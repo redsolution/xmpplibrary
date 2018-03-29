@@ -4136,8 +4136,8 @@
                           required = true},
                     #attr{name = <<"by">>,
                           required = true,
-                          enc = {jid, encode, []},
-                          dec = {jid, decode, []}}]}).
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
