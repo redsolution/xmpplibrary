@@ -4127,6 +4127,18 @@
 		   #ref{name = avatar_pointer, label = '$pointer',
 			min = 0, max = 1}]}).
 
+-xml(xab_xep1_time,
+  #elem{
+    name = <<"time">>,
+    xmlns = <<"http://xabber.com/protocol/unique">>,
+    module = 'xab_xep1_xmpp',
+    result = {xab_time, '$by', '$stamp'},
+    attrs = [
+      #attr{name = <<"stamp">>, required = true},
+      #attr{name = <<"by">>, required = true, enc = {jid, encode, []}, dec = {jid, decode, []}}
+    ]
+}).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
