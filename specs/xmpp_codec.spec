@@ -4127,6 +4127,20 @@
 		   #ref{name = avatar_pointer, label = '$pointer',
 			min = 0, max = 1}]}).
 
+-xml(delay,
+     #elem{name = <<"delay">>,
+           xmlns = <<"urn:xmpp:delay">>,
+	   module = 'xep0203',
+           result = {delay, '$stamp', '$from', '$desc'},
+	   cdata = #cdata{label = '$desc', default = <<"">>},
+           attrs = [#attr{name = <<"stamp">>,
+                          required = true,
+                          dec = {dec_utc, []},
+                          enc = {enc_utc, []}},
+                    #attr{name = <<"from">>,
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}}]}).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
