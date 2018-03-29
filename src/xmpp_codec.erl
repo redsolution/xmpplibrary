@@ -935,6 +935,9 @@ get_mod(<<"disable">>, <<"urn:xmpp:push:0">>) ->
     xep0357;
 get_mod(<<"delegated">>, <<"urn:xmpp:delegation:1">>) ->
     xep0355;
+get_mod(<<"received">>,
+	<<"http://xabber.com/protocol/unique">>) ->
+    unique;
 get_mod(<<"presence">>,
 	<<"jabber:component:accept">>) ->
     rfc6120;
@@ -1387,6 +1390,7 @@ get_mod({vcard_sound, _, _, _}) -> xep0054;
 get_mod({ps_retract, _, _, _}) -> xep0060;
 get_mod({streamhost, _, _, _}) -> xep0065;
 get_mod({privilege_perm, _, _}) -> xep0356;
+get_mod({unique_received, _, _, _}) -> unique;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({vcard_adr, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->

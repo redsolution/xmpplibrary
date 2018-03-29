@@ -571,6 +571,11 @@
                       by :: jid:jid()}).
 -type unique_time() :: #unique_time{}.
 
+-record(unique_received, {origin_id :: #origin_id{},
+                          stanza_id :: #stanza_id{},
+                          time :: #unique_time{}}).
+-type unique_received() :: #unique_received{}.
+
 -record(muc_invite, {reason = <<>> :: binary(),
                      from :: undefined | jid:jid(),
                      to :: undefined | jid:jid(),
@@ -1043,7 +1048,6 @@
                         mix_leave() |
                         muc_unique() |
                         ps_event() |
-                        search() |
                         private() |
                         unique_time() |
                         ping() |
@@ -1062,12 +1066,14 @@
                         mam_result() |
                         vcard_sound() |
                         roster_query() |
+                        unique_received() |
                         db_verify() |
                         stream_error() |
                         delegation_query() |
                         legacy_auth_feature() |
                         origin_id() |
                         vcard_xupdate() |
+                        text() |
                         gone() |
                         bookmark_url() |
                         db_result() |
@@ -1081,6 +1087,7 @@
                         sm_enabled() |
                         vcard_geo() |
                         stanza_error() |
+                        search() |
                         push_disable() |
                         upload_request_0() |
                         compressed() |
@@ -1162,7 +1169,6 @@
                         muc_unsubscribe() |
                         sm_failed() |
                         search_item() |
-                        text() |
                         thumbnail() |
                         stream_features() |
                         expire() |
