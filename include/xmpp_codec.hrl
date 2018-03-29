@@ -567,6 +567,10 @@
 -record(rosterver_feature, {}).
 -type rosterver_feature() :: #rosterver_feature{}.
 
+-record(unique_time, {stamp :: erlang:timestamp(),
+                      by :: jid:jid()}).
+-type unique_time() :: #unique_time{}.
+
 -record(muc_invite, {reason = <<>> :: binary(),
                      from :: undefined | jid:jid(),
                      to :: undefined | jid:jid(),
@@ -1039,7 +1043,9 @@
                         mix_leave() |
                         muc_unique() |
                         ps_event() |
+                        search() |
                         private() |
+                        unique_time() |
                         ping() |
                         ps_affiliation() |
                         streamhost() |
@@ -1102,7 +1108,6 @@
                         avatar_info() |
                         chatstate() |
                         media() |
-                        search() |
                         avatar_meta() |
                         compress() |
                         forwarded() |
@@ -1114,7 +1119,6 @@
                         xevent() |
                         ps_items() |
                         block_list() |
-                        text() |
                         privacy_query() |
                         sasl_response() |
                         rsm_set() |
@@ -1158,6 +1162,7 @@
                         muc_unsubscribe() |
                         sm_failed() |
                         search_item() |
+                        text() |
                         thumbnail() |
                         stream_features() |
                         expire() |

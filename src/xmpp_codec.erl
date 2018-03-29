@@ -1007,6 +1007,9 @@ get_mod(<<"item">>,
     xep0013;
 get_mod(<<"get">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
+get_mod(<<"time">>,
+	<<"http://xabber.com/protocol/unique">>) ->
+    unique;
 get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/disco#info">>) ->
     xep0030;
@@ -1347,9 +1350,7 @@ get_mod({carbons_disable}) -> xep0280;
 get_mod({last, _, _}) -> xep0012;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
-get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
-get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({sasl_auth, _, _}) -> rfc6120;
@@ -1447,6 +1448,7 @@ get_mod({adhoc_actions, _, _, _, _}) -> xep0050;
 get_mod({adhoc_note, _, _}) -> xep0050;
 get_mod({push_disable, _, _}) -> xep0357;
 get_mod({push_notification, _}) -> xep0357;
+get_mod({unique_time, _, _}) -> unique;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({stat, _, _, _, _}) -> xep0039;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
@@ -1534,4 +1536,6 @@ get_mod({muc_unsubscribe, _, _}) -> p1_mucsub;
 get_mod({search, _, _, _, _, _, _, _}) -> xep0055;
 get_mod({expire, _, _}) -> xep0023;
 get_mod({privilege, _, _}) -> xep0356;
+get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
+get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
