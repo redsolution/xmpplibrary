@@ -4140,6 +4140,17 @@
                           required = true,
                           dec = {jid, decode, []},
                           enc = {jid, encode, []}}]}).
+-xml(unique_received,
+     #elem{name = <<"received">>,
+           xmlns = <<"http://xabber.com/protocol/unique">>,
+           module = 'unique',
+           result = {unique_received, '$origin_id', '$stanza_id', '$time'},
+           refs = [#ref{name = origin_id,
+                        min = 1, max = 1, label = '$origin_id'},
+                   #ref{name = stanza_id,
+                        min = 1, max = 1, label = '$stanza_id'},
+                   #ref{name = unique_time,
+                        min = 1, max = 1, label = '$time'}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
