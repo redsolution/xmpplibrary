@@ -4127,17 +4127,17 @@
 		   #ref{name = avatar_pointer, label = '$pointer',
 			min = 0, max = 1}]}).
 
--xml(delay,
-     #elem{name = <<"delay">>,
-           xmlns = <<"urn:xmpp:delay">>,
-	   module = 'xep0203',
-           result = {delay, '$stamp', '$from', '$desc'},
+-xml(unique_time,
+     #elem{name = <<"time">>,
+           xmlns = <<"http://xabber.com/protocol/unique">>,
+	   module = 'unique',
+           result = {unique_time, '$stamp', '$by', '$desc'},
 	   cdata = #cdata{label = '$desc', default = <<"">>},
            attrs = [#attr{name = <<"stamp">>,
                           required = true,
                           dec = {dec_utc, []},
                           enc = {enc_utc, []}},
-                    #attr{name = <<"from">>,
+                    #attr{name = <<"by">>,
                           dec = {jid, decode, []},
                           enc = {jid, encode, []}}]}).
 
