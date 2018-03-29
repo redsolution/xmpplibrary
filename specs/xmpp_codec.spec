@@ -4127,12 +4127,12 @@
 		   #ref{name = avatar_pointer, label = '$pointer',
 			min = 0, max = 1}]}).
 
--xml(xab_xep1_time,
+-xml(unique_time,
   #elem{
     name = <<"time">>,
     xmlns = <<"http://xabber.com/protocol/unique">>,
-    module = 'xab_xep1_xmpp',
-    result = {xab_time, '$by', '$stamp'},
+    module = 'unique',
+    result = {unique_time, '$by', '$stamp'},
     attrs = [
       #attr{name = <<"stamp">>, required = true},
       #attr{name = <<"by">>, required = true, enc = {jid, encode, []}, dec = {jid, decode, []}}
