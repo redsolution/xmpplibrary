@@ -4137,6 +4137,7 @@
                           dec = {dec_utc, []},
                           enc = {enc_utc, []}},
                     #attr{name = <<"by">>,
+                          required = true,
                           dec = {jid, decode, []},
                           enc = {jid, encode, []}}]}).
 
