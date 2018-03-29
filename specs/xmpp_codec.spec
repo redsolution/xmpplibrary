@@ -4131,7 +4131,7 @@
      #elem{name = <<"time">>,
            xmlns = <<"http://xabber.com/protocol/unique">>,
 	   module = 'unique',
-           result = {unique_time, '$by', '$stamp'},
+           result = {unique_time, '$stamp', '$by'},
            attrs = [#attr{name = <<"stamp">>,
                           required = true,
                           dec = {dec_utc, []},
