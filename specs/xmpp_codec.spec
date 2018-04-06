@@ -4140,6 +4140,7 @@
                           required = true,
                           dec = {jid, decode, []},
                           enc = {jid, encode, []}}]}).
+
 -xml(unique_received,
      #elem{name = <<"received">>,
            xmlns = <<"http://xabber.com/protocol/unique">>,
@@ -4151,6 +4152,12 @@
                         min = 1, max = 1, label = '$stanza_id'},
                    #ref{name = unique_time,
                         min = 1, max = 1, label = '$time'}]}).
+
+-xml(unique_retry,
+     #elem{name = <<"retry">>,
+           xmlns = <<"http://xabber.com/protocol/unique">>,
+           module = 'unique',
+           result = {unique_retry}}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
