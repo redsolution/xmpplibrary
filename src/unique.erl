@@ -5,6 +5,10 @@
 
 -compile(export_all).
 
+do_decode(<<"retry">>,
+	  <<"http://xabber.com/protocol/unique">>, El, Opts) ->
+    decode_unique_retry(<<"http://xabber.com/protocol/unique">>,
+			Opts, El);
 do_decode(<<"received">>,
 	  <<"http://xabber.com/protocol/unique">>, El, Opts) ->
     decode_unique_received(<<"http://xabber.com/protocol/unique">>,
@@ -19,7 +23,8 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"received">>,
+    [{<<"retry">>, <<"http://xabber.com/protocol/unique">>},
+     {<<"received">>,
       <<"http://xabber.com/protocol/unique">>},
      {<<"time">>, <<"http://xabber.com/protocol/unique">>}].
 
@@ -27,26 +32,47 @@ do_encode({unique_time, _, _} = Time, TopXMLNS) ->
     encode_unique_time(Time, TopXMLNS);
 do_encode({unique_received, _, _, _} = Received,
 	  TopXMLNS) ->
-    encode_unique_received(Received, TopXMLNS).
+    encode_unique_received(Received, TopXMLNS);
+do_encode({unique_retry} = Retry, TopXMLNS) ->
+    encode_unique_retry(Retry, TopXMLNS).
 
 do_get_name({unique_received, _, _, _}) ->
     <<"received">>;
+do_get_name({unique_retry}) -> <<"retry">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
 do_get_ns({unique_received, _, _, _}) ->
+    <<"http://xabber.com/protocol/unique">>;
+do_get_ns({unique_retry}) ->
     <<"http://xabber.com/protocol/unique">>;
 do_get_ns({unique_time, _, _}) ->
     <<"http://xabber.com/protocol/unique">>.
 
 pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 3) -> [origin_id, stanza_id, time];
+pp(unique_retry, 0) -> [];
 pp(_, _) -> no.
 
-records() -> [{unique_time, 2}, {unique_received, 3}].
+records() ->
+    [{unique_time, 2}, {unique_received, 3},
+     {unique_retry, 0}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
 
 enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
+
+decode_unique_retry(__TopXMLNS, __Opts,
+		    {xmlel, <<"retry">>, _attrs, _els}) ->
+    {unique_retry}.
+
+encode_unique_retry({unique_retry}, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/unique">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"retry">>, _attrs, _els}.
 
 decode_unique_received(__TopXMLNS, __Opts,
 		       {xmlel, <<"received">>, _attrs, _els}) ->

@@ -386,6 +386,9 @@
 -record(feature_csi, {xmlns = <<>> :: binary()}).
 -type feature_csi() :: #feature_csi{}.
 
+-record(unique_retry, {}).
+-type unique_retry() :: #unique_retry{}.
+
 -record(disco_item, {jid :: jid:jid(),
                      name = <<>> :: binary(),
                      node = <<>> :: binary()}).
@@ -998,6 +1001,7 @@
 -type time() :: #time{}.
 
 -type xmpp_element() :: message() |
+                        search() |
                         muc_item() |
                         roster_item() |
                         sic() |
@@ -1013,6 +1017,7 @@
                         'see-other-host'() |
                         db_feature() |
                         register() |
+                        unique_retry() |
                         disco_info() |
                         starttls_failure() |
                         stat() |
@@ -1022,6 +1027,7 @@
                         vcard_tel() |
                         avatar_data() |
                         sm_resume() |
+                        text() |
                         sasl_challenge() |
                         ps_retract() |
                         mam_archived() |
@@ -1073,7 +1079,6 @@
                         legacy_auth_feature() |
                         origin_id() |
                         vcard_xupdate() |
-                        text() |
                         gone() |
                         bookmark_url() |
                         db_result() |
@@ -1087,7 +1092,6 @@
                         sm_enabled() |
                         vcard_geo() |
                         stanza_error() |
-                        search() |
                         push_disable() |
                         upload_request_0() |
                         compressed() |

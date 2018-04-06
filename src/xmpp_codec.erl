@@ -650,6 +650,9 @@ get_mod(<<"content-type">>,
     xep0363;
 get_mod(<<"perm">>, <<"urn:xmpp:privilege:1">>) ->
     xep0356;
+get_mod(<<"retry">>,
+	<<"http://xabber.com/protocol/unique">>) ->
+    unique;
 get_mod(<<"internal-server-error">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1466,6 +1469,7 @@ get_mod({version, _, _, _}) -> xep0092;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
+get_mod({unique_retry}) -> unique;
 get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_tel, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
