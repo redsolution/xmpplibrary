@@ -4159,6 +4159,13 @@
            module = 'unique',
            result = {unique_retry}}).
 
+-xml(previous_id,
+     #elem{name = <<"previous-id">>,
+	   xmlns = <<"http://xabber.com/protocol/previous">>,
+	   module = 'previous',
+	   result = {previous_id, '$id'},
+	   attrs = [#attr{name = <<"id">>, required = true}]}).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
