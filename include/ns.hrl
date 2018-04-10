@@ -187,3 +187,4 @@
 -define(NS_AVATAR_METADATA, <<"urn:xmpp:avatar:metadata">>).
 -define(NS_PEP_VCARD_CONVERSION_0, <<"urn:xmpp:pep-vcard-conversion:0">>).
 -define(NS_UNIQUE, <<"http://xabber.com/protocol/unique">>).
+-define(NS_PREVIOUS, <<"http://xabber.com/protocol/previous">>).
