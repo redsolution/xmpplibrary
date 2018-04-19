@@ -4164,7 +4164,7 @@
 	   xmlns = <<"http://xabber.com/protocol/previous">>,
 	   module = 'previous',
 	   result = {previous_id, '$id'},
-	   attrs = [#attr{name = <<"id">>, required = true}]}).
+	   attrs = [#attr{name = <<"id">>}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
