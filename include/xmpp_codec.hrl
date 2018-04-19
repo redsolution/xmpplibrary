@@ -209,14 +209,6 @@
 -record(starttls_proceed, {}).
 -type starttls_proceed() :: #starttls_proceed{}.
 
--record(forwarded, {delay :: 'undefined' | #delay{},
-                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type forwarded() :: #forwarded{}.
-
--record(privilege, {perms = [] :: [#privilege_perm{}],
-                    forwarded :: 'undefined' | #forwarded{}}).
--type privilege() :: #privilege{}.
-
 -record(sm_resumed, {h :: non_neg_integer(),
                      previd = <<>> :: binary(),
                      xmlns = <<>> :: binary()}).
@@ -241,6 +233,14 @@
 -record(stanza_id, {by :: jid:jid(),
                     id = <<>> :: binary()}).
 -type stanza_id() :: #stanza_id{}.
+
+-record(forwarded, {delay :: 'undefined' | #delay{},
+                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type forwarded() :: #forwarded{}.
+
+-record(privilege, {perms = [] :: [#privilege_perm{}],
+                    forwarded :: 'undefined' | #forwarded{}}).
+-type privilege() :: #privilege{}.
 
 -record(sasl_challenge, {text = <<>> :: binary()}).
 -type sasl_challenge() :: #sasl_challenge{}.
@@ -356,6 +356,9 @@
                      resume = false :: boolean(),
                      xmlns = <<>> :: binary()}).
 -type sm_enabled() :: #sm_enabled{}.
+
+-record(previous_id, {id = <<>> :: binary()}).
+-type previous_id() :: #previous_id{}.
 
 -record('see-other-host', {host :: binary() | inet:ip_address() | {binary() | inet:ip_address(),non_neg_integer()}}).
 -type 'see-other-host'() :: #'see-other-host'{}.
@@ -1001,7 +1004,6 @@
 -type time() :: #time{}.
 
 -type xmpp_element() :: message() |
-                        search() |
                         muc_item() |
                         roster_item() |
                         sic() |
@@ -1027,7 +1029,6 @@
                         vcard_tel() |
                         avatar_data() |
                         sm_resume() |
-                        text() |
                         sasl_challenge() |
                         ps_retract() |
                         mam_archived() |
@@ -1038,6 +1039,7 @@
                         delegation() |
                         bind() |
                         muc_owner() |
+                        text() |
                         address() |
                         vcard_photo() |
                         offline() |
@@ -1128,6 +1130,8 @@
                         stream_start() |
                         avatar_pointer() |
                         xevent() |
+                        search() |
+                        previous_id() |
                         ps_items() |
                         block_list() |
                         privacy_query() |

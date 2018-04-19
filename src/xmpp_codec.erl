@@ -770,6 +770,9 @@ get_mod(<<"affiliations">>,
     xep0060;
 get_mod(<<"data">>, <<"urn:xmpp:avatar:data">>) ->
     xep0084;
+get_mod(<<"previous-id">>,
+	<<"http://xabber.com/protocol/previous">>) ->
+    previous;
 get_mod(<<"item">>,
 	<<"http://jabber.org/protocol/disco#items">>) ->
     xep0030;
@@ -1498,6 +1501,7 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
+get_mod({previous_id, _}) -> previous;
 get_mod({bookmark_url, _, _}) -> xep0048;
 get_mod({gone, _}) -> rfc6120;
 get_mod({sasl_response, _}) -> rfc6120;
