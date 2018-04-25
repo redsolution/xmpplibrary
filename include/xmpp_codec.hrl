@@ -579,6 +579,7 @@
 
 -record(unique_received, {origin_id :: #origin_id{},
                           stanza_id :: #stanza_id{},
+                          previous_id :: #previous_id{},
                           time :: #unique_time{}}).
 -type unique_received() :: #unique_received{}.
 
@@ -1019,7 +1020,6 @@
                         'see-other-host'() |
                         db_feature() |
                         register() |
-                        unique_retry() |
                         disco_info() |
                         starttls_failure() |
                         stat() |
@@ -1121,6 +1121,7 @@
                         avatar_info() |
                         chatstate() |
                         media() |
+                        unique_retry() |
                         avatar_meta() |
                         compress() |
                         forwarded() |
@@ -1130,7 +1131,6 @@
                         stream_start() |
                         avatar_pointer() |
                         xevent() |
-                        search() |
                         previous_id() |
                         ps_items() |
                         block_list() |
@@ -1158,6 +1158,7 @@
                         time() |
                         upload_slot() |
                         privilege() |
+                        search() |
                         nick() |
                         bytestreams() |
                         vcard_org() |

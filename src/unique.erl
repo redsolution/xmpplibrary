@@ -30,18 +30,18 @@ tags() ->
 
 do_encode({unique_time, _, _} = Time, TopXMLNS) ->
     encode_unique_time(Time, TopXMLNS);
-do_encode({unique_received, _, _, _} = Received,
+do_encode({unique_received, _, _, _, _} = Received,
 	  TopXMLNS) ->
     encode_unique_received(Received, TopXMLNS);
 do_encode({unique_retry} = Retry, TopXMLNS) ->
     encode_unique_retry(Retry, TopXMLNS).
 
-do_get_name({unique_received, _, _, _}) ->
+do_get_name({unique_received, _, _, _, _}) ->
     <<"received">>;
 do_get_name({unique_retry}) -> <<"retry">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
-do_get_ns({unique_received, _, _, _}) ->
+do_get_ns({unique_received, _, _, _, _}) ->
     <<"http://xabber.com/protocol/unique">>;
 do_get_ns({unique_retry}) ->
     <<"http://xabber.com/protocol/unique">>;
@@ -49,12 +49,13 @@ do_get_ns({unique_time, _, _}) ->
     <<"http://xabber.com/protocol/unique">>.
 
 pp(unique_time, 2) -> [stamp, by];
-pp(unique_received, 3) -> [origin_id, stanza_id, time];
+pp(unique_received, 4) ->
+    [origin_id, stanza_id, previous_id, time];
 pp(unique_retry, 0) -> [];
 pp(_, _) -> no.
 
 records() ->
-    [{unique_time, 2}, {unique_received, 3},
+    [{unique_time, 2}, {unique_received, 4},
      {unique_retry, 0}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
@@ -76,14 +77,21 @@ encode_unique_retry({unique_retry}, __TopXMLNS) ->
 
 decode_unique_received(__TopXMLNS, __Opts,
 		       {xmlel, <<"received">>, _attrs, _els}) ->
-    {Stanza_id, Origin_id, Time} =
+    {Previous_id, Stanza_id, Origin_id, Time} =
 	decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				   error, error, error),
-    {unique_received, Origin_id, Stanza_id, Time}.
+				   error, error, error, error),
+    {unique_received, Origin_id, Stanza_id, Previous_id,
+     Time}.
 
 decode_unique_received_els(__TopXMLNS, __Opts, [],
-			   Stanza_id, Origin_id, Time) ->
-    {case Stanza_id of
+			   Previous_id, Stanza_id, Origin_id, Time) ->
+    {case Previous_id of
+       error ->
+	   erlang:error({xmpp_codec,
+			 {missing_tag, <<"previous-id">>, __TopXMLNS}});
+       {value, Previous_id1} -> Previous_id1
+     end,
+     case Stanza_id of
        error ->
 	   erlang:error({xmpp_codec,
 			 {missing_tag, <<"stanza-id">>, __TopXMLNS}});
@@ -103,75 +111,100 @@ decode_unique_received_els(__TopXMLNS, __Opts, [],
      end};
 decode_unique_received_els(__TopXMLNS, __Opts,
 			   [{xmlel, <<"origin-id">>, _attrs, _} = _el | _els],
-			   Stanza_id, Origin_id, Time) ->
+			   Previous_id, Stanza_id, Origin_id, Time) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"urn:xmpp:sid:0">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				     Stanza_id,
+				     Previous_id, Stanza_id,
 				     {value,
 				      xep0359:decode_origin_id(<<"urn:xmpp:sid:0">>,
 							       __Opts, _el)},
 				     Time);
       _ ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				     Stanza_id, Origin_id, Time)
+				     Previous_id, Stanza_id, Origin_id, Time)
     end;
 decode_unique_received_els(__TopXMLNS, __Opts,
 			   [{xmlel, <<"stanza-id">>, _attrs, _} = _el | _els],
-			   Stanza_id, Origin_id, Time) ->
+			   Previous_id, Stanza_id, Origin_id, Time) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"urn:xmpp:sid:0">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
+				     Previous_id,
 				     {value,
 				      xep0359:decode_stanza_id(<<"urn:xmpp:sid:0">>,
 							       __Opts, _el)},
 				     Origin_id, Time);
       _ ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				     Stanza_id, Origin_id, Time)
+				     Previous_id, Stanza_id, Origin_id, Time)
+    end;
+decode_unique_received_els(__TopXMLNS, __Opts,
+			   [{xmlel, <<"previous-id">>, _attrs, _} = _el | _els],
+			   Previous_id, Stanza_id, Origin_id, Time) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"http://xabber.com/protocol/previous">> ->
+	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
+				     {value,
+				      previous:decode_previous_id(<<"http://xabber.com/protocol/previous">>,
+								  __Opts, _el)},
+				     Stanza_id, Origin_id, Time);
+      _ ->
+	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
+				     Previous_id, Stanza_id, Origin_id, Time)
     end;
 decode_unique_received_els(__TopXMLNS, __Opts,
 			   [{xmlel, <<"time">>, _attrs, _} = _el | _els],
-			   Stanza_id, Origin_id, Time) ->
+			   Previous_id, Stanza_id, Origin_id, Time) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://xabber.com/protocol/unique">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				     Stanza_id, Origin_id,
+				     Previous_id, Stanza_id, Origin_id,
 				     {value,
 				      decode_unique_time(<<"http://xabber.com/protocol/unique">>,
 							 __Opts, _el)});
       _ ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
-				     Stanza_id, Origin_id, Time)
+				     Previous_id, Stanza_id, Origin_id, Time)
     end;
 decode_unique_received_els(__TopXMLNS, __Opts,
-			   [_ | _els], Stanza_id, Origin_id, Time) ->
+			   [_ | _els], Previous_id, Stanza_id, Origin_id,
+			   Time) ->
     decode_unique_received_els(__TopXMLNS, __Opts, _els,
-			       Stanza_id, Origin_id, Time).
+			       Previous_id, Stanza_id, Origin_id, Time).
 
 encode_unique_received({unique_received, Origin_id,
-			Stanza_id, Time},
+			Stanza_id, Previous_id, Time},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/unique">>,
 				    [], __TopXMLNS),
     _els =
-	lists:reverse('encode_unique_received_$stanza_id'(Stanza_id,
-							  __NewTopXMLNS,
-							  'encode_unique_received_$origin_id'(Origin_id,
-											      __NewTopXMLNS,
-											      'encode_unique_received_$time'(Time,
-															     __NewTopXMLNS,
-															     [])))),
+	lists:reverse('encode_unique_received_$previous_id'(Previous_id,
+							    __NewTopXMLNS,
+							    'encode_unique_received_$stanza_id'(Stanza_id,
+												__NewTopXMLNS,
+												'encode_unique_received_$origin_id'(Origin_id,
+																    __NewTopXMLNS,
+																    'encode_unique_received_$time'(Time,
+																				   __NewTopXMLNS,
+																				   []))))),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"received">>, _attrs, _els}.
+
+'encode_unique_received_$previous_id'(Previous_id,
+				      __TopXMLNS, _acc) ->
+    [previous:encode_previous_id(Previous_id, __TopXMLNS)
+     | _acc].
 
 'encode_unique_received_$stanza_id'(Stanza_id,
 				    __TopXMLNS, _acc) ->
