@@ -4168,6 +4168,39 @@
 	   result = {previous_id, '$id'},
 	   attrs = [#attr{name = <<"id">>}]}).
 
+-xml(xabbergroupchat_add,
+     #elem{name = <<"add">>,
+           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+           result = {xabbergroupchat_add, '$user', '$groupchat'},
+	   attrs = [#attr{name = <<"user">>,
+			  required = true,
+			  enc = {jid, encode, []},
+			  dec = {jid, decode, []}},
+	          #attr{name = <<"groupchat">>,
+			  required = true,
+			  enc = {jid, encode, []},
+			  dec = {jid, decode, []}}
+              ]}).
+
+-xml(xabbergroupchat_create,
+     #elem{name = <<"create">>,
+           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+           result = {xabbergroupchat_create, '$jid'},
+	   attrs = [#attr{name = <<"jid">>,
+			  required = true,
+			  enc = {jid, encode, []},
+			  dec = {jid, decode, []}}]}).
+
+-xml(xabbergroupchat,
+     #elem{name = <<"query">>,
+           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+           result = {xabbergroupchat, '$create'},
+           refs = [#ref{name = xabbergroupchat_create, min = 0, max = 1,
+                        label = '$create'}]}).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
