@@ -373,7 +373,8 @@
 -record(xabbergroupchat_create, {jid :: jid:jid()}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
--record(xabbergroupchat, {create :: 'undefined' | #xabbergroupchat_create{}}).
+-record(xabbergroupchat, {create :: 'undefined' | #xabbergroupchat_create{},
+                          add = [] :: [#xabbergroupchat_add{}]}).
 -type xabbergroupchat() :: #xabbergroupchat{}.
 
 -record(muc_unique, {name = <<>> :: binary()}).

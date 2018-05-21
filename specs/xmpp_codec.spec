@@ -4197,9 +4197,11 @@
      #elem{name = <<"query">>,
            xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-           result = {xabbergroupchat, '$create'},
+           result = {xabbergroupchat, '$create', '$add'},
            refs = [#ref{name = xabbergroupchat_create, min = 0, max = 1,
-                        label = '$create'}]}).
+                        label = '$create'},
+                        #ref{name = xabbergroupchat_add, label = '$add' }
+                        ]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
