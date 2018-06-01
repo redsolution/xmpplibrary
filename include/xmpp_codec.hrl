@@ -374,6 +374,7 @@
 -type sm_enabled() :: #sm_enabled{}.
 
 -record(xabbergroupchat_create, {name = <<>> :: binary(),
+                                 anonymous = <<>> :: binary(),
                                  localpart = <<>> :: binary(),
                                  membership :: 'undefined' | {binary()},
                                  searchable :: 'undefined' | {binary()}}).
