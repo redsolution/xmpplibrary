@@ -127,10 +127,6 @@
                     data = <<>> :: binary()}).
 -type rsm_first() :: #rsm_first{}.
 
--record(xabbergroupchat_add, {user :: jid:jid(),
-                              groupchat :: jid:jid()}).
--type xabbergroupchat_add() :: #xabbergroupchat_add{}.
-
 -record(streamhost, {jid :: jid:jid(),
                      host = <<>> :: binary(),
                      port = 1080 :: non_neg_integer()}).
@@ -185,6 +181,13 @@
                     width :: 'undefined' | non_neg_integer(),
                     height :: 'undefined' | non_neg_integer()}).
 -type thumbnail() :: #thumbnail{}.
+
+-record(xabbergroupchat_item, {id :: jid:jid(),
+                               role = <<>> :: binary()}).
+-type xabbergroupchat_item() :: #xabbergroupchat_item{}.
+
+-record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
+-type xabbergroupchat() :: #xabbergroupchat{}.
 
 -record(privilege_perm, {access :: 'message' | 'presence' | 'roster',
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
@@ -370,12 +373,11 @@
                      xmlns = <<>> :: binary()}).
 -type sm_enabled() :: #sm_enabled{}.
 
--record(xabbergroupchat_create, {jid :: jid:jid()}).
+-record(xabbergroupchat_create, {name = <<>> :: binary(),
+                                 localpart = <<>> :: binary(),
+                                 membership :: 'undefined' | {binary()},
+                                 searchable :: 'undefined' | {binary()}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
-
--record(xabbergroupchat, {create :: 'undefined' | #xabbergroupchat_create{},
-                          add = [] :: [#xabbergroupchat_add{}]}).
--type xabbergroupchat() :: #xabbergroupchat{}.
 
 -record(muc_unique, {name = <<>> :: binary()}).
 -type muc_unique() :: #muc_unique{}.
@@ -1104,7 +1106,6 @@
                         iq() |
                         avatar_meta() |
                         xcaptcha() |
-                        xabbergroupchat_add() |
                         streamhost() |
                         bind() |
                         ps_retract() |
@@ -1117,13 +1118,14 @@
                         ps_event() |
                         mam_result() |
                         rsm_first() |
-                        stat() |
                         xabbergroupchat() |
+                        stat() |
                         upload_request() |
                         xdata_field() |
                         adhoc_command() |
                         sm_failed() |
                         ping() |
+                        xabbergroupchat_item() |
                         privilege_perm() |
                         privacy_item() |
                         disco_item() |

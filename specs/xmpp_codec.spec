@@ -4168,40 +4168,53 @@
 	   result = {previous_id, '$id'},
 	   attrs = [#attr{name = <<"id">>}]}).
 
--xml(xabbergroupchat_add,
-     #elem{name = <<"add">>,
-           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+-xml(xabbergroupchat_item,
+     #elem{name = <<"item">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-           result = {xabbergroupchat_add, '$user', '$groupchat'},
-	   attrs = [#attr{name = <<"user">>,
+     result = {xabbergroupchat_item, '$id', '$role'},
+	   attrs = [#attr{name = <<"id">>,
 			  required = true,
 			  enc = {jid, encode, []},
 			  dec = {jid, decode, []}},
-	          #attr{name = <<"groupchat">>,
-			  required = true,
-			  enc = {jid, encode, []},
-			  dec = {jid, decode, []}}
+              #attr{name = <<"role">>,
+        required = true}
               ]}).
 
 -xml(xabbergroupchat_create,
      #elem{name = <<"create">>,
-           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-           result = {xabbergroupchat_create, '$jid'},
-	   attrs = [#attr{name = <<"jid">>,
-			  required = true,
-			  enc = {jid, encode, []},
-			  dec = {jid, decode, []}}]}).
+     result = {xabbergroupchat_create, '$name', '$localpart', '$membership', '$searchable'},
+	   attrs = [#attr{name = <<"name">>,
+        required = true},
+              #attr{name = <<"localpart">>}],
+     refs = [#ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
+             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
+              }).
+
+-xml(xabbergroupchat_searchable,
+     #elem{name = <<"searchable">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#access">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_membership,
+     #elem{name = <<"membership">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#access">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
-           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-           result = {xabbergroupchat, '$create', '$add'},
-           refs = [#ref{name = xabbergroupchat_create, min = 0, max = 1,
-                        label = '$create'},
-                        #ref{name = xabbergroupchat_add, label = '$add' }
-                        ]}).
+     result = {xabbergroupchat,'$item'},
+     refs = [#ref{name = xabbergroupchat_item, min = 0, max =1, label = '$item'}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
