@@ -369,6 +369,9 @@ get_mod(<<"pubsub">>,
     xep0060;
 get_mod(<<"disable">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
+get_mod(<<"update">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"unsupported-method">>,
 	<<"http://jabber.org/protocol/compress">>) ->
     xep0138;
@@ -644,18 +647,9 @@ get_mod(<<"perm">>, <<"urn:xmpp:privilege:1">>) ->
 get_mod(<<"internal-server-error">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
-get_mod(<<"remote-server-timeout">>,
-	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
-    rfc6120;
 get_mod(<<"service-unavailable">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
-get_mod(<<"invalid-from">>,
-	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
-    rfc6120;
-get_mod(<<"items">>,
-	<<"http://jabber.org/protocol/pubsub">>) ->
-    xep0060;
 get_mod(<<"password">>,
 	<<"http://jabber.org/protocol/muc#user">>) ->
     xep0045;
@@ -1365,6 +1359,15 @@ get_mod(<<"default">>,
 get_mod(<<"retry">>,
 	<<"http://xabber.com/protocol/unique">>) ->
     unique;
+get_mod(<<"remote-server-timeout">>,
+	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
+    rfc6120;
+get_mod(<<"invalid-from">>,
+	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
+    rfc6120;
+get_mod(<<"items">>,
+	<<"http://jabber.org/protocol/pubsub">>) ->
+    xep0060;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1420,6 +1423,8 @@ get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({ps_unsubscribe, _, _, _}) -> xep0060;
 get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
+get_mod({xabbergroupchat_update, _, _, _}) ->
+    xabbergroupchat;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;

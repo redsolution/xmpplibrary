@@ -4181,6 +4181,17 @@
         required = true}
               ]}).
 
+-xml(xabbergroupchat_update,
+     #elem{name = <<"update">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_update, '$name', '$membership', '$searchable'},
+	   attrs = [#attr{name = <<"name">>,
+        required = true}],
+     refs = [#ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
+             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
+              }).
+
 -xml(xabbergroupchat_create,
      #elem{name = <<"create">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,

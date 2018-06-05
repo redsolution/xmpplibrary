@@ -380,6 +380,11 @@
                                  searchable :: 'undefined' | {binary()}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
+-record(xabbergroupchat_update, {name = <<>> :: binary(),
+                                 membership :: 'undefined' | {binary()},
+                                 searchable :: 'undefined' | {binary()}}).
+-type xabbergroupchat_update() :: #xabbergroupchat_update{}.
+
 -record(muc_unique, {name = <<>> :: binary()}).
 -type muc_unique() :: #muc_unique{}.
 
@@ -1172,6 +1177,7 @@
                         privilege() |
                         push_enable() |
                         xabbergroupchat_create() |
+                        xabbergroupchat_update() |
                         muc_unique() |
                         sasl_response() |
                         message() |
