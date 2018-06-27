@@ -373,18 +373,6 @@
                      xmlns = <<>> :: binary()}).
 -type sm_enabled() :: #sm_enabled{}.
 
--record(xabbergroupchat_create, {name = <<>> :: binary(),
-                                 anonymous = <<>> :: binary(),
-                                 localpart = <<>> :: binary(),
-                                 membership :: 'undefined' | {binary()},
-                                 searchable :: 'undefined' | {binary()}}).
--type xabbergroupchat_create() :: #xabbergroupchat_create{}.
-
--record(xabbergroupchat_update, {name = <<>> :: binary(),
-                                 membership :: 'undefined' | {binary()},
-                                 searchable :: 'undefined' | {binary()}}).
--type xabbergroupchat_update() :: #xabbergroupchat_update{}.
-
 -record(muc_unique, {name = <<>> :: binary()}).
 -type muc_unique() :: #muc_unique{}.
 
@@ -949,6 +937,22 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
+-record(xabbergroupchat_create, {name :: {binary()},
+                                 anonymous :: {binary()},
+                                 localpart :: 'undefined' | {binary()},
+                                 description :: 'undefined' | {binary()},
+                                 model :: 'undefined' | {binary()},
+                                 membership :: 'undefined' | {binary()},
+                                 searchable :: 'undefined' | {binary()}}).
+-type xabbergroupchat_create() :: #xabbergroupchat_create{}.
+
+-record(xabbergroupchat_update, {name :: {binary()},
+                                 description :: 'undefined' | {binary()},
+                                 model :: 'undefined' | {binary()},
+                                 membership :: 'undefined' | {binary()},
+                                 searchable :: 'undefined' | {binary()}}).
+-type xabbergroupchat_update() :: #xabbergroupchat_update{}.
+
 -record(delegation, {delegated = [] :: [#delegated{}],
                      forwarded :: 'undefined' | #forwarded{}}).
 -type delegation() :: #delegation{}.
@@ -1159,8 +1163,8 @@
                         vcard_email() |
                         bookmark_url() |
                         vcard_label() |
-                        vcard_logo() |
                         disco_info() |
+                        vcard_logo() |
                         feature_register() |
                         register() |
                         avatar_pointer() |
@@ -1176,12 +1180,12 @@
                         muc_subscribe() |
                         privilege() |
                         push_enable() |
-                        xabbergroupchat_create() |
-                        xabbergroupchat_update() |
                         muc_unique() |
                         sasl_response() |
                         message() |
                         presence() |
+                        xabbergroupchat_create() |
+                        xabbergroupchat_update() |
                         sm_resume() |
                         carbons_enable() |
                         receipt_response() |

@@ -4185,10 +4185,11 @@
      #elem{name = <<"update">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_update, '$name', '$membership', '$searchable'},
-	   attrs = [#attr{name = <<"name">>,
-        required = true}],
-     refs = [#ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
+     result = {xabbergroupchat_update, '$name', '$description', '$model', '$membership', '$searchable'},
+     refs = [#ref{name = xabbergroupchat_name, min = 1, max = 1, label = '$name'},
+             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
+             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
+             #ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
               }).
 
@@ -4197,19 +4198,19 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_create, '$name', '$anonymous', 
-     '$localpart', '$membership', '$searchable'},
-	   attrs = [#attr{name = <<"name">>,
-        required = true},
-              #attr{name = <<"anonymous">>,
-        required = true},
-              #attr{name = <<"localpart">>}],
-     refs = [#ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
+     '$localpart', '$description', '$model', '$membership', '$searchable'},
+     refs = [#ref{name = xabbergroupchat_name, min = 1, max = 1, label = '$name'},
+             #ref{name = xabbergroupchat_anonymous, min = 1, max = 1, label = '$anonymous'},
+             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
+             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
+             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
+             #ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
               }).
 
 -xml(xabbergroupchat_searchable,
      #elem{name = <<"searchable">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#access">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
@@ -4217,7 +4218,47 @@
 
 -xml(xabbergroupchat_membership,
      #elem{name = <<"membership">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#access">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_name,
+     #elem{name = <<"name">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_anonymous,
+     #elem{name = <<"anonymous">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_description,
+     #elem{name = <<"description">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_model,
+     #elem{name = <<"model">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_localpart,
+     #elem{name = <<"localpart">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
