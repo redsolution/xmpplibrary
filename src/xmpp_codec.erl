@@ -1438,6 +1438,8 @@ get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({ps_unsubscribe, _, _, _}) -> xep0060;
 get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
+get_mod({xabbergroupchat_create, _, _, _}) ->
+    xabbergroupchat;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
@@ -1463,9 +1465,6 @@ get_mod({ps_error, _, _}) -> xep0060;
 get_mod({delay, _, _, _}) -> xep0203;
 get_mod({muc_actor, _, _}) -> xep0045;
 get_mod({nick, _}) -> xep0172;
-get_mod({xabbergroupchat_create, _, _, _, _, _, _,
-	 _}) ->
-    xabbergroupchat;
 get_mod({stats, _, _}) -> xep0039;
 get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _}) ->

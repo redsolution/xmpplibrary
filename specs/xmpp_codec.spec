@@ -4197,15 +4197,12 @@
      #elem{name = <<"create">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_create, '$name', '$anonymous', 
-     '$localpart', '$description', '$model', '$membership', '$searchable'},
-     refs = [#ref{name = xabbergroupchat_name, min = 1, max = 1, label = '$name'},
-             #ref{name = xabbergroupchat_anonymous, min = 1, max = 1, label = '$anonymous'},
-             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
-             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
-             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
-             #ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
-             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
+     result = {xabbergroupchat_create, '$anonymous',
+     '$localpart'},
+     refs = [
+             #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
+             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'}
+             ]
               }).
 
 -xml(xabbergroupchat_searchable,
