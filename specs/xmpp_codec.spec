@@ -4185,36 +4185,31 @@
      #elem{name = <<"update">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_update, '$name', '$description', '$model', '$membership', '$searchable'},
-     refs = [#ref{name = xabbergroupchat_name, min = 1, max = 1, label = '$name'},
+     result = {xabbergroupchat_update, '$name', '$description', '$model', '$searchable'},
+     refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
-             #ref{name = xabbergroupchat_membership, min = 0, max = 1, label = '$membership'},
-             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}]
+             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
+             ]
               }).
 
 -xml(xabbergroupchat_create,
      #elem{name = <<"create">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_create, '$anonymous',
-     '$localpart'},
-     refs = [
+     result = {xabbergroupchat_create, '$name', '$description', '$model', 
+     '$searchable', '$anonymous','$localpart'},
+     refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
+             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
+             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
              #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
-             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'}
+             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
+             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
 
 -xml(xabbergroupchat_searchable,
      #elem{name = <<"searchable">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
-	   module = 'xabbergroupchat',
-     result = {'$cdata'},
-     cdata = #cdata{label = '$cdata', required = true}}
-).
-
--xml(xabbergroupchat_membership,
-     #elem{name = <<"membership">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {'$cdata'},

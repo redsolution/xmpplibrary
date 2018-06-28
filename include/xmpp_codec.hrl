@@ -480,11 +480,6 @@
                 node = <<>> :: binary()}).
 -type stats() :: #stats{}.
 
--record(xabbergroupchat_create, {name :: {binary()},
-                                 anonymous :: {binary()},
-                                 localpart :: 'undefined' | {binary()}}).
--type xabbergroupchat_create() :: #xabbergroupchat_create{}.
-
 -record(sic, {ip :: undefined | inet:ip_address(),
               port :: 'undefined' | non_neg_integer(),
               xmlns = <<>> :: binary()}).
@@ -942,10 +937,17 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
--record(xabbergroupchat_update, {name :: {binary()},
+-record(xabbergroupchat_create, {name :: 'undefined' | {binary()},
                                  description :: 'undefined' | {binary()},
                                  model :: 'undefined' | {binary()},
-                                 membership :: 'undefined' | {binary()},
+                                 searchable :: 'undefined' | {binary()},
+                                 anonymous :: 'undefined' | {binary()},
+                                 localpart :: 'undefined' | {binary()}}).
+-type xabbergroupchat_create() :: #xabbergroupchat_create{}.
+
+-record(xabbergroupchat_update, {name :: 'undefined' | {binary()},
+                                 description :: 'undefined' | {binary()},
+                                 model :: 'undefined' | {binary()},
                                  searchable :: 'undefined' | {binary()}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
@@ -1179,8 +1181,8 @@
                         muc_unique() |
                         sasl_response() |
                         message() |
-                        xabbergroupchat_create() |
                         presence() |
+                        xabbergroupchat_create() |
                         xabbergroupchat_update() |
                         sm_resume() |
                         carbons_enable() |
