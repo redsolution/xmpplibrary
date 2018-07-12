@@ -407,6 +407,9 @@ get_mod(<<"subscriptions">>,
     xep0060;
 get_mod(<<"prefs">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"sm">>, <<"urn:xmpp:sm:2">>) -> xep0198;
+get_mod(<<"restriction">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"item">>, <<"jabber:iq:privacy">>) -> xep0016;
 get_mod(<<"feature-not-implemented">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
@@ -664,13 +667,6 @@ get_mod(<<"never">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"metadata">>,
 	<<"urn:xmpp:avatar:metadata">>) ->
     xep0084;
-get_mod(<<"bad-format">>,
-	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
-    rfc6120;
-get_mod(<<"STREET">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"status">>,
-	<<"http://jabber.org/protocol/muc#user">>) ->
-    xep0045;
 get_mod(<<"password">>,
 	<<"http://jabber.org/protocol/muc#owner">>) ->
     xep0045;
@@ -919,6 +915,9 @@ get_mod(<<"max">>,
     xep0059;
 get_mod(<<"result">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"address">>, <<"urn:xmpp:sic:1">>) -> xep0279;
+get_mod(<<"permission">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"query">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -1380,6 +1379,13 @@ get_mod(<<"invalid-from">>,
 get_mod(<<"items">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"bad-format">>,
+	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
+    rfc6120;
+get_mod(<<"STREET">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"status">>,
+	<<"http://jabber.org/protocol/muc#user">>) ->
+    xep0045;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1427,8 +1433,6 @@ get_mod({vcard_sound, _, _, _}) -> xep0054;
 get_mod({ps_retract, _, _, _}) -> xep0060;
 get_mod({streamhost, _, _, _}) -> xep0065;
 get_mod({privilege_perm, _, _}) -> xep0356;
-get_mod({xabbergroupchat_item, _, _}) ->
-    xabbergroupchat;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({vcard_adr, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
@@ -1437,6 +1441,8 @@ get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({ps_unsubscribe, _, _, _}) -> xep0060;
 get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
+get_mod({xabbergroupchat_restriction, _, _}) ->
+    xabbergroupchat;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
@@ -1556,7 +1562,11 @@ get_mod({mix_join, _, _}) -> xep0369;
 get_mod({address, _, _, _, _, _}) -> xep0033;
 get_mod({thumbnail, _, _, _, _}) -> xep0264;
 get_mod({delegation, _, _}) -> xep0355;
+get_mod({xabbergroupchat_permission, _, _}) ->
+    xabbergroupchat;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
+get_mod({xabbergroupchat_item, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;

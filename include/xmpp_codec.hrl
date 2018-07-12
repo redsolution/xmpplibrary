@@ -182,13 +182,6 @@
                     height :: 'undefined' | non_neg_integer()}).
 -type thumbnail() :: #thumbnail{}.
 
--record(xabbergroupchat_item, {id :: jid:jid(),
-                               role = <<>> :: binary()}).
--type xabbergroupchat_item() :: #xabbergroupchat_item{}.
-
--record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
--type xabbergroupchat() :: #xabbergroupchat{}.
-
 -record(privilege_perm, {access :: 'message' | 'presence' | 'roster',
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
 -type privilege_perm() :: #privilege_perm{}.
@@ -319,6 +312,10 @@
                        ver :: 'undefined' | binary()}).
 -type roster_query() :: #roster_query{}.
 
+-record(xabbergroupchat_permission, {name = <<>> :: binary(),
+                                     expires = <<>> :: binary()}).
+-type xabbergroupchat_permission() :: #xabbergroupchat_permission{}.
+
 -record(avatar_pointer, {bytes :: 'undefined' | non_neg_integer(),
                          id = <<>> :: binary(),
                          type = <<>> :: binary(),
@@ -412,6 +409,19 @@
 
 -record(compression, {methods = [] :: [binary()]}).
 -type compression() :: #compression{}.
+
+-record(xabbergroupchat_restriction, {name = <<>> :: binary(),
+                                      expires = <<>> :: binary()}).
+-type xabbergroupchat_restriction() :: #xabbergroupchat_restriction{}.
+
+-record(xabbergroupchat_item, {id :: jid:jid(),
+                               role = <<>> :: binary(),
+                               permission = [] :: [#xabbergroupchat_permission{}],
+                               restriction = [] :: [#xabbergroupchat_restriction{}]}).
+-type xabbergroupchat_item() :: #xabbergroupchat_item{}.
+
+-record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
+-type xabbergroupchat() :: #xabbergroupchat{}.
 
 -record(muc_subscriptions, {list = [] :: [jid:jid()]}).
 -type muc_subscriptions() :: #muc_subscriptions{}.
@@ -1026,6 +1036,7 @@
 -type time() :: #time{}.
 
 -type xmpp_element() :: compression() |
+                        xabbergroupchat_restriction() |
                         ps_subscription() |
                         xdata_option() |
                         version() |
@@ -1105,6 +1116,7 @@
                         ps_publish() |
                         nick() |
                         block() |
+                        xabbergroupchat_permission() |
                         delegation() |
                         push_notification() |
                         mix_join() |
@@ -1126,15 +1138,15 @@
                         ps_event() |
                         mam_result() |
                         rsm_first() |
-                        xabbergroupchat() |
                         stat() |
+                        xabbergroupchat() |
                         upload_request() |
                         xdata_field() |
                         adhoc_command() |
                         sm_failed() |
                         ping() |
-                        xabbergroupchat_item() |
                         privilege_perm() |
+                        xabbergroupchat_item() |
                         privacy_item() |
                         disco_item() |
                         ps_item() |

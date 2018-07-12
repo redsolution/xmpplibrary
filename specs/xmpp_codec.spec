@@ -4172,14 +4172,45 @@
      #elem{name = <<"item">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_item, '$id', '$role'},
+     result = {xabbergroupchat_item, '$id', '$role', '$permission', '$restriction'},
 	   attrs = [#attr{name = <<"id">>,
 			  required = true,
 			  enc = {jid, encode, []},
 			  dec = {jid, decode, []}},
               #attr{name = <<"role">>,
         required = true}
-              ]}).
+              ],
+        refs = [
+        #ref{name = xabbergroupchat_permission, label = '$permission'},
+        #ref{name = xabbergroupchat_restriction, label = '$restriction'}
+        ]
+              }
+              ).
+
+-xml(xabbergroupchat_permission,
+     #elem{name = <<"permission">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_permission, '$name', '$expires'},
+	   attrs = [#attr{name = <<"name">>,
+			  required = true},
+              #attr{name = <<"expires">>,
+        required = true}
+              ]}
+).
+
+-xml(xabbergroupchat_restriction,
+     #elem{name = <<"restriction">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_restriction, '$name', '$expires'},
+	   attrs = [#attr{name = <<"name">>,
+			  required = true},
+              #attr{name = <<"expires">>,
+        required = true}
+              ]}
+).
+
 
 -xml(xabbergroupchat_update,
      #elem{name = <<"update">>,
