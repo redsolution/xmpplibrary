@@ -4287,6 +4287,41 @@
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
+-xml(xabbergroupchat_block,
+     #elem{name = <<"block">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+	   module = 'xabbergroupchat',
+     result = {block, '$id', '$jid', '$domain'},
+     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
+      #ref{name = xabbergroupchat_jid, label = '$jid'},
+      #ref{name = xabbergroupchat_domain, label = '$domain'}
+     ]}).
+).
+
+-xml(xabbergroupchat_id,
+     #elem{name = <<"id">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_jid,
+     #elem{name = <<"jid">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_domain,
+     #elem{name = <<"domain">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,

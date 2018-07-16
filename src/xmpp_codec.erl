@@ -342,6 +342,9 @@ get_mod(<<"query">>,
     xep0065;
 get_mod(<<"displayed">>, <<"jabber:x:event">>) ->
     xep0022;
+get_mod(<<"domain">>,
+	<<"http://xabber.com/protocol/groupchat#block">>) ->
+    xabbergroupchat;
 get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
@@ -670,21 +673,12 @@ get_mod(<<"metadata">>,
 get_mod(<<"password">>,
 	<<"http://jabber.org/protocol/muc#owner">>) ->
     xep0045;
-get_mod(<<"error">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"method">>,
 	<<"http://jabber.org/features/compress">>) ->
     xep0138;
-get_mod(<<"VIDEO">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"redirect">>,
-	<<"http://jabber.org/protocol/pubsub#event">>) ->
-    xep0060;
 get_mod(<<"invalid-jid">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
-get_mod(<<"destroy">>,
-	<<"http://jabber.org/protocol/muc#user">>) ->
-    xep0045;
-get_mod(<<"id">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(<<"iq">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"not-acceptable">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
@@ -973,6 +967,9 @@ get_mod(<<"bind">>,
     rfc6120;
 get_mod(<<"enable">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
+get_mod(<<"id">>,
+	<<"http://xabber.com/protocol/groupchat#block">>) ->
+    xabbergroupchat;
 get_mod(<<"block">>, <<"urn:xmpp:blocking">>) ->
     xep0191;
 get_mod(<<"delete">>,
@@ -1067,6 +1064,9 @@ get_mod(<<"remote-connection-failed">>,
 get_mod(<<"pending-subscription">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"block">>,
+	<<"http://xabber.com/protocol/groupchat#block">>) ->
+    xabbergroupchat;
 get_mod(<<"misc">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"policy-violation">>,
@@ -1298,6 +1298,9 @@ get_mod(<<"sent">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
 get_mod(<<"db:result">>, <<"jabber:server">>) ->
     xep0220;
+get_mod(<<"jid">>,
+	<<"http://xabber.com/protocol/groupchat#block">>) ->
+    xabbergroupchat;
 get_mod(<<"group">>, <<"jabber:iq:roster">>) -> rfc6121;
 get_mod(<<"incorrect-encoding">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
@@ -1386,6 +1389,15 @@ get_mod(<<"STREET">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"status">>,
 	<<"http://jabber.org/protocol/muc#user">>) ->
     xep0045;
+get_mod(<<"error">>, <<"jabber:server">>) -> rfc6120;
+get_mod(<<"VIDEO">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"redirect">>,
+	<<"http://jabber.org/protocol/pubsub#event">>) ->
+    xep0060;
+get_mod(<<"destroy">>,
+	<<"http://jabber.org/protocol/muc#user">>) ->
+    xep0045;
+get_mod(<<"id">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1393,6 +1405,7 @@ get_mod({rosterver_feature}) -> rfc6121;
 get_mod({legacy_auth_feature}) -> xep0078;
 get_mod({carbons_disable}) -> xep0280;
 get_mod({last, _, _}) -> xep0012;
+get_mod({block, _, _, _}) -> xabbergroupchat;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
@@ -1400,7 +1413,6 @@ get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
-get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabbergroupchat_create, _, _, _, _, _, _}) ->
     xabbergroupchat;
@@ -1597,4 +1609,5 @@ get_mod({privilege, _, _}) -> xep0356;
 get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
+get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
