@@ -222,12 +222,18 @@
                         events = [] :: [binary()]}).
 -type muc_subscribe() :: #muc_subscribe{}.
 
+-record(id, {cdata = <<>> :: binary()}).
+-type id() :: #id{}.
+
 -record(stanza_id, {by :: jid:jid(),
                     id = <<>> :: binary()}).
 -type stanza_id() :: #stanza_id{}.
 
 -record(starttls_proceed, {}).
 -type starttls_proceed() :: #starttls_proceed{}.
+
+-record(jid, {cdata = <<>> :: binary()}).
+-type jid() :: #jid{}.
 
 -record(forwarded, {delay :: 'undefined' | #delay{},
                     sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -947,6 +953,19 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
+-record(domain, {cdata = <<>> :: binary()}).
+-type domain() :: #domain{}.
+
+-record(xabbergroup_unblock, {id = [] :: [#id{}],
+                              jid = [] :: [#jid{}],
+                              domain = [] :: [#domain{}]}).
+-type xabbergroup_unblock() :: #xabbergroup_unblock{}.
+
+-record(xabbergroup_block, {id = [] :: [#id{}],
+                            jid = [] :: [#jid{}],
+                            domain = [] :: [#domain{}]}).
+-type xabbergroup_block() :: #xabbergroup_block{}.
+
 -record(xabbergroupchat_create, {name :: 'undefined' | {binary()},
                                  description :: 'undefined' | {binary()},
                                  model :: 'undefined' | {binary()},
@@ -1041,6 +1060,7 @@
                         xdata_option() |
                         version() |
                         sm_a() |
+                        id() |
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
@@ -1054,12 +1074,9 @@
                         block_list() |
                         delegated() |
                         rsm_set() |
+                        jid() |
                         text() |
                         vcard_org() |
-                        shim() |
-                        search_item() |
-                        offline_item() |
-                        muc_item() |
                         feature_sm() |
                         roster_item() |
                         vcard_temp() |
@@ -1116,7 +1133,9 @@
                         ps_publish() |
                         nick() |
                         block() |
+                        xabbergroup_block() |
                         xabbergroupchat_permission() |
+                        domain() |
                         delegation() |
                         push_notification() |
                         mix_join() |
@@ -1205,6 +1224,7 @@
                         chatstate() |
                         sasl_auth() |
                         oob_x() |
+                        xabbergroup_unblock() |
                         unblock() |
                         muc_admin() |
                         ps_affiliation() |
@@ -1219,4 +1239,8 @@
                         privacy_list() |
                         'see-other-host'() |
                         hint() |
-                        stream_start().
+                        stream_start() |
+                        shim() |
+                        search_item() |
+                        offline_item() |
+                        muc_item().

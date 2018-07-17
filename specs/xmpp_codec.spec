@@ -4291,7 +4291,18 @@
      #elem{name = <<"block">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {block, '$id', '$jid', '$domain'},
+     result = {xabbergroup_block, '$id', '$jid', '$domain'},
+     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
+      #ref{name = xabbergroupchat_jid, label = '$jid'},
+      #ref{name = xabbergroupchat_domain, label = '$domain'}
+     ]}).
+).
+
+-xml(xabbergroupchat_unblock,
+     #elem{name = <<"unblock">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_unblock, '$id', '$jid', '$domain'},
      refs = [#ref{name = xabbergroupchat_id, label = '$id'},
       #ref{name = xabbergroupchat_jid, label = '$jid'},
       #ref{name = xabbergroupchat_domain, label = '$domain'}
@@ -4302,7 +4313,7 @@
      #elem{name = <<"id">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = {id,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4310,7 +4321,7 @@
      #elem{name = <<"jid">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = {jid,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4318,7 +4329,7 @@
      #elem{name = <<"domain">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = {domain,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 

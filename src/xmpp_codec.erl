@@ -1311,6 +1311,9 @@ get_mod(<<"before">>,
 get_mod(<<"set">>,
 	<<"http://jabber.org/protocol/rsm">>) ->
     xep0059;
+get_mod(<<"unblock">>,
+	<<"http://xabber.com/protocol/groupchat#block">>) ->
+    xabbergroupchat;
 get_mod(<<"status">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"item">>,
 	<<"http://jabber.org/protocol/pubsub#event">>) ->
@@ -1405,7 +1408,8 @@ get_mod({rosterver_feature}) -> rfc6121;
 get_mod({legacy_auth_feature}) -> xep0078;
 get_mod({carbons_disable}) -> xep0280;
 get_mod({last, _, _}) -> xep0012;
-get_mod({block, _, _, _}) -> xabbergroupchat;
+get_mod({xabbergroup_block, _, _, _}) ->
+    xabbergroupchat;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
@@ -1430,6 +1434,8 @@ get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
 get_mod({hint, _}) -> xep0334;
 get_mod({origin_id, _}) -> xep0359;
+get_mod({id, _}) -> xabbergroupchat;
+get_mod({jid, _}) -> xabbergroupchat;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({private, _}) -> xep0049;
 get_mod({sasl_challenge, _}) -> rfc6120;
@@ -1498,6 +1504,8 @@ get_mod({feature_sm, _}) -> xep0198;
 get_mod({mix_participant, _, _}) -> xep0369;
 get_mod({stanza_id, _, _}) -> xep0359;
 get_mod({delegated, _, _}) -> xep0355;
+get_mod({xabbergroup_unblock, _, _, _}) ->
+    xabbergroupchat;
 get_mod({bookmark_storage, _, _}) -> xep0048;
 get_mod({sasl_failure, _, _}) -> rfc6120;
 get_mod({xmpp_session, _}) -> rfc3921;
@@ -1509,6 +1517,7 @@ get_mod({adhoc_note, _, _}) -> xep0050;
 get_mod({push_disable, _, _}) -> xep0357;
 get_mod({push_notification, _}) -> xep0357;
 get_mod({unique_time, _, _}) -> unique;
+get_mod({domain, _}) -> xabbergroupchat;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({stat, _, _, _, _}) -> xep0039;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
