@@ -222,8 +222,8 @@
                         events = [] :: [binary()]}).
 -type muc_subscribe() :: #muc_subscribe{}.
 
--record(id, {cdata = <<>> :: binary()}).
--type id() :: #id{}.
+-record(block_id, {cdata = <<>> :: binary()}).
+-type block_id() :: #block_id{}.
 
 -record(stanza_id, {by :: jid:jid(),
                     id = <<>> :: binary()}).
@@ -232,8 +232,8 @@
 -record(starttls_proceed, {}).
 -type starttls_proceed() :: #starttls_proceed{}.
 
--record(jid, {cdata = <<>> :: binary()}).
--type jid() :: #jid{}.
+-record(block_jid, {cdata = <<>> :: binary()}).
+-type block_jid() :: #block_jid{}.
 
 -record(forwarded, {delay :: 'undefined' | #delay{},
                     sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -953,17 +953,17 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
--record(domain, {cdata = <<>> :: binary()}).
--type domain() :: #domain{}.
+-record(block_domain, {cdata = <<>> :: binary()}).
+-type block_domain() :: #block_domain{}.
 
--record(xabbergroup_unblock, {id = [] :: [#id{}],
-                              jid = [] :: [#jid{}],
-                              domain = [] :: [#domain{}]}).
+-record(xabbergroup_unblock, {id = [] :: [#block_id{}],
+                              jid = [] :: [#block_jid{}],
+                              domain = [] :: [#block_domain{}]}).
 -type xabbergroup_unblock() :: #xabbergroup_unblock{}.
 
--record(xabbergroup_block, {id = [] :: [#id{}],
-                            jid = [] :: [#jid{}],
-                            domain = [] :: [#domain{}]}).
+-record(xabbergroup_block, {id = [] :: [#block_id{}],
+                            jid = [] :: [#block_jid{}],
+                            domain = [] :: [#block_domain{}]}).
 -type xabbergroup_block() :: #xabbergroup_block{}.
 
 -record(xabbergroupchat_create, {name :: 'undefined' | {binary()},
@@ -1054,13 +1054,13 @@
                utc :: undefined | erlang:timestamp()}).
 -type time() :: #time{}.
 
--type xmpp_element() :: compression() |
+-type xmpp_element() :: block_domain() |
+                        compression() |
                         xabbergroupchat_restriction() |
                         ps_subscription() |
                         xdata_option() |
                         version() |
                         sm_a() |
-                        id() |
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
@@ -1074,7 +1074,6 @@
                         block_list() |
                         delegated() |
                         rsm_set() |
-                        jid() |
                         text() |
                         vcard_org() |
                         feature_sm() |
@@ -1135,7 +1134,6 @@
                         block() |
                         xabbergroup_block() |
                         xabbergroupchat_permission() |
-                        domain() |
                         delegation() |
                         push_notification() |
                         mix_join() |
@@ -1145,6 +1143,7 @@
                         iq() |
                         avatar_meta() |
                         xcaptcha() |
+                        block_id() |
                         streamhost() |
                         bind() |
                         ps_retract() |
@@ -1155,6 +1154,7 @@
                         unique_received() |
                         vcard_sound() |
                         ps_event() |
+                        block_jid() |
                         mam_result() |
                         rsm_first() |
                         stat() |

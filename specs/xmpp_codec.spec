@@ -4313,7 +4313,7 @@
      #elem{name = <<"id">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {id,'$cdata'},
+     result = {block_id,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4321,7 +4321,7 @@
      #elem{name = <<"jid">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {jid,'$cdata'},
+     result = {block_jid,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4329,7 +4329,7 @@
      #elem{name = <<"domain">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
 	   module = 'xabbergroupchat',
-     result = {domain,'$cdata'},
+     result = {block_domain,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
