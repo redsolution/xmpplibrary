@@ -422,6 +422,7 @@
 
 -record(xabbergroupchat_item, {id :: jid:jid(),
                                role = <<>> :: binary(),
+                               invited = <<>> :: binary(),
                                permission = [] :: [#xabbergroupchat_permission{}],
                                restriction = [] :: [#xabbergroupchat_restriction{}]}).
 -type xabbergroupchat_item() :: #xabbergroupchat_item{}.

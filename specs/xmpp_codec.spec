@@ -4172,13 +4172,13 @@
      #elem{name = <<"item">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_item, '$id', '$role', '$permission', '$restriction'},
+     result = {xabbergroupchat_item, '$id', '$role', '$invited', '$permission', '$restriction'},
 	   attrs = [#attr{name = <<"id">>,
 			  required = true,
 			  enc = {jid, encode, []},
 			  dec = {jid, decode, []}},
-              #attr{name = <<"role">>,
-        required = true}
+              #attr{name = <<"role">>},
+              #attr{name = <<"invited">>}
               ],
         refs = [
         #ref{name = xabbergroupchat_permission, label = '$permission'},

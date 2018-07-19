@@ -1418,6 +1418,8 @@ get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
+get_mod({xabbergroupchat_item, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabbergroupchat_create, _, _, _, _, _, _}) ->
     xabbergroupchat;
@@ -1586,8 +1588,6 @@ get_mod({delegation, _, _}) -> xep0355;
 get_mod({xabbergroupchat_permission, _, _}) ->
     xabbergroupchat;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
-get_mod({xabbergroupchat_item, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
