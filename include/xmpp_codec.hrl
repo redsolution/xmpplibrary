@@ -975,6 +975,14 @@
                                  localpart :: 'undefined' | {binary()}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
+-record(xabbergroupchat_x, {name :: 'undefined' | {binary()},
+                            description :: 'undefined' | {binary()},
+                            model :: 'undefined' | {binary()},
+                            searchable :: 'undefined' | {binary()},
+                            anonymous :: 'undefined' | {binary()},
+                            localpart :: 'undefined' | {binary()}}).
+-type xabbergroupchat_x() :: #xabbergroupchat_x{}.
+
 -record(xabbergroupchat_update, {name :: 'undefined' | {binary()},
                                  description :: 'undefined' | {binary()},
                                  model :: 'undefined' | {binary()},
@@ -1225,6 +1233,7 @@
                         chatstate() |
                         sasl_auth() |
                         oob_x() |
+                        xabbergroupchat_x() |
                         xabbergroup_unblock() |
                         unblock() |
                         muc_admin() |

@@ -648,6 +648,9 @@ get_mod(<<"header">>,
     xep0131;
 get_mod(<<"failed">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"x">>, <<"jabber:x:expire">>) -> xep0023;
+get_mod(<<"x">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"not-well-formed">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -1421,8 +1424,6 @@ get_mod({ps_item, _, _, _, _, _}) -> xep0060;
 get_mod({xabbergroupchat_item, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
-get_mod({xabbergroupchat_create, _, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
@@ -1444,6 +1445,8 @@ get_mod({compress_failure, _}) -> xep0138;
 get_mod({vcard_xupdate, _}) -> xep0153;
 get_mod({db_feature, _}) -> xep0220;
 get_mod({handshake, _}) -> xep0114;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
     rfc6120;
 get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->
@@ -1619,4 +1622,6 @@ get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
+get_mod({xabbergroupchat_create, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
