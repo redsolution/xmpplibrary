@@ -986,7 +986,8 @@
 -record(xabbergroupchat_update, {name :: 'undefined' | {binary()},
                                  description :: 'undefined' | {binary()},
                                  model :: 'undefined' | {binary()},
-                                 searchable :: 'undefined' | {binary()}}).
+                                 searchable :: 'undefined' | {binary()},
+                                 owner :: 'undefined' | {binary()}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
 -record(delegation, {delegated = [] :: [#delegated{}],

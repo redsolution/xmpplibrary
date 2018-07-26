@@ -4211,15 +4211,23 @@
               ]}
 ).
 
+-xml(xabbergroupchat_owner,
+     #elem{name = <<"owner">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
 
 -xml(xabbergroupchat_update,
      #elem{name = <<"update">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_update, '$name', '$description', '$model', '$searchable'},
+     result = {xabbergroupchat_update, '$name', '$description', '$model', '$searchable', '$owner'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
+             #ref{name = xabbergroupchat_owner, min = 0, max = 1, label = '$owner'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
