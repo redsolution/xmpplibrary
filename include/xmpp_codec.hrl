@@ -186,6 +186,12 @@
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
 -type privilege_perm() :: #privilege_perm{}.
 
+-record(xabbergroupchat_query_item, {id = <<>> :: binary()}).
+-type xabbergroupchat_query_item() :: #xabbergroupchat_query_item{}.
+
+-record(xabbergroupchat_query_rights, {item :: 'undefined' | #xabbergroupchat_query_item{}}).
+-type xabbergroupchat_query_rights() :: #xabbergroupchat_query_rights{}.
+
 -record(muc_decline, {reason = <<>> :: binary(),
                       from :: undefined | jid:jid(),
                       to :: undefined | jid:jid()}).
@@ -424,7 +430,8 @@
                                role = <<>> :: binary(),
                                invited = <<>> :: binary(),
                                permission = [] :: [#xabbergroupchat_permission{}],
-                               restriction = [] :: [#xabbergroupchat_restriction{}]}).
+                               restriction = [] :: [#xabbergroupchat_restriction{}],
+                               badge = [] :: [{binary()}]}).
 -type xabbergroupchat_item() :: #xabbergroupchat_item{}.
 
 -record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
@@ -1091,6 +1098,7 @@
                         vcard_temp() |
                         address() |
                         sasl_success() |
+                        xabbergroupchat_query_rights() |
                         addresses() |
                         muc_subscriptions() |
                         disco_items() |
@@ -1108,10 +1116,10 @@
                         avatar_info() |
                         vcard_geo() |
                         vcard_photo() |
+                        muc_actor() |
                         pubsub_owner() |
                         pubsub() |
                         muc_owner() |
-                        muc_actor() |
                         ps_error() |
                         starttls_failure() |
                         sasl_challenge() |
@@ -1179,6 +1187,7 @@
                         privacy_item() |
                         disco_item() |
                         ps_item() |
+                        xabbergroupchat_query_item() |
                         upload_slot_0() |
                         upload_request_0() |
                         mam_prefs() |
@@ -1204,13 +1213,13 @@
                         vcard_label() |
                         disco_info() |
                         vcard_logo() |
-                        feature_register() |
-                        register() |
-                        avatar_pointer() |
                         sm_r() |
                         stat_error() |
                         stanza_error() |
                         stream_error() |
+                        feature_register() |
+                        register() |
+                        avatar_pointer() |
                         muc_user() |
                         vcard_adr() |
                         gone() |
