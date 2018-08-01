@@ -268,6 +268,10 @@
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
 
+-record(xabbergroupchat_query_members, {id = <<>> :: binary(),
+                                        nickname :: 'undefined' | {binary()}}).
+-type xabbergroupchat_query_members() :: #xabbergroupchat_query_members{}.
+
 -record(db_feature, {errors = false :: boolean()}).
 -type db_feature() :: #db_feature{}.
 
@@ -1199,6 +1203,7 @@
                         sic() |
                         ps_items() |
                         ps_options() |
+                        xabbergroupchat_query_members() |
                         starttls() |
                         db_verify() |
                         roster_query() |

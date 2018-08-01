@@ -4229,6 +4229,25 @@
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
+-xml(xabbergroupchat_query_members,
+     #elem{name = <<"query">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_query_members, '$id', '$nickname'},
+     attrs = [#attr{name = <<"id">>}],
+     refs = [#ref{name = xabbergroupchat_nickname, min = 0, max = 1, label = '$nickname'}
+             ]
+              }).
+
+-xml(xabbergroupchat_nickname,
+     #elem{name = <<"nickname">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
+	   module = 'xabbergroupchat',
+     result = {'$cdata'},
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+
 -xml(xabbergroupchat_query_rights,
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#rights">>,

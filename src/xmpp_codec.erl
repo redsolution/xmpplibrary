@@ -985,6 +985,9 @@ get_mod(<<"sm">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"fetch">>,
 	<<"http://jabber.org/protocol/offline">>) ->
     xep0013;
+get_mod(<<"nickname">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"state">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"utc">>, <<"urn:xmpp:time">>) -> xep0202;
@@ -1319,6 +1322,9 @@ get_mod(<<"before">>,
 get_mod(<<"set">>,
 	<<"http://jabber.org/protocol/rsm">>) ->
     xep0059;
+get_mod(<<"query">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"unblock">>,
 	<<"http://xabber.com/protocol/groupchat#block">>) ->
     xabbergroupchat;
@@ -1511,6 +1517,8 @@ get_mod({carbons_enable}) -> xep0280;
 get_mod({carbons_private}) -> xep0280;
 get_mod({mix_leave}) -> xep0369;
 get_mod({avatar_info, _, _, _, _, _, _}) -> xep0084;
+get_mod({xabbergroupchat_query_members, _, _}) ->
+    xabbergroupchat;
 get_mod({privacy_list, _, _}) -> xep0016;
 get_mod({text, _, _}) -> rfc6120;
 get_mod({shim, _}) -> xep0131;
