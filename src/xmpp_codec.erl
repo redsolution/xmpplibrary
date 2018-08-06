@@ -258,6 +258,9 @@ get_mod(<<"last">>,
     xep0059;
 get_mod(<<"inactive">>, <<"urn:xmpp:csi:0">>) ->
     xep0352;
+get_mod(<<"user">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"searchable">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -289,6 +292,9 @@ get_mod(<<"query">>,
     xep0045;
 get_mod(<<"thumbnail">>, <<"urn:xmpp:thumbs:1">>) ->
     xep0264;
+get_mod(<<"invite">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"url">>, <<"jabber:iq:register">>) -> xep0077;
 get_mod(<<"GIVEN">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"TYPE">>, <<"vcard-temp">>) -> xep0054;
@@ -329,6 +335,9 @@ get_mod(<<"offline">>,
 get_mod(<<"actions">>,
 	<<"http://jabber.org/protocol/commands">>) ->
     xep0050;
+get_mod(<<"send">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"bad-protocol">>,
@@ -560,6 +569,9 @@ get_mod(<<"always">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"errors">>,
 	<<"urn:xmpp:features:dialback">>) ->
     xep0220;
+get_mod(<<"revoke">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"host-gone">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -574,6 +586,9 @@ get_mod(<<"model">>,
 get_mod(<<"not-subscribed">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"reason">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/stats">>) ->
     xep0039;
@@ -693,22 +708,12 @@ get_mod(<<"LOCALITY">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"inactive">>,
 	<<"http://jabber.org/protocol/chatstates">>) ->
     xep0085;
-get_mod(<<"subject">>, <<"jabber:server">>) -> rfc6120;
-get_mod(<<"bad-namespace-prefix">>,
-	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
-    rfc6120;
-get_mod(<<"EXTADD">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"affiliation">>,
-	<<"http://jabber.org/protocol/pubsub#owner">>) ->
-    xep0060;
 get_mod(<<"affiliations">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
     xep0060;
 get_mod(<<"first">>,
 	<<"http://jabber.org/protocol/rsm">>) ->
     xep0059;
-get_mod(<<"fin">>, <<"urn:xmpp:mam:0">>) -> xep0313;
-get_mod(<<"enabled">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"get">>,
 	<<"eu:siacs:conversations:http:upload">>) ->
     xep0363;
@@ -719,23 +724,12 @@ get_mod(<<"redirect">>,
 get_mod(<<"encryption-required">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
-get_mod(<<"TITLE">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"too-many-subscriptions">>,
-	<<"http://jabber.org/protocol/pubsub#errors">>) ->
-    xep0060;
-get_mod(<<"item">>,
-	<<"http://jabber.org/protocol/muc#owner">>) ->
-    xep0045;
-get_mod(<<"always">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"stanza-id">>, <<"urn:xmpp:sid:0">>) ->
     xep0359;
 get_mod(<<"complete">>,
 	<<"http://jabber.org/protocol/commands">>) ->
     xep0050;
 get_mod(<<"enable">>, <<"urn:xmpp:push:0">>) -> xep0357;
-get_mod(<<"create">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"time">>, <<"urn:xmpp:time">>) -> xep0202;
 get_mod(<<"conflict">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
@@ -1177,6 +1171,9 @@ get_mod(<<"presence-subscription-required">>,
 get_mod(<<"continue">>,
 	<<"http://jabber.org/protocol/muc#admin">>) ->
     xep0045;
+get_mod(<<"query">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"undefined-condition">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1282,6 +1279,9 @@ get_mod(<<"connection-timeout">>,
     rfc6120;
 get_mod(<<"CRED">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"KEY">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"jid">>,
+	<<"http://xabber.com/protocol/groupchat#invite">>) ->
+    xabbergroupchat;
 get_mod(<<"LABEL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"purge">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
@@ -1422,6 +1422,27 @@ get_mod(<<"SUFFIX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"redirect">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"subject">>, <<"jabber:server">>) -> rfc6120;
+get_mod(<<"bad-namespace-prefix">>,
+	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
+    rfc6120;
+get_mod(<<"EXTADD">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"affiliation">>,
+	<<"http://jabber.org/protocol/pubsub#owner">>) ->
+    xep0060;
+get_mod(<<"fin">>, <<"urn:xmpp:mam:0">>) -> xep0313;
+get_mod(<<"enabled">>, <<"urn:xmpp:sm:2">>) -> xep0198;
+get_mod(<<"TITLE">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"too-many-subscriptions">>,
+	<<"http://jabber.org/protocol/pubsub#errors">>) ->
+    xep0060;
+get_mod(<<"item">>,
+	<<"http://jabber.org/protocol/muc#owner">>) ->
+    xep0045;
+get_mod(<<"always">>, <<"urn:xmpp:mam:0">>) -> xep0313;
+get_mod(<<"create">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1441,12 +1462,8 @@ get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
-get_mod({sasl_mechanisms, _}) -> rfc6120;
-get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
-get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
-    rfc6120;
 get_mod({block_list, _}) -> xep0191;
 get_mod({'see-other-host', _}) -> rfc6120;
 get_mod({muc_destroy, _, _, _, _}) -> xep0045;
@@ -1461,6 +1478,7 @@ get_mod({compress_failure, _}) -> xep0138;
 get_mod({vcard_xupdate, _}) -> xep0153;
 get_mod({db_feature, _}) -> xep0220;
 get_mod({handshake, _}) -> xep0114;
+get_mod({xabbergroupchat_revoke, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_x, _, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
@@ -1494,6 +1512,8 @@ get_mod({pubsub, _, _, _, _, _, _, _, _, _, _, _, _, _,
     xep0060;
 get_mod({x_conference, _, _, _, _, _}) -> xep0249;
 get_mod({csi, _}) -> xep0352;
+get_mod({xabbergroupchat_invite_query, _}) ->
+    xabbergroupchat;
 get_mod({disco_info, _, _, _, _}) -> xep0030;
 get_mod({sm_a, _, _}) -> xep0198;
 get_mod({oob_x, _, _, _}) -> xep0066;
@@ -1556,6 +1576,8 @@ get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
 get_mod({unique_retry}) -> unique;
+get_mod({xabbergroupchat_invite, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_tel, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
@@ -1626,6 +1648,8 @@ get_mod({compressed}) -> xep0138;
 get_mod({stream_error, _, _}) -> rfc6120;
 get_mod({receipt_request}) -> xep0184;
 get_mod({upload_request_0, _, _, _, _}) -> xep0363;
+get_mod({xabbergroup_invite_user, _, _}) ->
+    xabbergroupchat;
 get_mod({privacy_item, _, _, _, _, _, _, _, _}) ->
     xep0016;
 get_mod({starttls_failure}) -> rfc6120;
@@ -1648,4 +1672,8 @@ get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
 get_mod({xabbergroupchat_create, _, _, _, _, _, _}) ->
     xabbergroupchat;
+get_mod({sasl_mechanisms, _}) -> rfc6120;
+get_mod({starttls, _}) -> rfc6120;
+get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
+    rfc6120;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).

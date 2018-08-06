@@ -4247,6 +4247,66 @@
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
+-xml(xabbergroupchat_invite_query,
+     #elem{name = <<"query">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_invite_query, '$user'},
+     refs = [#ref{name = xabbergroupchat_invite_user, label = '$user'}
+             ]
+              }).
+
+-xml(xabbergroupchat_invite,
+     #elem{name = <<"invite">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_invite, '$jid', '$send','$reason','$user'},
+     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$jid'},
+     #ref{name = xabbergroupchat_invite_send, min = 0, max = 1, label = '$send'},
+     #ref{name = xabbergroupchat_invite_user, min = 0, max = 1, label = '$user'},
+     #ref{name = xabbergroupchat_invite_reason, min = 0, max = 1, label = '$reason'}
+             ]
+              }).
+
+-xml(xabbergroupchat_revoke,
+     #elem{name = <<"revoke">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_revoke, '$jid'},
+     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$jid'}
+             ]
+              }).
+
+-xml(xabbergroupchat_invite_reason,
+     #elem{name = <<"reason">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+-xml(xabbergroupchat_invite_send,
+     #elem{name = <<"send">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+-xml(xabbergroupchat_invite_jid,
+     #elem{name = <<"jid">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_invite_user,
+     #elem{name = <<"user">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_invite_user, '$jid', '$id'},
+     attrs = [#attr{name = <<"id">>, required = true},
+     #attr{name = <<"jid">>}]}
+).
 
 -xml(xabbergroupchat_query_rights,
      #elem{name = <<"query">>,

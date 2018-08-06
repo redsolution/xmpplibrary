@@ -100,6 +100,10 @@
 -record(avatar_data, {data = <<>> :: binary()}).
 -type avatar_data() :: #avatar_data{}.
 
+-record(xabbergroup_invite_user, {jid = <<>> :: binary(),
+                                  id = <<>> :: binary()}).
+-type xabbergroup_invite_user() :: #xabbergroup_invite_user{}.
+
 -record(feature_register, {}).
 -type feature_register() :: #feature_register{}.
 
@@ -555,6 +559,15 @@
                       userid :: 'undefined' | binary()}).
 -type vcard_email() :: #vcard_email{}.
 
+-record(xabbergroupchat_revoke, {jid :: 'undefined' | binary()}).
+-type xabbergroupchat_revoke() :: #xabbergroupchat_revoke{}.
+
+-record(xabbergroupchat_invite, {jid :: 'undefined' | binary(),
+                                 send :: 'undefined' | binary(),
+                                 reason :: 'undefined' | binary(),
+                                 user :: 'undefined' | #xabbergroup_invite_user{}}).
+-type xabbergroupchat_invite() :: #xabbergroupchat_invite{}.
+
 -record(db_result, {from = <<>> :: binary(),
                     to = <<>> :: binary(),
                     type :: 'error' | 'invalid' | 'undefined' | 'valid',
@@ -739,6 +752,9 @@
 -record(vcard_key, {type :: 'undefined' | binary(),
                     cred :: 'undefined' | binary()}).
 -type vcard_key() :: #vcard_key{}.
+
+-record(xabbergroupchat_invite_query, {user = [] :: [#xabbergroup_invite_user{}]}).
+-type xabbergroupchat_invite_query() :: #xabbergroupchat_invite_query{}.
 
 -record(vcard_name, {family :: 'undefined' | binary(),
                      given :: 'undefined' | binary(),
@@ -1100,14 +1116,9 @@
                         feature_sm() |
                         roster_item() |
                         vcard_temp() |
-                        address() |
-                        sasl_success() |
-                        xabbergroupchat_query_rights() |
                         addresses() |
-                        muc_subscriptions() |
                         disco_items() |
-                        compress() |
-                        bytestreams() |
+                        muc_subscriptions() |
                         adhoc_actions() |
                         privacy_query() |
                         muc_history() |
@@ -1147,6 +1158,7 @@
                         sm_enable() |
                         handshake() |
                         compress_failure() |
+                        xabbergroupchat_revoke() |
                         bookmark_storage() |
                         muc_decline() |
                         legacy_auth() |
@@ -1194,6 +1206,7 @@
                         xabbergroupchat_query_item() |
                         upload_slot_0() |
                         upload_request_0() |
+                        ps_options() |
                         mam_prefs() |
                         sasl_mechanisms() |
                         caps() |
@@ -1202,7 +1215,6 @@
                         stats() |
                         sic() |
                         ps_items() |
-                        ps_options() |
                         xabbergroupchat_query_members() |
                         starttls() |
                         db_verify() |
@@ -1210,6 +1222,7 @@
                         media_uri() |
                         muc_destroy() |
                         vcard_key() |
+                        xabbergroupchat_invite_query() |
                         csi() |
                         delegation_query() |
                         mam_query() |
@@ -1222,6 +1235,7 @@
                         stat_error() |
                         stanza_error() |
                         stream_error() |
+                        xabbergroup_invite_user() |
                         feature_register() |
                         register() |
                         avatar_pointer() |
@@ -1237,6 +1251,7 @@
                         sasl_response() |
                         message() |
                         presence() |
+                        xabbergroupchat_invite() |
                         xabbergroupchat_create() |
                         xabbergroupchat_update() |
                         sm_resume() |
@@ -1268,4 +1283,9 @@
                         shim() |
                         search_item() |
                         offline_item() |
-                        muc_item().
+                        muc_item() |
+                        address() |
+                        sasl_success() |
+                        xabbergroupchat_query_rights() |
+                        compress() |
+                        bytestreams().
