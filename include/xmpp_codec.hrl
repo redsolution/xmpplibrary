@@ -273,7 +273,8 @@
 -type handshake() :: #handshake{}.
 
 -record(xabbergroupchat_query_members, {id = <<>> :: binary(),
-                                        nickname :: 'undefined' | {binary()}}).
+                                        nickname :: 'undefined' | binary(),
+                                        badge :: 'undefined' | binary()}).
 -type xabbergroupchat_query_members() :: #xabbergroupchat_query_members{}.
 
 -record(db_feature, {errors = false :: boolean()}).
@@ -438,8 +439,7 @@
                                role = <<>> :: binary(),
                                invited = <<>> :: binary(),
                                permission = [] :: [#xabbergroupchat_permission{}],
-                               restriction = [] :: [#xabbergroupchat_restriction{}],
-                               badge = [] :: [{binary()}]}).
+                               restriction = [] :: [#xabbergroupchat_restriction{}]}).
 -type xabbergroupchat_item() :: #xabbergroupchat_item{}.
 
 -record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).

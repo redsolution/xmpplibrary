@@ -4173,7 +4173,7 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_item, '$id', '$role', '$invited', 
-     '$permission', '$restriction', '$badge'},
+     '$permission', '$restriction'},
 	   attrs = [#attr{name = <<"id">>,
 			  required = true,
 			  enc = {jid, encode, []},
@@ -4183,7 +4183,6 @@
               ],
         refs = [
         #ref{name = xabbergroupchat_permission, label = '$permission'},
-        #ref{name = xabbergroupchat_badge, label = '$badge'},
         #ref{name = xabbergroupchat_restriction, label = '$restriction'}
         ]
               }
@@ -4215,9 +4214,9 @@
 
 -xml(xabbergroupchat_badge,
      #elem{name = <<"badge">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4233,9 +4232,10 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_query_members, '$id', '$nickname'},
+     result = {xabbergroupchat_query_members, '$id', '$nickname','$badge'},
      attrs = [#attr{name = <<"id">>}],
-     refs = [#ref{name = xabbergroupchat_nickname, min = 0, max = 1, label = '$nickname'}
+     refs = [#ref{name = xabbergroupchat_nickname, min = 0, max = 1, label = '$nickname'},
+             #ref{name = xabbergroupchat_badge, min = 0, max = 1, label = '$badge'}
              ]
               }).
 
@@ -4243,7 +4243,7 @@
      #elem{name = <<"nickname">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
