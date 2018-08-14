@@ -269,6 +269,9 @@
 -record(sasl_challenge, {text = <<>> :: binary()}).
 -type sasl_challenge() :: #sasl_challenge{}.
 
+-record(xabbergroup_domains, {domain = [] :: [binary()]}).
+-type xabbergroup_domains() :: #xabbergroup_domains{}.
+
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
 
@@ -511,6 +514,9 @@
 -record(stats, {list = [] :: [#stat{}],
                 node = <<>> :: binary()}).
 -type stats() :: #stats{}.
+
+-record(xabbergroup_contacts, {contact = [] :: [binary()]}).
+-type xabbergroup_contacts() :: #xabbergroup_contacts{}.
 
 -record(sic, {ip :: undefined | inet:ip_address(),
               port :: 'undefined' | non_neg_integer(),
@@ -994,27 +1000,33 @@
                             domain = [] :: [#block_domain{}]}).
 -type xabbergroup_block() :: #xabbergroup_block{}.
 
--record(xabbergroupchat_create, {name :: 'undefined' | {binary()},
-                                 description :: 'undefined' | {binary()},
-                                 model :: 'undefined' | {binary()},
-                                 searchable :: 'undefined' | {binary()},
-                                 anonymous :: 'undefined' | {binary()},
-                                 localpart :: 'undefined' | {binary()}}).
+-record(xabbergroupchat_create, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 searchable :: 'undefined' | binary(),
+                                 anonymous :: 'undefined' | binary(),
+                                 localpart :: 'undefined' | binary(),
+                                 message :: 'undefined' | binary(),
+                                 domains :: 'undefined' | #xabbergroup_domains{},
+                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
--record(xabbergroupchat_x, {name :: 'undefined' | {binary()},
-                            description :: 'undefined' | {binary()},
-                            model :: 'undefined' | {binary()},
-                            searchable :: 'undefined' | {binary()},
-                            anonymous :: 'undefined' | {binary()},
-                            localpart :: 'undefined' | {binary()}}).
+-record(xabbergroupchat_x, {name :: 'undefined' | binary(),
+                            description :: 'undefined' | binary(),
+                            model :: 'undefined' | binary(),
+                            searchable :: 'undefined' | binary(),
+                            anonymous :: 'undefined' | binary(),
+                            localpart :: 'undefined' | binary()}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.
 
--record(xabbergroupchat_update, {name :: 'undefined' | {binary()},
-                                 description :: 'undefined' | {binary()},
-                                 model :: 'undefined' | {binary()},
-                                 searchable :: 'undefined' | {binary()},
-                                 owner :: 'undefined' | {binary()}}).
+-record(xabbergroupchat_update, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 searchable :: 'undefined' | binary(),
+                                 owner :: 'undefined' | {binary()},
+                                 message :: 'undefined' | binary(),
+                                 domains :: 'undefined' | #xabbergroup_domains{},
+                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
 -record(delegation, {delegated = [] :: [#delegated{}],
@@ -1118,6 +1130,7 @@
                         vcard_temp() |
                         addresses() |
                         disco_items() |
+                        xabbergroup_contacts() |
                         muc_subscriptions() |
                         adhoc_actions() |
                         privacy_query() |
@@ -1177,17 +1190,17 @@
                         iq() |
                         avatar_meta() |
                         xcaptcha() |
+                        redirect() |
+                        sm_enabled() |
+                        unique_received() |
+                        ps_event() |
                         block_id() |
                         streamhost() |
                         bind() |
                         ps_retract() |
                         previous_id() |
                         last() |
-                        redirect() |
-                        sm_enabled() |
-                        unique_received() |
                         vcard_sound() |
-                        ps_event() |
                         block_jid() |
                         mam_result() |
                         rsm_first() |
@@ -1209,6 +1222,7 @@
                         ps_options() |
                         mam_prefs() |
                         sasl_mechanisms() |
+                        xabbergroup_domains() |
                         caps() |
                         muc() |
                         stream_features() |

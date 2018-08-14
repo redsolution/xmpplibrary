@@ -4329,11 +4329,15 @@
      #elem{name = <<"update">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_update, '$name', '$description', '$model', '$searchable', '$owner'},
+     result = {xabbergroupchat_update, '$name', '$description', '$model', 
+     '$searchable', '$owner', '$message', '$domains', '$contacts'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
              #ref{name = xabbergroupchat_owner, min = 0, max = 1, label = '$owner'},
+             #ref{name = xabbergroupchat_message, min = 0, max = 1, label = '$message'},
+             #ref{name = xabbergroupchat_domains, min = 0, max = 1, label = '$domains'},
+             #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
@@ -4358,21 +4362,64 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_create, '$name', '$description', '$model', 
-     '$searchable', '$anonymous','$localpart'},
+     '$searchable', '$anonymous','$localpart', '$message', '$domains', '$contacts'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
              #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
              #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
+             #ref{name = xabbergroupchat_message, min = 0, max = 1, label = '$message'},
+             #ref{name = xabbergroupchat_domains, min = 0, max = 1, label = '$domains'},
+             #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
+
+-xml(xabbergroupchat_contacts,
+     #elem{name = <<"contacts">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_contacts, '$contact'},
+     refs = [#ref{name = xabbergroupchat_contact_create, label = '$contact'}]}
+).
+
+-xml(xabbergroupchat_contact_create,
+     #elem{name = <<"contact">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_domains,
+     #elem{name = <<"domains">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_domains, '$domain'},
+     refs = [#ref{name = xabbergroupchat_domain_create, label = '$domain'}]}
+).
+
+-xml(xabbergroupchat_domain_create,
+     #elem{name = <<"domain">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_message,
+     #elem{name = <<"message">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
 
 -xml(xabbergroupchat_searchable,
      #elem{name = <<"searchable">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4380,7 +4427,7 @@
      #elem{name = <<"name">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4388,7 +4435,7 @@
      #elem{name = <<"anonymous">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4396,7 +4443,7 @@
      #elem{name = <<"description">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4404,7 +4451,7 @@
      #elem{name = <<"model">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
@@ -4412,7 +4459,7 @@
      #elem{name = <<"localpart">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {'$cdata'},
+     result = '$cdata',
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
