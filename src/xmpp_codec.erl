@@ -1478,8 +1478,6 @@ get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
-get_mod({xabbergroupchat_item, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
@@ -1538,6 +1536,8 @@ get_mod({xabbergroupchat_invite_query, _}) ->
 get_mod({disco_info, _, _, _, _}) -> xep0030;
 get_mod({sm_a, _, _}) -> xep0198;
 get_mod({oob_x, _, _, _}) -> xep0066;
+get_mod({xabbergroupchat_item, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({privacy_query, _, _, _}) -> xep0016;
 get_mod({block, _}) -> xep0191;
 get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->

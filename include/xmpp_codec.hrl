@@ -438,7 +438,8 @@
                                       expires = <<>> :: binary()}).
 -type xabbergroupchat_restriction() :: #xabbergroupchat_restriction{}.
 
--record(xabbergroupchat_item, {id :: jid:jid(),
+-record(xabbergroupchat_item, {id = <<>> :: binary(),
+                               jid = <<>> :: binary(),
                                role = <<>> :: binary(),
                                invited = <<>> :: binary(),
                                permission = [] :: [#xabbergroupchat_permission{}],
