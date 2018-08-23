@@ -575,6 +575,9 @@
                                  user :: 'undefined' | #xabbergroup_invite_user{}}).
 -type xabbergroupchat_invite() :: #xabbergroupchat_invite{}.
 
+-record(collect, {cdata = <<>> :: binary()}).
+-type collect() :: #collect{}.
+
 -record(db_result, {from = <<>> :: binary(),
                     to = <<>> :: binary(),
                     type :: 'error' | 'invalid' | 'undefined' | 'valid',
@@ -1198,6 +1201,7 @@
                         block_id() |
                         streamhost() |
                         bind() |
+                        collect() |
                         ps_retract() |
                         previous_id() |
                         last() |
@@ -1256,6 +1260,8 @@
                         avatar_pointer() |
                         muc_user() |
                         vcard_adr() |
+                        sasl_response() |
+                        presence() |
                         gone() |
                         carbons_private() |
                         mix_leave() |
@@ -1263,9 +1269,7 @@
                         privilege() |
                         push_enable() |
                         muc_unique() |
-                        sasl_response() |
                         message() |
-                        presence() |
                         xabbergroupchat_invite() |
                         xabbergroupchat_create() |
                         xabbergroupchat_update() |

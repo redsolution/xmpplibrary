@@ -589,6 +589,9 @@ get_mod(<<"model">>,
 get_mod(<<"not-subscribed">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"collect">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"reason">>,
 	<<"http://xabber.com/protocol/groupchat#invite">>) ->
     xabbergroupchat;
@@ -1484,11 +1487,8 @@ get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
 get_mod({xabbergroup_domains, _}) -> xabbergroupchat;
 get_mod({block_list, _}) -> xep0191;
-get_mod({'see-other-host', _}) -> rfc6120;
-get_mod({muc_destroy, _, _, _, _}) -> xep0045;
 get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
-get_mod({hint, _}) -> xep0334;
 get_mod({origin_id, _}) -> xep0359;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({private, _}) -> xep0049;
@@ -1627,6 +1627,7 @@ get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
 get_mod({previous_id, _}) -> previous;
+get_mod({collect, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_update, _, _, _, _, _, _, _,
 	 _}) ->
     xabbergroupchat;
@@ -1695,4 +1696,7 @@ get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
     rfc6120;
+get_mod({'see-other-host', _}) -> rfc6120;
+get_mod({muc_destroy, _, _, _, _}) -> xep0045;
+get_mod({hint, _}) -> xep0334;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).

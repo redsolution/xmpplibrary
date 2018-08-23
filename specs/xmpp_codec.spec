@@ -4210,6 +4210,14 @@
               ]}
 ).
 
+-xml(xabbergroupchat_collect,
+     #elem{name = <<"collect">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {collect, '$cdata'},
+     cdata = #cdata{label = '$cdata'}}
+).
+
 -xml(xabbergroupchat_badge,
      #elem{name = <<"badge">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#members">>,
