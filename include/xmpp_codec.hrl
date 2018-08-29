@@ -1011,7 +1011,7 @@
                                  searchable :: 'undefined' | binary(),
                                  anonymous :: 'undefined' | binary(),
                                  localpart :: 'undefined' | binary(),
-                                 message :: 'undefined' | binary(),
+                                 pinned :: 'undefined' | binary(),
                                  domains :: 'undefined' | #xabbergroup_domains{},
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
@@ -1029,7 +1029,7 @@
                                  model :: 'undefined' | binary(),
                                  searchable :: 'undefined' | binary(),
                                  owner :: 'undefined' | {binary()},
-                                 message :: 'undefined' | binary(),
+                                 pinned :: 'undefined' | binary(),
                                  domains :: 'undefined' | #xabbergroup_domains{},
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
