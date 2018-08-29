@@ -9,7 +9,6 @@
 	 format_error/1, io_format_error/1]).
 
 -include("xmpp_codec.hrl").
-
 -include("mam_query.hrl").
 
 -export_type([property/0, result/0, form/0]).
@@ -171,6 +170,38 @@ decode([#xdata_field{var = <<"withtext">>} | _], _,
     erlang:error({?MODULE,
 		  {too_many_values, <<"withtext">>,
 		   <<"urn:xmpp:mam:1">>}});
+%%%%
+%%  Custom section
+%%%%
+decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
+  values = [Value]}
+  | Fs],
+    Acc, Required) ->
+  try Value of
+    Result ->
+      decode(Fs, [{stanza_id, Result} | Acc], Required)
+  catch
+    _:_ ->
+      erlang:error({?MODULE,
+        {bad_var_value, <<"{urn:xmpp:sid:0}stanza-id">>, <<"urn:xmpp:mam:1">>}})
+  end;
+decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
+  values = []} =
+  F
+  | Fs],
+    Acc, Required) ->
+  decode([F#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
+    values = [<<>>]}
+    | Fs],
+    Acc, Required);
+decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>} | _], _,
+    _) ->
+  erlang:error({?MODULE,
+    {too_many_values, <<"{urn:xmpp:sid:0}stanza-id">>,
+      <<"urn:xmpp:mam:1">>}});
+%%%%
+%%   End of custom section
+%%%%
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
 	   erlang:error({?MODULE,

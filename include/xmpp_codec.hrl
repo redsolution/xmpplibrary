@@ -131,6 +131,10 @@
                     data = <<>> :: binary()}).
 -type rsm_first() :: #rsm_first{}.
 
+-record(xabbergroupchat_restriction, {name = <<>> :: binary(),
+                                      expires = <<>> :: binary()}).
+-type xabbergroupchat_restriction() :: #xabbergroupchat_restriction{}.
+
 -record(streamhost, {jid :: jid:jid(),
                      host = <<>> :: binary(),
                      port = 1080 :: non_neg_integer()}).
@@ -193,7 +197,8 @@
 -record(xabbergroupchat_query_item, {id = <<>> :: binary()}).
 -type xabbergroupchat_query_item() :: #xabbergroupchat_query_item{}.
 
--record(xabbergroupchat_query_rights, {item :: 'undefined' | #xabbergroupchat_query_item{}}).
+-record(xabbergroupchat_query_rights, {item :: 'undefined' | #xabbergroupchat_query_item{},
+                                       restriction = [] :: [#xabbergroupchat_restriction{}]}).
 -type xabbergroupchat_query_rights() :: #xabbergroupchat_query_rights{}.
 
 -record(muc_decline, {reason = <<>> :: binary(),
@@ -244,6 +249,10 @@
 
 -record(block_jid, {cdata = <<>> :: binary()}).
 -type block_jid() :: #block_jid{}.
+
+-record(xabbergroupchat_permission, {name = <<>> :: binary(),
+                                     expires = <<>> :: binary()}).
+-type xabbergroupchat_permission() :: #xabbergroupchat_permission{}.
 
 -record(forwarded, {delay :: 'undefined' | #delay{},
                     sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -335,10 +344,6 @@
 -record(roster_query, {items = [] :: [#roster_item{}],
                        ver :: 'undefined' | binary()}).
 -type roster_query() :: #roster_query{}.
-
--record(xabbergroupchat_permission, {name = <<>> :: binary(),
-                                     expires = <<>> :: binary()}).
--type xabbergroupchat_permission() :: #xabbergroupchat_permission{}.
 
 -record(avatar_pointer, {bytes :: 'undefined' | non_neg_integer(),
                          id = <<>> :: binary(),
@@ -433,10 +438,6 @@
 
 -record(compression, {methods = [] :: [binary()]}).
 -type compression() :: #compression{}.
-
--record(xabbergroupchat_restriction, {name = <<>> :: binary(),
-                                      expires = <<>> :: binary()}).
--type xabbergroupchat_restriction() :: #xabbergroupchat_restriction{}.
 
 -record(xabbergroupchat_item, {id = <<>> :: binary(),
                                jid = <<>> :: binary(),
@@ -1184,11 +1185,11 @@
                         nick() |
                         block() |
                         xabbergroup_block() |
-                        xabbergroupchat_permission() |
                         delegation() |
                         push_notification() |
                         mix_join() |
                         xmpp_session() |
+                        xabbergroupchat_permission() |
                         xdata() |
                         avatar_data() |
                         iq() |

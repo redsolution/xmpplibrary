@@ -4210,6 +4210,30 @@
               ]}
 ).
 
+-xml(xabbergroupchat_permission_set,
+     #elem{name = <<"permission">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#rights">>,
+          module = 'xabbergroupchat',
+     result = {xabbergroupchat_permission, '$name', '$expires'},
+          attrs = [#attr{name = <<"name">>,
+                         required = true},
+              #attr{name = <<"expires">>,
+        required = true}
+              ]}
+).
+
+-xml(xabbergroupchat_restriction_set,
+     #elem{name = <<"restriction">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#rights">>,
+          module = 'xabbergroupchat',
+     result = {xabbergroupchat_restriction, '$name', '$expires'},
+          attrs = [#attr{name = <<"name">>,
+                         required = true},
+              #attr{name = <<"expires">>,
+        required = true}
+              ]}
+).
+
 -xml(xabbergroupchat_collect,
      #elem{name = <<"collect">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
@@ -4318,9 +4342,10 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#rights">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_query_rights, '$item'},
-     refs = [#ref{name = xabbergroupchat_query_item, min = 0, max = 1, label = '$item'}
-             ]
+   result = {xabbergroupchat_query_rights, '$item', '$restriction'},
+     refs = [#ref{name = xabbergroupchat_query_item, min = 0, max = 1, label = '$item'},
+            #ref{name = xabbergroupchat_restriction_set, label = '$restriction'}
+		]
               }).
 
 -xml(xabbergroupchat_query_item,
@@ -4414,7 +4439,7 @@
 ).
 
 -xml(xabbergroupchat_message,
-     #elem{name = <<"message">>,
+     #elem{name = <<"pinned-message">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',

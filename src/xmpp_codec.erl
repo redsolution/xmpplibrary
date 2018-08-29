@@ -261,6 +261,9 @@ get_mod(<<"inactive">>, <<"urn:xmpp:csi:0">>) ->
 get_mod(<<"user">>,
 	<<"http://xabber.com/protocol/groupchat#invite">>) ->
     xabbergroupchat;
+get_mod(<<"pinned-message">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"searchable">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -395,9 +398,6 @@ get_mod(<<"POSTAL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"payload-too-big">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
-get_mod(<<"message">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"presence-out">>, <<"jabber:iq:privacy">>) ->
     xep0016;
 get_mod(<<"mechanism-too-weak">>,
@@ -983,6 +983,9 @@ get_mod(<<"DOM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
     xep0060;
+get_mod(<<"restriction">>,
+	<<"http://xabber.com/protocol/groupchat#rights">>) ->
+    xabbergroupchat;
 get_mod(<<"show">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"FAX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"subscribe">>, <<"urn:xmpp:mucsub:0">>) ->
@@ -1107,6 +1110,9 @@ get_mod(<<"body">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"always">>, <<"urn:xmpp:mam:2">>) -> xep0313;
 get_mod(<<"composing">>, <<"jabber:x:event">>) ->
     xep0022;
+get_mod(<<"permission">>,
+	<<"http://xabber.com/protocol/groupchat#rights">>) ->
+    xabbergroupchat;
 get_mod(<<"query">>,
 	<<"http://xabber.com/protocol/groupchat#rights">>) ->
     xabbergroupchat;
@@ -1619,8 +1625,6 @@ get_mod({addresses, _}) -> xep0033;
 get_mod({adhoc_command, _, _, _, _, _, _, _, _}) ->
     xep0050;
 get_mod({media, _, _, _}) -> xep0221;
-get_mod({xabbergroupchat_query_rights, _}) ->
-    xabbergroupchat;
 get_mod({xabbergroup_contacts, _}) -> xabbergroupchat;
 get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
@@ -1676,6 +1680,8 @@ get_mod({privacy_item, _, _, _, _, _, _, _, _}) ->
     xep0016;
 get_mod({starttls_failure}) -> rfc6120;
 get_mod({bob_data, _, _, _, _}) -> xep0231;
+get_mod({xabbergroupchat_query_rights, _, _}) ->
+    xabbergroupchat;
 get_mod({bind, _, _}) -> rfc6120;
 get_mod({rsm_first, _, _}) -> xep0059;
 get_mod({xabbergroupchat_query_item, _}) ->
