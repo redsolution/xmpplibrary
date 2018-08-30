@@ -4540,6 +4540,19 @@
      cdata = #cdata{label = '$cdata', required = true}}
 ).
 
+-xml(xabbergroupchat_search,
+     #elem{name = <<"search">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_search, '$name', '$description', '$model',
+     '$anonymous'},
+     refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
+             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
+             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
+             #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'}
+             ]
+              }).
+
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,

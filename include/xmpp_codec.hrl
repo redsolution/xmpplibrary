@@ -992,18 +992,11 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
--record(block_domain, {cdata = <<>> :: binary()}).
--type block_domain() :: #block_domain{}.
-
--record(xabbergroup_unblock, {id = [] :: [#block_id{}],
-                              jid = [] :: [#block_jid{}],
-                              domain = [] :: [#block_domain{}]}).
--type xabbergroup_unblock() :: #xabbergroup_unblock{}.
-
--record(xabbergroup_block, {id = [] :: [#block_id{}],
-                            jid = [] :: [#block_jid{}],
-                            domain = [] :: [#block_domain{}]}).
--type xabbergroup_block() :: #xabbergroup_block{}.
+-record(xabbergroupchat_search, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 anonymous :: 'undefined' | binary()}).
+-type xabbergroupchat_search() :: #xabbergroupchat_search{}.
 
 -record(xabbergroupchat_create, {name :: 'undefined' | binary(),
                                  description :: 'undefined' | binary(),
@@ -1033,6 +1026,19 @@
                                  domains :: 'undefined' | #xabbergroup_domains{},
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
+
+-record(block_domain, {cdata = <<>> :: binary()}).
+-type block_domain() :: #block_domain{}.
+
+-record(xabbergroup_unblock, {id = [] :: [#block_id{}],
+                              jid = [] :: [#block_jid{}],
+                              domain = [] :: [#block_domain{}]}).
+-type xabbergroup_unblock() :: #xabbergroup_unblock{}.
+
+-record(xabbergroup_block, {id = [] :: [#block_id{}],
+                            jid = [] :: [#block_jid{}],
+                            domain = [] :: [#block_domain{}]}).
+-type xabbergroup_block() :: #xabbergroup_block{}.
 
 -record(delegation, {delegated = [] :: [#delegated{}],
                      forwarded :: 'undefined' | #forwarded{}}).
@@ -1181,6 +1187,7 @@
                         muc_decline() |
                         legacy_auth() |
                         search() |
+                        xabbergroupchat_search() |
                         ps_publish() |
                         nick() |
                         block() |
