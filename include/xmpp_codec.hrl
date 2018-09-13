@@ -178,6 +178,9 @@
                 desc = <<>> :: binary()}).
 -type delay() :: #delay{}.
 
+-record(xabbertoken_query, {}).
+-type xabbertoken_query() :: #xabbertoken_query{}.
+
 -record(muc_history, {maxchars :: 'undefined' | non_neg_integer(),
                       maxstanzas :: 'undefined' | non_neg_integer(),
                       seconds :: 'undefined' | non_neg_integer(),
@@ -266,6 +269,9 @@
                      previd = <<>> :: binary(),
                      xmlns = <<>> :: binary()}).
 -type sm_resumed() :: #sm_resumed{}.
+
+-record(xabbertoken_revoke, {token_uid = [] :: [binary()]}).
+-type xabbertoken_revoke() :: #xabbertoken_revoke{}.
 
 -record(sm_enable, {max :: 'undefined' | non_neg_integer(),
                     resume = false :: boolean(),
@@ -494,6 +500,11 @@
 -record(shim, {headers = [] :: [{binary(),binary()}]}).
 -type shim() :: #shim{}.
 
+-record(xabbertoken_issue, {name :: 'undefined' | binary(),
+                            os :: 'undefined' | binary(),
+                            expire :: 'undefined' | binary()}).
+-type xabbertoken_issue() :: #xabbertoken_issue{}.
+
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
                     always :: undefined | [jid:jid()],
@@ -545,6 +556,15 @@
 
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
+
+-record(xabbertoken_field, {var = <<>> :: binary(),
+                            token :: 'undefined' | binary(),
+                            desc :: 'undefined' | binary(),
+                            expire :: 'undefined' | binary()}).
+-type xabbertoken_field() :: #xabbertoken_field{}.
+
+-record(xabbertoken_x_fields, {field = [] :: [#xabbertoken_field{}]}).
+-type xabbertoken_x_fields() :: #xabbertoken_x_fields{}.
 
 -record(origin_id, {id = <<>> :: binary()}).
 -type origin_id() :: #origin_id{}.
@@ -978,6 +998,10 @@
 -record(sasl_mechanisms, {list = [] :: [binary()]}).
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
+-record(xabbertoken_x_token, {token :: 'undefined' | binary(),
+                              expire :: 'undefined' | binary()}).
+-type xabbertoken_x_token() :: #xabbertoken_x_token{}.
+
 -record(sm_failed, {reason :: atom() | #gone{} | #redirect{},
                     text = [] :: [#text{}],
                     h :: 'undefined' | non_neg_integer(),
@@ -1125,6 +1149,7 @@
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
+                        xabbertoken_field() |
                         origin_id() |
                         receipt_request() |
                         db_result() |
@@ -1142,15 +1167,12 @@
                         vcard_temp() |
                         addresses() |
                         disco_items() |
+                        xabbertoken_x_fields() |
                         xabbergroup_contacts() |
                         muc_subscriptions() |
                         adhoc_actions() |
-                        privacy_query() |
-                        muc_history() |
-                        identity() |
                         unique_retry() |
                         feature_csi() |
-                        delay() |
                         thumbnail() |
                         vcard_tel() |
                         avatar_info() |
@@ -1180,6 +1202,7 @@
                         offline() |
                         time() |
                         ps_subscribe() |
+                        xabbertoken_revoke() |
                         sm_enable() |
                         handshake() |
                         compress_failure() |
@@ -1193,6 +1216,7 @@
                         nick() |
                         block() |
                         xabbergroup_block() |
+                        xabbertoken_x_token() |
                         delegation() |
                         push_notification() |
                         mix_join() |
@@ -1270,6 +1294,7 @@
                         muc_user() |
                         vcard_adr() |
                         sasl_response() |
+                        xabbertoken_issue() |
                         presence() |
                         gone() |
                         carbons_private() |
@@ -1289,8 +1314,8 @@
                         muc_unsubscribe() |
                         ps_unsubscribe() |
                         chatstate() |
-                        sasl_auth() |
                         oob_x() |
+                        sasl_auth() |
                         xabbergroupchat_x() |
                         xabbergroup_unblock() |
                         unblock() |
@@ -1316,4 +1341,9 @@
                         sasl_success() |
                         xabbergroupchat_query_rights() |
                         compress() |
-                        bytestreams().
+                        bytestreams() |
+                        privacy_query() |
+                        xabbertoken_query() |
+                        muc_history() |
+                        identity() |
+                        delay().

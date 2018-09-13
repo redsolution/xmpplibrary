@@ -189,3 +189,5 @@
 -define(NS_UNIQUE, <<"http://xabber.com/protocol/unique">>).
 -define(NS_PREVIOUS, <<"http://xabber.com/protocol/previous">>).
 -define(NS_GROUPCHAT, <<"http://xabber.com/protocol/groupchat">>).
+-define(NS_XABBER_TOKEN,<<"http://xabber.com/protocol/auth-tokens">>).
+-define(NS_XABBER_TOKEN_QUERY,<<"http://xabber.com/protocol/auth-tokens#items">>).
