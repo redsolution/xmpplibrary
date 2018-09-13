@@ -995,7 +995,8 @@
 -record(xabbergroupchat_search, {name :: 'undefined' | binary(),
                                  description :: 'undefined' | binary(),
                                  model :: 'undefined' | binary(),
-                                 anonymous :: 'undefined' | binary()}).
+                                 anonymous :: 'undefined' | binary(),
+                                 rsm :: 'undefined' | #rsm_set{}}).
 -type xabbergroupchat_search() :: #xabbergroupchat_search{}.
 
 -record(xabbergroupchat_create, {name :: 'undefined' | binary(),

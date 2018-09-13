@@ -4545,11 +4545,12 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_search, '$name', '$description', '$model',
-     '$anonymous'},
+     '$anonymous', '$rsm'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
-             #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'}
+             #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
+             #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}
              ]
               }).
 
