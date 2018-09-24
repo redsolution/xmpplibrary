@@ -4582,7 +4582,7 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
+     cdata = #cdata{label = '$cdata'}}
 ).
 
 -xml(xabbergroupchat_searchable,
