@@ -500,7 +500,7 @@
 -record(shim, {headers = [] :: [{binary(),binary()}]}).
 -type shim() :: #shim{}.
 
--record(xabbertoken_issue, {name :: 'undefined' | binary(),
+-record(xabbertoken_issue, {client :: 'undefined' | binary(),
                             os :: 'undefined' | binary(),
                             expire :: 'undefined' | binary()}).
 -type xabbertoken_issue() :: #xabbertoken_issue{}.
@@ -556,15 +556,6 @@
 
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
-
--record(xabbertoken_field, {var = <<>> :: binary(),
-                            token :: 'undefined' | binary(),
-                            desc :: 'undefined' | binary(),
-                            expire :: 'undefined' | binary()}).
--type xabbertoken_field() :: #xabbertoken_field{}.
-
--record(xabbertoken_x_fields, {field = [] :: [#xabbertoken_field{}]}).
--type xabbertoken_x_fields() :: #xabbertoken_x_fields{}.
 
 -record(origin_id, {id = <<>> :: binary()}).
 -type origin_id() :: #origin_id{}.
@@ -981,6 +972,16 @@
                      xdata = [] :: [#xdata{}]}).
 -type disco_info() :: #disco_info{}.
 
+-record(xabbertoken_field, {var = <<>> :: binary(),
+                            token :: 'undefined' | binary(),
+                            desc :: 'undefined' | binary(),
+                            ip :: 'undefined' | binary(),
+                            expire :: 'undefined' | binary()}).
+-type xabbertoken_field() :: #xabbertoken_field{}.
+
+-record(xabbertoken_x_fields, {field = [] :: [#xabbertoken_field{}]}).
+-type xabbertoken_x_fields() :: #xabbertoken_x_fields{}.
+
 -record(offline_item, {node = <<>> :: binary(),
                        action :: 'remove' | 'undefined' | 'view'}).
 -type offline_item() :: #offline_item{}.
@@ -999,6 +1000,7 @@
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
 -record(xabbertoken_x_token, {token :: 'undefined' | binary(),
+                              token_uid :: 'undefined' | binary(),
                               expire :: 'undefined' | binary()}).
 -type xabbertoken_x_token() :: #xabbertoken_x_token{}.
 
@@ -1149,7 +1151,6 @@
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
-                        xabbertoken_field() |
                         origin_id() |
                         receipt_request() |
                         db_result() |
@@ -1160,6 +1161,7 @@
                         block_list() |
                         delegated() |
                         rsm_set() |
+                        xabbertoken_field() |
                         text() |
                         vcard_org() |
                         feature_sm() |

@@ -231,9 +231,6 @@ get_mod(<<"decline">>,
 get_mod(<<"x">>,
 	<<"http://jabber.org/protocol/muc#user">>) ->
     xep0045;
-get_mod(<<"name">>,
-	<<"http://xabber.com/protocol/auth-tokens">>) ->
-    xabbertoken;
 get_mod(<<"failure">>,
 	<<"http://jabber.org/protocol/compress">>) ->
     xep0138;
@@ -1374,12 +1371,18 @@ get_mod(<<"port">>, <<"urn:xmpp:sic:1">>) -> xep0279;
 get_mod(<<"token-uid">>,
 	<<"http://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"client">>,
+	<<"http://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"desc">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"no-permanent-store">>,
 	<<"urn:xmpp:hints">>) ->
     xep0334;
 get_mod(<<"filename">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
+get_mod(<<"ip">>,
+	<<"http://xabber.com/protocol/auth-tokens#items">>) ->
+    xabbertoken;
 get_mod(<<"badge">>,
 	<<"http://xabber.com/protocol/groupchat#members">>) ->
     xabbergroupchat;
@@ -1566,6 +1569,8 @@ get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
+get_mod({xabbertoken_field, _, _, _, _, _}) ->
+    xabbertoken;
 get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({feature_register}) -> xep0077;
@@ -1700,7 +1705,6 @@ get_mod({mix_join, _, _}) -> xep0369;
 get_mod({address, _, _, _, _, _}) -> xep0033;
 get_mod({thumbnail, _, _, _, _}) -> xep0264;
 get_mod({delegation, _, _}) -> xep0355;
-get_mod({xabbertoken_x_token, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_permission, _, _}) ->
     xabbergroupchat;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
@@ -1739,8 +1743,8 @@ get_mod({expire, _, _}) -> xep0023;
 get_mod({privilege, _, _}) -> xep0356;
 get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
-get_mod({xabbertoken_field, _, _, _, _}) -> xabbertoken;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
+get_mod({xabbertoken_x_token, _, _, _}) -> xabbertoken;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
