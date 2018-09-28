@@ -4272,14 +4272,24 @@
      name = <<"field">>,
      xmlns = <<"http://xabber.com/protocol/auth-tokens#items">>,
      module = 'xabbertoken',
-     result = {xabbertoken_field, '$var', '$token', '$desc', '$ip','$expire'},
+     result = {xabbertoken_field, '$var', '$token', '$desc', '$ip', '$last','$expire'},
                 refs = [#ref{name = xabbertoken_uid_item, min = 0, max = 1, label = '$token'},
                              #ref{name = xabbertoken_desc_item, min = 0, max = 1, label = '$desc'},
                              #ref{name = xabbertoken_ip_item, min = 0, max = 1, label = '$ip'},
+                             #ref{name = xabbertoken_last_auth, min = 0, max = 1, label = '$last'},
                              #ref{name = xabbertoken_expire_item, min = 0, max = 1, label = '$expire'}
                              ],
      attrs = [#attr{name = <<"var">>, required = true}]
                              }
+).
+
+-xml(xabbertoken_last_auth,
+    #elem{name = <<"last-auth">>,
+    xmlns = <<"http://xabber.com/protocol/auth-tokens#items">>,
+    module = 'xabbertoken',
+    result = '$cdata',
+    cdata = #cdata{label = '$cdata'}
+}
 ).
 
 -xml(xabbertoken_expire_item,

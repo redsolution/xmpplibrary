@@ -484,6 +484,9 @@ get_mod(<<"query">>, <<"jabber:iq:search">>) -> xep0055;
 get_mod(<<"content-type">>,
 	<<"urn:xmpp:http:upload">>) ->
     xep0363;
+get_mod(<<"last-auth">>,
+	<<"http://xabber.com/protocol/auth-tokens#items">>) ->
+    xabbertoken;
 get_mod(<<"stream:error">>, <<"jabber:server">>) ->
     rfc6120;
 get_mod(<<"field">>, <<"jabber:x:data">>) -> xep0004;
@@ -795,23 +798,9 @@ get_mod(<<"undefined-condition">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
 get_mod(<<"DESC">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"url">>, <<"storage:bookmarks">>) -> xep0048;
-get_mod(<<"unexpected-request">>,
-	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
-    rfc6120;
-get_mod(<<"zip">>, <<"jabber:iq:register">>) -> xep0077;
-get_mod(<<"delete">>,
-	<<"http://jabber.org/protocol/pubsub#owner">>) ->
-    xep0060;
 get_mod(<<"subscriptions">>, <<"urn:xmpp:mucsub:0">>) ->
     p1_mucsub;
 get_mod(<<"resumed">>, <<"urn:xmpp:sm:2">>) -> xep0198;
-get_mod(<<"a">>, <<"urn:xmpp:sm:2">>) -> xep0198;
-get_mod(<<"dialback">>,
-	<<"urn:xmpp:features:dialback">>) ->
-    xep0220;
-get_mod(<<"put">>, <<"urn:xmpp:http:upload">>) ->
-    xep0363;
 get_mod(<<"slot">>, <<"urn:xmpp:http:upload:0">>) ->
     xep0363;
 get_mod(<<"query">>, <<"jabber:iq:privacy">>) ->
@@ -1515,6 +1504,20 @@ get_mod(<<"request">>, <<"urn:xmpp:receipts">>) ->
 get_mod(<<"revoke">>,
 	<<"http://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"url">>, <<"storage:bookmarks">>) -> xep0048;
+get_mod(<<"unexpected-request">>,
+	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
+    rfc6120;
+get_mod(<<"zip">>, <<"jabber:iq:register">>) -> xep0077;
+get_mod(<<"delete">>,
+	<<"http://jabber.org/protocol/pubsub#owner">>) ->
+    xep0060;
+get_mod(<<"a">>, <<"urn:xmpp:sm:2">>) -> xep0198;
+get_mod(<<"dialback">>,
+	<<"urn:xmpp:features:dialback">>) ->
+    xep0220;
+get_mod(<<"put">>, <<"urn:xmpp:http:upload">>) ->
+    xep0363;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1569,8 +1572,6 @@ get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
-get_mod({xabbertoken_field, _, _, _, _, _}) ->
-    xabbertoken;
 get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({feature_register}) -> xep0077;
@@ -1656,6 +1657,8 @@ get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({search_item, _, _, _, _, _}) -> xep0055;
 get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
+get_mod({xabbertoken_field, _, _, _, _, _, _}) ->
+    xabbertoken;
 get_mod({roster_query, _, _}) -> rfc6121;
 get_mod({vcard_key, _, _}) -> xep0054;
 get_mod({sm_r, _}) -> xep0198;

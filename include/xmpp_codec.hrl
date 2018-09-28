@@ -976,6 +976,7 @@
                             token :: 'undefined' | binary(),
                             desc :: 'undefined' | binary(),
                             ip :: 'undefined' | binary(),
+                            last :: 'undefined' | binary(),
                             expire :: 'undefined' | binary()}).
 -type xabbertoken_field() :: #xabbertoken_field{}.
 
