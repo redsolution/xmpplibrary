@@ -4327,6 +4327,21 @@
     cdata = #cdata{label = '$cdata', required = true}
 }
 ).
+-xml(xabbergroupchat_present,
+     #elem{name = <<"x">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#present">>,
+	   module = 'xabbergroupchat',
+     result = {x_present}
+              }
+              ).
+
+-xml(xabbergroupchat_not_present,
+     #elem{name = <<"x">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#not-present">>,
+	   module = 'xabbergroupchat',
+     result = {x_not_present}
+              }
+              ).
 
 -xml(xabbergroupchat_item,
      #elem{name = <<"item">>,

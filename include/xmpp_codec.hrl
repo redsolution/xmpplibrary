@@ -557,6 +557,9 @@
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
 
+-record(x_present, {}).
+-type x_present() :: #x_present{}.
+
 -record(origin_id, {id = <<>> :: binary()}).
 -type origin_id() :: #origin_id{}.
 
@@ -589,6 +592,9 @@
 
 -record(collect, {cdata = <<>> :: binary()}).
 -type collect() :: #collect{}.
+
+-record(x_not_present, {}).
+-type x_not_present() :: #x_not_present{}.
 
 -record(db_result, {from = <<>> :: binary(),
                     to = <<>> :: binary(),
@@ -1152,6 +1158,7 @@
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
+                        x_present() |
                         origin_id() |
                         receipt_request() |
                         db_result() |
@@ -1238,6 +1245,7 @@
                         streamhost() |
                         bind() |
                         collect() |
+                        x_not_present() |
                         ps_retract() |
                         previous_id() |
                         last() |
