@@ -557,6 +557,20 @@
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
 
+-record(xabbergroupchat_user_card, {id = <<>> :: binary(),
+                                    jid :: undefined | jid:jid(),
+                                    role :: 'undefined' | binary(),
+                                    badge :: 'undefined' | binary(),
+                                    nickname :: 'undefined' | binary(),
+                                    avatar :: 'undefined' | #avatar_meta{}}).
+-type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
+
+-record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).
+-type xabbergroupchat_kicked() :: #xabbergroupchat_kicked{}.
+
+-record(xabbergroupchat_user_updated, {user :: 'undefined' | #xabbergroupchat_user_card{}}).
+-type xabbergroupchat_user_updated() :: #xabbergroupchat_user_updated{}.
+
 -record(x_present, {}).
 -type x_present() :: #x_present{}.
 
@@ -1043,14 +1057,6 @@
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
--record(xabbergroupchat_x, {name :: 'undefined' | binary(),
-                            description :: 'undefined' | binary(),
-                            model :: 'undefined' | binary(),
-                            searchable :: 'undefined' | binary(),
-                            anonymous :: 'undefined' | binary(),
-                            localpart :: 'undefined' | binary()}).
--type xabbergroupchat_x() :: #xabbergroupchat_x{}.
-
 -record(xabbergroupchat_update, {name :: 'undefined' | binary(),
                                  description :: 'undefined' | binary(),
                                  model :: 'undefined' | binary(),
@@ -1060,6 +1066,21 @@
                                  domains :: 'undefined' | #xabbergroup_domains{},
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
+
+-record(xabbergroupchat_x, {create :: 'undefined' | #xabbergroupchat_update{},
+                            update :: 'undefined' | #xabbergroupchat_create{},
+                            left :: 'undefined' | binary(),
+                            join :: 'undefined' | binary(),
+                            kicked :: 'undefined' | #xabbergroupchat_kicked{},
+                            name :: 'undefined' | binary(),
+                            description :: 'undefined' | binary(),
+                            model :: 'undefined' | binary(),
+                            searchable :: 'undefined' | binary(),
+                            anonymous :: 'undefined' | binary(),
+                            localpart :: 'undefined' | binary(),
+                            user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
+                            by_user :: 'undefined' | #xabbergroupchat_user_card{}}).
+-type xabbergroupchat_x() :: #xabbergroupchat_x{}.
 
 -record(block_domain, {cdata = <<>> :: binary()}).
 -type block_domain() :: #block_domain{}.
@@ -1158,6 +1179,8 @@
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
+                        xabbergroupchat_user_card() |
+                        xabbergroupchat_kicked() |
                         x_present() |
                         origin_id() |
                         receipt_request() |
@@ -1184,7 +1207,6 @@
                         unique_retry() |
                         feature_csi() |
                         thumbnail() |
-                        vcard_tel() |
                         avatar_info() |
                         vcard_geo() |
                         vcard_photo() |
@@ -1328,8 +1350,8 @@
                         oob_x() |
                         sasl_auth() |
                         xabbergroupchat_x() |
-                        xabbergroup_unblock() |
                         unblock() |
+                        xabbergroup_unblock() |
                         muc_admin() |
                         ps_affiliation() |
                         mam_fin() |
@@ -1339,6 +1361,7 @@
                         starttls_proceed() |
                         forwarded() |
                         sm_resumed() |
+                        xabbergroupchat_user_updated() |
                         xevent() |
                         privacy_list() |
                         'see-other-host'() |
@@ -1357,4 +1380,5 @@
                         xabbertoken_query() |
                         muc_history() |
                         identity() |
-                        delay().
+                        delay() |
+                        vcard_tel().

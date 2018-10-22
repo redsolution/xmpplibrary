@@ -4552,14 +4552,21 @@
      #elem{name = <<"x">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$name', '$description', '$model', 
-     '$searchable', '$anonymous','$localpart'},
+     result = {xabbergroupchat_x, '$create', '$update', '$left', '$join', '$kicked', '$name', '$description', '$model',
+     '$searchable', '$anonymous','$localpart', '$user_updated', '$by_user'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
              #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
              #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
-             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
+             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'},
+             #ref{name = xabbergroupchat_update, min = 0, max = 1, label = '$create'},
+             #ref{name = xabbergroupchat_create, min = 0, max = 1, label = '$update'},
+             #ref{name = xabbergroupchat_left, min = 0, max = 1, label = '$left'},
+             #ref{name = xabbergroupchat_join, min = 0, max = 1, label = '$join'},
+             #ref{name = xabbergroupchat_kicked, min = 0, max = 1, label = '$kicked'},
+             #ref{name = xabbergroupchat_user_updated, min = 0, max = 1, label = '$user_updated'},
+             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$by_user'}
              ]
               }).
 
@@ -4728,6 +4735,92 @@
              #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}
              ]
               }).
+
+-xml(xabbergroupchat_join,
+     #elem{name = <<"join">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+       result = '$cdata',
+          cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(xabbergroupchat_left,
+     #elem{name = <<"left">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = '$cdata',
+               cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(xabbergroupchat_user_updated,
+    #elem{name = <<"user-updated">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_user_updated, '$user'},
+     refs = [
+             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$user'}
+             ]
+              }
+).
+
+-xml(xabbergroupchat_kicked,
+    #elem{name = <<"kicked">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_kicked, '$users'},
+     refs = [
+             #ref{name = xabbergroupchat_user_card, label = '$users'}
+             ]
+              }
+).
+
+-xml(xabbergroupchat_user_card,
+    #elem{name = <<"user">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_user_card, '$id', '$jid', '$role', '$badge', '$nickname', '$avatar'},
+     attrs = [#attr{name = <<"id">>}],
+     refs = [#ref{name = xabbergroupchat_user_jid, min = 0, max = 1, label = '$jid'},
+             #ref{name = xabbergroupchat_user_role, min = 0, max = 1, label = '$role'},
+             #ref{name = xabbergroupchat_user_nickname, min = 0, max = 1, label = '$nickname'},
+             #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
+             #ref{name = xabbergroupchat_user_badge, min = 0, max = 1, label = '$badge'}
+             ]
+              }
+).
+
+-xml(xabbergroupchat_user_jid,
+     #elem{name = <<"jid">>,
+           xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+           result = '$cdata',
+           cdata = #cdata{required = true,
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}}}).
+
+-xml(xabbergroupchat_user_role,
+     #elem{name = <<"role">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_user_nickname,
+     #elem{name = <<"nickname">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(xabbergroupchat_user_badge,
+     #elem{name = <<"badge">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata'}}
+).
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
