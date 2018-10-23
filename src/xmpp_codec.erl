@@ -1567,6 +1567,9 @@ get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({block_domain, _}) -> xabbergroupchat;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
@@ -1792,9 +1795,6 @@ get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
 get_mod({'see-other-host', _}) -> rfc6120;
 get_mod({muc_destroy, _, _, _, _}) -> xep0045;
 get_mod({hint, _}) -> xep0334;
-get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	 _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({xabbergroupchat_user_updated, _}) ->
     xabbergroupchat;
 get_mod({private, _}) -> xep0049;
