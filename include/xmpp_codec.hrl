@@ -290,7 +290,7 @@
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
 
--record(xabbergroupchat_query_members, {id = <<>> :: binary(),
+-record(xabbergroupchat_query_members, {version = <<>> :: binary(),
                                         nickname :: 'undefined' | binary(),
                                         badge :: 'undefined' | binary()}).
 -type xabbergroupchat_query_members() :: #xabbergroupchat_query_members{}.
@@ -1020,6 +1020,10 @@
 -record(sasl_mechanisms, {list = [] :: [binary()]}).
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
+-record(xabbergroupchat_members_item, {permission = [] :: [#xabbergroupchat_permission{}],
+                                       restriction = [] :: [#xabbergroupchat_restriction{}]}).
+-type xabbergroupchat_members_item() :: #xabbergroupchat_members_item{}.
+
 -record(xabbertoken_x_token, {token :: 'undefined' | binary(),
                               token_uid :: 'undefined' | binary(),
                               expire :: 'undefined' | binary()}).
@@ -1374,6 +1378,7 @@
                         search_item() |
                         offline_item() |
                         muc_item() |
+                        xabbergroupchat_members_item() |
                         address() |
                         sasl_success() |
                         xabbergroupchat_query_rights() |

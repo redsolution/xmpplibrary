@@ -607,6 +607,9 @@ get_mod(<<"model">>,
 get_mod(<<"not-subscribed">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"item">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"collect">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -652,6 +655,9 @@ get_mod(<<"redirect">>,
 get_mod(<<"a">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"info">>, <<"urn:xmpp:avatar:metadata">>) ->
     xep0084;
+get_mod(<<"jid">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"not-allowed">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1066,6 +1072,9 @@ get_mod(<<"result">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"os">>,
 	<<"http://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"role">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"TEL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"prefs">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"captcha">>, <<"urn:xmpp:captcha">>) ->
@@ -1739,6 +1748,8 @@ get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
 get_mod({upload_slot, _, _, _}) -> xep0363;
+get_mod({xabbergroupchat_members_item, _, _}) ->
+    xabbergroupchat;
 get_mod({muc_decline, _, _, _}) -> xep0045;
 get_mod({sm_enable, _, _, _}) -> xep0198;
 get_mod({offline, _, _, _}) -> xep0013;
