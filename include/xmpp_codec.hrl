@@ -290,11 +290,6 @@
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
 
--record(xabbergroupchat_query_members, {version = <<>> :: binary(),
-                                        nickname :: 'undefined' | binary(),
-                                        badge :: 'undefined' | binary()}).
--type xabbergroupchat_query_members() :: #xabbergroupchat_query_members{}.
-
 -record(db_feature, {errors = false :: boolean()}).
 -type db_feature() :: #db_feature{}.
 
@@ -445,17 +440,6 @@
 -record(compression, {methods = [] :: [binary()]}).
 -type compression() :: #compression{}.
 
--record(xabbergroupchat_item, {id = <<>> :: binary(),
-                               jid = <<>> :: binary(),
-                               role = <<>> :: binary(),
-                               invited = <<>> :: binary(),
-                               permission = [] :: [#xabbergroupchat_permission{}],
-                               restriction = [] :: [#xabbergroupchat_restriction{}]}).
--type xabbergroupchat_item() :: #xabbergroupchat_item{}.
-
--record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
--type xabbergroupchat() :: #xabbergroupchat{}.
-
 -record(muc_subscriptions, {list = [] :: [jid:jid()]}).
 -type muc_subscriptions() :: #muc_subscriptions{}.
 
@@ -478,6 +462,24 @@
 -record(avatar_meta, {info = [] :: [#avatar_info{}],
                       pointer :: 'undefined' | #avatar_pointer{}}).
 -type avatar_meta() :: #avatar_meta{}.
+
+-record(xabbergroupchat_item, {id = <<>> :: binary(),
+                               jid :: undefined | jid:jid(),
+                               role :: 'undefined' | binary(),
+                               badge :: 'undefined' | binary(),
+                               nickname :: 'undefined' | binary(),
+                               avatar :: 'undefined' | #avatar_meta{},
+                               permission = [] :: [#xabbergroupchat_permission{}],
+                               restriction = [] :: [#xabbergroupchat_restriction{}]}).
+-type xabbergroupchat_item() :: #xabbergroupchat_item{}.
+
+-record(xabbergroupchat, {item :: 'undefined' | #xabbergroupchat_item{}}).
+-type xabbergroupchat() :: #xabbergroupchat{}.
+
+-record(xabbergroupchat_query_members, {id = <<>> :: binary(),
+                                        version = <<>> :: binary(),
+                                        item :: 'undefined' | #xabbergroupchat_item{}}).
+-type xabbergroupchat_query_members() :: #xabbergroupchat_query_members{}.
 
 -record(bob_data, {cid = <<>> :: binary(),
                    'max-age' :: 'undefined' | non_neg_integer(),
@@ -1020,10 +1022,6 @@
 -record(sasl_mechanisms, {list = [] :: [binary()]}).
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
--record(xabbergroupchat_members_item, {permission = [] :: [#xabbergroupchat_permission{}],
-                                       restriction = [] :: [#xabbergroupchat_restriction{}]}).
--type xabbergroupchat_members_item() :: #xabbergroupchat_members_item{}.
-
 -record(xabbertoken_x_token, {token :: 'undefined' | binary(),
                               token_uid :: 'undefined' | binary(),
                               expire :: 'undefined' | binary()}).
@@ -1307,8 +1305,8 @@
                         stats() |
                         sic() |
                         ps_items() |
-                        xabbergroupchat_query_members() |
                         starttls() |
+                        xabbergroupchat_query_members() |
                         db_verify() |
                         roster_query() |
                         media_uri() |
@@ -1378,7 +1376,6 @@
                         search_item() |
                         offline_item() |
                         muc_item() |
-                        xabbergroupchat_members_item() |
                         address() |
                         sasl_success() |
                         xabbergroupchat_query_rights() |
