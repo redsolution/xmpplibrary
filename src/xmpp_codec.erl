@@ -705,6 +705,9 @@ get_mod(<<"header">>,
     xep0131;
 get_mod(<<"failed">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"x">>, <<"jabber:x:expire">>) -> xep0023;
+get_mod(<<"x">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"not-well-formed">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -1618,6 +1621,9 @@ get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({feature_register}) -> xep0077;

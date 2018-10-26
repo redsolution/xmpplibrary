@@ -4536,7 +4536,7 @@
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$join', '$kicked', '$name', '$description', '$model',
      '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user'},
-     attrs = [#attr{name = <<'version'>>}],
+     attrs = [#attr{name = <<"version">>}],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},

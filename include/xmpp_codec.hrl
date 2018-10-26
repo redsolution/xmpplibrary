@@ -1069,6 +1069,25 @@
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
+-record(xabbergroupchat_x, {version = <<>> :: binary(),
+                            create :: 'undefined' | #xabbergroupchat_update{},
+                            update :: 'undefined' | #xabbergroupchat_create{},
+                            left :: 'undefined' | binary(),
+                            join :: 'undefined' | binary(),
+                            kicked :: 'undefined' | #xabbergroupchat_kicked{},
+                            name :: 'undefined' | binary(),
+                            description :: 'undefined' | binary(),
+                            model :: 'undefined' | binary(),
+                            searchable :: 'undefined' | binary(),
+                            anonymous :: 'undefined' | binary(),
+                            localpart :: 'undefined' | binary(),
+                            pinned :: 'undefined' | binary(),
+                            domains :: 'undefined' | #xabbergroup_domains{},
+                            contacts :: 'undefined' | #xabbergroup_contacts{},
+                            user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
+                            by_user :: 'undefined' | #xabbergroupchat_user_card{}}).
+-type xabbergroupchat_x() :: #xabbergroupchat_x{}.
+
 -record(block_domain, {cdata = <<>> :: binary()}).
 -type block_domain() :: #block_domain{}.
 
@@ -1336,6 +1355,7 @@
                         chatstate() |
                         oob_x() |
                         sasl_auth() |
+                        xabbergroupchat_x() |
                         unblock() |
                         xabbergroup_unblock() |
                         muc_admin() |
