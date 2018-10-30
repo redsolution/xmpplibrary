@@ -1070,8 +1070,8 @@
 -type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
 -record(xabbergroupchat_x, {version = <<>> :: binary(),
-                            create :: 'undefined' | #xabbergroupchat_update{},
-                            update :: 'undefined' | #xabbergroupchat_create{},
+                            create :: 'undefined' | #xabbergroupchat_create{},
+                            update :: 'undefined' | #xabbergroupchat_update{},
                             left :: 'undefined' | binary(),
                             join :: 'undefined' | binary(),
                             kicked :: 'undefined' | #xabbergroupchat_kicked{},
