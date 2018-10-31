@@ -4535,7 +4535,8 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$join', '$kicked', '$name', '$description', '$model',
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user'},
+     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user',
+     '$jid', '$id', '$role', '$nickname', '$avatar', '$badge'},
      attrs = [#attr{name = <<"version">>}],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
@@ -4552,6 +4553,12 @@
              #ref{name = xabbergroupchat_join, min = 0, max = 1, label = '$join'},
              #ref{name = xabbergroupchat_kicked, min = 0, max = 1, label = '$kicked'},
              #ref{name = xabbergroupchat_user_updated, min = 0, max = 1, label = '$user_updated'},
+                          #ref{name = xabbergroupchat_user_jid, min = 0, max = 1, label = '$jid'},
+                          #ref{name = xabbergroupchat_user_role, min = 0, max = 1, label = '$role'},
+                          #ref{name = xabbergroupchat_user_nickname, min = 0, max = 1, label = '$nickname'},
+                          #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
+                          #ref{name = xabbergroupchat_user_badge, min = 0, max = 1, label = '$badge'},
+                          #ref{name = xabbergroupchat_user_id, min = 0, max = 1, label = '$id'},
              #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$by_user'}
              ]
               }).
