@@ -1085,13 +1085,7 @@
                             domains :: 'undefined' | #xabbergroup_domains{},
                             contacts :: 'undefined' | #xabbergroup_contacts{},
                             user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
-                            by_user :: 'undefined' | #xabbergroupchat_user_card{},
-                            jid :: undefined | jid:jid(),
-                            id :: 'undefined' | binary(),
-                            role :: 'undefined' | binary(),
-                            nickname :: 'undefined' | binary(),
-                            avatar :: 'undefined' | #avatar_meta{},
-                            badge :: 'undefined' | binary()}).
+                            by_user :: 'undefined' | #xabbergroupchat_user_card{}}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.
 
 -record(block_domain, {cdata = <<>> :: binary()}).
