@@ -290,6 +290,10 @@
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
 
+-record(xabbergroupchat_retract_message, {id = <<>> :: binary(),
+                                          version = <<>> :: binary()}).
+-type xabbergroupchat_retract_message() :: #xabbergroupchat_retract_message{}.
+
 -record(db_feature, {errors = false :: boolean()}).
 -type db_feature() :: #db_feature{}.
 
@@ -305,6 +309,9 @@
 
 -record(private, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type private() :: #private{}.
+
+-record(xabbergroupchat_retract_query, {version = <<>> :: binary()}).
+-type xabbergroupchat_retract_query() :: #xabbergroupchat_retract_query{}.
 
 -record(delegation_query, {to :: jid:jid(),
                            delegate = [] :: [binary()]}).
@@ -486,6 +493,10 @@
                    type = <<>> :: binary(),
                    data = <<>> :: binary()}).
 -type bob_data() :: #bob_data{}.
+
+-record(xabbergroupchat_retract_user, {id = <<>> :: binary(),
+                                       version = <<>> :: binary()}).
+-type xabbergroupchat_retract_user() :: #xabbergroupchat_retract_user{}.
 
 -record(muc_item, {actor :: 'undefined' | #muc_actor{},
                    continue :: 'undefined' | binary(),
@@ -1216,6 +1227,7 @@
                         avatar_info() |
                         vcard_geo() |
                         vcard_photo() |
+                        xabbergroupchat_retract_user() |
                         muc_actor() |
                         pubsub_owner() |
                         pubsub() |
@@ -1239,6 +1251,7 @@
                         bookmark_conference() |
                         offline() |
                         time() |
+                        xabbergroupchat_retract_message() |
                         ps_subscribe() |
                         xabbertoken_revoke() |
                         sm_enable() |
@@ -1315,6 +1328,7 @@
                         vcard_key() |
                         xabbergroupchat_invite_query() |
                         csi() |
+                        xabbergroupchat_retract_query() |
                         delegation_query() |
                         mam_query() |
                         vcard_email() |

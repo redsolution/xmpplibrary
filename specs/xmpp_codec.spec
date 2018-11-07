@@ -4841,6 +4841,39 @@
      result = {xabbergroupchat,'$item'},
      refs = [#ref{name = xabbergroupchat_item, min = 0, max =1, label = '$item'}]}).
 
+-xml(xabbergroupchat_retract_query,
+     #elem{name = <<"query">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#retract">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_retract_query, '$version'},
+     attrs = [#attr{name = <<"version">>}]
+     }).
+
+-xml(xabbergroupchat_retract_message,
+     #elem{name = <<"retract-message">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_retract_message, '$id', '$version'},
+     attrs = [#attr{name = <<"id">>},
+              #attr{name = <<"version">>}]
+     }).
+
+-xml(xabbergroupchat_retract_user,
+     #elem{name = <<"retract-user">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_retract_user, '$id', '$version'},
+     attrs = [#attr{name = <<"id">>},
+              #attr{name = <<"version">>}]
+     }).
+
+-xml(xabbergroupchat_retract_all,
+     #elem{name = <<"retract-all">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_retract_message, '$version'},
+     attrs = [#attr{name = <<"version">>}]
+     }).
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
