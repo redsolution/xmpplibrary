@@ -4845,8 +4845,8 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#retract">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_query, '$version'},
-     attrs = [#attr{name = <<"version">>}]
+     result = {xabbergroupchat_retract_query, '$version', '$less_than'},
+     attrs = [#attr{name = <<"version">>}, #attr{name = <<"less_than">>}]
      }).
 
 -xml(xabbergroupchat_retract_message,

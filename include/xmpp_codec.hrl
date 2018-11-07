@@ -310,7 +310,8 @@
 -record(private, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type private() :: #private{}.
 
--record(xabbergroupchat_retract_query, {version = <<>> :: binary()}).
+-record(xabbergroupchat_retract_query, {version = <<>> :: binary(),
+                                        less_than = <<>> :: binary()}).
 -type xabbergroupchat_retract_query() :: #xabbergroupchat_retract_query{}.
 
 -record(delegation_query, {to :: jid:jid(),
