@@ -191,3 +191,5 @@
 -define(NS_GROUPCHAT, <<"http://xabber.com/protocol/groupchat">>).
 -define(NS_XABBER_TOKEN,<<"http://xabber.com/protocol/auth-tokens">>).
 -define(NS_XABBER_TOKEN_QUERY,<<"http://xabber.com/protocol/auth-tokens#items">>).
+-define(NS_GROUPCHAT_RETRACT,<<"http://xabber.com/protocol/groupchat#retract">>).
+-define(NS_GROUPCHAT_RETRACT_HISTORY,<<"http://xabber.com/protocol/groupchat#history">>).
