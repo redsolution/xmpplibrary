@@ -424,6 +424,9 @@
                        jid :: jid:jid()}).
 -type ps_subscribe() :: #ps_subscribe{}.
 
+-record(xabbergroupchat_retract_invalidate, {version = <<>> :: binary()}).
+-type xabbergroupchat_retract_invalidate() :: #xabbergroupchat_retract_invalidate{}.
+
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
@@ -1348,6 +1351,7 @@
                         muc_user() |
                         vcard_adr() |
                         sasl_response() |
+                        xabbergroupchat_retract_invalidate() |
                         xabbertoken_issue() |
                         presence() |
                         gone() |

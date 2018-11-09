@@ -4843,7 +4843,7 @@
 
 -xml(xabbergroupchat_retract_query,
      #elem{name = <<"query">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#retract">>,
+     xmlns = <<"http://xabber.com/protocol/retract">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_retract_query, '$version', '$less_than'},
      attrs = [#attr{name = <<"version">>}, #attr{name = <<"less_than">>}]
@@ -4874,6 +4874,14 @@
      result = {xabbergroupchat_retract_message, '$version'},
      attrs = [#attr{name = <<"version">>}]
      }).
+-xml(xabbergroupchat_retract_invalidate,
+     #elem{name = <<"invalidate">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_retract_invalidate, '$version'},
+     attrs = [#attr{name = <<"version">>}]
+     }).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
