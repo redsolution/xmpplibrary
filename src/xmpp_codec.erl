@@ -1590,6 +1590,8 @@ get_mod(Name, XMLNS) ->
 get_mod({rosterver_feature}) -> rfc6121;
 get_mod({legacy_auth_feature}) -> xep0078;
 get_mod({carbons_disable}) -> xep0280;
+get_mod({xabbergroupchat_retract_all, _}) ->
+    xabbergroupchat;
 get_mod({last, _, _}) -> xep0012;
 get_mod({xabbergroupchat_create, _, _, _, _, _, _, _, _,
 	 _}) ->
@@ -1840,8 +1842,6 @@ get_mod({db_feature, _}) -> xep0220;
 get_mod({handshake, _}) -> xep0114;
 get_mod({xabbertoken_revoke, _}) -> xabbertoken;
 get_mod({xabbergroupchat_revoke, _}) -> xabbergroupchat;
-get_mod({xabbergroupchat_retract_message, _}) ->
-    xabbergroupchat;
 get_mod({vcard_sound, _, _, _}) -> xep0054;
 get_mod({ps_retract, _, _, _}) -> xep0060;
 get_mod({privilege_perm, _, _}) -> xep0356;

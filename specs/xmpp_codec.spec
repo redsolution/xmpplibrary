@@ -4871,7 +4871,7 @@
      #elem{name = <<"retract-all">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_message, '$version'},
+     result = {xabbergroupchat_retract_all, '$version'},
      attrs = [#attr{name = <<"version">>}]
      }).
 -xml(xabbergroupchat_retract_invalidate,

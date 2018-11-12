@@ -437,6 +437,9 @@
 -record(feature_csi, {xmlns = <<>> :: binary()}).
 -type feature_csi() :: #feature_csi{}.
 
+-record(xabbergroupchat_retract_all, {version = <<>> :: binary()}).
+-type xabbergroupchat_retract_all() :: #xabbergroupchat_retract_all{}.
+
 -record(disco_item, {jid :: jid:jid(),
                      name = <<>> :: binary(),
                      node = <<>> :: binary()}).
@@ -1239,6 +1242,7 @@
                         ps_error() |
                         starttls_failure() |
                         sasl_challenge() |
+                        xabbergroupchat_retract_message() |
                         db_feature() |
                         x_conference() |
                         private() |
@@ -1255,7 +1259,6 @@
                         bookmark_conference() |
                         offline() |
                         time() |
-                        xabbergroupchat_retract_message() |
                         ps_subscribe() |
                         xabbertoken_revoke() |
                         sm_enable() |
@@ -1406,4 +1409,5 @@
                         muc_history() |
                         identity() |
                         delay() |
+                        xabbergroupchat_retract_all() |
                         vcard_tel().
