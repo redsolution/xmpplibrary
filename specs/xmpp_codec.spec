@@ -4535,7 +4535,7 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$join', '$kicked', '$name', '$description', '$model',
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user'},
+     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user', '$body'},
      attrs = [#attr{name = <<"version">>}],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
@@ -4552,7 +4552,8 @@
              #ref{name = xabbergroupchat_join, min = 0, max = 1, label = '$join'},
              #ref{name = xabbergroupchat_kicked, min = 0, max = 1, label = '$kicked'},
              #ref{name = xabbergroupchat_user_updated, min = 0, max = 1, label = '$user_updated'},
-             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$by_user'}
+             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$by_user'},
+             #ref{name = xabbergroupchat_x_body, min = 0, max = 1, label = '$body'}
              ]
               }).
 
@@ -4573,6 +4574,14 @@
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
+
+-xml(xabbergroupchat_x_body,
+     #elem{name = <<"body">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+           result = {body_x, '$lang', '$data'},
+           cdata = #cdata{label = '$data'},
+           attrs = [#attr{name = <<"xml:lang">>, label = '$lang'}]}).
 
 -xml(xabbergroupchat_contacts,
      #elem{name = <<"contacts">>,
@@ -4874,6 +4883,7 @@
      result = {xabbergroupchat_retract_all, '$version'},
      attrs = [#attr{name = <<"version">>}]
      }).
+
 -xml(xabbergroupchat_retract_invalidate,
      #elem{name = <<"invalidate">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
@@ -4881,6 +4891,41 @@
      result = {xabbergroupchat_retract_invalidate, '$version'},
      attrs = [#attr{name = <<"version">>}]
      }).
+
+-xml(xabbergroupchat_replaced,
+     #elem{name = <<"replaced">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_replaced, '$stamp'},
+          attrs = [#attr{name = <<"stamp">>}]
+     }).
+
+-xml(xabbergroupchat_replace,
+     #elem{name = <<"replace">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_replace, '$id', '$version', '$message'},
+          attrs = [#attr{name = <<"id">>},
+                   #attr{name = <<"version">>}],
+     refs = [#ref{name = xabbergroupchat_replace_message, min = 0, max =1, label = '$message'}]}).
+
+-xml(xabbergroupchat_replace_message,
+     #elem{name = <<"message">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroupchat_replace_message, '$from', '$to', '$body', '$replaced'},
+            attrs = [#attr{name = <<"from">>},
+                        #attr{name = <<"to">>}],
+     refs = [#ref{name = xabbergroupchat_replace_message_body, min = 0, max = 1, label = '$body'},
+             #ref{name = xabbergroupchat_replaced, min = 0, max = 1, label = '$replaced'}
+     ]}).
+
+-xml(xabbergroupchat_replace_message_body,
+     #elem{name = <<"body">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
+	   module = 'xabbergroupchat',
+	   result = '$cdata',
+	   cdata = #cdata{label = '$cdata'}}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

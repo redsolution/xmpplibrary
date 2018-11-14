@@ -250,6 +250,9 @@
 -record(starttls_proceed, {}).
 -type starttls_proceed() :: #starttls_proceed{}.
 
+-record(xabbergroupchat_replaced, {stamp = <<>> :: binary()}).
+-type xabbergroupchat_replaced() :: #xabbergroupchat_replaced{}.
+
 -record(block_jid, {cdata = <<>> :: binary()}).
 -type block_jid() :: #block_jid{}.
 
@@ -436,6 +439,12 @@
 
 -record(feature_csi, {xmlns = <<>> :: binary()}).
 -type feature_csi() :: #feature_csi{}.
+
+-record(xabbergroupchat_replace_message, {from = <<>> :: binary(),
+                                          to = <<>> :: binary(),
+                                          body :: 'undefined' | binary(),
+                                          replaced :: 'undefined' | #xabbergroupchat_replaced{}}).
+-type xabbergroupchat_replace_message() :: #xabbergroupchat_replace_message{}.
 
 -record(xabbergroupchat_retract_all, {version = <<>> :: binary()}).
 -type xabbergroupchat_retract_all() :: #xabbergroupchat_retract_all{}.
@@ -707,6 +716,11 @@
 -record(rosterver_feature, {}).
 -type rosterver_feature() :: #rosterver_feature{}.
 
+-record(xabbergroupchat_replace, {id = <<>> :: binary(),
+                                  version = <<>> :: binary(),
+                                  message :: 'undefined' | #xabbergroupchat_replace_message{}}).
+-type xabbergroupchat_replace() :: #xabbergroupchat_replace{}.
+
 -record(unique_time, {stamp :: erlang:timestamp(),
                       by :: jid:jid()}).
 -type unique_time() :: #unique_time{}.
@@ -787,6 +801,10 @@
                     pref = false :: boolean(),
                     number :: 'undefined' | binary()}).
 -type vcard_tel() :: #vcard_tel{}.
+
+-record(body_x, {lang = <<>> :: binary(),
+                 data = <<>> :: binary()}).
+-type body_x() :: #body_x{}.
 
 -record(media_uri, {type = <<>> :: binary(),
                     uri = <<>> :: binary()}).
@@ -1103,7 +1121,8 @@
                             domains :: 'undefined' | #xabbergroup_domains{},
                             contacts :: 'undefined' | #xabbergroup_contacts{},
                             user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
-                            by_user :: 'undefined' | #xabbergroupchat_user_card{}}).
+                            by_user :: 'undefined' | #xabbergroupchat_user_card{},
+                            body :: 'undefined' | #body_x{}}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.
 
 -record(block_domain, {cdata = <<>> :: binary()}).
@@ -1234,11 +1253,7 @@
                         avatar_info() |
                         vcard_geo() |
                         vcard_photo() |
-                        xabbergroupchat_retract_user() |
                         muc_actor() |
-                        pubsub_owner() |
-                        pubsub() |
-                        muc_owner() |
                         ps_error() |
                         starttls_failure() |
                         sasl_challenge() |
@@ -1246,12 +1261,14 @@
                         db_feature() |
                         x_conference() |
                         private() |
+                        xabbergroupchat_replace_message() |
                         sasl_failure() |
                         vcard_name() |
                         adhoc_note() |
                         push_disable() |
                         legacy_auth_feature() |
                         rosterver_feature() |
+                        xabbergroupchat_replace() |
                         unique_time() |
                         muc_invite() |
                         vcard_xupdate() |
@@ -1376,6 +1393,7 @@
                         ps_unsubscribe() |
                         chatstate() |
                         oob_x() |
+                        body_x() |
                         sasl_auth() |
                         xabbergroupchat_x() |
                         unblock() |
@@ -1395,6 +1413,7 @@
                         'see-other-host'() |
                         hint() |
                         stream_start() |
+                        xabbergroupchat_replaced() |
                         shim() |
                         search_item() |
                         offline_item() |
@@ -1410,4 +1429,8 @@
                         identity() |
                         delay() |
                         xabbergroupchat_retract_all() |
-                        vcard_tel().
+                        vcard_tel() |
+                        xabbergroupchat_retract_user() |
+                        pubsub_owner() |
+                        pubsub() |
+                        muc_owner().
