@@ -121,6 +121,9 @@
 -record(sasl_success, {text = <<>> :: binary()}).
 -type sasl_success() :: #sasl_success{}.
 
+-record(unique_request, {retry = <<>> :: binary()}).
+-type unique_request() :: #unique_request{}.
+
 -record(mam_result, {xmlns = <<>> :: binary(),
                      queryid = <<>> :: binary(),
                      id = <<>> :: binary(),
@@ -433,9 +436,6 @@
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
-
--record(unique_retry, {}).
--type unique_retry() :: #unique_retry{}.
 
 -record(feature_csi, {xmlns = <<>> :: binary()}).
 -type feature_csi() :: #feature_csi{}.
@@ -1247,7 +1247,6 @@
                         xabbergroup_contacts() |
                         muc_subscriptions() |
                         adhoc_actions() |
-                        unique_retry() |
                         feature_csi() |
                         thumbnail() |
                         avatar_info() |
@@ -1316,6 +1315,7 @@
                         last() |
                         vcard_sound() |
                         block_jid() |
+                        unique_request() |
                         mam_result() |
                         rsm_first() |
                         stat() |

@@ -5,17 +5,17 @@
 
 -compile(export_all).
 
-do_decode(<<"retry">>,
-	  <<"http://xabber.com/protocol/unique">>, El, Opts) ->
-    decode_unique_retry(<<"http://xabber.com/protocol/unique">>,
-			Opts, El);
+do_decode(<<"request">>,
+	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_request(<<"http://xabber.com/protocol/delivery">>,
+			  Opts, El);
 do_decode(<<"received">>,
-	  <<"http://xabber.com/protocol/unique">>, El, Opts) ->
-    decode_unique_received(<<"http://xabber.com/protocol/unique">>,
+	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_received(<<"http://xabber.com/protocol/delivery">>,
 			   Opts, El);
 do_decode(<<"time">>,
-	  <<"http://xabber.com/protocol/unique">>, El, Opts) ->
-    decode_unique_time(<<"http://xabber.com/protocol/unique">>,
+	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_time(<<"http://xabber.com/protocol/delivery">>,
 		       Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -23,57 +23,82 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"retry">>, <<"http://xabber.com/protocol/unique">>},
+    [{<<"request">>,
+      <<"http://xabber.com/protocol/delivery">>},
      {<<"received">>,
-      <<"http://xabber.com/protocol/unique">>},
-     {<<"time">>, <<"http://xabber.com/protocol/unique">>}].
+      <<"http://xabber.com/protocol/delivery">>},
+     {<<"time">>,
+      <<"http://xabber.com/protocol/delivery">>}].
 
 do_encode({unique_time, _, _} = Time, TopXMLNS) ->
     encode_unique_time(Time, TopXMLNS);
 do_encode({unique_received, _, _, _, _} = Received,
 	  TopXMLNS) ->
     encode_unique_received(Received, TopXMLNS);
-do_encode({unique_retry} = Retry, TopXMLNS) ->
-    encode_unique_retry(Retry, TopXMLNS).
+do_encode({unique_request, _} = Request, TopXMLNS) ->
+    encode_unique_request(Request, TopXMLNS).
 
 do_get_name({unique_received, _, _, _, _}) ->
     <<"received">>;
-do_get_name({unique_retry}) -> <<"retry">>;
+do_get_name({unique_request, _}) -> <<"request">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
 do_get_ns({unique_received, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/unique">>;
-do_get_ns({unique_retry}) ->
-    <<"http://xabber.com/protocol/unique">>;
+    <<"http://xabber.com/protocol/delivery">>;
+do_get_ns({unique_request, _}) ->
+    <<"http://xabber.com/protocol/delivery">>;
 do_get_ns({unique_time, _, _}) ->
-    <<"http://xabber.com/protocol/unique">>.
+    <<"http://xabber.com/protocol/delivery">>.
 
 pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 4) ->
     [origin_id, stanza_id, previous_id, time];
-pp(unique_retry, 0) -> [];
+pp(unique_request, 1) -> [retry];
 pp(_, _) -> no.
 
 records() ->
     [{unique_time, 2}, {unique_received, 4},
-     {unique_retry, 0}].
+     {unique_request, 1}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
 
 enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
 
-decode_unique_retry(__TopXMLNS, __Opts,
-		    {xmlel, <<"retry">>, _attrs, _els}) ->
-    {unique_retry}.
+decode_unique_request(__TopXMLNS, __Opts,
+		      {xmlel, <<"request">>, _attrs, _els}) ->
+    Retry = decode_unique_request_attrs(__TopXMLNS, _attrs,
+					undefined),
+    {unique_request, Retry}.
 
-encode_unique_retry({unique_retry}, __TopXMLNS) ->
+decode_unique_request_attrs(__TopXMLNS,
+			    [{<<"retry">>, _val} | _attrs], _Retry) ->
+    decode_unique_request_attrs(__TopXMLNS, _attrs, _val);
+decode_unique_request_attrs(__TopXMLNS, [_ | _attrs],
+			    Retry) ->
+    decode_unique_request_attrs(__TopXMLNS, _attrs, Retry);
+decode_unique_request_attrs(__TopXMLNS, [], Retry) ->
+    decode_unique_request_attr_retry(__TopXMLNS, Retry).
+
+encode_unique_request({unique_request, Retry},
+		      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/unique">>,
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"retry">>, _attrs, _els}.
+    _attrs = encode_unique_request_attr_retry(Retry,
+					      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+									 __TopXMLNS)),
+    {xmlel, <<"request">>, _attrs, _els}.
+
+decode_unique_request_attr_retry(__TopXMLNS,
+				 undefined) ->
+    <<>>;
+decode_unique_request_attr_retry(__TopXMLNS, _val) ->
+    _val.
+
+encode_unique_request_attr_retry(<<>>, _acc) -> _acc;
+encode_unique_request_attr_retry(_val, _acc) ->
+    [{<<"retry">>, _val} | _acc].
 
 decode_unique_received(__TopXMLNS, __Opts,
 		       {xmlel, <<"received">>, _attrs, _els}) ->
@@ -165,11 +190,11 @@ decode_unique_received_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/unique">> ->
+      <<"http://xabber.com/protocol/delivery">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
 				     Previous_id, Stanza_id, Origin_id,
 				     {value,
-				      decode_unique_time(<<"http://xabber.com/protocol/unique">>,
+				      decode_unique_time(<<"http://xabber.com/protocol/delivery">>,
 							 __Opts, _el)});
       _ ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
@@ -185,7 +210,7 @@ encode_unique_received({unique_received, Origin_id,
 			Stanza_id, Previous_id, Time},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/unique">>,
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_unique_received_$previous_id'(Previous_id,
@@ -243,7 +268,7 @@ decode_unique_time_attrs(__TopXMLNS, [], Stamp, By) ->
 encode_unique_time({unique_time, Stamp, By},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/unique">>,
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_unique_time_attr_by(By,

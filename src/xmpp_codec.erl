@@ -728,6 +728,9 @@ get_mod(<<"content-type">>,
     xep0363;
 get_mod(<<"perm">>, <<"urn:xmpp:privilege:1">>) ->
     xep0356;
+get_mod(<<"request">>,
+	<<"http://xabber.com/protocol/delivery">>) ->
+    unique;
 get_mod(<<"internal-server-error">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -786,6 +789,9 @@ get_mod(<<"PREFIX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"affiliations">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"time">>,
+	<<"http://xabber.com/protocol/delivery">>) ->
+    unique;
 get_mod(<<"aborted">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -877,9 +883,6 @@ get_mod(<<"disable">>, <<"urn:xmpp:push:0">>) ->
     xep0357;
 get_mod(<<"delegated">>, <<"urn:xmpp:delegation:1">>) ->
     xep0355;
-get_mod(<<"received">>,
-	<<"http://xabber.com/protocol/unique">>) ->
-    unique;
 get_mod(<<"presence">>,
 	<<"jabber:component:accept">>) ->
     rfc6120;
@@ -973,9 +976,6 @@ get_mod(<<"item">>,
     xep0013;
 get_mod(<<"get">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
-get_mod(<<"time">>,
-	<<"http://xabber.com/protocol/unique">>) ->
-    unique;
 get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/disco#info">>) ->
     xep0030;
@@ -1397,6 +1397,9 @@ get_mod(<<"publish-options">>,
 get_mod(<<"reason">>,
 	<<"http://jabber.org/protocol/muc#admin">>) ->
     xep0045;
+get_mod(<<"received">>,
+	<<"http://xabber.com/protocol/delivery">>) ->
+    unique;
 get_mod(<<"policy-violation">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1406,9 +1409,6 @@ get_mod(<<"mechanism">>,
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
-get_mod(<<"retry">>,
-	<<"http://xabber.com/protocol/unique">>) ->
-    unique;
 get_mod(<<"remote-server-timeout">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1724,7 +1724,6 @@ get_mod({version, _, _, _}) -> xep0092;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
-get_mod({unique_retry}) -> unique;
 get_mod({xabbertoken_query}) -> xabbertoken;
 get_mod({xabbergroupchat_invite, _, _, _, _}) ->
     xabbergroupchat;
@@ -1768,6 +1767,7 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
+get_mod({unique_request, _}) -> unique;
 get_mod({previous_id, _}) -> previous;
 get_mod({collect, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_update, _, _, _, _, _, _, _,

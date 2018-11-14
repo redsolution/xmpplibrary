@@ -4129,7 +4129,7 @@
 
 -xml(unique_time,
      #elem{name = <<"time">>,
-           xmlns = <<"http://xabber.com/protocol/unique">>,
+           xmlns = <<"http://xabber.com/protocol/delivery">>,
 	   module = 'unique',
            result = {unique_time, '$stamp', '$by'},
            attrs = [#attr{name = <<"stamp">>,
@@ -4143,7 +4143,7 @@
 
 -xml(unique_received,
      #elem{name = <<"received">>,
-           xmlns = <<"http://xabber.com/protocol/unique">>,
+           xmlns = <<"http://xabber.com/protocol/delivery">>,
            module = 'unique',
            result = {unique_received, '$origin_id', '$stanza_id', '$previous_id', '$time'},
            refs = [#ref{name = origin_id,
@@ -4155,11 +4155,13 @@
                    #ref{name = unique_time,
                         min = 1, max = 1, label = '$time'}]}).
 
--xml(unique_retry,
-     #elem{name = <<"retry">>,
-           xmlns = <<"http://xabber.com/protocol/unique">>,
+-xml(unique_request,
+     #elem{name = <<"request">>,
+           xmlns = <<"http://xabber.com/protocol/delivery">>,
            module = 'unique',
-           result = {unique_retry}}).
+           result = {unique_request, '$retry'},
+           attrs = [#attr{name = <<"retry">>}]
+           }).
 
 -xml(previous_id,
      #elem{name = <<"previous-id">>,
