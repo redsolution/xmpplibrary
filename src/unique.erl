@@ -35,17 +35,17 @@ do_encode({unique_time, _, _} = Time, TopXMLNS) ->
 do_encode({unique_received, _, _, _, _} = Received,
 	  TopXMLNS) ->
     encode_unique_received(Received, TopXMLNS);
-do_encode({unique_request, _} = Request, TopXMLNS) ->
+do_encode({unique_request, _, _} = Request, TopXMLNS) ->
     encode_unique_request(Request, TopXMLNS).
 
 do_get_name({unique_received, _, _, _, _}) ->
     <<"received">>;
-do_get_name({unique_request, _}) -> <<"request">>;
+do_get_name({unique_request, _, _}) -> <<"request">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
 do_get_ns({unique_received, _, _, _, _}) ->
     <<"http://xabber.com/protocol/delivery">>;
-do_get_ns({unique_request, _}) ->
+do_get_ns({unique_request, _, _}) ->
     <<"http://xabber.com/protocol/delivery">>;
 do_get_ns({unique_time, _, _}) ->
     <<"http://xabber.com/protocol/delivery">>.
@@ -53,12 +53,12 @@ do_get_ns({unique_time, _, _}) ->
 pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 4) ->
     [origin_id, stanza_id, previous_id, time];
-pp(unique_request, 1) -> [retry];
+pp(unique_request, 2) -> [retry, to];
 pp(_, _) -> no.
 
 records() ->
     [{unique_time, 2}, {unique_received, 4},
-     {unique_request, 1}].
+     {unique_request, 2}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
 
@@ -66,28 +66,37 @@ enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
 
 decode_unique_request(__TopXMLNS, __Opts,
 		      {xmlel, <<"request">>, _attrs, _els}) ->
-    Retry = decode_unique_request_attrs(__TopXMLNS, _attrs,
-					undefined),
-    {unique_request, Retry}.
+    {Retry, To} = decode_unique_request_attrs(__TopXMLNS,
+					      _attrs, undefined, undefined),
+    {unique_request, Retry, To}.
 
 decode_unique_request_attrs(__TopXMLNS,
-			    [{<<"retry">>, _val} | _attrs], _Retry) ->
-    decode_unique_request_attrs(__TopXMLNS, _attrs, _val);
+			    [{<<"retry">>, _val} | _attrs], _Retry, To) ->
+    decode_unique_request_attrs(__TopXMLNS, _attrs, _val,
+				To);
+decode_unique_request_attrs(__TopXMLNS,
+			    [{<<"to">>, _val} | _attrs], Retry, _To) ->
+    decode_unique_request_attrs(__TopXMLNS, _attrs, Retry,
+				_val);
 decode_unique_request_attrs(__TopXMLNS, [_ | _attrs],
-			    Retry) ->
-    decode_unique_request_attrs(__TopXMLNS, _attrs, Retry);
-decode_unique_request_attrs(__TopXMLNS, [], Retry) ->
-    decode_unique_request_attr_retry(__TopXMLNS, Retry).
+			    Retry, To) ->
+    decode_unique_request_attrs(__TopXMLNS, _attrs, Retry,
+				To);
+decode_unique_request_attrs(__TopXMLNS, [], Retry,
+			    To) ->
+    {decode_unique_request_attr_retry(__TopXMLNS, Retry),
+     decode_unique_request_attr_to(__TopXMLNS, To)}.
 
-encode_unique_request({unique_request, Retry},
+encode_unique_request({unique_request, Retry, To},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
-    _attrs = encode_unique_request_attr_retry(Retry,
-					      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-									 __TopXMLNS)),
+    _attrs = encode_unique_request_attr_to(To,
+					   encode_unique_request_attr_retry(Retry,
+									    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+												       __TopXMLNS))),
     {xmlel, <<"request">>, _attrs, _els}.
 
 decode_unique_request_attr_retry(__TopXMLNS,
@@ -99,6 +108,20 @@ decode_unique_request_attr_retry(__TopXMLNS, _val) ->
 encode_unique_request_attr_retry(<<>>, _acc) -> _acc;
 encode_unique_request_attr_retry(_val, _acc) ->
     [{<<"retry">>, _val} | _acc].
+
+decode_unique_request_attr_to(__TopXMLNS, undefined) ->
+    undefined;
+decode_unique_request_attr_to(__TopXMLNS, _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"to">>, <<"request">>, __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_unique_request_attr_to(undefined, _acc) -> _acc;
+encode_unique_request_attr_to(_val, _acc) ->
+    [{<<"to">>, jid:encode(_val)} | _acc].
 
 decode_unique_received(__TopXMLNS, __Opts,
 		       {xmlel, <<"received">>, _attrs, _els}) ->

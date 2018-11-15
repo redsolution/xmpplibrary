@@ -4159,8 +4159,12 @@
      #elem{name = <<"request">>,
            xmlns = <<"http://xabber.com/protocol/delivery">>,
            module = 'unique',
-           result = {unique_request, '$retry'},
-           attrs = [#attr{name = <<"retry">>}]
+           result = {unique_request, '$retry', '$to'},
+           attrs = [#attr{name = <<"retry">>},
+                    #attr{name = <<"to">>,
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}}
+           ]
            }).
 
 -xml(previous_id,

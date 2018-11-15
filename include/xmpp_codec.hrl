@@ -121,7 +121,8 @@
 -record(sasl_success, {text = <<>> :: binary()}).
 -type sasl_success() :: #sasl_success{}.
 
--record(unique_request, {retry = <<>> :: binary()}).
+-record(unique_request, {retry = <<>> :: binary(),
+                         to :: undefined | jid:jid()}).
 -type unique_request() :: #unique_request{}.
 
 -record(mam_result, {xmlns = <<>> :: binary(),

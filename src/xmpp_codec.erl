@@ -1767,7 +1767,6 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
-get_mod({unique_request, _}) -> unique;
 get_mod({previous_id, _}) -> previous;
 get_mod({collect, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_update, _, _, _, _, _, _, _,
@@ -1830,6 +1829,7 @@ get_mod({xabbergroupchat_item, _, _, _, _, _, _, _,
     xabbergroupchat;
 get_mod({bind, _, _}) -> rfc6120;
 get_mod({rsm_first, _, _}) -> xep0059;
+get_mod({unique_request, _, _}) -> unique;
 get_mod({xabbergroupchat_query_item, _}) ->
     xabbergroupchat;
 get_mod({caps, _, _, _, _}) -> xep0115;
