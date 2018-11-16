@@ -186,7 +186,7 @@
 -define(NS_AVATAR_DATA, <<"urn:xmpp:avatar:data">>).
 -define(NS_AVATAR_METADATA, <<"urn:xmpp:avatar:metadata">>).
 -define(NS_PEP_VCARD_CONVERSION_0, <<"urn:xmpp:pep-vcard-conversion:0">>).
--define(NS_UNIQUE, <<"http://xabber.com/protocol/unique">>).
+-define(NS_UNIQUE, <<"http://xabber.com/protocol/delivery">>).
 -define(NS_PREVIOUS, <<"http://xabber.com/protocol/previous">>).
 -define(NS_GROUPCHAT, <<"http://xabber.com/protocol/groupchat">>).
 -define(NS_XABBER_TOKEN,<<"http://xabber.com/protocol/auth-tokens">>).
