@@ -9,9 +9,18 @@
 	 format_error/1, io_format_error/1]).
 
 -include("xmpp_codec.hrl").
+
 -include("mam_query.hrl").
 
 -export_type([property/0, result/0, form/0]).
+
+dec_bool(<<"1">>) -> true;
+dec_bool(<<"0">>) -> false;
+dec_bool(<<"true">>) -> true;
+dec_bool(<<"false">>) -> false.
+
+enc_bool(true) -> <<"1">>;
+enc_bool(false) -> <<"0">>.
 
 format_error({form_type_mismatch, Type}) ->
     <<"FORM_TYPE doesn't match '", Type/binary, "'">>;
@@ -77,6 +86,8 @@ encode(List, Lang) when is_list(List) ->
 	    {'end', _, _} -> erlang:error({badarg, Opt});
 	    {withtext, Val} -> [encode_withtext(Val, Lang)];
 	    {withtext, _, _} -> erlang:error({badarg, Opt});
+	    {last, Val} -> [encode_last(Val, Lang)];
+	    {last, _, _} -> erlang:error({badarg, Opt});
 	    #xdata_field{} -> [Opt];
 	    _ -> []
 	  end
@@ -170,38 +181,39 @@ decode([#xdata_field{var = <<"withtext">>} | _], _,
     erlang:error({?MODULE,
 		  {too_many_values, <<"withtext">>,
 		   <<"urn:xmpp:mam:1">>}});
-%%%%
-%%  Custom section
-%%%%
-decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
-  values = [Value]}
-  | Fs],
-    Acc, Required) ->
-  try Value of
-    Result ->
-      decode(Fs, [{stanza_id, Result} | Acc], Required)
-  catch
-    _:_ ->
-      erlang:error({?MODULE,
-        {bad_var_value, <<"{urn:xmpp:sid:0}stanza-id">>, <<"urn:xmpp:mam:1">>}})
-  end;
-decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
-  values = []} =
-  F
-  | Fs],
-    Acc, Required) ->
-  decode([F#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
-    values = [<<>>]}
-    | Fs],
-    Acc, Required);
-decode([#xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>} | _], _,
-    _) ->
-  erlang:error({?MODULE,
-    {too_many_values, <<"{urn:xmpp:sid:0}stanza-id">>,
-      <<"urn:xmpp:mam:1">>}});
-%%%%
-%%   End of custom section
-%%%%
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}last">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result -> decode(Fs, [{last, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}last">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}last">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}last">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}last">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}last">>,
+		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
 	   erlang:error({?MODULE,
@@ -252,3 +264,18 @@ encode_withtext(Value, Lang) ->
 		 required = false, type = 'text-single', options = Opts,
 		 desc = <<>>,
 		 label = xmpp_tr:tr(Lang, <<"Search the text">>)}.
+
+encode_last(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}last">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the last message from each "
+				  "conversation">>)}.

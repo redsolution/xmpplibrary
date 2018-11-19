@@ -14,6 +14,9 @@
   <field var='withtext'
 	 type='text-single'
 	 label='Search the text'/>
+  <field var='{http://xabber.com/protocol/archive}last'
+	 type='boolean'
+	 label='Fetch only the last message from each conversation'/>
 </form_type>
 
 <!--
