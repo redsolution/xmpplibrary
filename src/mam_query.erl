@@ -88,6 +88,8 @@ encode(List, Lang) when is_list(List) ->
 	    {withtext, _, _} -> erlang:error({badarg, Opt});
 	    {last, Val} -> [encode_last(Val, Lang)];
 	    {last, _, _} -> erlang:error({badarg, Opt});
+	    {'stanza-id', Val} -> ['encode_stanza-id'(Val, Lang)];
+	    {'stanza-id', _, _} -> erlang:error({badarg, Opt});
 	    #xdata_field{} -> [Opt];
 	    _ -> []
 	  end
@@ -214,6 +216,38 @@ decode([#xdata_field{var =
 		  {too_many_values,
 		   <<"{http://xabber.com/protocol/archive}last">>,
 		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{urn:xmpp:sid:0}stanza-id">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try Value of
+      Result ->
+	  decode(Fs, [{'stanza-id', Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"{urn:xmpp:sid:0}stanza-id">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{urn:xmpp:sid:0}stanza-id">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{urn:xmpp:sid:0}stanza-id">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{urn:xmpp:sid:0}stanza-id">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"{urn:xmpp:sid:0}stanza-id">>,
+		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
 	   erlang:error({?MODULE,
@@ -279,3 +313,16 @@ encode_last(Value, Lang) ->
 		     xmpp_tr:tr(Lang,
 				<<"Fetch only the last message from each "
 				  "conversation">>)}.
+
+'encode_stanza-id'(Value, Lang) ->
+    Values = case Value of
+	       <<>> -> [];
+	       Value -> [Value]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
+		 values = Values, required = false, type = 'text-single',
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch one message from conversation">>)}.

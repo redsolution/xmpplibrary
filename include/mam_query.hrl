@@ -8,7 +8,8 @@
                     {'start', erlang:timestamp()} |
                     {'end', erlang:timestamp()} |
                     {'withtext', binary()} |
-                    {'last', boolean()}.
+                    {'last', boolean()} |
+                    {'stanza-id', binary()}.
 -type result() :: [property()].
 
 -type form() :: [property() | xdata_field()].
