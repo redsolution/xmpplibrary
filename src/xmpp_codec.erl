@@ -1719,7 +1719,6 @@ get_mod({pubsub_owner, _, _, _, _, _, _}) -> xep0060;
 get_mod({mam_result, _, _, _, _}) -> xep0313;
 get_mod({sm_failed, _, _, _, _}) -> xep0198;
 get_mod({upload_request, _, _, _, _}) -> xep0363;
-get_mod({unique_received, _, _, _, _}) -> unique;
 get_mod({version, _, _, _}) -> xep0092;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
@@ -1802,6 +1801,7 @@ get_mod({xabbergroupchat_permission, _, _}) ->
 get_mod({xabbergroupchat_replace, _, _, _}) ->
     xabbergroupchat;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
+get_mod({unique_received, _, _, _, _, _}) -> unique;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;

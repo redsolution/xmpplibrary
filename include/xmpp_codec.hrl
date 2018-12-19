@@ -726,10 +726,11 @@
                       by :: jid:jid()}).
 -type unique_time() :: #unique_time{}.
 
--record(unique_received, {origin_id :: #origin_id{},
-                          stanza_id :: #stanza_id{},
-                          previous_id :: #previous_id{},
-                          time :: #unique_time{}}).
+-record(unique_received, {origin_id :: 'undefined' | #origin_id{},
+                          stanza_id :: 'undefined' | #stanza_id{},
+                          previous_id :: 'undefined' | #previous_id{},
+                          time :: 'undefined' | #unique_time{},
+                          forwarded :: 'undefined' | #forwarded{}}).
 -type unique_received() :: #unique_received{}.
 
 -record(muc_invite, {reason = <<>> :: binary(),

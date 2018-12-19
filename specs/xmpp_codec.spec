@@ -4145,15 +4145,17 @@
      #elem{name = <<"received">>,
            xmlns = <<"http://xabber.com/protocol/delivery">>,
            module = 'unique',
-           result = {unique_received, '$origin_id', '$stanza_id', '$previous_id', '$time'},
+           result = {unique_received, '$origin_id', '$stanza_id', '$previous_id', '$time', '$forwarded'},
            refs = [#ref{name = origin_id,
-                        min = 1, max = 1, label = '$origin_id'},
+                        min = 0, max = 1, label = '$origin_id'},
                    #ref{name = stanza_id,
-                        min = 1, max = 1, label = '$stanza_id'},
+                        min = 0, max = 1, label = '$stanza_id'},
                    #ref{name = previous_id,
-                        min = 1, max = 1, label = '$previous_id'},
+                        min = 0, max = 1, label = '$previous_id'},
+                   #ref{name = forwarded,
+                        min = 0, max = 1, label = '$forwarded'},
                    #ref{name = unique_time,
-                        min = 1, max = 1, label = '$time'}]}).
+                        min = 0, max = 1, label = '$time'}]}).
 
 -xml(unique_request,
      #elem{name = <<"request">>,
