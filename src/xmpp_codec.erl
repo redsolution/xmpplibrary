@@ -267,9 +267,6 @@ get_mod(<<"user">>,
 get_mod(<<"pinned-message">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
-get_mod(<<"searchable">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"message">>, <<"jabber:iq:privacy">>) ->
     xep0016;
 get_mod(<<"presence">>, <<"jabber:client">>) -> rfc6120;
@@ -613,9 +610,6 @@ get_mod(<<"photo">>, <<"vcard-temp:x:update">>) ->
 get_mod(<<"handshake">>,
 	<<"jabber:component:accept">>) ->
     xep0114;
-get_mod(<<"model">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"not-subscribed">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
@@ -852,6 +846,9 @@ get_mod(<<"CELL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"stream:stream">>,
 	<<"jabber:component:accept">>) ->
     rfc6120;
+get_mod(<<"index">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"user">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -1087,6 +1084,9 @@ get_mod(<<"permission">>,
 get_mod(<<"query">>,
 	<<"http://xabber.com/protocol/groupchat#rights">>) ->
     xabbergroupchat;
+get_mod(<<"membership">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"reset">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -1296,9 +1296,6 @@ get_mod(<<"delegation">>,
 get_mod(<<"domains">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
-get_mod(<<"anonymous">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"bad-request">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1457,6 +1454,9 @@ get_mod(<<"affiliation">>,
     xep0060;
 get_mod(<<"fin">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"enabled">>, <<"urn:xmpp:sm:2">>) -> xep0198;
+get_mod(<<"privacy">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"TITLE">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"too-many-subscriptions">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->

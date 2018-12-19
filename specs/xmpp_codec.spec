@@ -4630,7 +4630,7 @@
 ).
 
 -xml(xabbergroupchat_searchable,
-     #elem{name = <<"searchable">>,
+     #elem{name = <<"index">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',
@@ -4646,7 +4646,7 @@
 ).
 
 -xml(xabbergroupchat_anonymous,
-     #elem{name = <<"anonymous">>,
+     #elem{name = <<"privacy">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',
@@ -4662,7 +4662,7 @@
 ).
 
 -xml(xabbergroupchat_model,
-     #elem{name = <<"model">>,
+     #elem{name = <<"membership">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',
