@@ -267,6 +267,9 @@ get_mod(<<"user">>,
 get_mod(<<"pinned-message">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
+get_mod(<<"no-permission">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"message">>, <<"jabber:iq:privacy">>) ->
     xep0016;
 get_mod(<<"presence">>, <<"jabber:client">>) -> rfc6120;
@@ -1737,9 +1740,6 @@ get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
 get_mod({xabbertoken_field, _, _, _, _, _, _}) ->
     xabbertoken;
-get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	 _, _, _, _, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({xabbergroupchat_user_card, _, _, _, _, _,
 	 _}) ->
     xabbergroupchat;
@@ -1807,6 +1807,9 @@ get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({unblock, _}) -> xep0191;
 get_mod({stat_error, _, _}) -> xep0039;
 get_mod({sasl_abort}) -> rfc6120;

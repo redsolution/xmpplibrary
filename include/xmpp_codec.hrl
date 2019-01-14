@@ -1111,6 +1111,7 @@
                             create :: 'undefined' | #xabbergroupchat_create{},
                             update :: 'undefined' | #xabbergroupchat_update{},
                             left :: 'undefined' | binary(),
+                            no_permission :: 'undefined' | binary(),
                             join :: 'undefined' | binary(),
                             kicked :: 'undefined' | #xabbergroupchat_kicked{},
                             name :: 'undefined' | binary(),

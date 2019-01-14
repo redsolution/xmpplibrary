@@ -4542,7 +4542,7 @@
      #elem{name = <<"x">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$join', '$kicked', '$name', '$description', '$model',
+     result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$no_permission', '$join', '$kicked', '$name', '$description', '$model',
      '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$by_user', '$body'},
      attrs = [#attr{name = <<"version">>}],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
@@ -4557,6 +4557,7 @@
              #ref{name = xabbergroupchat_update, min = 0, max = 1, label = '$update'},
              #ref{name = xabbergroupchat_create, min = 0, max = 1, label = '$create'},
              #ref{name = xabbergroupchat_left, min = 0, max = 1, label = '$left'},
+             #ref{name = xabbergroupchat_no_permission, min = 0, max = 1, label = '$no_permission'},
              #ref{name = xabbergroupchat_join, min = 0, max = 1, label = '$join'},
              #ref{name = xabbergroupchat_kicked, min = 0, max = 1, label = '$kicked'},
              #ref{name = xabbergroupchat_user_updated, min = 0, max = 1, label = '$user_updated'},
@@ -4749,6 +4750,14 @@
 
 -xml(xabbergroupchat_left,
      #elem{name = <<"left">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = '$cdata',
+               cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(xabbergroupchat_no_permission,
+     #elem{name = <<"no-permission">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
 	   result = '$cdata',
