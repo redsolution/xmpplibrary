@@ -347,6 +347,9 @@ get_mod(<<"actions">>,
 get_mod(<<"send">>,
 	<<"http://xabber.com/protocol/groupchat#invite">>) ->
     xabbergroupchat;
+get_mod(<<"subscription">>,
+	<<"http://xabber.com/protocol/groupchat#members">>) ->
+    xabbergroupchat;
 get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"bad-protocol">>,
@@ -523,6 +526,9 @@ get_mod(<<"enable">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"no-permanent-storage">>,
 	<<"urn:xmpp:hints">>) ->
     xep0334;
+get_mod(<<"revoke-all">>,
+	<<"http://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"credentials-expired">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -683,6 +689,9 @@ get_mod(<<"filename">>,
     xep0363;
 get_mod(<<"put">>, <<"urn:xmpp:http:upload:0">>) ->
     xep0363;
+get_mod(<<"x-token">>,
+	<<"http://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"user-updated">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -886,16 +895,7 @@ get_mod(<<"delegated">>, <<"urn:xmpp:delegation:1">>) ->
 get_mod(<<"presence">>,
 	<<"jabber:component:accept">>) ->
     rfc6120;
-get_mod(<<"abort">>,
-	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
-    rfc6120;
-get_mod(<<"FAMILY">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"URL">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"headers">>,
-	<<"http://jabber.org/protocol/shim">>) ->
-    xep0131;
-get_mod(<<"received">>, <<"urn:xmpp:receipts">>) ->
-    xep0184;
 get_mod(<<"x">>,
 	<<"http://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
@@ -1258,6 +1258,9 @@ get_mod(<<"origin-id">>, <<"urn:xmpp:sid:0">>) ->
 get_mod(<<"note">>,
 	<<"http://jabber.org/protocol/commands">>) ->
     xep0050;
+get_mod(<<"subscription">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"message">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"MIDDLE">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"activate">>,
@@ -1602,12 +1605,22 @@ get_mod(<<"unsubscribe">>, <<"urn:xmpp:mucsub:0">>) ->
 get_mod(<<"failed">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"db:verify">>, <<"jabber:server">>) ->
     xep0220;
+get_mod(<<"abort">>,
+	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
+    rfc6120;
+get_mod(<<"FAMILY">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"headers">>,
+	<<"http://jabber.org/protocol/shim">>) ->
+    xep0131;
+get_mod(<<"received">>, <<"urn:xmpp:receipts">>) ->
+    xep0184;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
 get_mod({rosterver_feature}) -> rfc6121;
 get_mod({legacy_auth_feature}) -> xep0078;
 get_mod({carbons_disable}) -> xep0280;
+get_mod({xabbertoken_feature}) -> xabbertoken;
 get_mod({xabbergroupchat_retract_all, _}) ->
     xabbergroupchat;
 get_mod({last, _, _}) -> xep0012;
@@ -1760,6 +1773,7 @@ get_mod({addresses, _}) -> xep0033;
 get_mod({adhoc_command, _, _, _, _, _, _, _, _}) ->
     xep0050;
 get_mod({media, _, _, _}) -> xep0221;
+get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbertoken_x_fields, _}) -> xabbertoken;
 get_mod({xabbergroup_contacts, _}) -> xabbergroupchat;
 get_mod({identity, _, _, _, _}) -> xep0030;

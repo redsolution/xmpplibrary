@@ -70,6 +70,16 @@ do_decode(<<"token">>,
 	  Opts) ->
     decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens">>,
 		       Opts, El);
+do_decode(<<"revoke-all">>,
+	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  Opts) ->
+    decode_xabbertoken_revoke_all(<<"http://xabber.com/protocol/auth-tokens">>,
+				  Opts, El);
+do_decode(<<"x-token">>,
+	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  Opts) ->
+    decode_xabbertoken_feature(<<"http://xabber.com/protocol/auth-tokens">>,
+			       Opts, El);
 do_decode(<<"revoke">>,
 	  <<"http://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
@@ -117,6 +127,10 @@ tags() ->
       <<"http://xabber.com/protocol/auth-tokens">>},
      {<<"token">>,
       <<"http://xabber.com/protocol/auth-tokens">>},
+     {<<"revoke-all">>,
+      <<"http://xabber.com/protocol/auth-tokens">>},
+     {<<"x-token">>,
+      <<"http://xabber.com/protocol/auth-tokens">>},
      {<<"revoke">>,
       <<"http://xabber.com/protocol/auth-tokens">>},
      {<<"x">>, <<"http://xabber.com/protocol/auth-tokens">>},
@@ -131,6 +145,11 @@ do_encode({xabbertoken_x_token, _, _, _} = X,
     encode_xabbertoken_x_token(X, TopXMLNS);
 do_encode({xabbertoken_revoke, _} = Revoke, TopXMLNS) ->
     encode_xabbertoken_revoke(Revoke, TopXMLNS);
+do_encode({xabbertoken_feature} = X_token, TopXMLNS) ->
+    encode_xabbertoken_feature(X_token, TopXMLNS);
+do_encode({xabbertoken_revoke_all} = Revoke_all,
+	  TopXMLNS) ->
+    encode_xabbertoken_revoke_all(Revoke_all, TopXMLNS);
 do_encode({xabbertoken_query} = Query, TopXMLNS) ->
     encode_xabbertoken_query(Query, TopXMLNS);
 do_encode({xabbertoken_x_fields, _} = X, TopXMLNS) ->
@@ -139,15 +158,20 @@ do_encode({xabbertoken_field, _, _, _, _, _, _} = Field,
 	  TopXMLNS) ->
     encode_xabbertoken_field(Field, TopXMLNS).
 
+do_get_name({xabbertoken_feature}) -> <<"x-token">>;
 do_get_name({xabbertoken_field, _, _, _, _, _, _}) ->
     <<"field">>;
 do_get_name({xabbertoken_issue, _, _, _}) ->
     <<"issue">>;
 do_get_name({xabbertoken_query}) -> <<"query">>;
 do_get_name({xabbertoken_revoke, _}) -> <<"revoke">>;
+do_get_name({xabbertoken_revoke_all}) ->
+    <<"revoke-all">>;
 do_get_name({xabbertoken_x_fields, _}) -> <<"x">>;
 do_get_name({xabbertoken_x_token, _, _, _}) -> <<"x">>.
 
+do_get_ns({xabbertoken_feature}) ->
+    <<"http://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_field, _, _, _, _, _, _}) ->
     <<"http://xabber.com/protocol/auth-tokens#items">>;
 do_get_ns({xabbertoken_issue, _, _, _}) ->
@@ -155,6 +179,8 @@ do_get_ns({xabbertoken_issue, _, _, _}) ->
 do_get_ns({xabbertoken_query}) ->
     <<"http://xabber.com/protocol/auth-tokens#items">>;
 do_get_ns({xabbertoken_revoke, _}) ->
+    <<"http://xabber.com/protocol/auth-tokens">>;
+do_get_ns({xabbertoken_revoke_all}) ->
     <<"http://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_x_fields, _}) ->
     <<"http://xabber.com/protocol/auth-tokens#items">>;
@@ -165,6 +191,8 @@ pp(xabbertoken_issue, 3) -> [client, os, expire];
 pp(xabbertoken_x_token, 3) ->
     [token, token_uid, expire];
 pp(xabbertoken_revoke, 1) -> [token_uid];
+pp(xabbertoken_feature, 0) -> [];
+pp(xabbertoken_revoke_all, 0) -> [];
 pp(xabbertoken_query, 0) -> [];
 pp(xabbertoken_x_fields, 1) -> [field];
 pp(xabbertoken_field, 6) ->
@@ -173,7 +201,8 @@ pp(_, _) -> no.
 
 records() ->
     [{xabbertoken_issue, 3}, {xabbertoken_x_token, 3},
-     {xabbertoken_revoke, 1}, {xabbertoken_query, 0},
+     {xabbertoken_revoke, 1}, {xabbertoken_feature, 0},
+     {xabbertoken_revoke_all, 0}, {xabbertoken_query, 0},
      {xabbertoken_x_fields, 1}, {xabbertoken_field, 6}].
 
 decode_xabbertoken_ip_item(__TopXMLNS, __Opts,
@@ -777,6 +806,34 @@ decode_xabbertoken_cdata(__TopXMLNS, _val) -> _val.
 
 encode_xabbertoken_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
+
+decode_xabbertoken_revoke_all(__TopXMLNS, __Opts,
+			      {xmlel, <<"revoke-all">>, _attrs, _els}) ->
+    {xabbertoken_revoke_all}.
+
+encode_xabbertoken_revoke_all({xabbertoken_revoke_all},
+			      __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"revoke-all">>, _attrs, _els}.
+
+decode_xabbertoken_feature(__TopXMLNS, __Opts,
+			   {xmlel, <<"x-token">>, _attrs, _els}) ->
+    {xabbertoken_feature}.
+
+encode_xabbertoken_feature({xabbertoken_feature},
+			   __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"x-token">>, _attrs, _els}.
 
 decode_xabbertoken_revoke(__TopXMLNS, __Opts,
 			  {xmlel, <<"revoke">>, _attrs, _els}) ->

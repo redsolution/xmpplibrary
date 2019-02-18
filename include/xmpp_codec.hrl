@@ -197,6 +197,9 @@
                     height :: 'undefined' | non_neg_integer()}).
 -type thumbnail() :: #thumbnail{}.
 
+-record(xabbertoken_revoke_all, {}).
+-type xabbertoken_revoke_all() :: #xabbertoken_revoke_all{}.
+
 -record(privilege_perm, {access :: 'message' | 'presence' | 'roster',
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
 -type privilege_perm() :: #privilege_perm{}.
@@ -677,6 +680,9 @@
 
 -record(block_list, {items = [] :: [jid:jid()]}).
 -type block_list() :: #block_list{}.
+
+-record(xabbertoken_feature, {}).
+-type xabbertoken_feature() :: #xabbertoken_feature{}.
 
 -record(upload_request, {filename :: binary(),
                          size :: non_neg_integer(),
@@ -1215,10 +1221,10 @@
                utc :: undefined | erlang:timestamp()}).
 -type time() :: #time{}.
 
--type xmpp_element() :: block_domain() |
-                        compression() |
+-type xmpp_element() :: ps_subscription() |
                         xabbergroupchat_restriction() |
-                        ps_subscription() |
+                        block_domain() |
+                        compression() |
                         xdata_option() |
                         version() |
                         sm_a() |
@@ -1251,6 +1257,7 @@
                         muc_subscriptions() |
                         adhoc_actions() |
                         feature_csi() |
+                        xabbertoken_revoke_all() |
                         thumbnail() |
                         avatar_info() |
                         vcard_geo() |
@@ -1267,6 +1274,7 @@
                         sasl_failure() |
                         vcard_name() |
                         adhoc_note() |
+                        xabbertoken_feature() |
                         push_disable() |
                         legacy_auth_feature() |
                         rosterver_feature() |

@@ -80,6 +80,15 @@ do_decode(<<"nickname">>,
 	  Opts) ->
     decode_xabbergroupchat_user_nickname(<<"http://xabber.com/protocol/groupchat#members">>,
 					 Opts, El);
+do_decode(<<"subscription">>,
+	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
+    decode_xabbergroupchat_subscription(<<"http://xabber.com/protocol/groupchat">>,
+					Opts, El);
+do_decode(<<"subscription">>,
+	  <<"http://xabber.com/protocol/groupchat#members">>, El,
+	  Opts) ->
+    decode_xabbergroupchat_subscription(<<"http://xabber.com/protocol/groupchat#members">>,
+					Opts, El);
 do_decode(<<"role">>,
 	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
     decode_xabbergroupchat_user_role(<<"http://xabber.com/protocol/groupchat">>,
@@ -361,6 +370,10 @@ tags() ->
      {<<"nickname">>,
       <<"http://xabber.com/protocol/groupchat">>},
      {<<"nickname">>,
+      <<"http://xabber.com/protocol/groupchat#members">>},
+     {<<"subscription">>,
+      <<"http://xabber.com/protocol/groupchat">>},
+     {<<"subscription">>,
       <<"http://xabber.com/protocol/groupchat#members">>},
      {<<"role">>,
       <<"http://xabber.com/protocol/groupchat">>},
@@ -1683,6 +1696,52 @@ encode_xabbergroupchat_user_nickname_cdata(<<>>,
     _acc;
 encode_xabbergroupchat_user_nickname_cdata(_val,
 					   _acc) ->
+    [{xmlcdata, _val} | _acc].
+
+decode_xabbergroupchat_subscription(__TopXMLNS, __Opts,
+				    {xmlel, <<"subscription">>, _attrs,
+				     _els}) ->
+    Cdata =
+	decode_xabbergroupchat_subscription_els(__TopXMLNS,
+						__Opts, _els, <<>>),
+    Cdata.
+
+decode_xabbergroupchat_subscription_els(__TopXMLNS,
+					__Opts, [], Cdata) ->
+    decode_xabbergroupchat_subscription_cdata(__TopXMLNS,
+					      Cdata);
+decode_xabbergroupchat_subscription_els(__TopXMLNS,
+					__Opts, [{xmlcdata, _data} | _els],
+					Cdata) ->
+    decode_xabbergroupchat_subscription_els(__TopXMLNS,
+					    __Opts, _els,
+					    <<Cdata/binary, _data/binary>>);
+decode_xabbergroupchat_subscription_els(__TopXMLNS,
+					__Opts, [_ | _els], Cdata) ->
+    decode_xabbergroupchat_subscription_els(__TopXMLNS,
+					    __Opts, _els, Cdata).
+
+encode_xabbergroupchat_subscription(Cdata,
+				    __TopXMLNS) ->
+    __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
+						[<<"http://xabber.com/protocol/groupchat">>,
+						 <<"http://xabber.com/protocol/groupchat#members">>],
+						__TopXMLNS),
+    _els = encode_xabbergroupchat_subscription_cdata(Cdata,
+						     []),
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"subscription">>, _attrs, _els}.
+
+decode_xabbergroupchat_subscription_cdata(__TopXMLNS,
+					  <<>>) ->
+    erlang:error({xmpp_codec,
+		  {missing_cdata, <<>>, <<"subscription">>, __TopXMLNS}});
+decode_xabbergroupchat_subscription_cdata(__TopXMLNS,
+					  _val) ->
+    _val.
+
+encode_xabbergroupchat_subscription_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_xabbergroupchat_user_role(__TopXMLNS, __Opts,

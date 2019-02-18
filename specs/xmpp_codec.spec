@@ -4212,6 +4212,21 @@
                              ]
                              }
 ).
+
+-xml(xabbertoken_feature,
+     #elem{
+     name = <<"x-token">>,
+     xmlns = <<"http://xabber.com/protocol/auth-tokens">>,
+     module = 'xabbertoken',
+     result = {xabbertoken_feature}}).
+
+-xml(xabbertoken_revoke_all,
+     #elem{
+     name = <<"revoke-all">>,
+     xmlns = <<"http://xabber.com/protocol/auth-tokens">>,
+     module = 'xabbertoken',
+     result = {xabbertoken_revoke_all}}).
+
 -xml(xabbertoken,
     #elem{name = <<"token">>,
     xmlns = <<"http://xabber.com/protocol/auth-tokens">>,
@@ -4830,6 +4845,14 @@
 
 -xml(xabbergroupchat_user_role,
      #elem{name = <<"role">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#members">>],
+	   module = 'xabbergroupchat',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(xabbergroupchat_subscription,
+     #elem{name = <<"subscription">>,
      xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#members">>],
 	   module = 'xabbergroupchat',
      result = '$cdata',
