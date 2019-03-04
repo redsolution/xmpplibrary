@@ -1130,6 +1130,8 @@
                             domains :: 'undefined' | #xabbergroup_domains{},
                             contacts :: 'undefined' | #xabbergroup_contacts{},
                             user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
+                            members :: 'undefined' | binary(),
+                            present :: 'undefined' | binary(),
                             by_user :: 'undefined' | #xabbergroupchat_user_card{},
                             body :: 'undefined' | #body_x{}}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.

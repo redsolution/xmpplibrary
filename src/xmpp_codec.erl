@@ -945,6 +945,9 @@ get_mod(<<"x">>,
 get_mod(<<"restriction">>,
 	<<"http://xabber.com/protocol/groupchat#rights">>) ->
     xabbergroupchat;
+get_mod(<<"present">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"search">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -1132,6 +1135,9 @@ get_mod(<<"unsupported-encoding">>,
 get_mod(<<"stream:error">>,
 	<<"jabber:component:accept">>) ->
     rfc6120;
+get_mod(<<"members">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"subject">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"text">>,
@@ -1700,6 +1706,9 @@ get_mod({carbons_enable}) -> xep0280;
 get_mod({carbons_private}) -> xep0280;
 get_mod({mix_leave}) -> xep0369;
 get_mod({avatar_info, _, _, _, _, _, _}) -> xep0084;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _, _, _, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({xabbergroupchat_search, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({privacy_list, _, _}) -> xep0016;
@@ -1821,9 +1830,6 @@ get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
-get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	 _, _, _, _, _, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({unblock, _}) -> xep0191;
 get_mod({stat_error, _, _}) -> xep0039;
 get_mod({sasl_abort}) -> rfc6120;
