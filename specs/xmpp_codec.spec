@@ -4985,6 +4985,175 @@
 	   result = '$cdata',
 	   cdata = #cdata{label = '$cdata'}}).
 
+-xml(xabbergroupchat_disclosured,
+     #elem{name = <<"disclosured">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = {disclosured, '$user_card'},
+     refs = [
+     #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'}
+     ]
+     }).
+
+-xml(xabbergroupchat_disclosure,
+     #elem{name = <<"disclosure">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = {disclosure, '$recipient', '$reason'},
+     refs = [
+     #ref{name = xabbergroupchat_recipient, min = 0, max =1, label = '$recipient'},
+     #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}
+     ]
+     }).
+
+-xml(xabbergroupchat_recipient,
+     #elem{name = <<"recipient">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = {recipient, '$id'},
+	   attrs = [#attr{name = <<"id">>}]
+	   }).
+
+-xml(xabbergroupchat_reason,
+     #elem{name = <<"reason">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+	   result = '$cdata',
+	   cdata = #cdata{label = '$cdata'}}).
+
+-xml(xabber_retract_message,
+     #elem{name = <<"retract-message">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+     result = {xabber_retract_message, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation'},
+     attrs = [
+              #attr{name = <<"xmlns">>},
+              #attr{name = <<"id">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"version">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"conversation">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}
+              },
+              #attr{name = <<"symmetric">>,
+              enc = {enc_bool, []},
+              dec = {dec_bool, []}
+              },
+              #attr{name = <<"by">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}}
+              ]
+     }).
+
+-xml(xabber_retract_all,
+     #elem{name = <<"retract-all">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+     result = {xabber_retract_all, '$xmlns', '$symmetric', '$version', '$conversation'},
+     attrs = [
+              #attr{name = <<"xmlns">>},
+              #attr{name = <<"version">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"conversation">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}
+              },
+              #attr{name = <<"symmetric">>,
+              enc = {enc_bool, []},
+              dec = {dec_bool, []}
+              }
+              ]
+     }).
+
+-xml(xabber_replace,
+     #elem{name = <<"replace">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$xabber_replace_message'},
+     attrs = [
+              #attr{name = <<"xmlns">>},
+              #attr{name = <<"id">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"version">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"conversation">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}
+              },
+              #attr{name = <<"by">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}}
+              ],
+     refs = [#ref{name = xabber_replace_message, min = 0, max = 1, label = '$xabber_replace_message'}]
+     }).
+
+-xml(xabber_replace_message,
+     #elem{name = <<"message">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+     result = {xabber_replace_message, '$from', '$to', '$body', '$stanza_id', '$replaced'},
+            attrs = [#attr{name = <<"from">>,
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}},
+                        #attr{name = <<"to">>,
+                          dec = {jid, decode, []},
+                          enc = {jid, encode, []}}
+                        ],
+     refs = [#ref{name = xabber_replace_message_body, min = 0, max = 1, label = '$body'},
+             #ref{name = stanza_id, min = 0, max = 1, label = '$stanza_id'},
+             #ref{name = xabber_replaced, min = 0, max = 1, label = '$replaced'}
+     ]}).
+
+-xml(xabber_replace_message_body,
+     #elem{name = <<"body">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+	   result = '$cdata',
+	   cdata = #cdata{label = '$cdata'}}).
+
+-xml(xabber_replaced,
+     #elem{name = <<"replaced">>,
+           xmlns = <<"http://xabber.com/protocol/rewrite">>,
+	   module = 'unique',
+           result = {replaced, '$stamp'},
+           attrs = [#attr{name = <<"stamp">>,
+                          required = true,
+                          dec = {dec_utc, []},
+                          enc = {enc_utc, []}}
+                    ]}).
+
+-xml(xabber_retract_activate,
+     #elem{name = <<"activate">>,
+     xmlns = <<"http://xabber.com/protocol/rewrite">>,
+	   module = 'xabberrewrite',
+     result = {xabber_retract_activate, '$version', '$less-than'},
+     attrs = [#attr{name = <<"version">>,
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}},
+              #attr{name = <<"less-than">>,
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}}
+              ]
+     }).
+
+-xml(xabber_retract_invalidate,
+     #elem{name = <<"invalidate">>,
+     xmlns = <<"http://xabber.com/protocol/rewrite#notify">>,
+	   module = 'xabberrewrite',
+     result = {xabber_retract_invalidate, '$version'},
+     attrs = [
+     #attr{name = <<"version">>,
+                     dec = {dec_int, [0, infinity]},
+                     enc = {enc_int, []}}
+     ]
+     }).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
