@@ -621,8 +621,8 @@
                                     avatar :: 'undefined' | #avatar_meta{}}).
 -type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
 
--record(disclosured, {user_card :: 'undefined' | #xabbergroupchat_user_card{}}).
--type disclosured() :: #disclosured{}.
+-record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{}}).
+-type disclosed() :: #disclosed{}.
 
 -record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).
 -type xabbergroupchat_kicked() :: #xabbergroupchat_kicked{}.
@@ -1279,6 +1279,7 @@
                         xdata_option() |
                         version() |
                         sm_a() |
+                        disclosed() |
                         replaced() |
                         carbons_sent() |
                         mam_archived() |
@@ -1465,7 +1466,6 @@
                         hint() |
                         stream_start() |
                         xabbergroupchat_replaced() |
-                        disclosured() |
                         shim() |
                         search_item() |
                         offline_item() |

@@ -4985,11 +4985,11 @@
 	   result = '$cdata',
 	   cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_disclosured,
-     #elem{name = <<"disclosured">>,
+-xml(xabbergroupchat_disclosed,
+     #elem{name = <<"disclosed">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-	   result = {disclosured, '$user_card'},
+	   result = {disclosed, '$user_card'},
      refs = [
      #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'}
      ]

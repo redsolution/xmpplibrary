@@ -702,6 +702,9 @@ get_mod(<<"unsupported-access-model">>,
 get_mod(<<"ip">>, <<"urn:xmpp:sic:1">>) -> xep0279;
 get_mod(<<"attribute">>, <<"urn:xmpp:delegation:1">>) ->
     xep0355;
+get_mod(<<"disclosed">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"status">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"query">>, <<"jabber:iq:register">>) ->
@@ -1401,9 +1404,6 @@ get_mod(<<"ip">>,
 get_mod(<<"badge">>,
 	<<"http://xabber.com/protocol/groupchat#members">>) ->
     xabbergroupchat;
-get_mod(<<"disclosured">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"storage">>, <<"storage:bookmarks">>) ->
     xep0048;
 get_mod(<<"LINE">>, <<"vcard-temp">>) -> xep0054;
@@ -1710,6 +1710,7 @@ get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
 get_mod({origin_id, _}) -> xep0359;
 get_mod({xabbergroupchat_kicked, _}) -> xabbergroupchat;
+get_mod({disclosed, _}) -> xabbergroupchat;
 get_mod({replaced, _}) -> unique;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
@@ -1938,7 +1939,6 @@ get_mod({xabbergroupchat_user_updated, _}) ->
     xabbergroupchat;
 get_mod({xabbergroupchat_replaced, _}) ->
     xabbergroupchat;
-get_mod({disclosured, _}) -> xabbergroupchat;
 get_mod({private, _}) -> xep0049;
 get_mod({sasl_challenge, _}) -> rfc6120;
 get_mod({compress_failure, _}) -> xep0138;
