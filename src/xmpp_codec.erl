@@ -915,6 +915,9 @@ get_mod(<<"enable">>, <<"urn:xmpp:carbons:2">>) ->
 get_mod(<<"id">>,
 	<<"http://xabber.com/protocol/groupchat#block">>) ->
     xabbergroupchat;
+get_mod(<<"retract-user">>,
+	<<"http://xabber.com/protocol/rewrite#notify">>) ->
+    xabberrewrite;
 get_mod(<<"block">>, <<"urn:xmpp:blocking">>) ->
     xep0191;
 get_mod(<<"delete">>,
@@ -1067,6 +1070,9 @@ get_mod(<<"private">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
 get_mod(<<"privilege">>, <<"urn:xmpp:privilege:1">>) ->
     xep0356;
+get_mod(<<"retract-user">>,
+	<<"http://xabber.com/protocol/rewrite">>) ->
+    xabberrewrite;
 get_mod(<<"show">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"PAGER">>, <<"vcard-temp">>) -> xep0054;
@@ -1925,6 +1931,8 @@ get_mod({expire, _, _}) -> xep0023;
 get_mod({privilege, _, _}) -> xep0356;
 get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
+get_mod({xabber_retract_user, _, _, _, _, _, _}) ->
+    xabberrewrite;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({xabbertoken_x_token, _, _, _}) -> xabbertoken;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;

@@ -41,6 +41,15 @@ do_decode(<<"replace">>,
 	  Opts) ->
     decode_xabber_replace(<<"http://xabber.com/protocol/rewrite#notify">>,
 			  Opts, El);
+do_decode(<<"retract-user">>,
+	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_retract_user(<<"http://xabber.com/protocol/rewrite">>,
+			       Opts, El);
+do_decode(<<"retract-user">>,
+	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  Opts) ->
+    decode_xabber_retract_user(<<"http://xabber.com/protocol/rewrite#notify">>,
+			       Opts, El);
 do_decode(<<"retract-all">>,
 	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
     decode_xabber_retract_all(<<"http://xabber.com/protocol/rewrite">>,
@@ -80,6 +89,10 @@ tags() ->
       <<"http://xabber.com/protocol/rewrite">>},
      {<<"replace">>,
       <<"http://xabber.com/protocol/rewrite#notify">>},
+     {<<"retract-user">>,
+      <<"http://xabber.com/protocol/rewrite">>},
+     {<<"retract-user">>,
+      <<"http://xabber.com/protocol/rewrite#notify">>},
      {<<"retract-all">>,
       <<"http://xabber.com/protocol/rewrite">>},
      {<<"retract-all">>,
@@ -98,6 +111,10 @@ do_encode({xabber_retract_all, _, _, _, _} =
 	      Retract_all,
 	  TopXMLNS) ->
     encode_xabber_retract_all(Retract_all, TopXMLNS);
+do_encode({xabber_retract_user, _, _, _, _, _, _} =
+	      Retract_user,
+	  TopXMLNS) ->
+    encode_xabber_retract_user(Retract_user, TopXMLNS);
 do_encode({xabber_replace, _, _, _, _, _, _} = Replace,
 	  TopXMLNS) ->
     encode_xabber_replace(Replace, TopXMLNS);
@@ -124,7 +141,9 @@ do_get_name({xabber_retract_invalidate, _}) ->
     <<"invalidate">>;
 do_get_name({xabber_retract_message, _, _, _, _, _,
 	     _}) ->
-    <<"retract-message">>.
+    <<"retract-message">>;
+do_get_name({xabber_retract_user, _, _, _, _, _, _}) ->
+    <<"retract-user">>.
 
 do_get_ns({xabber_replace, Xmlns, _, _, _, _, _}) ->
     Xmlns;
@@ -138,12 +157,17 @@ do_get_ns({xabber_retract_invalidate, _}) ->
     <<"http://xabber.com/protocol/rewrite#notify">>;
 do_get_ns({xabber_retract_message, Xmlns, _, _, _, _,
 	   _}) ->
+    Xmlns;
+do_get_ns({xabber_retract_user, Xmlns, _, _, _, _,
+	   _}) ->
     Xmlns.
 
 pp(xabber_retract_message, 6) ->
     [xmlns, id, by, symmetric, version, conversation];
 pp(xabber_retract_all, 4) ->
     [xmlns, symmetric, version, conversation];
+pp(xabber_retract_user, 6) ->
+    [xmlns, id, by, symmetric, version, conversation];
 pp(xabber_replace, 6) ->
     [xmlns, id, by, version, conversation,
      xabber_replace_message];
@@ -156,7 +180,8 @@ pp(_, _) -> no.
 
 records() ->
     [{xabber_retract_message, 6}, {xabber_retract_all, 4},
-     {xabber_replace, 6}, {xabber_replace_message, 5},
+     {xabber_retract_user, 6}, {xabber_replace, 6},
+     {xabber_replace_message, 5},
      {xabber_retract_activate, 2},
      {xabber_retract_invalidate, 1}].
 
@@ -707,6 +732,178 @@ decode_xabber_replace_attr_by(__TopXMLNS, _val) ->
 
 encode_xabber_replace_attr_by(undefined, _acc) -> _acc;
 encode_xabber_replace_attr_by(_val, _acc) ->
+    [{<<"by">>, jid:encode(_val)} | _acc].
+
+decode_xabber_retract_user(__TopXMLNS, __Opts,
+			   {xmlel, <<"retract-user">>, _attrs, _els}) ->
+    {Xmlns, Id, Version, Conversation, Symmetric, By} =
+	decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+					 undefined, undefined, undefined,
+					 undefined, undefined, undefined),
+    {xabber_retract_user, Xmlns, Id, By, Symmetric, Version,
+     Conversation}.
+
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"xmlns">>, _val} | _attrs], _Xmlns, Id,
+				 Version, Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     _val, Id, Version, Conversation, Symmetric,
+				     By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"id">>, _val} | _attrs], Xmlns, _Id,
+				 Version, Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, _val, Version, Conversation,
+				     Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"version">>, _val} | _attrs], Xmlns, Id,
+				 _Version, Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, Id, _val, Conversation, Symmetric,
+				     By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"conversation">>, _val} | _attrs], Xmlns,
+				 Id, Version, _Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, Id, Version, _val, Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"symmetric">>, _val} | _attrs], Xmlns, Id,
+				 Version, Conversation, _Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, Id, Version, Conversation, _val,
+				     By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"by">>, _val} | _attrs], Xmlns, Id,
+				 Version, Conversation, Symmetric, _By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, Id, Version, Conversation,
+				     Symmetric, _val);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [_ | _attrs], Xmlns, Id, Version, Conversation,
+				 Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Xmlns, Id, Version, Conversation,
+				     Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS, [], Xmlns,
+				 Id, Version, Conversation, Symmetric, By) ->
+    {decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
+					   Xmlns),
+     decode_xabber_retract_user_attr_id(__TopXMLNS, Id),
+     decode_xabber_retract_user_attr_version(__TopXMLNS,
+					     Version),
+     decode_xabber_retract_user_attr_conversation(__TopXMLNS,
+						  Conversation),
+     decode_xabber_retract_user_attr_symmetric(__TopXMLNS,
+					       Symmetric),
+     decode_xabber_retract_user_attr_by(__TopXMLNS, By)}.
+
+encode_xabber_retract_user({xabber_retract_user, Xmlns,
+			    Id, By, Symmetric, Version, Conversation},
+			   __TopXMLNS) ->
+    __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
+						[<<"http://xabber.com/protocol/rewrite">>,
+						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						__TopXMLNS),
+    _els = [],
+    _attrs = encode_xabber_retract_user_attr_by(By,
+						encode_xabber_retract_user_attr_symmetric(Symmetric,
+											  encode_xabber_retract_user_attr_conversation(Conversation,
+																       encode_xabber_retract_user_attr_version(Version,
+																					       encode_xabber_retract_user_attr_id(Id,
+																										  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																													     __TopXMLNS)))))),
+    {xmlel, <<"retract-user">>, _attrs, _els}.
+
+decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
+				      undefined) ->
+    <<>>;
+decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
+				      _val) ->
+    _val.
+
+decode_xabber_retract_user_attr_id(__TopXMLNS,
+				   undefined) ->
+    <<>>;
+decode_xabber_retract_user_attr_id(__TopXMLNS, _val) ->
+    _val.
+
+encode_xabber_retract_user_attr_id(<<>>, _acc) -> _acc;
+encode_xabber_retract_user_attr_id(_val, _acc) ->
+    [{<<"id">>, _val} | _acc].
+
+decode_xabber_retract_user_attr_version(__TopXMLNS,
+					undefined) ->
+    undefined;
+decode_xabber_retract_user_attr_version(__TopXMLNS,
+					_val) ->
+    case catch dec_int(_val, 0, infinity) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"version">>, <<"retract-user">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabber_retract_user_attr_version(undefined,
+					_acc) ->
+    _acc;
+encode_xabber_retract_user_attr_version(_val, _acc) ->
+    [{<<"version">>, enc_int(_val)} | _acc].
+
+decode_xabber_retract_user_attr_conversation(__TopXMLNS,
+					     undefined) ->
+    undefined;
+decode_xabber_retract_user_attr_conversation(__TopXMLNS,
+					     _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"conversation">>, <<"retract-user">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabber_retract_user_attr_conversation(undefined,
+					     _acc) ->
+    _acc;
+encode_xabber_retract_user_attr_conversation(_val,
+					     _acc) ->
+    [{<<"conversation">>, jid:encode(_val)} | _acc].
+
+decode_xabber_retract_user_attr_symmetric(__TopXMLNS,
+					  undefined) ->
+    undefined;
+decode_xabber_retract_user_attr_symmetric(__TopXMLNS,
+					  _val) ->
+    case catch dec_bool(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"symmetric">>, <<"retract-user">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabber_retract_user_attr_symmetric(undefined,
+					  _acc) ->
+    _acc;
+encode_xabber_retract_user_attr_symmetric(_val, _acc) ->
+    [{<<"symmetric">>, enc_bool(_val)} | _acc].
+
+decode_xabber_retract_user_attr_by(__TopXMLNS,
+				   undefined) ->
+    undefined;
+decode_xabber_retract_user_attr_by(__TopXMLNS, _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"by">>, <<"retract-user">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabber_retract_user_attr_by(undefined, _acc) ->
+    _acc;
+encode_xabber_retract_user_attr_by(_val, _acc) ->
     [{<<"by">>, jid:encode(_val)} | _acc].
 
 decode_xabber_retract_all(__TopXMLNS, __Opts,

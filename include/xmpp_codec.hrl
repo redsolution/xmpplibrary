@@ -384,6 +384,14 @@
 -record(sm_r, {xmlns = <<>> :: binary()}).
 -type sm_r() :: #sm_r{}.
 
+-record(xabber_retract_user, {xmlns = <<>> :: binary(),
+                              id = <<>> :: binary(),
+                              by :: undefined | jid:jid(),
+                              symmetric :: 'false' | 'true' | 'undefined',
+                              version :: 'undefined' | non_neg_integer(),
+                              conversation :: undefined | jid:jid()}).
+-type xabber_retract_user() :: #xabber_retract_user{}.
+
 -record(muc_actor, {jid :: undefined | jid:jid(),
                     nick = <<>> :: binary()}).
 -type muc_actor() :: #muc_actor{}.
@@ -1418,6 +1426,7 @@
                         feature_register() |
                         register() |
                         avatar_pointer() |
+                        xabber_retract_user() |
                         muc_user() |
                         vcard_adr() |
                         sasl_response() |
@@ -1453,8 +1462,8 @@
                         muc_admin() |
                         ps_affiliation() |
                         mam_fin() |
-                        bob_data() |
                         media() |
+                        bob_data() |
                         stanza_id() |
                         starttls_proceed() |
                         forwarded() |

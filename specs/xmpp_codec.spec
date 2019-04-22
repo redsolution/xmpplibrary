@@ -5069,6 +5069,31 @@
               ]
      }).
 
+-xml(xabber_retract_user,
+     #elem{name = <<"retract-user">>,
+     xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
+	   module = 'xabberrewrite',
+     result = {xabber_retract_user, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation'},
+     attrs = [
+              #attr{name = <<"xmlns">>},
+              #attr{name = <<"id">>},
+              #attr{name = <<"version">>,
+              dec = {dec_int, [0, infinity]},
+              enc = {enc_int, []}},
+              #attr{name = <<"conversation">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}
+              },
+              #attr{name = <<"symmetric">>,
+              enc = {enc_bool, []},
+              dec = {dec_bool, []}
+              },
+              #attr{name = <<"by">>,
+              dec = {jid, decode, []},
+              enc = {jid, encode, []}}
+              ]
+     }).
+
 -xml(xabber_replace,
      #elem{name = <<"replace">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
