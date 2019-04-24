@@ -1777,7 +1777,6 @@ get_mod({stanza_id, _, _}) -> xep0359;
 get_mod({delegated, _, _}) -> xep0355;
 get_mod({xabbergroup_unblock, _, _, _}) ->
     xabbergroupchat;
-get_mod({disclosed, _, _}) -> xabbergroupchat;
 get_mod({bookmark_storage, _, _}) -> xep0048;
 get_mod({sasl_failure, _, _}) -> rfc6120;
 get_mod({xmpp_session, _}) -> rfc3921;
@@ -1791,7 +1790,6 @@ get_mod({push_notification, _}) -> xep0357;
 get_mod({unique_time, _, _}) -> unique;
 get_mod({xabbergroupchat_retract_message, _, _}) ->
     xabbergroupchat;
-get_mod({disclosure, _, _}) -> xabbergroupchat;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({stat, _, _, _, _}) -> xep0039;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
@@ -1876,6 +1874,7 @@ get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
 get_mod({upload_slot, _, _, _}) -> xep0363;
+get_mod({disclosed, _, _, _}) -> xabbergroupchat;
 get_mod({muc_decline, _, _, _}) -> xep0045;
 get_mod({sm_enable, _, _, _}) -> xep0198;
 get_mod({offline, _, _, _}) -> xep0013;
@@ -1887,6 +1886,7 @@ get_mod({xabbergroupchat_permission, _, _}) ->
     xabbergroupchat;
 get_mod({xabbergroupchat_replace, _, _, _}) ->
     xabbergroupchat;
+get_mod({disclosure, _, _, _}) -> xabbergroupchat;
 get_mod({xabber_retract_all, _, _, _, _}) ->
     xabberrewrite;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;

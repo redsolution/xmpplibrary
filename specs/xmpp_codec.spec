@@ -4989,7 +4989,8 @@
      #elem{name = <<"disclosed">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-	   result = {disclosed, '$user_card', '$reason'},
+	   result = {disclosed, '$user_card', '$reason', '$type'},
+	   	 attrs = [#attr{name = <<"type">>}],
      refs = [
      #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'},
      #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}
@@ -5000,7 +5001,8 @@
      #elem{name = <<"disclosure">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-	   result = {disclosure, '$recipient', '$reason'},
+	   result = {disclosure, '$recipient', '$reason', '$type'},
+	   	 attrs = [#attr{name = <<"type">>}],
      refs = [
      #ref{name = xabbergroupchat_recipient, min = 0, max =1, label = '$recipient'},
      #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}

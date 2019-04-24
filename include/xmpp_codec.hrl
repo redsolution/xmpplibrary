@@ -456,7 +456,8 @@
 -type xabber_retract_activate() :: #xabber_retract_activate{}.
 
 -record(disclosure, {recipient :: 'undefined' | #recipient{},
-                     reason :: 'undefined' | binary()}).
+                     reason :: 'undefined' | binary(),
+                     type = <<>> :: binary()}).
 -type disclosure() :: #disclosure{}.
 
 -record(xabbergroupchat_retract_invalidate, {version = <<>> :: binary()}).
@@ -630,7 +631,8 @@
 -type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
 
 -record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{},
-                    reason :: 'undefined' | binary()}).
+                    reason :: 'undefined' | binary(),
+                    type = <<>> :: binary()}).
 -type disclosed() :: #disclosed{}.
 
 -record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).
