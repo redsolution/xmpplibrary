@@ -651,7 +651,7 @@ do_encode({xabbergroupchat_replace_message, _, _, _,
 	  TopXMLNS) ->
     encode_xabbergroupchat_replace_message(Message,
 					   TopXMLNS);
-do_encode({disclosed, _} = Disclosed, TopXMLNS) ->
+do_encode({disclosed, _, _} = Disclosed, TopXMLNS) ->
     encode_xabbergroupchat_disclosed(Disclosed, TopXMLNS);
 do_encode({disclosure, _, _} = Disclosure, TopXMLNS) ->
     encode_xabbergroupchat_disclosure(Disclosure, TopXMLNS);
@@ -663,7 +663,7 @@ do_get_name({block_id, _}) -> <<"id">>;
 do_get_name({block_jid, _}) -> <<"jid">>;
 do_get_name({body_x, _, _}) -> <<"body">>;
 do_get_name({collect, _}) -> <<"collect">>;
-do_get_name({disclosed, _}) -> <<"disclosed">>;
+do_get_name({disclosed, _, _}) -> <<"disclosed">>;
 do_get_name({disclosure, _, _}) -> <<"disclosure">>;
 do_get_name({recipient, _}) -> <<"recipient">>;
 do_get_name({x_not_present}) -> <<"x">>;
@@ -743,7 +743,7 @@ do_get_ns({body_x, _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({collect, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
-do_get_ns({disclosed, _}) ->
+do_get_ns({disclosed, _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({disclosure, _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
@@ -871,7 +871,7 @@ pp(xabbergroupchat_replace, 3) ->
     [id, version, message];
 pp(xabbergroupchat_replace_message, 4) ->
     [from, to, body, replaced];
-pp(disclosed, 1) -> [user_card];
+pp(disclosed, 2) -> [user_card, reason];
 pp(disclosure, 2) -> [recipient, reason];
 pp(recipient, 1) -> [id];
 pp(_, _) -> no.
@@ -903,7 +903,7 @@ records() ->
      {xabbergroupchat_retract_invalidate, 1},
      {xabbergroupchat_replaced, 1},
      {xabbergroupchat_replace, 3},
-     {xabbergroupchat_replace_message, 4}, {disclosed, 1},
+     {xabbergroupchat_replace_message, 4}, {disclosed, 2},
      {disclosure, 2}, {recipient, 1}].
 
 decode_xabbergroupchat_reason(__TopXMLNS, __Opts,
@@ -1071,18 +1071,18 @@ encode_xabbergroupchat_disclosure({disclosure,
 
 decode_xabbergroupchat_disclosed(__TopXMLNS, __Opts,
 				 {xmlel, <<"disclosed">>, _attrs, _els}) ->
-    User_card =
+    {User_card, Reason} =
 	decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
-					     _els, undefined),
-    {disclosed, User_card}.
+					     _els, undefined, undefined),
+    {disclosed, User_card, Reason}.
 
 decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
-				     [], User_card) ->
-    User_card;
+				     [], User_card, Reason) ->
+    {User_card, Reason};
 decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"user">>, _attrs, _} = _el
 				      | _els],
-				     User_card) ->
+				     User_card, Reason) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1091,17 +1091,36 @@ decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
 					       _els,
 					       decode_xabbergroupchat_user_card(<<"http://xabber.com/protocol/groupchat">>,
 										__Opts,
-										_el));
+										_el),
+					       Reason);
       _ ->
 	  decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
-					       _els, User_card)
+					       _els, User_card, Reason)
     end;
 decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
-				     [_ | _els], User_card) ->
+				     [{xmlel, <<"reason">>, _attrs, _} = _el
+				      | _els],
+				     User_card, Reason) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"http://xabber.com/protocol/groupchat">> ->
+	  decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
+					       _els, User_card,
+					       decode_xabbergroupchat_reason(<<"http://xabber.com/protocol/groupchat">>,
+									     __Opts,
+									     _el));
+      _ ->
+	  decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
+					       _els, User_card, Reason)
+    end;
+decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
+				     [_ | _els], User_card, Reason) ->
     decode_xabbergroupchat_disclosed_els(__TopXMLNS, __Opts,
-					 _els, User_card).
+					 _els, User_card, Reason).
 
-encode_xabbergroupchat_disclosed({disclosed, User_card},
+encode_xabbergroupchat_disclosed({disclosed, User_card,
+				  Reason},
 				 __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat">>,
@@ -1109,7 +1128,9 @@ encode_xabbergroupchat_disclosed({disclosed, User_card},
     _els =
 	lists:reverse('encode_xabbergroupchat_disclosed_$user_card'(User_card,
 								    __NewTopXMLNS,
-								    [])),
+								    'encode_xabbergroupchat_disclosed_$reason'(Reason,
+													       __NewTopXMLNS,
+													       []))),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"disclosed">>, _attrs, _els}.
@@ -1120,6 +1141,14 @@ encode_xabbergroupchat_disclosed({disclosed, User_card},
 'encode_xabbergroupchat_disclosed_$user_card'(User_card,
 					      __TopXMLNS, _acc) ->
     [encode_xabbergroupchat_user_card(User_card, __TopXMLNS)
+     | _acc].
+
+'encode_xabbergroupchat_disclosed_$reason'(undefined,
+					   __TopXMLNS, _acc) ->
+    _acc;
+'encode_xabbergroupchat_disclosed_$reason'(Reason,
+					   __TopXMLNS, _acc) ->
+    [encode_xabbergroupchat_reason(Reason, __TopXMLNS)
      | _acc].
 
 decode_xabbergroupchat_replace_message_body(__TopXMLNS,

@@ -4989,9 +4989,10 @@
      #elem{name = <<"disclosed">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-	   result = {disclosed, '$user_card'},
+	   result = {disclosed, '$user_card', '$reason'},
      refs = [
-     #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'}
+     #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'},
+     #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}
      ]
      }).
 

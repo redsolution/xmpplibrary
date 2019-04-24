@@ -629,7 +629,8 @@
                                     avatar :: 'undefined' | #avatar_meta{}}).
 -type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
 
--record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{}}).
+-record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{},
+                    reason :: 'undefined' | binary()}).
 -type disclosed() :: #disclosed{}.
 
 -record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).

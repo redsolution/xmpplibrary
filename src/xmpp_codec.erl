@@ -1716,7 +1716,6 @@ get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
 get_mod({origin_id, _}) -> xep0359;
 get_mod({xabbergroupchat_kicked, _}) -> xabbergroupchat;
-get_mod({disclosed, _}) -> xabbergroupchat;
 get_mod({replaced, _}) -> unique;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
@@ -1778,6 +1777,7 @@ get_mod({stanza_id, _, _}) -> xep0359;
 get_mod({delegated, _, _}) -> xep0355;
 get_mod({xabbergroup_unblock, _, _, _}) ->
     xabbergroupchat;
+get_mod({disclosed, _, _}) -> xabbergroupchat;
 get_mod({bookmark_storage, _, _}) -> xep0048;
 get_mod({sasl_failure, _, _}) -> rfc6120;
 get_mod({xmpp_session, _}) -> rfc3921;
