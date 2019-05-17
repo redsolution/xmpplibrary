@@ -97,6 +97,8 @@
 		       'no-permanent-store' | 'no-permanent-storage'}).
 -type hint() :: #hint{}.
 
+-type reference_type() :: data | mention | groupchat | forward | legacy.
+
 -record(avatar_data, {data = <<>> :: binary()}).
 -type avatar_data() :: #avatar_data{}.
 
@@ -135,7 +137,8 @@
                     data = <<>> :: binary()}).
 -type rsm_first() :: #rsm_first{}.
 
--record(replaced, {stamp :: erlang:timestamp()}).
+-record(replaced, {stamp :: erlang:timestamp(),
+                   body = <<>> :: binary()}).
 -type replaced() :: #replaced{}.
 
 -record(recipient, {id = <<>> :: binary()}).
@@ -296,6 +299,13 @@
                     resume = false :: boolean(),
                     xmlns = <<>> :: binary()}).
 -type sm_enable() :: #sm_enable{}.
+
+-record(xmppreference, {type :: 'data' | 'forward' | 'groupchat' | 'legacy' | 'mention',
+                        uri = <<>> :: binary(),
+                        'begin' :: 'undefined' | non_neg_integer(),
+                        'end' :: 'undefined' | non_neg_integer(),
+                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type xmppreference() :: #xmppreference{}.
 
 -record(starttls_failure, {}).
 -type starttls_failure() :: #starttls_failure{}.
@@ -1163,23 +1173,9 @@
                                  contacts :: 'undefined' | #xabbergroup_contacts{}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
--record(xabbergroupchat_update, {name :: 'undefined' | binary(),
-                                 description :: 'undefined' | binary(),
-                                 model :: 'undefined' | binary(),
-                                 searchable :: 'undefined' | binary(),
-                                 owner :: 'undefined' | {binary()},
-                                 pinned :: 'undefined' | binary(),
-                                 domains :: 'undefined' | #xabbergroup_domains{},
-                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
--type xabbergroupchat_update() :: #xabbergroupchat_update{}.
-
--record(xabbergroupchat_x, {version = <<>> :: binary(),
-                            create :: 'undefined' | #xabbergroupchat_create{},
-                            update :: 'undefined' | #xabbergroupchat_update{},
-                            left :: 'undefined' | binary(),
+-record(xabbergroupchat_x, {xmlns = <<>> :: binary(),
+                            version = <<>> :: binary(),
                             no_permission :: 'undefined' | binary(),
-                            join :: 'undefined' | binary(),
-                            kicked :: 'undefined' | #xabbergroupchat_kicked{},
                             name :: 'undefined' | binary(),
                             description :: 'undefined' | binary(),
                             model :: 'undefined' | binary(),
@@ -1189,12 +1185,20 @@
                             pinned :: 'undefined' | binary(),
                             domains :: 'undefined' | #xabbergroup_domains{},
                             contacts :: 'undefined' | #xabbergroup_contacts{},
-                            user_updated :: 'undefined' | #xabbergroupchat_user_updated{},
                             members :: 'undefined' | binary(),
                             present :: 'undefined' | binary(),
-                            by_user :: 'undefined' | #xabbergroupchat_user_card{},
-                            body :: 'undefined' | #body_x{}}).
+                            sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.
+
+-record(xabbergroupchat_update, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 searchable :: 'undefined' | binary(),
+                                 owner :: 'undefined' | {binary()},
+                                 pinned :: 'undefined' | binary(),
+                                 domains :: 'undefined' | #xabbergroup_domains{},
+                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
+-type xabbergroupchat_update() :: #xabbergroupchat_update{}.
 
 -record(block_domain, {cdata = <<>> :: binary()}).
 -type block_domain() :: #block_domain{}.
@@ -1347,9 +1351,6 @@
                         legacy_auth() |
                         search() |
                         xabbergroupchat_search() |
-                        nick() |
-                        block() |
-                        xabbergroup_block() |
                         xabbertoken_x_token() |
                         delegation() |
                         push_notification() |
@@ -1500,6 +1501,7 @@
                         pubsub() |
                         muc_owner() |
                         disclosure() |
+                        xmppreference() |
                         starttls_failure() |
                         sasl_challenge() |
                         xabbergroupchat_retract_message() |
@@ -1517,4 +1519,7 @@
                         xabber_replace() |
                         bookmark_storage() |
                         muc_decline() |
-                        ps_publish().
+                        ps_publish() |
+                        nick() |
+                        block() |
+                        xabbergroup_block().

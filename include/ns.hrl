@@ -195,3 +195,10 @@
 -define(NS_GROUPCHAT_RETRACT_HISTORY,<<"http://xabber.com/protocol/groupchat#history">>).
 -define(NS_XABBER_REWRITE,<<"http://xabber.com/protocol/rewrite">>).
 -define(NS_XABBER_REWRITE_NOTIFY,<<"http://xabber.com/protocol/rewrite#notify">>).
+-define(NS_REFERENCE_0, <<"urn:xmpp:reference:0">>).
+-define(NS_GROUPCHAT_UPDATE, <<"http://xabber.com/protocol/groupchat#update">>).
+-define(NS_GROUPCHAT_USER_UPDATED, <<"http://xabber.com/protocol/groupchat#user-updated">>).
+-define(NS_GROUPCHAT_USER_LEFT, <<"http://xabber.com/protocol/groupchat#left">>).
+-define(NS_GROUPCHAT_USER_JOIN, <<"http://xabber.com/protocol/groupchat#join">>).
+-define(NS_GROUPCHAT_USER_KICK, <<"http://xabber.com/protocol/groupchat#kick">>).
+-define(NS_GROUPCHAT_CREATE, <<"http://xabber.com/protocol/groupchat#create">>).

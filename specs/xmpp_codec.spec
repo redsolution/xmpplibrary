@@ -4555,11 +4555,20 @@
 
 -xml(xabbergroupchat_x,
      #elem{name = <<"x">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,
+     <<"http://xabber.com/protocol/groupchat#create">>,
+     <<"http://xabber.com/protocol/groupchat#left">>,
+     <<"http://xabber.com/protocol/groupchat#join">>,
+     <<"http://xabber.com/protocol/groupchat#kick">>,
+     <<"http://xabber.com/protocol/groupchat#update">>,
+     <<"http://xabber.com/protocol/groupchat#user-updated">>],
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$version', '$create', '$update', '$left', '$no_permission', '$join', '$kicked', '$name', '$description', '$model',
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$user_updated', '$members', '$present', '$by_user', '$body'},
-     attrs = [#attr{name = <<"version">>}],
+     result = {xabbergroupchat_x, '$xmlns', '$version', '$no_permission', '$name', '$description', '$model',
+     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts',  '$members', '$present', '$_els'},
+     attrs = [
+     #attr{name = <<"xmlns">>},
+     #attr{name = <<"version">>}
+     ],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
@@ -4569,17 +4578,9 @@
              #ref{name = xabbergroupchat_message, min = 0, max = 1, label = '$pinned'},
              #ref{name = xabbergroupchat_domains, min = 0, max = 1, label = '$domains'},
              #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
-             #ref{name = xabbergroupchat_update, min = 0, max = 1, label = '$update'},
-             #ref{name = xabbergroupchat_create, min = 0, max = 1, label = '$create'},
-             #ref{name = xabbergroupchat_left, min = 0, max = 1, label = '$left'},
              #ref{name = xabbergroupchat_no_permission, min = 0, max = 1, label = '$no_permission'},
-             #ref{name = xabbergroupchat_join, min = 0, max = 1, label = '$join'},
-             #ref{name = xabbergroupchat_kicked, min = 0, max = 1, label = '$kicked'},
-             #ref{name = xabbergroupchat_user_updated, min = 0, max = 1, label = '$user_updated'},
-             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$by_user'},
              #ref{name = xabbergroupchat_members, min = 0, max = 1, label = '$members'},
-             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'},
-             #ref{name = xabbergroupchat_x_body, min = 0, max = 1, label = '$body'}
+             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'}
              ]
               }).
 
@@ -5149,11 +5150,12 @@
      #elem{name = <<"replaced">>,
            xmlns = <<"http://xabber.com/protocol/rewrite">>,
 	   module = 'unique',
-           result = {replaced, '$stamp'},
+           result = {replaced, '$stamp', '$body'},
            attrs = [#attr{name = <<"stamp">>,
                           required = true,
                           dec = {dec_utc, []},
-                          enc = {enc_utc, []}}
+                          enc = {enc_utc, []}},
+                    #attr{name = <<"body">>}
                     ]}).
 
 -xml(xabber_retract_activate,
@@ -5181,6 +5183,34 @@
                      enc = {enc_int, []}}
      ]
      }).
+
+-type reference_type() :: data | mention | groupchat | forward | legacy.
+
+-record(xmppreference, {
+             type :: reference_type(),
+             uri = <<>> :: binary(),
+             begin :: undefined | non_neg_integer(),
+             end :: undefined | non_neg_integer(),
+             sub_els = [] :: [xmpp_element() | fxml:xmlel()]
+	     }).
+
+-xml(xmppreference,
+     #elem{name = <<"reference">>,
+           xmlns = <<"urn:xmpp:reference:0">>,
+	   module = xep0372,
+           result = {xmppreference, '$type', '$uri', '$begin', '$end', '$_els'},
+           attrs = [#attr{name = <<"type">>,
+                          required = true,
+                          enc = {enc_enum, []},
+                          dec = {dec_enum, [[data, mention, groupchat, forward, legacy]]}},
+                    #attr{name = <<"begin">>,
+                          dec = {dec_int, [0, infinity]},
+                          enc = {enc_int, []}},
+                    #attr{name = <<"end">>,
+                          dec = {dec_int, [0, infinity]},
+                          enc = {enc_int, []}},
+                    #attr{name = <<"uri">>,
+                          label = '$uri'}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

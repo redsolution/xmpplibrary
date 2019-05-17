@@ -43,16 +43,16 @@ do_encode({unique_received, _, _, _, _, _} = Received,
     encode_unique_received(Received, TopXMLNS);
 do_encode({unique_request, _, _} = Request, TopXMLNS) ->
     encode_unique_request(Request, TopXMLNS);
-do_encode({replaced, _} = Replaced, TopXMLNS) ->
+do_encode({replaced, _, _} = Replaced, TopXMLNS) ->
     encode_xabber_replaced(Replaced, TopXMLNS).
 
-do_get_name({replaced, _}) -> <<"replaced">>;
+do_get_name({replaced, _, _}) -> <<"replaced">>;
 do_get_name({unique_received, _, _, _, _, _}) ->
     <<"received">>;
 do_get_name({unique_request, _, _}) -> <<"request">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
-do_get_ns({replaced, _}) ->
+do_get_ns({replaced, _, _}) ->
     <<"http://xabber.com/protocol/rewrite">>;
 do_get_ns({unique_received, _, _, _, _, _}) ->
     <<"http://xabber.com/protocol/delivery">>;
@@ -65,12 +65,12 @@ pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 5) ->
     [origin_id, stanza_id, previous_id, time, forwarded];
 pp(unique_request, 2) -> [retry, to];
-pp(replaced, 1) -> [stamp];
+pp(replaced, 2) -> [stamp, body];
 pp(_, _) -> no.
 
 records() ->
     [{unique_time, 2}, {unique_received, 5},
-     {unique_request, 2}, {replaced, 1}].
+     {unique_request, 2}, {replaced, 2}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
 
@@ -78,27 +78,37 @@ enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
 
 decode_xabber_replaced(__TopXMLNS, __Opts,
 		       {xmlel, <<"replaced">>, _attrs, _els}) ->
-    Stamp = decode_xabber_replaced_attrs(__TopXMLNS, _attrs,
-					 undefined),
-    {replaced, Stamp}.
+    {Stamp, Body} = decode_xabber_replaced_attrs(__TopXMLNS,
+						 _attrs, undefined, undefined),
+    {replaced, Stamp, Body}.
 
 decode_xabber_replaced_attrs(__TopXMLNS,
-			     [{<<"stamp">>, _val} | _attrs], _Stamp) ->
-    decode_xabber_replaced_attrs(__TopXMLNS, _attrs, _val);
+			     [{<<"stamp">>, _val} | _attrs], _Stamp, Body) ->
+    decode_xabber_replaced_attrs(__TopXMLNS, _attrs, _val,
+				 Body);
+decode_xabber_replaced_attrs(__TopXMLNS,
+			     [{<<"body">>, _val} | _attrs], Stamp, _Body) ->
+    decode_xabber_replaced_attrs(__TopXMLNS, _attrs, Stamp,
+				 _val);
 decode_xabber_replaced_attrs(__TopXMLNS, [_ | _attrs],
-			     Stamp) ->
-    decode_xabber_replaced_attrs(__TopXMLNS, _attrs, Stamp);
-decode_xabber_replaced_attrs(__TopXMLNS, [], Stamp) ->
-    decode_xabber_replaced_attr_stamp(__TopXMLNS, Stamp).
+			     Stamp, Body) ->
+    decode_xabber_replaced_attrs(__TopXMLNS, _attrs, Stamp,
+				 Body);
+decode_xabber_replaced_attrs(__TopXMLNS, [], Stamp,
+			     Body) ->
+    {decode_xabber_replaced_attr_stamp(__TopXMLNS, Stamp),
+     decode_xabber_replaced_attr_body(__TopXMLNS, Body)}.
 
-encode_xabber_replaced({replaced, Stamp}, __TopXMLNS) ->
+encode_xabber_replaced({replaced, Stamp, Body},
+		       __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/rewrite">>,
 				    [], __TopXMLNS),
     _els = [],
-    _attrs = encode_xabber_replaced_attr_stamp(Stamp,
-					       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-									  __TopXMLNS)),
+    _attrs = encode_xabber_replaced_attr_body(Body,
+					      encode_xabber_replaced_attr_stamp(Stamp,
+										xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+													   __TopXMLNS))),
     {xmlel, <<"replaced">>, _attrs, _els}.
 
 decode_xabber_replaced_attr_stamp(__TopXMLNS,
@@ -117,6 +127,16 @@ decode_xabber_replaced_attr_stamp(__TopXMLNS, _val) ->
 
 encode_xabber_replaced_attr_stamp(_val, _acc) ->
     [{<<"stamp">>, enc_utc(_val)} | _acc].
+
+decode_xabber_replaced_attr_body(__TopXMLNS,
+				 undefined) ->
+    <<>>;
+decode_xabber_replaced_attr_body(__TopXMLNS, _val) ->
+    _val.
+
+encode_xabber_replaced_attr_body(<<>>, _acc) -> _acc;
+encode_xabber_replaced_attr_body(_val, _acc) ->
+    [{<<"body">>, _val} | _acc].
 
 decode_unique_request(__TopXMLNS, __Opts,
 		      {xmlel, <<"request">>, _attrs, _els}) ->
