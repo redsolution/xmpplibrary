@@ -5132,7 +5132,8 @@
                           enc = {jid, encode, []}},
                         #attr{name = <<"to">>,
                           dec = {jid, decode, []},
-                          enc = {jid, encode, []}}
+                          enc = {jid, encode, []}
+                          }
                         ],
      refs = [#ref{name = xabber_replace_message_body, min = 0, max = 1, label = '$body'},
              #ref{name = stanza_id, min = 0, max = 1, label = '$stanza_id'},
@@ -5202,7 +5203,7 @@
            attrs = [#attr{name = <<"type">>,
                           required = true,
                           enc = {enc_enum, []},
-                          dec = {dec_enum, [[data, mention, groupchat, forward, legacy]]}},
+                          dec = {dec_enum, [[data, mention, groupchat, forward, legacy, markup]]}},
                     #attr{name = <<"begin">>,
                           dec = {dec_int, [0, infinity]},
                           enc = {enc_int, []}},
@@ -5211,6 +5212,146 @@
                           enc = {enc_int, []}},
                     #attr{name = <<"uri">>,
                           label = '$uri'}]}).
+
+-xml(xabber_synchronization,
+     #elem{name = <<"synchronization">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_synchronization, '$stamp', '$conversation'},
+     attrs = [
+     #attr{name = <<"stamp">>,
+           dec = {dec_utc, []},
+           enc = {enc_utc, []}}
+
+     ],
+     refs = [
+     #ref{name = xabber_conversation, label = '$conversation'}
+     ]
+     }).
+
+-xml(xabber_synchronization_query,
+     #elem{name = <<"query">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_synchronization_query, '$stamp'},
+     attrs = [
+     #attr{name = <<"stamp">>,
+           dec = {dec_utc, []},
+           enc = {enc_utc, []}}
+
+     ]
+     }).
+
+-xml(xabber_conversation,
+     #elem{name = <<"conversation">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation, '$type', '$jid', '$timestamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last'},
+     attrs = [
+     #attr{name = <<"jid">>,
+           required = true,
+           dec = {jid, decode, []},
+           enc = {jid, encode, []}},
+     #attr{name = <<"timestamp">>,
+           required = true,
+           dec = {dec_utc, []},
+           enc = {enc_utc, []}},
+     #attr{name = <<"thread">>},
+     #attr{name = <<"type">>}
+     ],
+     refs = [
+     #ref{name = xabber_conversation_retract, min = 0, max = 1, label = '$retract'},
+     #ref{name = xabber_conversation_unread, min = 0, max = 1, label = '$unread'},
+     #ref{name = xabber_conversation_unread_mention, min = 0, max = 1, label = '$unread_mention'},
+     #ref{name = xabber_conversation_displayed, min = 0, max = 1, label = '$displayed'},
+     #ref{name = xabber_conversation_delivered, min = 0, max = 1, label = '$delivered'},
+     #ref{name = xabber_conversation_call, min = 0, max = 1, label = '$call'},
+     #ref{name = xabber_conversation_last, min = 0, max = 1, label = '$last'}
+     ]
+     }).
+
+-xml(xabber_conversation_retract,
+     #elem{name = <<"retract">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_retract, '$version'},
+     attrs = [#attr{name = <<"version">>,
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}}
+     ]
+     }).
+
+-xml(xabber_conversation_unread,
+     #elem{name = <<"unread">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_unread, '$count', '$after'},
+     attrs = [#attr{name = <<"count">>,
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}},
+              #attr{name = <<"after">>,
+                    required = true}
+     ]
+     }).
+
+-xml(xabber_conversation_displayed,
+     #elem{name = <<"displayed">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_displayed, '$id'},
+     attrs = [#attr{name = <<"id">>,
+                    required = true}
+     ]
+     }).
+
+-xml(xabber_conversation_delivered,
+     #elem{name = <<"delivered">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_delivered, '$id'},
+     attrs = [
+              #attr{name = <<"id">>,
+                    required = true}
+     ]
+     }).
+
+-xml(xabber_conversation_unread_mention,
+     #elem{name = <<"unread-mention">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_unread_mention, '$id'},
+     attrs = [#attr{name = <<"id">>,
+                    required = true}
+     ]
+     }).
+
+-xml(xabber_conversation_last,
+     #elem{name = <<"last-message">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_last, '$_els'}
+     }).
+
+-xml(xabber_conversation_call,
+     #elem{name = <<"call">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_conversation_call, '$_els'}
+     }).
+
+-xml(message_received,
+     #elem{name = <<"received">>,
+	   xmlns = <<"urn:xmpp:chat-markers:0">>,
+	   module = 'xep0333',
+	   result = {message_received, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>}]}).
+
+-xml(message_displayed,
+     #elem{name = <<"displayed">>,
+	   xmlns = <<"urn:xmpp:chat-markers:0">>,
+	   module = 'xep0333',
+	   result = {message_displayed, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

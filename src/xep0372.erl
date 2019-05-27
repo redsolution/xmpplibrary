@@ -147,7 +147,7 @@ decode_xmppreference_attr_type(__TopXMLNS, undefined) ->
 		   __TopXMLNS}});
 decode_xmppreference_attr_type(__TopXMLNS, _val) ->
     case catch dec_enum(_val,
-			[data, mention, groupchat, forward, legacy])
+			[data, mention, groupchat, forward, legacy, markup])
 	of
       {'EXIT', _} ->
 	  erlang:error({xmpp_codec,
