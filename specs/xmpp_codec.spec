@@ -5185,7 +5185,7 @@
      ]
      }).
 
--type reference_type() :: data | mention | groupchat | forward | legacy.
+-type reference_type() :: 'data' | mention | groupchat | forward | legacy | markup.
 
 -record(xmppreference, {
              type :: reference_type(),
@@ -5203,7 +5203,7 @@
            attrs = [#attr{name = <<"type">>,
                           required = true,
                           enc = {enc_enum, []},
-                          dec = {dec_enum, [[data, mention, groupchat, forward, legacy, markup]]}},
+                          dec = {dec_enum, [['data', mention, groupchat, forward, legacy, markup]]}},
                     #attr{name = <<"begin">>,
                           dec = {dec_int, [0, infinity]},
                           enc = {enc_int, []}},
@@ -5351,6 +5351,27 @@
 	   xmlns = <<"urn:xmpp:chat-markers:0">>,
 	   module = 'xep0333',
 	   result = {message_displayed, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>}]}).
+
+-xml(jingle_propose,
+     #elem{name = <<"propose">>,
+	   xmlns = <<"urn:xmpp:jingle-message:0">>,
+	   module = 'xep0353',
+	   result = {jingle_propose, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>}]}).
+
+-xml(jingle_reject,
+     #elem{name = <<"reject">>,
+	   xmlns = <<"urn:xmpp:jingle-message:0">>,
+	   module = 'xep0353',
+	   result = {jingle_reject, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>}]}).
+
+-xml(jingle_accept,
+     #elem{name = <<"accept">>,
+	   xmlns = <<"urn:xmpp:jingle-message:0">>,
+	   module = 'xep0353',
+	   result = {jingle_accept, '$id'},
 	   attrs = [#attr{name = <<"id">>}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.

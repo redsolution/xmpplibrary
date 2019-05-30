@@ -258,13 +258,6 @@ get_mod(<<"TYPE">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/disco#items">>) ->
     xep0030;
-get_mod(<<"first">>, <<"jabber:iq:register">>) ->
-    xep0077;
-get_mod(<<"x">>,
-	<<"http://jabber.org/protocol/muc">>) ->
-    xep0045;
-get_mod(<<"media">>, <<"urn:xmpp:media-element">>) ->
-    xep0221;
 get_mod(<<"KEYWORD">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"result">>, <<"urn:xmpp:mam:tmp">>) ->
     xep0313;
@@ -477,6 +470,9 @@ get_mod(<<"field">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"unsubscribe">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"accept">>,
+	<<"urn:xmpp:jingle-message:0">>) ->
+    xep0353;
 get_mod(<<"presence">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"configure">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
@@ -1403,6 +1399,9 @@ get_mod(<<"closed-node">>,
 get_mod(<<"command">>,
 	<<"http://jabber.org/protocol/commands">>) ->
     xep0050;
+get_mod(<<"propose">>,
+	<<"urn:xmpp:jingle-message:0">>) ->
+    xep0353;
 get_mod(<<"body">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"restricted-xml">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
@@ -1453,6 +1452,9 @@ get_mod(<<"received">>,
 get_mod(<<"body">>,
 	<<"http://xabber.com/protocol/rewrite">>) ->
     xabberrewrite;
+get_mod(<<"reject">>,
+	<<"urn:xmpp:jingle-message:0">>) ->
+    xep0353;
 get_mod(<<"policy-violation">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1734,6 +1736,13 @@ get_mod(<<"unread">>,
     xabbersynchronization;
 get_mod(<<"url">>, <<"jabber:iq:register">>) -> xep0077;
 get_mod(<<"GIVEN">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"first">>, <<"jabber:iq:register">>) ->
+    xep0077;
+get_mod(<<"x">>,
+	<<"http://jabber.org/protocol/muc">>) ->
+    xep0045;
+get_mod(<<"media">>, <<"urn:xmpp:media-element">>) ->
+    xep0221;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1757,6 +1766,7 @@ get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({block_domain, _}) -> xabbergroupchat;
 get_mod({xabber_retract_activate, _, _}) ->
     xabberrewrite;
+get_mod({jingle_propose, _, _}) -> xep0353;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({xabbergroupchat_replace_message, _, _, _,
@@ -1825,21 +1835,14 @@ get_mod({mam_archived, _, _}) -> xep0313;
 get_mod({mix_participant, _, _}) -> xep0369;
 get_mod({delegated, _, _}) -> xep0355;
 get_mod({replaced, _, _}) -> unique;
-get_mod({bookmark_storage, _, _}) -> xep0048;
-get_mod({sasl_failure, _, _}) -> rfc6120;
 get_mod({xmpp_session, _}) -> rfc3921;
 get_mod({ping}) -> xep0199;
 get_mod({time, _, _}) -> xep0202;
 get_mod({ps_subscribe, _, _}) -> xep0060;
 get_mod({adhoc_actions, _, _, _, _}) -> xep0050;
-get_mod({adhoc_note, _, _}) -> xep0050;
 get_mod({push_disable, _, _}) -> xep0357;
 get_mod({push_notification, _}) -> xep0357;
 get_mod({unique_time, _, _}) -> unique;
-get_mod({xabbergroupchat_retract_message, _, _}) ->
-    xabbergroupchat;
-get_mod({xabber_conversation_unread_mention, _}) ->
-    xabbersynchronization;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({stat, _, _, _, _}) -> xep0039;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
@@ -1983,6 +1986,7 @@ get_mod({rsm_first, _, _}) -> xep0059;
 get_mod({unique_request, _, _}) -> unique;
 get_mod({xabbergroupchat_query_item, _}) ->
     xabbergroupchat;
+get_mod({jingle_reject, _, _}) -> xep0353;
 get_mod({caps, _, _, _, _}) -> xep0115;
 get_mod({xdata, _, _, _, _, _, _}) -> xep0004;
 get_mod({ps_options, _, _, _, _}) -> xep0060;
@@ -2009,6 +2013,7 @@ get_mod({xabbergroupchat_user_updated, _}) ->
     xabbergroupchat;
 get_mod({xabbergroupchat_replaced, _}) ->
     xabbergroupchat;
+get_mod({jingle_accept, _}) -> xep0353;
 get_mod({private, _}) -> xep0049;
 get_mod({sasl_challenge, _}) -> rfc6120;
 get_mod({compress_failure, _}) -> xep0138;
@@ -2053,4 +2058,11 @@ get_mod({xabbergroup_unblock, _, _, _}) ->
 get_mod({xabber_conversation_unread, _, _}) ->
     xabbersynchronization;
 get_mod({message_received, _, _}) -> xep0333;
+get_mod({bookmark_storage, _, _}) -> xep0048;
+get_mod({sasl_failure, _, _}) -> rfc6120;
+get_mod({adhoc_note, _, _}) -> xep0050;
+get_mod({xabbergroupchat_retract_message, _, _}) ->
+    xabbergroupchat;
+get_mod({xabber_conversation_unread_mention, _}) ->
+    xabbersynchronization;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).

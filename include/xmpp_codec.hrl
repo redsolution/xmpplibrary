@@ -97,7 +97,7 @@
 		       'no-permanent-store' | 'no-permanent-storage'}).
 -type hint() :: #hint{}.
 
--type reference_type() :: data | mention | groupchat | forward | legacy.
+-type reference_type() :: 'data' | mention | groupchat | forward | legacy | markup.
 
 -record(avatar_data, {data = <<>> :: binary()}).
 -type avatar_data() :: #avatar_data{}.
@@ -136,6 +136,10 @@
 -record(rsm_first, {index :: 'undefined' | non_neg_integer(),
                     data = <<>> :: binary()}).
 -type rsm_first() :: #rsm_first{}.
+
+-record(jingle_reject, {id = <<>> :: binary(),
+                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type jingle_reject() :: #jingle_reject{}.
 
 -record(replaced, {stamp :: erlang:timestamp(),
                    body = <<>> :: binary()}).
@@ -275,6 +279,9 @@
 
 -record(starttls_proceed, {}).
 -type starttls_proceed() :: #starttls_proceed{}.
+
+-record(jingle_accept, {id = <<>> :: binary()}).
+-type jingle_accept() :: #jingle_accept{}.
 
 -record(message_received, {id = <<>> :: binary(),
                            sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -484,6 +491,10 @@
 -record(ps_subscribe, {node = <<>> :: binary(),
                        jid :: jid:jid()}).
 -type ps_subscribe() :: #ps_subscribe{}.
+
+-record(jingle_propose, {id = <<>> :: binary(),
+                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type jingle_propose() :: #jingle_propose{}.
 
 -record(xabber_retract_activate, {version :: 'undefined' | non_neg_integer(),
                                   'less-than' :: 'undefined' | non_neg_integer()}).
@@ -1344,27 +1355,27 @@
                         xdata_option() |
                         version() |
                         sm_a() |
+                        xabbergroupchat_user_card() |
+                        x_present() |
+                        origin_id() |
+                        receipt_request() |
+                        xabber_conversation_delivered() |
+                        mix_participant() |
+                        compressed() |
+                        block_list() |
+                        delegated() |
+                        xabbertoken_field() |
                         disclosed() |
                         replaced() |
                         xabber_conversation_displayed() |
                         carbons_sent() |
                         mam_archived() |
                         sasl_abort() |
-                        xabbergroupchat_user_card() |
                         xabbergroupchat_kicked() |
-                        x_present() |
-                        origin_id() |
-                        receipt_request() |
                         db_result() |
                         carbons_received() |
-                        xabber_conversation_delivered() |
                         upload_slot() |
-                        mix_participant() |
-                        compressed() |
-                        block_list() |
-                        delegated() |
                         rsm_set() |
-                        xabbertoken_field() |
                         text() |
                         vcard_org() |
                         feature_sm() |
@@ -1415,27 +1426,12 @@
                         ps_event() |
                         block_id() |
                         streamhost() |
-                        bind() |
-                        collect() |
-                        x_not_present() |
-                        ps_retract() |
                         message_displayed() |
                         previous_id() |
                         xabber_conversation_last() |
                         xabber_conversation_retract() |
                         last() |
-                        vcard_sound() |
-                        block_jid() |
-                        unique_request() |
-                        mam_result() |
-                        rsm_first() |
                         recipient() |
-                        stat() |
-                        xabbergroupchat() |
-                        upload_request() |
-                        xdata_field() |
-                        adhoc_command() |
-                        sm_failed() |
                         ping() |
                         privilege_perm() |
                         xabbergroupchat_item() |
@@ -1484,6 +1480,7 @@
                         muc_user() |
                         vcard_adr() |
                         sasl_response() |
+                        jingle_propose() |
                         xabber_retract_activate() |
                         xabbergroupchat_retract_invalidate() |
                         xabbertoken_issue() |
@@ -1531,6 +1528,7 @@
                         'see-other-host'() |
                         hint() |
                         stream_start() |
+                        jingle_accept() |
                         message_received() |
                         xabbergroupchat_replaced() |
                         shim() |
@@ -1584,4 +1582,20 @@
                         push_notification() |
                         mix_join() |
                         xmpp_session() |
-                        xdata().
+                        xdata() |
+                        jingle_reject() |
+                        bind() |
+                        collect() |
+                        x_not_present() |
+                        ps_retract() |
+                        vcard_sound() |
+                        block_jid() |
+                        unique_request() |
+                        mam_result() |
+                        rsm_first() |
+                        stat() |
+                        xabbergroupchat() |
+                        upload_request() |
+                        xdata_field() |
+                        adhoc_command() |
+                        sm_failed().
