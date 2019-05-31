@@ -690,7 +690,7 @@ do_encode({xabbergroupchat_replaced, _} = Replaced,
 do_encode({xabbergroupchat_replace, _, _, _} = Replace,
 	  TopXMLNS) ->
     encode_xabbergroupchat_replace(Replace, TopXMLNS);
-do_encode({xabbergroupchat_replace_message, _, _, _,
+do_encode({xabbergroupchat_replace_message, _, _, _, _,
 	   _} =
 	      Message,
 	  TopXMLNS) ->
@@ -747,7 +747,7 @@ do_get_name({xabbergroupchat_query_rights, _, _}) ->
 do_get_name({xabbergroupchat_replace, _, _, _}) ->
     <<"replace">>;
 do_get_name({xabbergroupchat_replace_message, _, _, _,
-	     _}) ->
+	     _, _}) ->
     <<"message">>;
 do_get_name({xabbergroupchat_replaced, _}) ->
     <<"replaced">>;
@@ -831,7 +831,7 @@ do_get_ns({xabbergroupchat_query_rights, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#rights">>;
 do_get_ns({xabbergroupchat_replace, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#history">>;
-do_get_ns({xabbergroupchat_replace_message, _, _, _,
+do_get_ns({xabbergroupchat_replace_message, _, _, _, _,
 	   _}) ->
     <<"http://xabber.com/protocol/groupchat#history">>;
 do_get_ns({xabbergroupchat_replaced, _}) ->
@@ -866,6 +866,9 @@ get_els({xabbergroupchat_x, _xmlns, _version,
 	 _no_permission, _name, _description, _model,
 	 _searchable, _anonymous, _localpart, _pinned, _domains,
 	 _contacts, _members, _present, _sub_els}) ->
+    _sub_els;
+get_els({xabbergroupchat_replace_message, _from, _to,
+	 _body, _replaced, _sub_els}) ->
     _sub_els.
 
 set_els({xabbergroupchat_x, _xmlns, _version,
@@ -876,7 +879,12 @@ set_els({xabbergroupchat_x, _xmlns, _version,
     {xabbergroupchat_x, _xmlns, _version, _no_permission,
      _name, _description, _model, _searchable, _anonymous,
      _localpart, _pinned, _domains, _contacts, _members,
-     _present, _sub_els}.
+     _present, _sub_els};
+set_els({xabbergroupchat_replace_message, _from, _to,
+	 _body, _replaced, _},
+	_sub_els) ->
+    {xabbergroupchat_replace_message, _from, _to, _body,
+     _replaced, _sub_els}.
 
 pp(x_present, 0) -> [];
 pp(x_not_present, 0) -> [];
@@ -930,8 +938,8 @@ pp(xabbergroupchat_retract_invalidate, 1) -> [version];
 pp(xabbergroupchat_replaced, 1) -> [stamp];
 pp(xabbergroupchat_replace, 3) ->
     [id, version, message];
-pp(xabbergroupchat_replace_message, 4) ->
-    [from, to, body, replaced];
+pp(xabbergroupchat_replace_message, 5) ->
+    [from, to, body, replaced, sub_els];
 pp(disclosed, 3) -> [user_card, reason, type];
 pp(disclosure, 3) -> [recipient, reason, type];
 pp(recipient, 1) -> [id];
@@ -964,7 +972,7 @@ records() ->
      {xabbergroupchat_retract_invalidate, 1},
      {xabbergroupchat_replaced, 1},
      {xabbergroupchat_replace, 3},
-     {xabbergroupchat_replace_message, 4}, {disclosed, 3},
+     {xabbergroupchat_replace_message, 5}, {disclosed, 3},
      {disclosure, 3}, {recipient, 1}].
 
 decode_xabbergroupchat_reason(__TopXMLNS, __Opts,
@@ -1331,25 +1339,25 @@ encode_xabbergroupchat_replace_message_body_cdata(_val,
 decode_xabbergroupchat_replace_message(__TopXMLNS,
 				       __Opts,
 				       {xmlel, <<"message">>, _attrs, _els}) ->
-    {Replaced, Body} =
+    {Replaced, Body, __Els} =
 	decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 						   __Opts, _els, undefined,
-						   undefined),
+						   undefined, []),
     {From, To} =
 	decode_xabbergroupchat_replace_message_attrs(__TopXMLNS,
 						     _attrs, undefined,
 						     undefined),
     {xabbergroupchat_replace_message, From, To, Body,
-     Replaced}.
+     Replaced, __Els}.
 
 decode_xabbergroupchat_replace_message_els(__TopXMLNS,
-					   __Opts, [], Replaced, Body) ->
-    {Replaced, Body};
+					   __Opts, [], Replaced, Body, __Els) ->
+    {Replaced, Body, lists:reverse(__Els)};
 decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 					   __Opts,
 					   [{xmlel, <<"body">>, _attrs, _} = _el
 					    | _els],
-					   Replaced, Body) ->
+					   Replaced, Body, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1358,18 +1366,19 @@ decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 						     __Opts, _els, Replaced,
 						     decode_xabbergroupchat_replace_message_body(<<"http://xabber.com/protocol/groupchat#history">>,
 												 __Opts,
-												 _el));
+												 _el),
+						     __Els);
       _ ->
 	  decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 						     __Opts, _els, Replaced,
-						     Body)
+						     Body, [_el | __Els])
     end;
 decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 					   __Opts,
 					   [{xmlel, <<"replaced">>, _attrs, _} =
 						_el
 					    | _els],
-					   Replaced, Body) ->
+					   Replaced, Body, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1379,17 +1388,48 @@ decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 						     decode_xabbergroupchat_replaced(<<"http://xabber.com/protocol/groupchat#history">>,
 										     __Opts,
 										     _el),
-						     Body);
+						     Body, __Els);
       _ ->
 	  decode_xabbergroupchat_replace_message_els(__TopXMLNS,
 						     __Opts, _els, Replaced,
-						     Body)
+						     Body, [_el | __Els])
     end;
 decode_xabbergroupchat_replace_message_els(__TopXMLNS,
-					   __Opts, [_ | _els], Replaced,
-					   Body) ->
+					   __Opts,
+					   [{xmlel, _name, _attrs, _} = _el
+					    | _els],
+					   Replaced, Body, __Els) ->
+    case proplists:get_bool(ignore_els, __Opts) of
+      true ->
+	  decode_xabbergroupchat_replace_message_els(__TopXMLNS,
+						     __Opts, _els, Replaced,
+						     Body, [_el | __Els]);
+      false ->
+	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+					__TopXMLNS),
+	  case xmpp_codec:get_mod(_name, __XMLNS) of
+	    undefined ->
+		decode_xabbergroupchat_replace_message_els(__TopXMLNS,
+							   __Opts, _els,
+							   Replaced, Body,
+							   [_el | __Els]);
+	    Mod ->
+		decode_xabbergroupchat_replace_message_els(__TopXMLNS,
+							   __Opts, _els,
+							   Replaced, Body,
+							   [Mod:do_decode(_name,
+									  __XMLNS,
+									  _el,
+									  __Opts)
+							    | __Els])
+	  end
+    end;
+decode_xabbergroupchat_replace_message_els(__TopXMLNS,
+					   __Opts, [_ | _els], Replaced, Body,
+					   __Els) ->
     decode_xabbergroupchat_replace_message_els(__TopXMLNS,
-					       __Opts, _els, Replaced, Body).
+					       __Opts, _els, Replaced, Body,
+					       __Els).
 
 decode_xabbergroupchat_replace_message_attrs(__TopXMLNS,
 					     [{<<"from">>, _val} | _attrs],
@@ -1413,17 +1453,19 @@ decode_xabbergroupchat_replace_message_attrs(__TopXMLNS,
 						    To)}.
 
 encode_xabbergroupchat_replace_message({xabbergroupchat_replace_message,
-					From, To, Body, Replaced},
+					From, To, Body, Replaced, __Els},
 				       __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat#history">>,
 				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_xabbergroupchat_replace_message_$replaced'(Replaced,
-									 __NewTopXMLNS,
-									 'encode_xabbergroupchat_replace_message_$body'(Body,
-															__NewTopXMLNS,
-															[]))),
+    _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
+	    || _el <- __Els]
+	     ++
+	     lists:reverse('encode_xabbergroupchat_replace_message_$replaced'(Replaced,
+									      __NewTopXMLNS,
+									      'encode_xabbergroupchat_replace_message_$body'(Body,
+															     __NewTopXMLNS,
+															     []))),
     _attrs =
 	encode_xabbergroupchat_replace_message_attr_to(To,
 						       encode_xabbergroupchat_replace_message_attr_from(From,

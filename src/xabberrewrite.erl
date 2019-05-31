@@ -115,10 +115,11 @@ do_encode({xabber_retract_user, _, _, _, _, _, _} =
 	      Retract_user,
 	  TopXMLNS) ->
     encode_xabber_retract_user(Retract_user, TopXMLNS);
-do_encode({xabber_replace, _, _, _, _, _, _} = Replace,
+do_encode({xabber_replace, _, _, _, _, _, _, _} =
+	      Replace,
 	  TopXMLNS) ->
     encode_xabber_replace(Replace, TopXMLNS);
-do_encode({xabber_replace_message, _, _, _, _, _} =
+do_encode({xabber_replace_message, _, _, _, _, _, _} =
 	      Message,
 	  TopXMLNS) ->
     encode_xabber_replace_message(Message, TopXMLNS);
@@ -129,9 +130,10 @@ do_encode({xabber_retract_invalidate, _} = Invalidate,
 	  TopXMLNS) ->
     encode_xabber_retract_invalidate(Invalidate, TopXMLNS).
 
-do_get_name({xabber_replace, _, _, _, _, _, _}) ->
+do_get_name({xabber_replace, _, _, _, _, _, _, _}) ->
     <<"replace">>;
-do_get_name({xabber_replace_message, _, _, _, _, _}) ->
+do_get_name({xabber_replace_message, _, _, _, _, _,
+	     _}) ->
     <<"message">>;
 do_get_name({xabber_retract_activate, _, _}) ->
     <<"activate">>;
@@ -145,9 +147,9 @@ do_get_name({xabber_retract_message, _, _, _, _, _,
 do_get_name({xabber_retract_user, _, _, _, _, _, _}) ->
     <<"retract-user">>.
 
-do_get_ns({xabber_replace, Xmlns, _, _, _, _, _}) ->
+do_get_ns({xabber_replace, Xmlns, _, _, _, _, _, _}) ->
     Xmlns;
-do_get_ns({xabber_replace_message, _, _, _, _, _}) ->
+do_get_ns({xabber_replace_message, _, _, _, _, _, _}) ->
     <<"http://xabber.com/protocol/rewrite">>;
 do_get_ns({xabber_retract_activate, _, _}) ->
     <<"http://xabber.com/protocol/rewrite">>;
@@ -162,17 +164,35 @@ do_get_ns({xabber_retract_user, Xmlns, _, _, _, _,
 	   _}) ->
     Xmlns.
 
+get_els({xabber_replace, _xmlns, _id, _by, _version,
+	 _conversation, _xabber_replace_message, _sub_els}) ->
+    _sub_els;
+get_els({xabber_replace_message, _from, _to, _body,
+	 _stanza_id, _replaced, _sub_els}) ->
+    _sub_els.
+
+set_els({xabber_replace, _xmlns, _id, _by, _version,
+	 _conversation, _xabber_replace_message, _},
+	_sub_els) ->
+    {xabber_replace, _xmlns, _id, _by, _version,
+     _conversation, _xabber_replace_message, _sub_els};
+set_els({xabber_replace_message, _from, _to, _body,
+	 _stanza_id, _replaced, _},
+	_sub_els) ->
+    {xabber_replace_message, _from, _to, _body, _stanza_id,
+     _replaced, _sub_els}.
+
 pp(xabber_retract_message, 6) ->
     [xmlns, id, by, symmetric, version, conversation];
 pp(xabber_retract_all, 4) ->
     [xmlns, symmetric, version, conversation];
 pp(xabber_retract_user, 6) ->
     [xmlns, id, by, symmetric, version, conversation];
-pp(xabber_replace, 6) ->
+pp(xabber_replace, 7) ->
     [xmlns, id, by, version, conversation,
-     xabber_replace_message];
-pp(xabber_replace_message, 5) ->
-    [from, to, body, stanza_id, replaced];
+     xabber_replace_message, sub_els];
+pp(xabber_replace_message, 6) ->
+    [from, to, body, stanza_id, replaced, sub_els];
 pp(xabber_retract_activate, 2) ->
     [version, 'less-than'];
 pp(xabber_retract_invalidate, 1) -> [version];
@@ -180,8 +200,8 @@ pp(_, _) -> no.
 
 records() ->
     [{xabber_retract_message, 6}, {xabber_retract_all, 4},
-     {xabber_retract_user, 6}, {xabber_replace, 6},
-     {xabber_replace_message, 5},
+     {xabber_retract_user, 6}, {xabber_replace, 7},
+     {xabber_replace_message, 6},
      {xabber_retract_activate, 2},
      {xabber_retract_invalidate, 1}].
 
@@ -384,22 +404,22 @@ encode_xabber_replace_message_body_cdata(_val, _acc) ->
 
 decode_xabber_replace_message(__TopXMLNS, __Opts,
 			      {xmlel, <<"message">>, _attrs, _els}) ->
-    {Replaced, Stanza_id, Body} =
+    {Replaced, Stanza_id, Body, __Els} =
 	decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-					  _els, undefined, undefined,
-					  undefined),
+					  _els, undefined, undefined, undefined,
+					  []),
     {From, To} =
 	decode_xabber_replace_message_attrs(__TopXMLNS, _attrs,
 					    undefined, undefined),
     {xabber_replace_message, From, To, Body, Stanza_id,
-     Replaced}.
+     Replaced, __Els}.
 
 decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-				  [], Replaced, Stanza_id, Body) ->
-    {Replaced, Stanza_id, Body};
+				  [], Replaced, Stanza_id, Body, __Els) ->
+    {Replaced, Stanza_id, Body, lists:reverse(__Els)};
 decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"body">>, _attrs, _} = _el | _els],
-				  Replaced, Stanza_id, Body) ->
+				  Replaced, Stanza_id, Body, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -408,21 +428,24 @@ decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    _els, Replaced, Stanza_id,
 					    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite">>,
 									       __Opts,
-									       _el));
+									       _el),
+					    __Els);
       <<"http://xabber.com/protocol/rewrite#notify">> ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    _els, Replaced, Stanza_id,
 					    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite#notify">>,
 									       __Opts,
-									       _el));
+									       _el),
+					    __Els);
       _ ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-					    _els, Replaced, Stanza_id, Body)
+					    _els, Replaced, Stanza_id, Body,
+					    [_el | __Els])
     end;
 decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"stanza-id">>, _attrs, _} = _el
 				   | _els],
-				  Replaced, Stanza_id, Body) ->
+				  Replaced, Stanza_id, Body, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -432,15 +455,16 @@ decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    xep0359:decode_stanza_id(<<"urn:xmpp:sid:0">>,
 								     __Opts,
 								     _el),
-					    Body);
+					    Body, __Els);
       _ ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-					    _els, Replaced, Stanza_id, Body)
+					    _els, Replaced, Stanza_id, Body,
+					    [_el | __Els])
     end;
 decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"replaced">>, _attrs, _} = _el
 				   | _els],
-				  Replaced, Stanza_id, Body) ->
+				  Replaced, Stanza_id, Body, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -450,15 +474,42 @@ decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    unique:decode_xabber_replaced(<<"http://xabber.com/protocol/rewrite">>,
 									  __Opts,
 									  _el),
-					    Stanza_id, Body);
+					    Stanza_id, Body, __Els);
       _ ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-					    _els, Replaced, Stanza_id, Body)
+					    _els, Replaced, Stanza_id, Body,
+					    [_el | __Els])
     end;
 decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-				  [_ | _els], Replaced, Stanza_id, Body) ->
+				  [{xmlel, _name, _attrs, _} = _el | _els],
+				  Replaced, Stanza_id, Body, __Els) ->
+    case proplists:get_bool(ignore_els, __Opts) of
+      true ->
+	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
+					    _els, Replaced, Stanza_id, Body,
+					    [_el | __Els]);
+      false ->
+	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+					__TopXMLNS),
+	  case xmpp_codec:get_mod(_name, __XMLNS) of
+	    undefined ->
+		decode_xabber_replace_message_els(__TopXMLNS, __Opts,
+						  _els, Replaced, Stanza_id,
+						  Body, [_el | __Els]);
+	    Mod ->
+		decode_xabber_replace_message_els(__TopXMLNS, __Opts,
+						  _els, Replaced, Stanza_id,
+						  Body,
+						  [Mod:do_decode(_name, __XMLNS,
+								 _el, __Opts)
+						   | __Els])
+	  end
+    end;
+decode_xabber_replace_message_els(__TopXMLNS, __Opts,
+				  [_ | _els], Replaced, Stanza_id, Body,
+				  __Els) ->
     decode_xabber_replace_message_els(__TopXMLNS, __Opts,
-				      _els, Replaced, Stanza_id, Body).
+				      _els, Replaced, Stanza_id, Body, __Els).
 
 decode_xabber_replace_message_attrs(__TopXMLNS,
 				    [{<<"from">>, _val} | _attrs], _From, To) ->
@@ -479,20 +530,22 @@ decode_xabber_replace_message_attrs(__TopXMLNS, [],
      decode_xabber_replace_message_attr_to(__TopXMLNS, To)}.
 
 encode_xabber_replace_message({xabber_replace_message,
-			       From, To, Body, Stanza_id, Replaced},
+			       From, To, Body, Stanza_id, Replaced, __Els},
 			      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
 						[<<"http://xabber.com/protocol/rewrite">>,
 						 <<"http://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
-    _els =
-	lists:reverse('encode_xabber_replace_message_$replaced'(Replaced,
-								__NewTopXMLNS,
-								'encode_xabber_replace_message_$stanza_id'(Stanza_id,
-													   __NewTopXMLNS,
-													   'encode_xabber_replace_message_$body'(Body,
-																		 __NewTopXMLNS,
-																		 [])))),
+    _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
+	    || _el <- __Els]
+	     ++
+	     lists:reverse('encode_xabber_replace_message_$replaced'(Replaced,
+								     __NewTopXMLNS,
+								     'encode_xabber_replace_message_$stanza_id'(Stanza_id,
+														__NewTopXMLNS,
+														'encode_xabber_replace_message_$body'(Body,
+																		      __NewTopXMLNS,
+																		      [])))),
     _attrs = encode_xabber_replace_message_attr_to(To,
 						   encode_xabber_replace_message_attr_from(From,
 											   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -562,41 +615,66 @@ encode_xabber_replace_message_attr_to(_val, _acc) ->
 
 decode_xabber_replace(__TopXMLNS, __Opts,
 		      {xmlel, <<"replace">>, _attrs, _els}) ->
-    Xabber_replace_message =
+    {Xabber_replace_message, __Els} =
 	decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
-				  undefined),
+				  undefined, []),
     {Xmlns, Id, Version, Conversation, By} =
 	decode_xabber_replace_attrs(__TopXMLNS, _attrs,
 				    undefined, undefined, undefined, undefined,
 				    undefined),
     {xabber_replace, Xmlns, Id, By, Version, Conversation,
-     Xabber_replace_message}.
+     Xabber_replace_message, __Els}.
 
 decode_xabber_replace_els(__TopXMLNS, __Opts, [],
-			  Xabber_replace_message) ->
-    Xabber_replace_message;
+			  Xabber_replace_message, __Els) ->
+    {Xabber_replace_message, lists:reverse(__Els)};
 decode_xabber_replace_els(__TopXMLNS, __Opts,
 			  [{xmlel, <<"message">>, _attrs, _} = _el | _els],
-			  Xabber_replace_message) ->
+			  Xabber_replace_message, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://xabber.com/protocol/rewrite">> ->
 	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
 				    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite">>,
-								  __Opts, _el));
+								  __Opts, _el),
+				    __Els);
       <<"http://xabber.com/protocol/rewrite#notify">> ->
 	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
 				    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite#notify">>,
-								  __Opts, _el));
+								  __Opts, _el),
+				    __Els);
       _ ->
 	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
-				    Xabber_replace_message)
+				    Xabber_replace_message, [_el | __Els])
     end;
 decode_xabber_replace_els(__TopXMLNS, __Opts,
-			  [_ | _els], Xabber_replace_message) ->
+			  [{xmlel, _name, _attrs, _} = _el | _els],
+			  Xabber_replace_message, __Els) ->
+    case proplists:get_bool(ignore_els, __Opts) of
+      true ->
+	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
+				    Xabber_replace_message, [_el | __Els]);
+      false ->
+	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+					__TopXMLNS),
+	  case xmpp_codec:get_mod(_name, __XMLNS) of
+	    undefined ->
+		decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
+					  Xabber_replace_message,
+					  [_el | __Els]);
+	    Mod ->
+		decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
+					  Xabber_replace_message,
+					  [Mod:do_decode(_name, __XMLNS, _el,
+							 __Opts)
+					   | __Els])
+	  end
+    end;
+decode_xabber_replace_els(__TopXMLNS, __Opts,
+			  [_ | _els], Xabber_replace_message, __Els) ->
     decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
-			      Xabber_replace_message).
+			      Xabber_replace_message, __Els).
 
 decode_xabber_replace_attrs(__TopXMLNS,
 			    [{<<"xmlns">>, _val} | _attrs], _Xmlns, Id, Version,
@@ -637,16 +715,18 @@ decode_xabber_replace_attrs(__TopXMLNS, [], Xmlns, Id,
      decode_xabber_replace_attr_by(__TopXMLNS, By)}.
 
 encode_xabber_replace({xabber_replace, Xmlns, Id, By,
-		       Version, Conversation, Xabber_replace_message},
+		       Version, Conversation, Xabber_replace_message, __Els},
 		      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/rewrite">>,
 						 <<"http://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
-    _els =
-	lists:reverse('encode_xabber_replace_$xabber_replace_message'(Xabber_replace_message,
-								      __NewTopXMLNS,
-								      [])),
+    _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
+	    || _el <- __Els]
+	     ++
+	     lists:reverse('encode_xabber_replace_$xabber_replace_message'(Xabber_replace_message,
+									   __NewTopXMLNS,
+									   [])),
     _attrs = encode_xabber_replace_attr_by(By,
 					   encode_xabber_replace_attr_conversation(Conversation,
 										   encode_xabber_replace_attr_version(Version,

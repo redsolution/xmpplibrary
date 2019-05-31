@@ -41,19 +41,11 @@ pp(_, _) -> no.
 
 records() -> [{xmppreference, 5}].
 
-dec_enum(Val, Enums) ->
-    AtomVal = erlang:binary_to_existing_atom(Val, utf8),
-    case lists:member(AtomVal, Enums) of
-      true -> AtomVal
-    end.
-
 dec_int(Val, Min, Max) ->
     case erlang:binary_to_integer(Val) of
       Int when Int =< Max, Min == infinity -> Int;
       Int when Int =< Max, Int >= Min -> Int
     end.
-
-enc_enum(Atom) -> erlang:atom_to_binary(Atom, utf8).
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
 
@@ -146,18 +138,10 @@ decode_xmppreference_attr_type(__TopXMLNS, undefined) ->
 		  {missing_attr, <<"type">>, <<"reference">>,
 		   __TopXMLNS}});
 decode_xmppreference_attr_type(__TopXMLNS, _val) ->
-    case catch dec_enum(_val,
-			[data, mention, groupchat, forward, legacy, markup])
-	of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"type">>, <<"reference">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+    _val.
 
 encode_xmppreference_attr_type(_val, _acc) ->
-    [{<<"type">>, enc_enum(_val)} | _acc].
+    [{<<"type">>, _val} | _acc].
 
 decode_xmppreference_attr_begin(__TopXMLNS,
 				undefined) ->

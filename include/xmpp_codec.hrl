@@ -97,8 +97,6 @@
 		       'no-permanent-store' | 'no-permanent-storage'}).
 -type hint() :: #hint{}.
 
--type reference_type() :: 'data' | mention | groupchat | forward | legacy | markup.
-
 -record(avatar_data, {data = <<>> :: binary()}).
 -type avatar_data() :: #avatar_data{}.
 
@@ -318,7 +316,7 @@
                     xmlns = <<>> :: binary()}).
 -type sm_enable() :: #sm_enable{}.
 
--record(xmppreference, {type :: 'data' | 'forward' | 'groupchat' | 'legacy' | 'markup' | 'mention',
+-record(xmppreference, {type = <<>> :: binary(),
                         uri = <<>> :: binary(),
                         'begin' :: 'undefined' | non_neg_integer(),
                         'end' :: 'undefined' | non_neg_integer(),
@@ -518,7 +516,8 @@
 -record(xabbergroupchat_replace_message, {from = <<>> :: binary(),
                                           to = <<>> :: binary(),
                                           body :: 'undefined' | binary(),
-                                          replaced :: 'undefined' | #xabbergroupchat_replaced{}}).
+                                          replaced :: 'undefined' | #xabbergroupchat_replaced{},
+                                          sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabbergroupchat_replace_message() :: #xabbergroupchat_replace_message{}.
 
 -record(xabber_conversation_call, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -860,7 +859,8 @@
                                  to :: undefined | jid:jid(),
                                  body :: 'undefined' | binary(),
                                  stanza_id :: 'undefined' | #stanza_id{},
-                                 replaced :: 'undefined' | #replaced{}}).
+                                 replaced :: 'undefined' | #replaced{},
+                                 sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabber_replace_message() :: #xabber_replace_message{}.
 
 -record(xabber_replace, {xmlns = <<>> :: binary(),
@@ -868,7 +868,8 @@
                          by :: undefined | jid:jid(),
                          version :: 'undefined' | non_neg_integer(),
                          conversation :: undefined | jid:jid(),
-                         xabber_replace_message :: 'undefined' | #xabber_replace_message{}}).
+                         xabber_replace_message :: 'undefined' | #xabber_replace_message{},
+                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabber_replace() :: #xabber_replace{}.
 
 -record(xabber_retract_message, {xmlns = <<>> :: binary(),

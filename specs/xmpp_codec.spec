@@ -4972,7 +4972,7 @@
      #elem{name = <<"message">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#history">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_replace_message, '$from', '$to', '$body', '$replaced'},
+     result = {xabbergroupchat_replace_message, '$from', '$to', '$body', '$replaced', '$_els'},
             attrs = [#attr{name = <<"from">>},
                         #attr{name = <<"to">>}],
      refs = [#ref{name = xabbergroupchat_replace_message_body, min = 0, max = 1, label = '$body'},
@@ -5102,7 +5102,7 @@
      #elem{name = <<"replace">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$xabber_replace_message'},
+     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$xabber_replace_message', '$_els'},
      attrs = [
               #attr{name = <<"xmlns">>},
               #attr{name = <<"id">>,
@@ -5126,7 +5126,7 @@
      #elem{name = <<"message">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_replace_message, '$from', '$to', '$body', '$stanza_id', '$replaced'},
+     result = {xabber_replace_message, '$from', '$to', '$body', '$stanza_id', '$replaced', '$_els'},
             attrs = [#attr{name = <<"from">>,
                           dec = {jid, decode, []},
                           enc = {jid, encode, []}},
@@ -5185,10 +5185,8 @@
      ]
      }).
 
--type reference_type() :: 'data' | mention | groupchat | forward | legacy | markup.
-
 -record(xmppreference, {
-             type :: reference_type(),
+             type = <<>> :: binary(),
              uri = <<>> :: binary(),
              begin :: undefined | non_neg_integer(),
              end :: undefined | non_neg_integer(),
@@ -5201,9 +5199,8 @@
 	   module = xep0372,
            result = {xmppreference, '$type', '$uri', '$begin', '$end', '$_els'},
            attrs = [#attr{name = <<"type">>,
-                          required = true,
-                          enc = {enc_enum, []},
-                          dec = {dec_enum, [['data', mention, groupchat, forward, legacy, markup]]}},
+                          required = true
+                          },
                     #attr{name = <<"begin">>,
                           dec = {dec_int, [0, infinity]},
                           enc = {enc_int, []}},
