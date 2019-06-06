@@ -4468,10 +4468,13 @@
 
 -xml(xabbergroupchat_invite,
      #elem{name = <<"invite">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat#invite">>,<<"http://xabber.com/protocol/groupchat">>],
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_invite, '$jid', '$send','$reason','$user'},
-     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$jid'},
+     result = {xabbergroupchat_invite, '$jid', '$invite_jid', '$send','$reason','$user'},
+     attrs = [#attr{name = <<"jid">>,
+                         dec = {jid, decode, []},
+                         enc = {jid, encode, []}}],
+     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$invite_jid'},
      #ref{name = xabbergroupchat_invite_send, min = 0, max = 1, label = '$send'},
      #ref{name = xabbergroupchat_invite_user, min = 0, max = 1, label = '$user'},
      #ref{name = xabbergroupchat_invite_reason, min = 0, max = 1, label = '$reason'}
@@ -5216,10 +5219,7 @@
 	   module = 'xabbersynchronization',
      result = {xabber_synchronization, '$stamp', '$conversation'},
      attrs = [
-     #attr{name = <<"stamp">>,
-           dec = {dec_utc, []},
-           enc = {enc_utc, []}}
-
+     #attr{name = <<"stamp">>}
      ],
      refs = [
      #ref{name = xabber_conversation, label = '$conversation'}
@@ -5232,10 +5232,7 @@
 	   module = 'xabbersynchronization',
      result = {xabber_synchronization_query, '$stamp'},
      attrs = [
-     #attr{name = <<"stamp">>,
-           dec = {dec_utc, []},
-           enc = {enc_utc, []}}
-
+     #attr{name = <<"stamp">>}
      ]
      }).
 
@@ -5243,16 +5240,14 @@
      #elem{name = <<"conversation">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_conversation, '$type', '$jid', '$timestamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last'},
+     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last'},
      attrs = [
      #attr{name = <<"jid">>,
            required = true,
            dec = {jid, decode, []},
            enc = {jid, encode, []}},
-     #attr{name = <<"timestamp">>,
-           required = true,
-           dec = {dec_utc, []},
-           enc = {enc_utc, []}},
+     #attr{name = <<"stamp">>,
+           required = true},
      #attr{name = <<"thread">>},
      #attr{name = <<"type">>}
      ],

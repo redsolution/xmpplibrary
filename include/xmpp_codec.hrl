@@ -191,7 +191,7 @@
 -record(ping, {}).
 -type ping() :: #ping{}.
 
--record(xabber_synchronization_query, {stamp :: undefined | erlang:timestamp()}).
+-record(xabber_synchronization_query, {stamp = <<>> :: binary()}).
 -type xabber_synchronization_query() :: #xabber_synchronization_query{}.
 
 -record(delay, {stamp :: erlang:timestamp(),
@@ -718,7 +718,8 @@
 -record(xabbergroupchat_revoke, {jid :: 'undefined' | binary()}).
 -type xabbergroupchat_revoke() :: #xabbergroupchat_revoke{}.
 
--record(xabbergroupchat_invite, {jid :: 'undefined' | binary(),
+-record(xabbergroupchat_invite, {jid :: undefined | jid:jid(),
+                                 invite_jid :: 'undefined' | binary(),
                                  send :: 'undefined' | binary(),
                                  reason :: 'undefined' | binary(),
                                  user :: 'undefined' | #xabbergroup_invite_user{}}).
@@ -750,7 +751,7 @@
 
 -record(xabber_conversation, {type = <<>> :: binary(),
                               jid :: jid:jid(),
-                              timestamp :: erlang:timestamp(),
+                              stamp = <<>> :: binary(),
                               thread = <<>> :: binary(),
                               retract :: 'undefined' | #xabber_conversation_retract{},
                               unread :: 'undefined' | #xabber_conversation_unread{},
@@ -761,7 +762,7 @@
                               last :: 'undefined' | #xabber_conversation_last{}}).
 -type xabber_conversation() :: #xabber_conversation{}.
 
--record(xabber_synchronization, {stamp :: undefined | erlang:timestamp(),
+-record(xabber_synchronization, {stamp = <<>> :: binary(),
                                  conversation = [] :: [#xabber_conversation{}]}).
 -type xabber_synchronization() :: #xabber_synchronization{}.
 

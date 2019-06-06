@@ -325,6 +325,10 @@ do_decode(<<"invite">>,
 	  Opts) ->
     decode_xabbergroupchat_invite(<<"http://xabber.com/protocol/groupchat#invite">>,
 				  Opts, El);
+do_decode(<<"invite">>,
+	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
+    decode_xabbergroupchat_invite(<<"http://xabber.com/protocol/groupchat">>,
+				  Opts, El);
 do_decode(<<"query">>,
 	  <<"http://xabber.com/protocol/groupchat#invite">>, El,
 	  Opts) ->
@@ -535,6 +539,8 @@ tags() ->
       <<"http://xabber.com/protocol/groupchat#invite">>},
      {<<"invite">>,
       <<"http://xabber.com/protocol/groupchat#invite">>},
+     {<<"invite">>,
+      <<"http://xabber.com/protocol/groupchat">>},
      {<<"query">>,
       <<"http://xabber.com/protocol/groupchat#invite">>},
      {<<"nickname">>,
@@ -587,7 +593,8 @@ do_encode({xabbergroupchat_query_members, _, _, _} =
 do_encode({xabbergroupchat_invite_query, _} = Query,
 	  TopXMLNS) ->
     encode_xabbergroupchat_invite_query(Query, TopXMLNS);
-do_encode({xabbergroupchat_invite, _, _, _, _} = Invite,
+do_encode({xabbergroupchat_invite, _, _, _, _, _} =
+	      Invite,
 	  TopXMLNS) ->
     encode_xabbergroupchat_invite(Invite, TopXMLNS);
 do_encode({xabbergroupchat_revoke, _} = Revoke,
@@ -727,7 +734,7 @@ do_get_name({xabbergroupchat, _}) -> <<"query">>;
 do_get_name({xabbergroupchat_create, _, _, _, _, _, _,
 	     _, _, _}) ->
     <<"create">>;
-do_get_name({xabbergroupchat_invite, _, _, _, _}) ->
+do_get_name({xabbergroupchat_invite, _, _, _, _, _}) ->
     <<"invite">>;
 do_get_name({xabbergroupchat_invite_query, _}) ->
     <<"query">>;
@@ -814,7 +821,7 @@ do_get_ns({xabbergroupchat, _}) ->
 do_get_ns({xabbergroupchat_create, _, _, _, _, _, _, _,
 	   _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
-do_get_ns({xabbergroupchat_invite, _, _, _, _}) ->
+do_get_ns({xabbergroupchat_invite, _, _, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#invite">>;
 do_get_ns({xabbergroupchat_invite_query, _}) ->
     <<"http://xabber.com/protocol/groupchat#invite">>;
@@ -894,8 +901,8 @@ pp(collect, 1) -> [cdata];
 pp(xabbergroupchat_query_members, 3) ->
     [id, version, item];
 pp(xabbergroupchat_invite_query, 1) -> [user];
-pp(xabbergroupchat_invite, 4) ->
-    [jid, send, reason, user];
+pp(xabbergroupchat_invite, 5) ->
+    [jid, invite_jid, send, reason, user];
 pp(xabbergroupchat_revoke, 1) -> [jid];
 pp(xabbergroup_invite_user, 2) -> [jid, id];
 pp(xabbergroupchat_query_rights, 2) ->
@@ -951,7 +958,7 @@ records() ->
      {xabbergroupchat_restriction, 2}, {collect, 1},
      {xabbergroupchat_query_members, 3},
      {xabbergroupchat_invite_query, 1},
-     {xabbergroupchat_invite, 4},
+     {xabbergroupchat_invite, 5},
      {xabbergroupchat_revoke, 1},
      {xabbergroup_invite_user, 2},
      {xabbergroupchat_query_rights, 2},
@@ -5825,18 +5832,21 @@ encode_xabbergroupchat_revoke({xabbergroupchat_revoke,
 
 decode_xabbergroupchat_invite(__TopXMLNS, __Opts,
 			      {xmlel, <<"invite">>, _attrs, _els}) ->
-    {User, Send, Jid, Reason} =
+    {User, Send, Invite_jid, Reason} =
 	decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 					  _els, undefined, undefined, undefined,
 					  undefined),
-    {xabbergroupchat_invite, Jid, Send, Reason, User}.
+    Jid = decode_xabbergroupchat_invite_attrs(__TopXMLNS,
+					      _attrs, undefined),
+    {xabbergroupchat_invite, Jid, Invite_jid, Send, Reason,
+     User}.
 
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-				  [], User, Send, Jid, Reason) ->
-    {User, Send, Jid, Reason};
+				  [], User, Send, Invite_jid, Reason) ->
+    {User, Send, Invite_jid, Reason};
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"jid">>, _attrs, _} = _el | _els],
-				  User, Send, Jid, Reason) ->
+				  User, Send, Invite_jid, Reason) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -5849,11 +5859,12 @@ decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 					    Reason);
       _ ->
 	  decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-					    _els, User, Send, Jid, Reason)
+					    _els, User, Send, Invite_jid,
+					    Reason)
     end;
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"send">>, _attrs, _} = _el | _els],
-				  User, Send, Jid, Reason) ->
+				  User, Send, Invite_jid, Reason) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -5863,14 +5874,15 @@ decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 					    decode_xabbergroupchat_invite_send(<<"http://xabber.com/protocol/groupchat#invite">>,
 									       __Opts,
 									       _el),
-					    Jid, Reason);
+					    Invite_jid, Reason);
       _ ->
 	  decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-					    _els, User, Send, Jid, Reason)
+					    _els, User, Send, Invite_jid,
+					    Reason)
     end;
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"user">>, _attrs, _} = _el | _els],
-				  User, Send, Jid, Reason) ->
+				  User, Send, Invite_jid, Reason) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -5880,51 +5892,67 @@ decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 					    decode_xabbergroupchat_invite_user(<<"http://xabber.com/protocol/groupchat#invite">>,
 									       __Opts,
 									       _el),
-					    Send, Jid, Reason);
+					    Send, Invite_jid, Reason);
       _ ->
 	  decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-					    _els, User, Send, Jid, Reason)
+					    _els, User, Send, Invite_jid,
+					    Reason)
     end;
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"reason">>, _attrs, _} = _el
 				   | _els],
-				  User, Send, Jid, Reason) ->
+				  User, Send, Invite_jid, Reason) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://xabber.com/protocol/groupchat#invite">> ->
 	  decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-					    _els, User, Send, Jid,
+					    _els, User, Send, Invite_jid,
 					    decode_xabbergroupchat_invite_reason(<<"http://xabber.com/protocol/groupchat#invite">>,
 										 __Opts,
 										 _el));
       _ ->
 	  decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-					    _els, User, Send, Jid, Reason)
+					    _els, User, Send, Invite_jid,
+					    Reason)
     end;
 decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-				  [_ | _els], User, Send, Jid, Reason) ->
+				  [_ | _els], User, Send, Invite_jid, Reason) ->
     decode_xabbergroupchat_invite_els(__TopXMLNS, __Opts,
-				      _els, User, Send, Jid, Reason).
+				      _els, User, Send, Invite_jid, Reason).
+
+decode_xabbergroupchat_invite_attrs(__TopXMLNS,
+				    [{<<"jid">>, _val} | _attrs], _Jid) ->
+    decode_xabbergroupchat_invite_attrs(__TopXMLNS, _attrs,
+					_val);
+decode_xabbergroupchat_invite_attrs(__TopXMLNS,
+				    [_ | _attrs], Jid) ->
+    decode_xabbergroupchat_invite_attrs(__TopXMLNS, _attrs,
+					Jid);
+decode_xabbergroupchat_invite_attrs(__TopXMLNS, [],
+				    Jid) ->
+    decode_xabbergroupchat_invite_attr_jid(__TopXMLNS, Jid).
 
 encode_xabbergroupchat_invite({xabbergroupchat_invite,
-			       Jid, Send, Reason, User},
+			       Jid, Invite_jid, Send, Reason, User},
 			      __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat#invite">>,
-				    [], __TopXMLNS),
+    __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
+						[<<"http://xabber.com/protocol/groupchat#invite">>,
+						 <<"http://xabber.com/protocol/groupchat">>],
+						__TopXMLNS),
     _els =
 	lists:reverse('encode_xabbergroupchat_invite_$user'(User,
 							    __NewTopXMLNS,
 							    'encode_xabbergroupchat_invite_$send'(Send,
 												  __NewTopXMLNS,
-												  'encode_xabbergroupchat_invite_$jid'(Jid,
-																       __NewTopXMLNS,
-																       'encode_xabbergroupchat_invite_$reason'(Reason,
-																					       __NewTopXMLNS,
-																					       []))))),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+												  'encode_xabbergroupchat_invite_$invite_jid'(Invite_jid,
+																	      __NewTopXMLNS,
+																	      'encode_xabbergroupchat_invite_$reason'(Reason,
+																						      __NewTopXMLNS,
+																						      []))))),
+    _attrs = encode_xabbergroupchat_invite_attr_jid(Jid,
+						    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+									       __TopXMLNS)),
     {xmlel, <<"invite">>, _attrs, _els}.
 
 'encode_xabbergroupchat_invite_$user'(undefined,
@@ -5943,12 +5971,13 @@ encode_xabbergroupchat_invite({xabbergroupchat_invite,
     [encode_xabbergroupchat_invite_send(Send, __TopXMLNS)
      | _acc].
 
-'encode_xabbergroupchat_invite_$jid'(undefined,
-				     __TopXMLNS, _acc) ->
+'encode_xabbergroupchat_invite_$invite_jid'(undefined,
+					    __TopXMLNS, _acc) ->
     _acc;
-'encode_xabbergroupchat_invite_$jid'(Jid, __TopXMLNS,
-				     _acc) ->
-    [encode_xabbergroupchat_invite_jid(Jid, __TopXMLNS)
+'encode_xabbergroupchat_invite_$invite_jid'(Invite_jid,
+					    __TopXMLNS, _acc) ->
+    [encode_xabbergroupchat_invite_jid(Invite_jid,
+				       __TopXMLNS)
      | _acc].
 
 'encode_xabbergroupchat_invite_$reason'(undefined,
@@ -5959,6 +5988,24 @@ encode_xabbergroupchat_invite({xabbergroupchat_invite,
     [encode_xabbergroupchat_invite_reason(Reason,
 					  __TopXMLNS)
      | _acc].
+
+decode_xabbergroupchat_invite_attr_jid(__TopXMLNS,
+				       undefined) ->
+    undefined;
+decode_xabbergroupchat_invite_attr_jid(__TopXMLNS,
+				       _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"jid">>, <<"invite">>, __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabbergroupchat_invite_attr_jid(undefined,
+				       _acc) ->
+    _acc;
+encode_xabbergroupchat_invite_attr_jid(_val, _acc) ->
+    [{<<"jid">>, jid:encode(_val)} | _acc].
 
 decode_xabbergroupchat_invite_query(__TopXMLNS, __Opts,
 				    {xmlel, <<"query">>, _attrs, _els}) ->

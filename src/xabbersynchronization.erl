@@ -180,7 +180,7 @@ set_els({xabber_conversation_call, _}, _sub_els) ->
 pp(xabber_synchronization, 2) -> [stamp, conversation];
 pp(xabber_synchronization_query, 1) -> [stamp];
 pp(xabber_conversation, 11) ->
-    [type, jid, timestamp, thread, retract, unread,
+    [type, jid, stamp, thread, retract, unread,
      unread_mention, displayed, delivered, call, last];
 pp(xabber_conversation_retract, 1) -> [version];
 pp(xabber_conversation_unread, 2) -> [count, 'after'];
@@ -209,11 +209,7 @@ dec_int(Val, Min, Max) ->
       Int when Int =< Max, Int >= Min -> Int
     end.
 
-dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
-
 enc_int(Int) -> erlang:integer_to_binary(Int).
-
-enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
 
 decode_xabber_conversation_call(__TopXMLNS, __Opts,
 				{xmlel, <<"call">>, _attrs, _els}) ->
@@ -588,13 +584,13 @@ decode_xabber_conversation(__TopXMLNS, __Opts,
 				       undefined, undefined, undefined,
 				       undefined, undefined, undefined,
 				       undefined),
-    {Jid, Timestamp, Thread, Type} =
+    {Jid, Stamp, Thread, Type} =
 	decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
 					 undefined, undefined, undefined,
 					 undefined),
-    {xabber_conversation, Type, Jid, Timestamp, Thread,
-     Retract, Unread, Unread_mention, Displayed, Delivered,
-     Call, Last}.
+    {xabber_conversation, Type, Jid, Stamp, Thread, Retract,
+     Unread, Unread_mention, Displayed, Delivered, Call,
+     Last}.
 
 decode_xabber_conversation_els(__TopXMLNS, __Opts, [],
 			       Last, Delivered, Displayed, Unread, Retract,
@@ -748,41 +744,41 @@ decode_xabber_conversation_els(__TopXMLNS, __Opts,
 				   Call, Unread_mention).
 
 decode_xabber_conversation_attrs(__TopXMLNS,
-				 [{<<"jid">>, _val} | _attrs], _Jid, Timestamp,
+				 [{<<"jid">>, _val} | _attrs], _Jid, Stamp,
 				 Thread, Type) ->
     decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
-				     _val, Timestamp, Thread, Type);
+				     _val, Stamp, Thread, Type);
 decode_xabber_conversation_attrs(__TopXMLNS,
-				 [{<<"timestamp">>, _val} | _attrs], Jid,
-				 _Timestamp, Thread, Type) ->
+				 [{<<"stamp">>, _val} | _attrs], Jid, _Stamp,
+				 Thread, Type) ->
     decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
 				     Jid, _val, Thread, Type);
 decode_xabber_conversation_attrs(__TopXMLNS,
-				 [{<<"thread">>, _val} | _attrs], Jid,
-				 Timestamp, _Thread, Type) ->
+				 [{<<"thread">>, _val} | _attrs], Jid, Stamp,
+				 _Thread, Type) ->
     decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
-				     Jid, Timestamp, _val, Type);
+				     Jid, Stamp, _val, Type);
 decode_xabber_conversation_attrs(__TopXMLNS,
-				 [{<<"type">>, _val} | _attrs], Jid, Timestamp,
+				 [{<<"type">>, _val} | _attrs], Jid, Stamp,
 				 Thread, _Type) ->
     decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
-				     Jid, Timestamp, Thread, _val);
+				     Jid, Stamp, Thread, _val);
 decode_xabber_conversation_attrs(__TopXMLNS,
-				 [_ | _attrs], Jid, Timestamp, Thread, Type) ->
+				 [_ | _attrs], Jid, Stamp, Thread, Type) ->
     decode_xabber_conversation_attrs(__TopXMLNS, _attrs,
-				     Jid, Timestamp, Thread, Type);
+				     Jid, Stamp, Thread, Type);
 decode_xabber_conversation_attrs(__TopXMLNS, [], Jid,
-				 Timestamp, Thread, Type) ->
+				 Stamp, Thread, Type) ->
     {decode_xabber_conversation_attr_jid(__TopXMLNS, Jid),
-     decode_xabber_conversation_attr_timestamp(__TopXMLNS,
-					       Timestamp),
+     decode_xabber_conversation_attr_stamp(__TopXMLNS,
+					   Stamp),
      decode_xabber_conversation_attr_thread(__TopXMLNS,
 					    Thread),
      decode_xabber_conversation_attr_type(__TopXMLNS, Type)}.
 
 encode_xabber_conversation({xabber_conversation, Type,
-			    Jid, Timestamp, Thread, Retract, Unread,
-			    Unread_mention, Displayed, Delivered, Call, Last},
+			    Jid, Stamp, Thread, Retract, Unread, Unread_mention,
+			    Displayed, Delivered, Call, Last},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
@@ -805,10 +801,10 @@ encode_xabber_conversation({xabber_conversation, Type,
 																																				    [])))))))),
     _attrs = encode_xabber_conversation_attr_type(Type,
 						  encode_xabber_conversation_attr_thread(Thread,
-											 encode_xabber_conversation_attr_timestamp(Timestamp,
-																   encode_xabber_conversation_attr_jid(Jid,
-																				       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																								  __TopXMLNS))))),
+											 encode_xabber_conversation_attr_stamp(Stamp,
+															       encode_xabber_conversation_attr_jid(Jid,
+																				   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																							      __TopXMLNS))))),
     {xmlel, <<"conversation">>, _attrs, _els}.
 
 'encode_xabber_conversation_$last'(undefined,
@@ -887,23 +883,17 @@ decode_xabber_conversation_attr_jid(__TopXMLNS, _val) ->
 encode_xabber_conversation_attr_jid(_val, _acc) ->
     [{<<"jid">>, jid:encode(_val)} | _acc].
 
-decode_xabber_conversation_attr_timestamp(__TopXMLNS,
-					  undefined) ->
+decode_xabber_conversation_attr_stamp(__TopXMLNS,
+				      undefined) ->
     erlang:error({xmpp_codec,
-		  {missing_attr, <<"timestamp">>, <<"conversation">>,
+		  {missing_attr, <<"stamp">>, <<"conversation">>,
 		   __TopXMLNS}});
-decode_xabber_conversation_attr_timestamp(__TopXMLNS,
-					  _val) ->
-    case catch dec_utc(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"timestamp">>, <<"conversation">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+decode_xabber_conversation_attr_stamp(__TopXMLNS,
+				      _val) ->
+    _val.
 
-encode_xabber_conversation_attr_timestamp(_val, _acc) ->
-    [{<<"timestamp">>, enc_utc(_val)} | _acc].
+encode_xabber_conversation_attr_stamp(_val, _acc) ->
+    [{<<"stamp">>, _val} | _acc].
 
 decode_xabber_conversation_attr_thread(__TopXMLNS,
 				       undefined) ->
@@ -965,23 +955,17 @@ encode_xabber_synchronization_query({xabber_synchronization_query,
 
 decode_xabber_synchronization_query_attr_stamp(__TopXMLNS,
 					       undefined) ->
-    undefined;
+    <<>>;
 decode_xabber_synchronization_query_attr_stamp(__TopXMLNS,
 					       _val) ->
-    case catch dec_utc(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"stamp">>, <<"query">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+    _val.
 
-encode_xabber_synchronization_query_attr_stamp(undefined,
+encode_xabber_synchronization_query_attr_stamp(<<>>,
 					       _acc) ->
     _acc;
 encode_xabber_synchronization_query_attr_stamp(_val,
 					       _acc) ->
-    [{<<"stamp">>, enc_utc(_val)} | _acc].
+    [{<<"stamp">>, _val} | _acc].
 
 decode_xabber_synchronization(__TopXMLNS, __Opts,
 			      {xmlel, <<"synchronization">>, _attrs, _els}) ->
@@ -1060,19 +1044,12 @@ encode_xabber_synchronization({xabber_synchronization,
 
 decode_xabber_synchronization_attr_stamp(__TopXMLNS,
 					 undefined) ->
-    undefined;
+    <<>>;
 decode_xabber_synchronization_attr_stamp(__TopXMLNS,
 					 _val) ->
-    case catch dec_utc(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"stamp">>, <<"synchronization">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+    _val.
 
-encode_xabber_synchronization_attr_stamp(undefined,
-					 _acc) ->
+encode_xabber_synchronization_attr_stamp(<<>>, _acc) ->
     _acc;
 encode_xabber_synchronization_attr_stamp(_val, _acc) ->
-    [{<<"stamp">>, enc_utc(_val)} | _acc].
+    [{<<"stamp">>, _val} | _acc].
