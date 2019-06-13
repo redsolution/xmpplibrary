@@ -506,6 +506,11 @@
 -record(xabbergroupchat_retract_invalidate, {version = <<>> :: binary()}).
 -type xabbergroupchat_retract_invalidate() :: #xabbergroupchat_retract_invalidate{}.
 
+-record(xabbertoken_issue, {client :: 'undefined' | binary(),
+                            device :: 'undefined' | binary(),
+                            expire :: 'undefined' | binary()}).
+-type xabbertoken_issue() :: #xabbertoken_issue{}.
+
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
@@ -611,11 +616,6 @@
 
 -record(shim, {headers = [] :: [{binary(),binary()}]}).
 -type shim() :: #shim{}.
-
--record(xabbertoken_issue, {client :: 'undefined' | binary(),
-                            os :: 'undefined' | binary(),
-                            expire :: 'undefined' | binary()}).
--type xabbertoken_issue() :: #xabbertoken_issue{}.
 
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
@@ -1173,7 +1173,8 @@
 
 -record(xabbertoken_field, {var = <<>> :: binary(),
                             token :: 'undefined' | binary(),
-                            desc :: 'undefined' | binary(),
+                            client :: 'undefined' | binary(),
+                            device :: 'undefined' | binary(),
                             ip :: 'undefined' | binary(),
                             last :: 'undefined' | binary(),
                             expire :: 'undefined' | binary()}).

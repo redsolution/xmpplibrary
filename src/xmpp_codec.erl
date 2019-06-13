@@ -750,6 +750,9 @@ get_mod(<<"metadata">>,
 get_mod(<<"password">>,
 	<<"http://jabber.org/protocol/muc#owner">>) ->
     xep0045;
+get_mod(<<"device">>,
+	<<"http://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"method">>,
 	<<"http://jabber.org/features/compress">>) ->
     xep0138;
@@ -1065,9 +1068,6 @@ get_mod(<<"ORGUNIT">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"UID">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"required">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"result">>, <<"urn:xmpp:mam:0">>) -> xep0313;
-get_mod(<<"os">>,
-	<<"http://xabber.com/protocol/auth-tokens">>) ->
-    xabbertoken;
 get_mod(<<"role">>,
 	<<"http://xabber.com/protocol/groupchat#members">>) ->
     xabbergroupchat;
@@ -1869,8 +1869,6 @@ get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({search_item, _, _, _, _, _}) -> xep0055;
 get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
-get_mod({xabbertoken_field, _, _, _, _, _, _}) ->
-    xabbertoken;
 get_mod({xabbergroupchat_user_card, _, _, _, _, _,
 	 _}) ->
     xabbergroupchat;
@@ -1964,6 +1962,8 @@ get_mod({xabber_synchronization_query, _}) ->
     xabbersynchronization;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
+get_mod({xabbertoken_field, _, _, _, _, _, _, _}) ->
+    xabbertoken;
 get_mod({unblock, _}) -> xep0191;
 get_mod({stat_error, _, _}) -> xep0039;
 get_mod({sasl_abort}) -> rfc6120;
