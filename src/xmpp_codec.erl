@@ -1145,6 +1145,9 @@ get_mod(<<"invalid-subid">>,
 get_mod(<<"not-in-roster-group">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"peer-to-peer">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"message">>,
 	<<"http://xabber.com/protocol/rewrite">>) ->
     xabberrewrite;
@@ -1758,9 +1761,6 @@ get_mod({xabbergroupchat_retract_all, _}) ->
 get_mod({xabber_conversation_call, _}) ->
     xabbersynchronization;
 get_mod({last, _, _}) -> xep0012;
-get_mod({xabbergroupchat_create, _, _, _, _, _, _, _, _,
-	 _}) ->
-    xabbergroupchat;
 get_mod({xabbergroup_block, _, _, _}) ->
     xabbergroupchat;
 get_mod({message_displayed, _, _}) -> xep0333;
@@ -1797,6 +1797,9 @@ get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
 get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->
     rfc6120;
 get_mod({streamhost, _, _, _}) -> xep0065;
+get_mod({xabbergroupchat_create, _, _, _, _, _, _, _, _,
+	 _, _}) ->
+    xabbergroupchat;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({xabbertoken_issue, _, _, _}) -> xabbertoken;
@@ -1975,6 +1978,7 @@ get_mod({upload_request_0, _, _, _, _}) -> xep0363;
 get_mod({x_present}) -> xabbergroupchat;
 get_mod({xabbergroup_invite_user, _, _}) ->
     xabbergroupchat;
+get_mod({xabbergroup_peer, _, _}) -> xabbergroupchat;
 get_mod({xabber_replace, _, _, _, _, _, _, _}) ->
     xabberrewrite;
 get_mod({privacy_item, _, _, _, _, _, _, _, _}) ->

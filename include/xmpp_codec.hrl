@@ -602,6 +602,10 @@
                                        version = <<>> :: binary()}).
 -type xabbergroupchat_retract_user() :: #xabbergroupchat_retract_user{}.
 
+-record(xabbergroup_peer, {jid :: jid:jid(),
+                           id = <<>> :: binary()}).
+-type xabbergroup_peer() :: #xabbergroup_peer{}.
+
 -record(muc_item, {actor :: 'undefined' | #muc_actor{},
                    continue :: 'undefined' | binary(),
                    reason = <<>> :: binary(),
@@ -1234,7 +1238,8 @@
                                  localpart :: 'undefined' | binary(),
                                  pinned :: 'undefined' | binary(),
                                  domains :: 'undefined' | #xabbergroup_domains{},
-                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
+                                 contacts :: 'undefined' | #xabbergroup_contacts{},
+                                 peer :: 'undefined' | #xabbergroup_peer{}}).
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
 -record(xabbergroupchat_x, {xmlns = <<>> :: binary(),
@@ -1478,6 +1483,7 @@
                         xabbergroup_invite_user() |
                         feature_register() |
                         register() |
+                        xabbergroup_peer() |
                         avatar_pointer() |
                         xabber_retract_user() |
                         muc_user() |

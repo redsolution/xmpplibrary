@@ -4593,7 +4593,7 @@
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_create, '$name', '$description', '$model', 
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts'},
+     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts', '$peer'},
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
              #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
              #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
@@ -4602,9 +4602,25 @@
              #ref{name = xabbergroupchat_message, min = 0, max = 1, label = '$pinned'},
              #ref{name = xabbergroupchat_domains, min = 0, max = 1, label = '$domains'},
              #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
+             #ref{name = xabbergroupchat_peer, min = 0, max = 1, label = '$peer'},
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
+
+-xml(xabbergroupchat_peer,
+     #elem{name = <<"peer-to-peer">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_peer, '$jid', '$id'},
+     attrs = [#attr{name = <<"jid">>,
+     required = true,
+     dec = {jid, decode, []},
+     enc = {jid, encode, []}
+     },
+     #attr{name = <<"id">>, required = true}
+     ]
+     }
+).
 
 -xml(xabbergroupchat_x_body,
      #elem{name = <<"body">>,
