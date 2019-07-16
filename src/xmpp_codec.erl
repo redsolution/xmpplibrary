@@ -942,6 +942,9 @@ get_mod(<<"nickname">>,
 get_mod(<<"state">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"utc">>, <<"urn:xmpp:time">>) -> xep0202;
+get_mod(<<"token">>,
+	<<"http://xabber.com/protocol/auth-tokens#items">>) ->
+    xabbertoken;
 get_mod(<<"DOM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
@@ -1862,7 +1865,6 @@ get_mod({version, _, _, _}) -> xep0092;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
-get_mod({xabbertoken_query}) -> xabbertoken;
 get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_tel, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
@@ -1959,6 +1961,7 @@ get_mod({xabber_conversation, _, _, _, _, _, _, _, _, _,
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
+get_mod({xabbertoken_query, _}) -> xabbertoken;
 get_mod({xabbergroupchat_invite, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({xabber_synchronization_query, _}) ->

@@ -199,9 +199,6 @@
                 desc = <<>> :: binary()}).
 -type delay() :: #delay{}.
 
--record(xabbertoken_query, {}).
--type xabbertoken_query() :: #xabbertoken_query{}.
-
 -record(muc_history, {maxchars :: 'undefined' | non_neg_integer(),
                       maxstanzas :: 'undefined' | non_neg_integer(),
                       seconds :: 'undefined' | non_neg_integer(),
@@ -1204,6 +1201,9 @@
 -record(sasl_mechanisms, {list = [] :: [binary()]}).
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
+-record(xabbertoken_query, {token :: 'undefined' | binary()}).
+-type xabbertoken_query() :: #xabbertoken_query{}.
+
 -record(xabbertoken_x_token, {token :: 'undefined' | binary(),
                               token_uid :: 'undefined' | binary(),
                               expire :: 'undefined' | binary()}).
@@ -1550,8 +1550,8 @@
                         compress() |
                         bytestreams() |
                         privacy_query() |
-                        xabbertoken_query() |
                         muc_history() |
+                        xabbertoken_query() |
                         identity() |
                         xabber_synchronization_query() |
                         delay() |

@@ -4229,7 +4229,7 @@
 
 -xml(xabbertoken,
     #elem{name = <<"token">>,
-    xmlns = <<"http://xabber.com/protocol/auth-tokens">>,
+    xmlns = [<<"http://xabber.com/protocol/auth-tokens">>,<<"http://xabber.com/protocol/auth-tokens#items">>],
     module = 'xabbertoken',
     result = '$cdata',
     cdata = #cdata{label = '$cdata', required = true}
@@ -4276,7 +4276,9 @@
     #elem{name = <<"query">>,
     xmlns = <<"http://xabber.com/protocol/auth-tokens#items">>,
     module = 'xabbertoken',
-    result = {xabbertoken_query}}
+    result = {xabbertoken_query, '$token'},
+    refs = [#ref{name = xabbertoken, min = 0, max = 1, label = '$token'}]
+    }
 ).
 
 -xml(xabbertoken_x_tokens,
