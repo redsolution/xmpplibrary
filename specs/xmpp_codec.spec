@@ -4613,14 +4613,14 @@
      #elem{name = <<"peer-to-peer">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroup_peer, '$jid', '$id'},
+     result = {xabbergroup_peer, '$jid', '$id', '$cdata'},
      attrs = [#attr{name = <<"jid">>,
-     required = true,
      dec = {jid, decode, []},
      enc = {jid, encode, []}
      },
-     #attr{name = <<"id">>, required = true}
-     ]
+     #attr{name = <<"id">>}
+     ],
+     cdata = #cdata{label = '$cdata'}
      }
 ).
 

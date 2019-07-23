@@ -630,7 +630,7 @@ do_encode({xabbergroupchat_create, _, _, _, _, _, _, _,
 	      Create,
 	  TopXMLNS) ->
     encode_xabbergroupchat_create(Create, TopXMLNS);
-do_encode({xabbergroup_peer, _, _} = Peer_to_peer,
+do_encode({xabbergroup_peer, _, _, _} = Peer_to_peer,
 	  TopXMLNS) ->
     encode_xabbergroupchat_peer(Peer_to_peer, TopXMLNS);
 do_encode({body_x, _, _} = Body, TopXMLNS) ->
@@ -737,7 +737,7 @@ do_get_name({xabbergroup_contacts, _}) ->
 do_get_name({xabbergroup_domains, _}) -> <<"domains">>;
 do_get_name({xabbergroup_invite_user, _, _}) ->
     <<"user">>;
-do_get_name({xabbergroup_peer, _, _}) ->
+do_get_name({xabbergroup_peer, _, _, _}) ->
     <<"peer-to-peer">>;
 do_get_name({xabbergroup_unblock, _, _, _}) ->
     <<"unblock">>;
@@ -825,7 +825,7 @@ do_get_ns({xabbergroup_domains, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({xabbergroup_invite_user, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#invite">>;
-do_get_ns({xabbergroup_peer, _, _}) ->
+do_get_ns({xabbergroup_peer, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({xabbergroup_unblock, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#block">>;
@@ -931,7 +931,7 @@ pp(xabbergroupchat_x, 15) ->
 pp(xabbergroupchat_create, 10) ->
     [name, description, model, searchable, anonymous,
      localpart, pinned, domains, contacts, peer];
-pp(xabbergroup_peer, 2) -> [jid, id];
+pp(xabbergroup_peer, 3) -> [jid, id, cdata];
 pp(body_x, 2) -> [lang, data];
 pp(xabbergroup_contacts, 1) -> [contact];
 pp(xabbergroup_domains, 1) -> [domain];
@@ -978,7 +978,7 @@ records() ->
      {xabbergroupchat_query_rights, 2},
      {xabbergroupchat_query_item, 1},
      {xabbergroupchat_update, 8}, {xabbergroupchat_x, 15},
-     {xabbergroupchat_create, 10}, {xabbergroup_peer, 2},
+     {xabbergroupchat_create, 10}, {xabbergroup_peer, 3},
      {body_x, 2}, {xabbergroup_contacts, 1},
      {xabbergroup_domains, 1}, {xabbergroup_block, 3},
      {xabbergroup_unblock, 3}, {block_id, 1}, {block_jid, 1},
@@ -4284,10 +4284,24 @@ encode_xabbergroupchat_x_body_cdata(_val, _acc) ->
 
 decode_xabbergroupchat_peer(__TopXMLNS, __Opts,
 			    {xmlel, <<"peer-to-peer">>, _attrs, _els}) ->
+    Cdata = decode_xabbergroupchat_peer_els(__TopXMLNS,
+					    __Opts, _els, <<>>),
     {Jid, Id} =
 	decode_xabbergroupchat_peer_attrs(__TopXMLNS, _attrs,
 					  undefined, undefined),
-    {xabbergroup_peer, Jid, Id}.
+    {xabbergroup_peer, Jid, Id, Cdata}.
+
+decode_xabbergroupchat_peer_els(__TopXMLNS, __Opts, [],
+				Cdata) ->
+    decode_xabbergroupchat_peer_cdata(__TopXMLNS, Cdata);
+decode_xabbergroupchat_peer_els(__TopXMLNS, __Opts,
+				[{xmlcdata, _data} | _els], Cdata) ->
+    decode_xabbergroupchat_peer_els(__TopXMLNS, __Opts,
+				    _els, <<Cdata/binary, _data/binary>>);
+decode_xabbergroupchat_peer_els(__TopXMLNS, __Opts,
+				[_ | _els], Cdata) ->
+    decode_xabbergroupchat_peer_els(__TopXMLNS, __Opts,
+				    _els, Cdata).
 
 decode_xabbergroupchat_peer_attrs(__TopXMLNS,
 				  [{<<"jid">>, _val} | _attrs], _Jid, Id) ->
@@ -4306,12 +4320,13 @@ decode_xabbergroupchat_peer_attrs(__TopXMLNS, [], Jid,
     {decode_xabbergroupchat_peer_attr_jid(__TopXMLNS, Jid),
      decode_xabbergroupchat_peer_attr_id(__TopXMLNS, Id)}.
 
-encode_xabbergroupchat_peer({xabbergroup_peer, Jid, Id},
+encode_xabbergroupchat_peer({xabbergroup_peer, Jid, Id,
+			     Cdata},
 			    __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat">>,
 				    [], __TopXMLNS),
-    _els = [],
+    _els = encode_xabbergroupchat_peer_cdata(Cdata, []),
     _attrs = encode_xabbergroupchat_peer_attr_id(Id,
 						 encode_xabbergroupchat_peer_attr_jid(Jid,
 										      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -4320,9 +4335,7 @@ encode_xabbergroupchat_peer({xabbergroup_peer, Jid, Id},
 
 decode_xabbergroupchat_peer_attr_jid(__TopXMLNS,
 				     undefined) ->
-    erlang:error({xmpp_codec,
-		  {missing_attr, <<"jid">>, <<"peer-to-peer">>,
-		   __TopXMLNS}});
+    undefined;
 decode_xabbergroupchat_peer_attr_jid(__TopXMLNS,
 				     _val) ->
     case catch jid:decode(_val) of
@@ -4333,19 +4346,29 @@ decode_xabbergroupchat_peer_attr_jid(__TopXMLNS,
       _res -> _res
     end.
 
+encode_xabbergroupchat_peer_attr_jid(undefined, _acc) ->
+    _acc;
 encode_xabbergroupchat_peer_attr_jid(_val, _acc) ->
     [{<<"jid">>, jid:encode(_val)} | _acc].
 
 decode_xabbergroupchat_peer_attr_id(__TopXMLNS,
 				    undefined) ->
-    erlang:error({xmpp_codec,
-		  {missing_attr, <<"id">>, <<"peer-to-peer">>,
-		   __TopXMLNS}});
+    <<>>;
 decode_xabbergroupchat_peer_attr_id(__TopXMLNS, _val) ->
     _val.
 
+encode_xabbergroupchat_peer_attr_id(<<>>, _acc) -> _acc;
 encode_xabbergroupchat_peer_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
+
+decode_xabbergroupchat_peer_cdata(__TopXMLNS, <<>>) ->
+    <<>>;
+decode_xabbergroupchat_peer_cdata(__TopXMLNS, _val) ->
+    _val.
+
+encode_xabbergroupchat_peer_cdata(<<>>, _acc) -> _acc;
+encode_xabbergroupchat_peer_cdata(_val, _acc) ->
+    [{xmlcdata, _val} | _acc].
 
 decode_xabbergroupchat_create(__TopXMLNS, __Opts,
 			      {xmlel, <<"create">>, _attrs, _els}) ->

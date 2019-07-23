@@ -1788,6 +1788,7 @@ get_mod({block_list, _}) -> xep0191;
 get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
 get_mod({origin_id, _}) -> xep0359;
+get_mod({xabbergroup_peer, _, _, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_kicked, _}) -> xabbergroupchat;
 get_mod({xabber_conversation_displayed, _}) ->
     xabbersynchronization;
@@ -1981,7 +1982,6 @@ get_mod({upload_request_0, _, _, _, _}) -> xep0363;
 get_mod({x_present}) -> xabbergroupchat;
 get_mod({xabbergroup_invite_user, _, _}) ->
     xabbergroupchat;
-get_mod({xabbergroup_peer, _, _}) -> xabbergroupchat;
 get_mod({xabber_replace, _, _, _, _, _, _, _}) ->
     xabberrewrite;
 get_mod({privacy_item, _, _, _, _, _, _, _, _}) ->

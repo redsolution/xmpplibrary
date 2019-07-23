@@ -599,8 +599,9 @@
                                        version = <<>> :: binary()}).
 -type xabbergroupchat_retract_user() :: #xabbergroupchat_retract_user{}.
 
--record(xabbergroup_peer, {jid :: jid:jid(),
-                           id = <<>> :: binary()}).
+-record(xabbergroup_peer, {jid :: undefined | jid:jid(),
+                           id = <<>> :: binary(),
+                           cdata = <<>> :: binary()}).
 -type xabbergroup_peer() :: #xabbergroup_peer{}.
 
 -record(muc_item, {actor :: 'undefined' | #muc_actor{},
