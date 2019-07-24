@@ -471,6 +471,9 @@
                      xmlns = <<>> :: binary()}).
 -type sm_enabled() :: #sm_enabled{}.
 
+-record(idle, {since = <<>> :: binary()}).
+-type idle() :: #idle{}.
+
 -record(muc_unique, {name = <<>> :: binary()}).
 -type muc_unique() :: #muc_unique{}.
 
@@ -1501,6 +1504,7 @@
                         muc_subscribe() |
                         privilege() |
                         push_enable() |
+                        idle() |
                         muc_unique() |
                         message() |
                         xabbergroupchat_invite() |

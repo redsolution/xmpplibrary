@@ -5350,6 +5350,13 @@
      result = {xabber_conversation_call, '$_els'}
      }).
 
+-xml(message_markable,
+     #elem{name = <<"markable">>,
+	   xmlns = <<"urn:xmpp:chat-markers:0">>,
+	   module = 'xep0333',
+	   result = {message_markable}
+	   }).
+
 -xml(message_received,
      #elem{name = <<"received">>,
 	   xmlns = <<"urn:xmpp:chat-markers:0">>,
@@ -5384,6 +5391,13 @@
 	   module = 'xep0353',
 	   result = {jingle_accept, '$id'},
 	   attrs = [#attr{name = <<"id">>}]}).
+
+-xml(idle,
+     #elem{name = <<"idle">>,
+	   xmlns = <<"urn:xmpp:idle:1">>,
+	   module = 'xep0319',
+	   result = {idle, '$since'},
+	   attrs = [#attr{name = <<"since">>}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

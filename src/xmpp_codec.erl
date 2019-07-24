@@ -421,6 +421,7 @@ get_mod(<<"join">>, <<"urn:xmpp:mix:0">>) -> xep0369;
 get_mod(<<"recipient">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
+get_mod(<<"idle">>, <<"urn:xmpp:idle:1">>) -> xep0319;
 get_mod(<<"retract">>,
 	<<"http://jabber.org/protocol/pubsub#event">>) ->
     xep0060;
@@ -1932,6 +1933,7 @@ get_mod({xabbergroupchat_retract_invalidate, _}) ->
     xabbergroupchat;
 get_mod({xabber_retract_invalidate, _}) ->
     xabberrewrite;
+get_mod({idle, _}) -> xep0319;
 get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
