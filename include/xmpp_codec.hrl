@@ -191,9 +191,6 @@
 -record(ping, {}).
 -type ping() :: #ping{}.
 
--record(xabber_synchronization_query, {stamp = <<>> :: binary()}).
--type xabber_synchronization_query() :: #xabber_synchronization_query{}.
-
 -record(delay, {stamp :: erlang:timestamp(),
                 from :: undefined | jid:jid(),
                 desc = <<>> :: binary()}).
@@ -767,10 +764,6 @@
                               last :: 'undefined' | #xabber_conversation_last{}}).
 -type xabber_conversation() :: #xabber_conversation{}.
 
--record(xabber_synchronization, {stamp = <<>> :: binary(),
-                                 conversation = [] :: [#xabber_conversation{}]}).
--type xabber_synchronization() :: #xabber_synchronization{}.
-
 -record(upload_slot, {get :: 'undefined' | binary(),
                       put :: 'undefined' | binary(),
                       xmlns = <<>> :: binary()}).
@@ -835,6 +828,9 @@
 
 -record(rosterver_feature, {}).
 -type rosterver_feature() :: #rosterver_feature{}.
+
+-record(message_markable, {}).
+-type message_markable() :: #message_markable{}.
 
 -record(xabbergroupchat_replace, {id = <<>> :: binary(),
                                   version = <<>> :: binary(),
@@ -919,6 +915,15 @@
                   last :: 'undefined' | binary(),
                   max :: 'undefined' | non_neg_integer()}).
 -type rsm_set() :: #rsm_set{}.
+
+-record(xabber_synchronization_query, {stamp = <<>> :: binary(),
+                                       rsm :: 'undefined' | #rsm_set{}}).
+-type xabber_synchronization_query() :: #xabber_synchronization_query{}.
+
+-record(xabber_synchronization, {stamp = <<>> :: binary(),
+                                 conversation = [] :: [#xabber_conversation{}],
+                                 rsm :: 'undefined' | #rsm_set{}}).
+-type xabber_synchronization() :: #xabber_synchronization{}.
 
 -record(mam_fin, {xmlns = <<>> :: binary(),
                   id = <<>> :: binary(),
@@ -1412,6 +1417,7 @@
                         push_disable() |
                         legacy_auth_feature() |
                         rosterver_feature() |
+                        message_markable() |
                         xabbergroupchat_replace() |
                         unique_time() |
                         muc_invite() |
@@ -1558,8 +1564,8 @@
                         muc_history() |
                         xabbertoken_query() |
                         identity() |
-                        xabber_synchronization_query() |
                         delay() |
+                        xabber_synchronization_query() |
                         xabber_retract_all() |
                         xabber_conversation_call() |
                         xabbergroupchat_retract_all() |

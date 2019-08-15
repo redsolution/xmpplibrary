@@ -13,6 +13,10 @@ do_decode(<<"received">>, <<"urn:xmpp:chat-markers:0">>,
 	  El, Opts) ->
     decode_message_received(<<"urn:xmpp:chat-markers:0">>,
 			    Opts, El);
+do_decode(<<"markable">>, <<"urn:xmpp:chat-markers:0">>,
+	  El, Opts) ->
+    decode_message_markable(<<"urn:xmpp:chat-markers:0">>,
+			    Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
 do_decode(Name, XMLNS, _, _) ->
@@ -20,8 +24,11 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"displayed">>, <<"urn:xmpp:chat-markers:0">>},
-     {<<"received">>, <<"urn:xmpp:chat-markers:0">>}].
+     {<<"received">>, <<"urn:xmpp:chat-markers:0">>},
+     {<<"markable">>, <<"urn:xmpp:chat-markers:0">>}].
 
+do_encode({message_markable} = Markable, TopXMLNS) ->
+    encode_message_markable(Markable, TopXMLNS);
 do_encode({message_received, _, _} = Received,
 	  TopXMLNS) ->
     encode_message_received(Received, TopXMLNS);
@@ -31,9 +38,12 @@ do_encode({message_displayed, _, _} = Displayed,
 
 do_get_name({message_displayed, _, _}) ->
     <<"displayed">>;
+do_get_name({message_markable}) -> <<"markable">>;
 do_get_name({message_received, _, _}) -> <<"received">>.
 
 do_get_ns({message_displayed, _, _}) ->
+    <<"urn:xmpp:chat-markers:0">>;
+do_get_ns({message_markable}) ->
     <<"urn:xmpp:chat-markers:0">>;
 do_get_ns({message_received, _, _}) ->
     <<"urn:xmpp:chat-markers:0">>.
@@ -46,12 +56,14 @@ set_els({message_received, _id, _}, _sub_els) ->
 set_els({message_displayed, _id, _}, _sub_els) ->
     {message_displayed, _id, _sub_els}.
 
+pp(message_markable, 0) -> [];
 pp(message_received, 2) -> [id, sub_els];
 pp(message_displayed, 2) -> [id, sub_els];
 pp(_, _) -> no.
 
 records() ->
-    [{message_received, 2}, {message_displayed, 2}].
+    [{message_markable, 0}, {message_received, 2},
+     {message_displayed, 2}].
 
 decode_message_displayed(__TopXMLNS, __Opts,
 			 {xmlel, <<"displayed">>, _attrs, _els}) ->
@@ -187,3 +199,17 @@ decode_message_received_attr_id(__TopXMLNS, _val) ->
 encode_message_received_attr_id(<<>>, _acc) -> _acc;
 encode_message_received_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
+
+decode_message_markable(__TopXMLNS, __Opts,
+			{xmlel, <<"markable">>, _attrs, _els}) ->
+    {message_markable}.
+
+encode_message_markable({message_markable},
+			__TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"markable">>, _attrs, _els}.

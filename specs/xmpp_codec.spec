@@ -5236,12 +5236,13 @@
      #elem{name = <<"synchronization">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_synchronization, '$stamp', '$conversation'},
+     result = {xabber_synchronization, '$stamp', '$conversation', '$rsm'},
      attrs = [
      #attr{name = <<"stamp">>}
      ],
      refs = [
-     #ref{name = xabber_conversation, label = '$conversation'}
+     #ref{name = xabber_conversation, label = '$conversation'},
+     #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}
      ]
      }).
 
@@ -5249,10 +5250,9 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_synchronization_query, '$stamp'},
-     attrs = [
-     #attr{name = <<"stamp">>}
-     ]
+     result = {xabber_synchronization_query, '$stamp', '$rsm'},
+     attrs = [#attr{name = <<"stamp">>}],
+     refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]
      }).
 
 -xml(xabber_conversation,

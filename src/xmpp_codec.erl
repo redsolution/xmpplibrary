@@ -259,14 +259,6 @@ get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/disco#items">>) ->
     xep0030;
 get_mod(<<"KEYWORD">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"result">>, <<"urn:xmpp:mam:tmp">>) ->
-    xep0313;
-get_mod(<<"active">>, <<"urn:xmpp:csi:0">>) -> xep0352;
-get_mod(<<"slot">>, <<"urn:xmpp:http:upload">>) ->
-    xep0363;
-get_mod(<<"query">>,
-	<<"http://xabber.com/protocol/retract">>) ->
-    xabbergroupchat;
 get_mod(<<"query">>, <<"jabber:iq:roster">>) -> rfc6121;
 get_mod(<<"digest">>, <<"jabber:iq:auth">>) -> xep0078;
 get_mod(<<"NUMBER">>, <<"vcard-temp">>) -> xep0054;
@@ -1602,6 +1594,9 @@ get_mod(<<"request">>, <<"urn:xmpp:receipts">>) ->
 get_mod(<<"revoke">>,
 	<<"http://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"markable">>,
+	<<"urn:xmpp:chat-markers:0">>) ->
+    xep0333;
 get_mod(<<"url">>, <<"storage:bookmarks">>) -> xep0048;
 get_mod(<<"unexpected-request">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
@@ -1753,6 +1748,14 @@ get_mod(<<"x">>,
     xep0045;
 get_mod(<<"media">>, <<"urn:xmpp:media-element">>) ->
     xep0221;
+get_mod(<<"result">>, <<"urn:xmpp:mam:tmp">>) ->
+    xep0313;
+get_mod(<<"active">>, <<"urn:xmpp:csi:0">>) -> xep0352;
+get_mod(<<"slot">>, <<"urn:xmpp:http:upload">>) ->
+    xep0363;
+get_mod(<<"query">>,
+	<<"http://xabber.com/protocol/retract">>) ->
+    xabbergroupchat;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1764,6 +1767,7 @@ get_mod({xabbergroupchat_retract_all, _}) ->
     xabbergroupchat;
 get_mod({xabber_conversation_call, _}) ->
     xabbersynchronization;
+get_mod({message_markable}) -> xep0333;
 get_mod({last, _, _}) -> xep0012;
 get_mod({xabbergroup_block, _, _, _}) ->
     xabbergroupchat;
@@ -1867,6 +1871,8 @@ get_mod({version, _, _, _}) -> xep0092;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
+get_mod({xabber_synchronization, _, _, _}) ->
+    xabbersynchronization;
 get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_tel, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
@@ -1967,8 +1973,6 @@ get_mod({feature_csi, _}) -> xep0352;
 get_mod({xabbertoken_query, _}) -> xabbertoken;
 get_mod({xabbergroupchat_invite, _, _, _, _, _}) ->
     xabbergroupchat;
-get_mod({xabber_synchronization_query, _}) ->
-    xabbersynchronization;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
 get_mod({xabbertoken_field, _, _, _, _, _, _, _}) ->
@@ -2016,6 +2020,8 @@ get_mod({xabber_retract_user, _, _, _, _, _, _}) ->
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({xabbertoken_x_token, _, _, _}) -> xabbertoken;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
+get_mod({xabber_synchronization_query, _, _}) ->
+    xabbersynchronization;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
@@ -2044,8 +2050,6 @@ get_mod({vcard_adr, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({ps_unsubscribe, _, _, _}) -> xep0060;
 get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
-get_mod({xabber_synchronization, _, _}) ->
-    xabbersynchronization;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
 get_mod({bookmark_conference, _, _, _, _, _}) ->
