@@ -1191,6 +1191,8 @@ get_mod(<<"withtext">>, <<"urn:xmpp:mam:tmp">>) ->
 get_mod(<<"x">>,
 	<<"http://xabber.com/protocol/groupchat#create">>) ->
     xabbergroupchat;
+get_mod(<<"peer-to-peer">>, <<"jabber:client">>) ->
+    xabbergroupchat;
 get_mod(<<"username">>, <<"jabber:iq:auth">>) ->
     xep0078;
 get_mod(<<"required">>,
@@ -1622,6 +1624,9 @@ get_mod(<<"auth">>,
 get_mod(<<"malformed-request">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
+get_mod(<<"delete">>,
+	<<"http://xabber.com/protocol/synchronization">>) ->
+    xabbersynchronization;
 get_mod(<<"username">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"paused">>,
@@ -1801,6 +1806,7 @@ get_mod({xabber_conversation_delivered, _}) ->
     xabbersynchronization;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
+get_mod({xabber_delete, _}) -> xabbersynchronization;
 get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
     rfc6120;
 get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->

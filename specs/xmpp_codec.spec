@@ -4611,7 +4611,7 @@
 
 -xml(xabbergroupchat_peer,
      #elem{name = <<"peer-to-peer">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"jabber:client">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroup_peer, '$jid', '$id', '$cdata'},
      attrs = [#attr{name = <<"jid">>,
@@ -5246,6 +5246,16 @@
      ]
      }).
 
+-xml(xabber_synchronization_delete,
+     #elem{name = <<"delete">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_delete, '$conversation'},
+     refs = [
+     #ref{name = xabber_conversation, label = '$conversation'}
+     ]
+     }).
+
 -xml(xabber_synchronization_query,
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
@@ -5265,8 +5275,7 @@
            required = true,
            dec = {jid, decode, []},
            enc = {jid, encode, []}},
-     #attr{name = <<"stamp">>,
-           required = true},
+     #attr{name = <<"stamp">>},
      #attr{name = <<"thread">>},
      #attr{name = <<"type">>}
      ],

@@ -764,6 +764,9 @@
                               last :: 'undefined' | #xabber_conversation_last{}}).
 -type xabber_conversation() :: #xabber_conversation{}.
 
+-record(xabber_delete, {conversation = [] :: [#xabber_conversation{}]}).
+-type xabber_delete() :: #xabber_delete{}.
+
 -record(upload_slot, {get :: 'undefined' | binary(),
                       put :: 'undefined' | binary(),
                       xmlns = <<>> :: binary()}).
@@ -1412,19 +1415,20 @@
                         vcard_photo() |
                         muc_actor() |
                         ps_error() |
-                        vcard_name() |
-                        xabbertoken_feature() |
                         push_disable() |
                         legacy_auth_feature() |
                         rosterver_feature() |
-                        message_markable() |
-                        xabbergroupchat_replace() |
-                        unique_time() |
                         muc_invite() |
-                        vcard_xupdate() |
                         xabber_replace_message() |
                         xabber_retract_message() |
                         carbons_disable() |
+                        xabber_delete() |
+                        vcard_name() |
+                        xabbertoken_feature() |
+                        message_markable() |
+                        xabbergroupchat_replace() |
+                        unique_time() |
+                        vcard_xupdate() |
                         bookmark_conference() |
                         offline() |
                         time() |

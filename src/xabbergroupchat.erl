@@ -245,6 +245,10 @@ do_decode(<<"peer-to-peer">>,
 	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
     decode_xabbergroupchat_peer(<<"http://xabber.com/protocol/groupchat">>,
 				Opts, El);
+do_decode(<<"peer-to-peer">>, <<"jabber:client">>, El,
+	  Opts) ->
+    decode_xabbergroupchat_peer(<<"jabber:client">>, Opts,
+				El);
 do_decode(<<"create">>,
 	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
     decode_xabbergroupchat_create(<<"http://xabber.com/protocol/groupchat">>,
@@ -511,6 +515,7 @@ tags() ->
       <<"http://xabber.com/protocol/groupchat">>},
      {<<"peer-to-peer">>,
       <<"http://xabber.com/protocol/groupchat">>},
+     {<<"peer-to-peer">>, <<"jabber:client">>},
      {<<"create">>,
       <<"http://xabber.com/protocol/groupchat">>},
      {<<"x">>, <<"http://xabber.com/protocol/groupchat">>},
@@ -4323,9 +4328,10 @@ decode_xabbergroupchat_peer_attrs(__TopXMLNS, [], Jid,
 encode_xabbergroupchat_peer({xabbergroup_peer, Jid, Id,
 			     Cdata},
 			    __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat">>,
-				    [], __TopXMLNS),
+    __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
+						[<<"http://xabber.com/protocol/groupchat">>,
+						 <<"jabber:client">>],
+						__TopXMLNS),
     _els = encode_xabbergroupchat_peer_cdata(Cdata, []),
     _attrs = encode_xabbergroupchat_peer_attr_id(Id,
 						 encode_xabbergroupchat_peer_attr_jid(Jid,
@@ -4600,6 +4606,15 @@ decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
 	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
 					    _els,
 					    decode_xabbergroupchat_peer(<<"http://xabber.com/protocol/groupchat">>,
+									__Opts,
+									_el),
+					    Contacts, Domains, Anonymous,
+					    Pinned, Localpart, Searchable, Name,
+					    Model, Description);
+      <<"jabber:client">> ->
+	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
+					    _els,
+					    decode_xabbergroupchat_peer(<<"jabber:client">>,
 									__Opts,
 									_el),
 					    Contacts, Domains, Anonymous,
