@@ -1268,6 +1268,8 @@
                             contacts :: 'undefined' | #xabbergroup_contacts{},
                             members :: 'undefined' | binary(),
                             present :: 'undefined' | binary(),
+                            parent :: undefined | jid:jid(),
+                            jid :: undefined | jid:jid(),
                             sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabbergroupchat_x() :: #xabbergroupchat_x{}.
 

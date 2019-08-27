@@ -4570,7 +4570,7 @@
      <<"http://xabber.com/protocol/groupchat#user-updated">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_x, '$xmlns', '$version', '$no_permission', '$name', '$description', '$model',
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts',  '$members', '$present', '$_els'},
+     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts',  '$members', '$present', '$parent', '$jid', '$_els'},
      attrs = [
      #attr{name = <<"xmlns">>},
      #attr{name = <<"version">>}
@@ -4586,7 +4586,10 @@
              #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
              #ref{name = xabbergroupchat_no_permission, min = 0, max = 1, label = '$no_permission'},
              #ref{name = xabbergroupchat_members, min = 0, max = 1, label = '$members'},
-             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'}
+             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'},
+             #ref{name = xabbergroupchat_parent_chat, min = 0, max = 1, label = '$parent'},
+             #ref{name = xabbergroupchat_chat_jid, min = 0, max = 1, label = '$jid'}
+
              ]
               }).
 
@@ -4608,6 +4611,22 @@
              #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'}
              ]
               }).
+
+-xml(xabbergroupchat_parent_chat,
+     #elem{name = <<"parent-chat">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+       result = '$cdata',
+           cdata = #cdata{dec = {jid, decode, []},
+                          enc = {jid, encode, []}}}).
+
+-xml(xabbergroupchat_chat_jid,
+     #elem{name = <<"jid">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+       result = '$cdata',
+           cdata = #cdata{dec = {jid, decode, []},
+                          enc = {jid, encode, []}}}).
 
 -xml(xabbergroupchat_peer,
      #elem{name = <<"peer-to-peer">>,
