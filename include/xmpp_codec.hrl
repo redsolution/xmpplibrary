@@ -229,7 +229,8 @@
 -type xabbergroupchat_query_item() :: #xabbergroupchat_query_item{}.
 
 -record(xabbergroupchat_query_rights, {item :: 'undefined' | #xabbergroupchat_query_item{},
-                                       restriction = [] :: [#xabbergroupchat_restriction{}]}).
+                                       restriction = [] :: [#xabbergroupchat_restriction{}],
+                                       sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabbergroupchat_query_rights() :: #xabbergroupchat_query_rights{}.
 
 -record(muc_decline, {reason = <<>> :: binary(),
@@ -1258,6 +1259,7 @@
 -type xabbergroupchat_create() :: #xabbergroupchat_create{}.
 
 -record(xabbergroupchat_x, {xmlns = <<>> :: binary(),
+                            type = <<>> :: binary(),
                             version = <<>> :: binary(),
                             no_permission :: 'undefined' | binary(),
                             name :: 'undefined' | binary(),
@@ -1455,6 +1457,7 @@
                         jingle_accept() |
                         sasl_abort() |
                         delegation() |
+                        text() |
                         bytestreams() |
                         xabbergroupchat_permission() |
                         offline() |
@@ -1496,12 +1499,10 @@
                         receipt_response() |
                         vcard_adr() |
                         xabbergroupchat_kicked() |
-                        text() |
                         previous_id() |
                         xabbertoken_x_token() |
                         sic() |
                         mix_join() |
-                        search() |
                         xdata() |
                         vcard_xupdate() |
                         privacy_query() |
@@ -1572,6 +1573,7 @@
                         block_domain() |
                         xabber_replace() |
                         xabber_retract_all() |
+                        search() |
                         block_id() |
                         xabbergroupchat_name() |
                         xabbergroupchat_x() |

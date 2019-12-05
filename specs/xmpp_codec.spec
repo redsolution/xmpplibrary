@@ -4528,7 +4528,7 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#rights">>,
 	   module = 'xabbergroupchat',
-   result = {xabbergroupchat_query_rights, '$item', '$restriction'},
+   result = {xabbergroupchat_query_rights, '$item', '$restriction', '$_els'},
      refs = [#ref{name = xabbergroupchat_query_item, min = 0, max = 1, label = '$item'},
             #ref{name = xabbergroupchat_restriction_set, label = '$restriction'}
 		]
@@ -4562,6 +4562,7 @@
 -xml(xabbergroupchat_x,
      #elem{name = <<"x">>,
      xmlns = [<<"http://xabber.com/protocol/groupchat">>,
+     <<"http://xabber.com/protocol/groupchat#system-message">>,
      <<"http://xabber.com/protocol/groupchat#create">>,
      <<"http://xabber.com/protocol/groupchat#left">>,
      <<"http://xabber.com/protocol/groupchat#join">>,
@@ -4569,10 +4570,11 @@
      <<"http://xabber.com/protocol/groupchat#update">>,
      <<"http://xabber.com/protocol/groupchat#user-updated">>],
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$xmlns', '$version', '$no_permission', '$name', '$description', '$model',
+     result = {xabbergroupchat_x, '$xmlns', '$type', '$version', '$no_permission', '$name', '$description', '$model',
      '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts',  '$members', '$present', '$parent', '$jid', '$_els'},
      attrs = [
      #attr{name = <<"xmlns">>},
+     #attr{name = <<"type">>},
      #attr{name = <<"version">>}
      ],
      refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
@@ -4945,7 +4947,7 @@
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
-     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>,<<"http://xabber.com/protocol/groupchat#rights">>],
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat,'$xmlns','$_els'},
      attrs = [#attr{name = <<"xmlns">>}]
@@ -4953,7 +4955,7 @@
 
 -xml(xabbergroupchat_query_contacts,
      #elem{name = <<"contacts">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroup_contacts, '$contact'},
      refs = [#ref{name = xabbergroupchat_query_contact, label = '$contact'}]}
@@ -4961,7 +4963,7 @@
 
 -xml(xabbergroupchat_query_contact,
      #elem{name = <<"contact">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = '$cdata',
      cdata = #cdata{label = '$cdata'}}
@@ -4969,7 +4971,7 @@
 
 -xml(xabbergroupchat_query_domains,
      #elem{name = <<"domains">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroup_domains, '$domain'},
      refs = [#ref{name = xabbergroupchat_query_domain, label = '$domain'}]}
@@ -4977,7 +4979,7 @@
 
 -xml(xabbergroupchat_query_domain,
      #elem{name = <<"domain">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = '$cdata',
      cdata = #cdata{label = '$cdata'}}
@@ -4985,7 +4987,7 @@
 
 -xml(xabbergroupchat_query_message,
      #elem{name = <<"pinned-message">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_pinned_message, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -4993,7 +4995,7 @@
 
 -xml(xabbergroupchat_query_index,
      #elem{name = <<"index">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_index ,'$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5001,7 +5003,7 @@
 
 -xml(xabbergroupchat_query_name,
      #elem{name = <<"name">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_name, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5009,7 +5011,7 @@
 
 -xml(xabbergroupchat_query_status,
      #elem{name = <<"status">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_status, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5017,7 +5019,7 @@
 
 -xml(xabbergroupchat_query_privacy,
      #elem{name = <<"privacy">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_privacy, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5025,7 +5027,7 @@
 
 -xml(xabbergroupchat_query_description,
      #elem{name = <<"description">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_description, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5033,7 +5035,7 @@
 
 -xml(xabbergroupchat_query_membership,
      #elem{name = <<"membership">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_membership, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
@@ -5041,7 +5043,7 @@
 
 -xml(xabbergroupchat_query_localpart,
      #elem{name = <<"localpart">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#create">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat_localpart, '$cdata'},
      cdata = #cdata{label = '$cdata'}}
