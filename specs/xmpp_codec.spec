@@ -4947,7 +4947,7 @@
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
-     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>],
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>,<<"http://xabber.com/protocol/groupchat#default-rights">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat,'$xmlns','$_els'},
      attrs = [#attr{name = <<"xmlns">>}]

@@ -1551,6 +1551,10 @@ get_mod(<<"SUFFIX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"redirect">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"query">>,
+	<<"http://xabber.com/protocol/groupchat#default-"
+	  "rights">>) ->
+    xabbergroupchat;
 get_mod(<<"subject">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"bad-namespace-prefix">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->

@@ -182,6 +182,13 @@ do_decode(<<"query">>,
 	  Opts) ->
     decode_xabbergroupchat(<<"http://xabber.com/protocol/groupchat#create">>,
 			   Opts, El);
+do_decode(<<"query">>,
+	  <<"http://xabber.com/protocol/groupchat#default-"
+	    "rights">>,
+	  El, Opts) ->
+    decode_xabbergroupchat(<<"http://xabber.com/protocol/groupchat#default-"
+			     "rights">>,
+			   Opts, El);
 do_decode(<<"id">>,
 	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
     decode_xabbergroupchat_user_id(<<"http://xabber.com/protocol/groupchat">>,
@@ -614,6 +621,9 @@ tags() ->
       <<"http://xabber.com/protocol/groupchat">>},
      {<<"query">>,
       <<"http://xabber.com/protocol/groupchat#create">>},
+     {<<"query">>,
+      <<"http://xabber.com/protocol/groupchat#default-"
+	"rights">>},
      {<<"id">>, <<"http://xabber.com/protocol/groupchat">>},
      {<<"id">>,
       <<"http://xabber.com/protocol/groupchat#members">>},
@@ -2957,7 +2967,9 @@ encode_xabbergroupchat({xabbergroupchat, Xmlns, __Els},
 		       __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/groupchat">>,
-						 <<"http://xabber.com/protocol/groupchat#create">>],
+						 <<"http://xabber.com/protocol/groupchat#create">>,
+						 <<"http://xabber.com/protocol/groupchat#default-"
+						   "rights">>],
 						__TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],

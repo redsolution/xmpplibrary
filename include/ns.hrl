@@ -203,6 +203,7 @@
 -define(NS_GROUPCHAT_USER_KICK, <<"http://xabber.com/protocol/groupchat#kick">>).
 -define(NS_GROUPCHAT_SYSTEM_MESSAGE, <<"http://xabber.com/protocol/groupchat#system-message">>).
 -define(NS_GROUPCHAT_RIGHTS, <<"http://xabber.com/protocol/groupchat#rights">>).
+-define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"http://xabber.com/protocol/groupchat#default-rights">>).
 -define(NS_GROUPCHAT_CREATE, <<"http://xabber.com/protocol/groupchat#create">>).
 -define(NS_XABBER_SYNCHRONIZATION, <<"http://xabber.com/protocol/synchronization">>).
 -define(NS_JINGLE_MESSAGE, <<"urn:xmpp:jingle-message:0">>).

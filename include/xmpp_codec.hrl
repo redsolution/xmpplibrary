@@ -1457,7 +1457,6 @@
                         jingle_accept() |
                         sasl_abort() |
                         delegation() |
-                        text() |
                         bytestreams() |
                         xabbergroupchat_permission() |
                         offline() |
@@ -1507,6 +1506,7 @@
                         vcard_xupdate() |
                         privacy_query() |
                         streamhost() |
+                        text() |
                         muc_owner() |
                         carbons_received() |
                         avatar_data() |
@@ -1529,6 +1529,7 @@
                         adhoc_actions() |
                         xabbergroupchat_pinned_message() |
                         push_disable() |
+                        search() |
                         vcard_label() |
                         roster_item() |
                         sm_a() |
@@ -1573,7 +1574,6 @@
                         block_domain() |
                         xabber_replace() |
                         xabber_retract_all() |
-                        search() |
                         block_id() |
                         xabbergroupchat_name() |
                         xabbergroupchat_x() |
