@@ -5374,11 +5374,18 @@
      ]
      }).
 
+-xml(xabber_deleted_conversation,
+     #elem{name = <<"deleted">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_deleted_conversation}
+     }).
+
 -xml(xabber_synchronization_query,
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_synchronization_query, '$stamp', '$rsm'},
+     result = {xabber_synchronization_query, '$stamp', '$rsm', '$_els'},
      attrs = [#attr{name = <<"stamp">>}],
      refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]
      }).
@@ -5387,7 +5394,7 @@
      #elem{name = <<"conversation">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last'},
+     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last', '$_els'},
      attrs = [
      #attr{name = <<"jid">>,
            required = true,

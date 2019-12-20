@@ -299,9 +299,6 @@ get_mod(<<"domain">>,
 	<<"http://xabber.com/protocol/groupchat#block">>) ->
     xabbergroupchat;
 get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
-get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
-    xep0280;
-get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(<<"nick">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"internal-server-error">>,
@@ -1519,6 +1516,9 @@ get_mod(<<"items">>,
 get_mod(<<"message">>,
 	<<"http://xabber.com/protocol/groupchat#history">>) ->
     xabbergroupchat;
+get_mod(<<"deleted">>,
+	<<"http://xabber.com/protocol/synchronization">>) ->
+    xabbersynchronization;
 get_mod(<<"bad-format">>,
 	<<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -1814,6 +1814,9 @@ get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
 get_mod(<<"bad-protocol">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
+get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
+    xep0280;
+get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1842,6 +1845,9 @@ get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
 get_mod({body_x, _, _}) -> xabbergroupchat;
+get_mod({xabber_conversation, _, _, _, _, _, _, _, _, _,
+	 _, _, _}) ->
+    xabbersynchronization;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
@@ -2000,6 +2006,8 @@ get_mod({xabbergroupchat_retract_invalidate, _}) ->
     xabbergroupchat;
 get_mod({xabber_retract_invalidate, _}) ->
     xabberrewrite;
+get_mod({xabber_deleted_conversation}) ->
+    xabbersynchronization;
 get_mod({idle, _}) -> xep0319;
 get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
@@ -2023,9 +2031,6 @@ get_mod({xabber_retract_all, _, _, _, _}) ->
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
 get_mod({unique_received, _, _, _, _, _}) -> unique;
 get_mod({xabbergroupchat_index, _}) -> xabbergroupchat;
-get_mod({xabber_conversation, _, _, _, _, _, _, _, _, _,
-	 _, _}) ->
-    xabbersynchronization;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
@@ -2080,8 +2085,6 @@ get_mod({xabber_retract_user, _, _, _, _, _, _}) ->
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({xabbertoken_x_token, _, _, _}) -> xabbertoken;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
-get_mod({xabber_synchronization_query, _, _}) ->
-    xabbersynchronization;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
@@ -2126,6 +2129,8 @@ get_mod({ps_error, _, _}) -> xep0060;
 get_mod({delay, _, _, _}) -> xep0203;
 get_mod({muc_actor, _, _}) -> xep0045;
 get_mod({nick, _}) -> xep0172;
+get_mod({xabber_synchronization_query, _, _, _}) ->
+    xabbersynchronization;
 get_mod({avatar_info, _, _, _, _, _, _}) -> xep0084;
 get_mod({privacy_list, _, _}) -> xep0016;
 get_mod({forwarded, _, _}) -> xep0297;
