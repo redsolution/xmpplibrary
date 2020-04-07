@@ -5,41 +5,51 @@
 
 -compile(export_all).
 
-do_decode(<<"encrypted">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_encrypted(<<"urn:xmpp:push:1">>, Opts, El);
-do_decode(<<"call">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_push_call(<<"urn:xmpp:push:1">>, Opts, El);
-do_decode(<<"encryption-key">>, <<"urn:xmpp:push:1">>,
-	  El, Opts) ->
-    decode_encryption_key(<<"urn:xmpp:push:1">>, Opts, El);
-do_decode(<<"security">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_push_security(<<"urn:xmpp:push:1">>, Opts, El);
-do_decode(<<"notification">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_push_notification(<<"urn:xmpp:push:1">>, Opts,
-			     El);
-do_decode(<<"disable">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_push_disable(<<"urn:xmpp:push:1">>, Opts, El);
-do_decode(<<"enable">>, <<"urn:xmpp:push:1">>, El,
-	  Opts) ->
-    decode_push_enable(<<"urn:xmpp:push:1">>, Opts, El);
+do_decode(<<"encrypted">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_encrypted(<<"https://xabber.com/protocol/push">>,
+		     Opts, El);
+do_decode(<<"call">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_push_call(<<"https://xabber.com/protocol/push">>,
+		     Opts, El);
+do_decode(<<"encryption-key">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_encryption_key(<<"https://xabber.com/protocol/push">>,
+			  Opts, El);
+do_decode(<<"security">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_push_security(<<"https://xabber.com/protocol/push">>,
+			 Opts, El);
+do_decode(<<"notification">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_push_notification(<<"https://xabber.com/protocol/push">>,
+			     Opts, El);
+do_decode(<<"disable">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_push_disable(<<"https://xabber.com/protocol/push">>,
+			Opts, El);
+do_decode(<<"enable">>,
+	  <<"https://xabber.com/protocol/push">>, El, Opts) ->
+    decode_push_enable(<<"https://xabber.com/protocol/push">>,
+		       Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
 do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"encrypted">>, <<"urn:xmpp:push:1">>},
-     {<<"call">>, <<"urn:xmpp:push:1">>},
-     {<<"encryption-key">>, <<"urn:xmpp:push:1">>},
-     {<<"security">>, <<"urn:xmpp:push:1">>},
-     {<<"notification">>, <<"urn:xmpp:push:1">>},
-     {<<"disable">>, <<"urn:xmpp:push:1">>},
-     {<<"enable">>, <<"urn:xmpp:push:1">>}].
+    [{<<"encrypted">>,
+      <<"https://xabber.com/protocol/push">>},
+     {<<"call">>, <<"https://xabber.com/protocol/push">>},
+     {<<"encryption-key">>,
+      <<"https://xabber.com/protocol/push">>},
+     {<<"security">>,
+      <<"https://xabber.com/protocol/push">>},
+     {<<"notification">>,
+      <<"https://xabber.com/protocol/push">>},
+     {<<"disable">>, <<"https://xabber.com/protocol/push">>},
+     {<<"enable">>, <<"https://xabber.com/protocol/push">>}].
 
 do_encode({push_enable, _, _, _, _} = Enable,
 	  TopXMLNS) ->
@@ -69,17 +79,20 @@ do_get_name({push_notification, _, _}) ->
     <<"notification">>;
 do_get_name({push_security, _, _}) -> <<"security">>.
 
-do_get_ns({encrypted, _, _}) -> <<"urn:xmpp:push:1">>;
-do_get_ns({encryption_key, _}) -> <<"urn:xmpp:push:1">>;
-do_get_ns({push_call}) -> <<"urn:xmpp:push:1">>;
+do_get_ns({encrypted, _, _}) ->
+    <<"https://xabber.com/protocol/push">>;
+do_get_ns({encryption_key, _}) ->
+    <<"https://xabber.com/protocol/push">>;
+do_get_ns({push_call}) ->
+    <<"https://xabber.com/protocol/push">>;
 do_get_ns({push_disable, _, _}) ->
-    <<"urn:xmpp:push:1">>;
+    <<"https://xabber.com/protocol/push">>;
 do_get_ns({push_enable, _, _, _, _}) ->
-    <<"urn:xmpp:push:1">>;
+    <<"https://xabber.com/protocol/push">>;
 do_get_ns({push_notification, _, _}) ->
-    <<"urn:xmpp:push:1">>;
+    <<"https://xabber.com/protocol/push">>;
 do_get_ns({push_security, _, _}) ->
-    <<"urn:xmpp:push:1">>.
+    <<"https://xabber.com/protocol/push">>.
 
 get_els({push_notification, _xdata, _sub_els}) ->
     _sub_els.
@@ -140,8 +153,8 @@ decode_encrypted_attrs(__TopXMLNS, [], Iv_length) ->
 encode_encrypted({encrypted, Iv_length, Data},
 		 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = encode_encrypted_cdata(Data, []),
     _attrs = 'encode_encrypted_attr_iv-length'(Iv_length,
 					       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -185,8 +198,8 @@ decode_push_call(__TopXMLNS, __Opts,
 
 encode_push_call({push_call}, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
@@ -213,8 +226,8 @@ decode_encryption_key_els(__TopXMLNS, __Opts,
 encode_encryption_key({encryption_key, Data},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = encode_encryption_key_cdata(Data, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
@@ -254,9 +267,9 @@ decode_push_security_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"urn:xmpp:push:1">> ->
+      <<"https://xabber.com/protocol/push">> ->
 	  decode_push_security_els(__TopXMLNS, __Opts, _els,
-				   decode_encryption_key(<<"urn:xmpp:push:1">>,
+				   decode_encryption_key(<<"https://xabber.com/protocol/push">>,
 							 __Opts, _el));
       _ ->
 	  decode_push_security_els(__TopXMLNS, __Opts, _els,
@@ -280,8 +293,8 @@ encode_push_security({push_security, Cipher,
 		      Encryption_key},
 		     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_push_security_$encryption_key'(Encryption_key,
 							     __NewTopXMLNS,
@@ -366,8 +379,8 @@ encode_push_notification({push_notification, Xdata,
 			  __Els},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
 	     ++
@@ -410,8 +423,8 @@ decode_push_disable_attrs(__TopXMLNS, [], Jid, Node) ->
 encode_push_disable({push_disable, Jid, Node},
 		    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_push_disable_attr_node(Node,
 					   encode_push_disable_attr_jid(Jid,
@@ -475,9 +488,9 @@ decode_push_enable_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"urn:xmpp:push:1">> ->
+      <<"https://xabber.com/protocol/push">> ->
 	  decode_push_enable_els(__TopXMLNS, __Opts, _els, Xdata,
-				 decode_push_security(<<"urn:xmpp:push:1">>,
+				 decode_push_security(<<"https://xabber.com/protocol/push">>,
 						      __Opts, _el));
       _ ->
 	  decode_push_enable_els(__TopXMLNS, __Opts, _els, Xdata,
@@ -506,8 +519,8 @@ encode_push_enable({push_enable, Jid, Node, Xdata,
 		    Push_security},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:push:1">>, [],
-				    __TopXMLNS),
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/push">>,
+				    [], __TopXMLNS),
     _els = lists:reverse('encode_push_enable_$xdata'(Xdata,
 						     __NewTopXMLNS,
 						     'encode_push_enable_$push_security'(Push_security,

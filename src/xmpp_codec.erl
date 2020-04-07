@@ -293,6 +293,9 @@ get_mod(<<"query">>,
     xep0065;
 get_mod(<<"displayed">>, <<"jabber:x:event">>) ->
     xep0022;
+get_mod(<<"security">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"domain">>,
 	<<"http://xabber.com/protocol/groupchat#block">>) ->
     xabbergroupchat;
@@ -326,8 +329,6 @@ get_mod(<<"pubsub">>,
     xep0060;
 get_mod(<<"disable">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
-get_mod(<<"encrypted">>, <<"urn:xmpp:push:1">>) ->
-    xep0357;
 get_mod(<<"update">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -559,7 +560,6 @@ get_mod(<<"method">>,
 	<<"http://jabber.org/protocol/compress">>) ->
     xep0138;
 get_mod(<<"x">>, <<"jabber:x:data">>) -> xep0004;
-get_mod(<<"call">>, <<"urn:xmpp:push:1">>) -> xep0357;
 get_mod(<<"expire">>,
 	<<"http://xabber.com/protocol/auth-tokens#items">>) ->
     xabbertoken;
@@ -579,8 +579,6 @@ get_mod(<<"stream:features">>, <<"jabber:client">>) ->
 get_mod(<<"fin">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"enabled">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"leave">>, <<"urn:xmpp:mix:0">>) -> xep0369;
-get_mod(<<"security">>, <<"urn:xmpp:push:1">>) ->
-    xep0357;
 get_mod(<<"x">>,
 	<<"http://xabber.com/protocol/groupchat#user-upd"
 	  "ated">>) ->
@@ -616,6 +614,9 @@ get_mod(<<"reason">>,
 get_mod(<<"not-subscribed">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"encryption-key">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"collect">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
@@ -760,6 +761,9 @@ get_mod(<<"method">>,
 get_mod(<<"invalid-jid">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
+get_mod(<<"notification">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"iq">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"LOCALITY">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"inactive">>,
@@ -797,8 +801,6 @@ get_mod(<<"PREFIX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"affiliations">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
-get_mod(<<"encryption-key">>, <<"urn:xmpp:push:1">>) ->
-    xep0357;
 get_mod(<<"time">>,
 	<<"http://xabber.com/protocol/delivery">>) ->
     unique;
@@ -855,8 +857,6 @@ get_mod(<<"subscriptions">>, <<"urn:xmpp:mucsub:0">>) ->
 get_mod(<<"resumed">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"slot">>, <<"urn:xmpp:http:upload:0">>) ->
     xep0363;
-get_mod(<<"notification">>, <<"urn:xmpp:push:1">>) ->
-    xep0357;
 get_mod(<<"call">>,
 	<<"http://xabber.com/protocol/synchronization">>) ->
     xabbersynchronization;
@@ -1004,6 +1004,9 @@ get_mod(<<"item">>,
     xep0013;
 get_mod(<<"get">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
+get_mod(<<"call">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"domain">>,
 	<<"http://xabber.com/protocol/groupchat#create">>) ->
     xabbergroupchat;
@@ -1087,6 +1090,9 @@ get_mod(<<"resume">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"purge">>,
 	<<"http://jabber.org/protocol/offline">>) ->
     xep0013;
+get_mod(<<"disable">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"MODEM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"ORGUNIT">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"UID">>, <<"vcard-temp">>) -> xep0054;
@@ -1349,7 +1355,6 @@ get_mod(<<"connection-timeout">>,
     rfc6120;
 get_mod(<<"CRED">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"KEY">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"enable">>, <<"urn:xmpp:push:1">>) -> xep0357;
 get_mod(<<"jid">>,
 	<<"http://xabber.com/protocol/groupchat#invite">>) ->
     xabbergroupchat;
@@ -1470,8 +1475,6 @@ get_mod(<<"publish-options">>,
 get_mod(<<"reason">>,
 	<<"http://jabber.org/protocol/muc#admin">>) ->
     xep0045;
-get_mod(<<"disable">>, <<"urn:xmpp:push:1">>) ->
-    xep0357;
 get_mod(<<"received">>,
 	<<"http://xabber.com/protocol/delivery">>) ->
     unique;
@@ -1502,6 +1505,9 @@ get_mod(<<"invalid-from">>,
 get_mod(<<"items">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"enable">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"message">>,
 	<<"http://xabber.com/protocol/groupchat#history">>) ->
     xabbergroupchat;
@@ -1554,6 +1560,9 @@ get_mod(<<"affiliation">>,
     xep0060;
 get_mod(<<"fin">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"enabled">>, <<"urn:xmpp:sm:2">>) -> xep0198;
+get_mod(<<"encrypted">>,
+	<<"https://xabber.com/protocol/push">>) ->
+    xep0357;
 get_mod(<<"privacy">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
