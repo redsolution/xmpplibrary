@@ -150,7 +150,7 @@
 -define(NS_MAM_2, <<"urn:xmpp:mam:2">>).
 -define(NS_SID_0, <<"urn:xmpp:sid:0">>).
 -define(NS_PING, <<"urn:xmpp:ping">>).
--define(NS_PUSH_0, <<"urn:xmpp:push:0">>).
+-define(NS_PUSH_0, <<"https://xabber.com/protocol/push">>).
 -define(NS_CARBONS_2, <<"urn:xmpp:carbons:2">>).
 -define(NS_CARBONS_1, <<"urn:xmpp:carbons:1">>).
 -define(NS_FORWARD, <<"urn:xmpp:forward:0">>).
@@ -201,6 +201,10 @@
 -define(NS_GROUPCHAT_USER_LEFT, <<"http://xabber.com/protocol/groupchat#left">>).
 -define(NS_GROUPCHAT_USER_JOIN, <<"http://xabber.com/protocol/groupchat#join">>).
 -define(NS_GROUPCHAT_USER_KICK, <<"http://xabber.com/protocol/groupchat#kick">>).
+-define(NS_GROUPCHAT_SYSTEM_MESSAGE, <<"http://xabber.com/protocol/groupchat#system-message">>).
+-define(NS_GROUPCHAT_RIGHTS, <<"http://xabber.com/protocol/groupchat#rights">>).
+-define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"http://xabber.com/protocol/groupchat#default-rights">>).
+-define(NS_GROUPCHAT_MEMBERS, <<"http://xabber.com/protocol/groupchat#members">>).
 -define(NS_GROUPCHAT_CREATE, <<"http://xabber.com/protocol/groupchat#create">>).
 -define(NS_XABBER_SYNCHRONIZATION, <<"http://xabber.com/protocol/synchronization">>).
 -define(NS_JINGLE_MESSAGE, <<"urn:xmpp:jingle-message:0">>).
