@@ -4936,15 +4936,16 @@
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
-     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>,<<"http://xabber.com/protocol/groupchat#default-rights">>,<<"http://xabber.com/protocol/groupchat#members">>],
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#create">>,<<"http://xabber.com/protocol/groupchat#default-rights">>,<<"http://xabber.com/protocol/groupchat#members">>,<<"http://xabber.com/protocol/groupchat#delete">>],
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat, '$xmlns', '$id', '$version', '$rsm', '$_els'},
+     result = {xabbergroupchat, '$xmlns', '$id', '$version', '$rsm', '$_els', '$cdata'},
      attrs = [#attr{name = <<"xmlns">>},
      #attr{name = <<"version">>,
                   dec = {dec_int, [0, infinity]},
                    enc = {enc_int, []}},
      #attr{name = <<"id">>}],
-          refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]
+          refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}],
+          cdata = #cdata{label = '$cdata'}
      }).
 
 -xml(xabbergroupchat_query_contacts,
@@ -5321,7 +5322,6 @@
 
 -record(xmppreference, {
              type = <<>> :: binary(),
-             uri = <<>> :: binary(),
              begin :: undefined | non_neg_integer(),
              end :: undefined | non_neg_integer(),
              sub_els = [] :: [xmpp_element() | fxml:xmlel()]
@@ -5329,9 +5329,9 @@
 
 -xml(xmppreference,
      #elem{name = <<"reference">>,
-           xmlns = <<"urn:xmpp:reference:0">>,
+           xmlns = <<"https://xabber.com/protocol/reference">>,
 	   module = xep0372,
-           result = {xmppreference, '$type', '$uri', '$begin', '$end', '$_els'},
+           result = {xmppreference, '$type', '$begin', '$end', '$_els'},
            attrs = [#attr{name = <<"type">>,
                           required = true
                           },
@@ -5340,9 +5340,8 @@
                           enc = {enc_int, []}},
                     #attr{name = <<"end">>,
                           dec = {dec_int, [0, infinity]},
-                          enc = {enc_int, []}},
-                    #attr{name = <<"uri">>,
-                          label = '$uri'}]}).
+                          enc = {enc_int, []}}
+                    ]}).
 
 -xml(xabber_synchronization,
      #elem{name = <<"synchronization">>,

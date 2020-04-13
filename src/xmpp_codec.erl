@@ -893,8 +893,6 @@ get_mod(<<"permission">>,
 get_mod(<<"query">>,
 	<<"http://xabber.com/protocol/groupchat">>) ->
     xabbergroupchat;
-get_mod(<<"reference">>, <<"urn:xmpp:reference:0">>) ->
-    xep0372;
 get_mod(<<"error">>,
 	<<"http://jabber.org/protocol/stats">>) ->
     xep0039;
@@ -1347,6 +1345,9 @@ get_mod(<<"password">>,
 get_mod(<<"r">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"uri">>, <<"urn:xmpp:media-element">>) ->
     xep0221;
+get_mod(<<"query">>,
+	<<"http://xabber.com/protocol/groupchat#delete">>) ->
+    xabbergroupchat;
 get_mod(<<"retract-user">>,
 	<<"http://xabber.com/protocol/groupchat#history">>) ->
     xabbergroupchat;
@@ -1711,6 +1712,9 @@ get_mod(<<"unsubscribe">>, <<"urn:xmpp:mucsub:0">>) ->
 get_mod(<<"failed">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"db:verify">>, <<"jabber:server">>) ->
     xep0220;
+get_mod(<<"reference">>,
+	<<"https://xabber.com/protocol/reference">>) ->
+    xep0372;
 get_mod(<<"abort">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -1830,10 +1834,13 @@ get_mod({xabber_retract_activate, _, _}) ->
 get_mod({jingle_propose, _, _}) -> xep0353;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
+get_mod({xmppreference, _, _, _, _}) -> xep0372;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
 get_mod({body_x, _, _}) -> xabbergroupchat;
+get_mod({xabbergroupchat, _, _, _, _, _, _}) ->
+    xabbergroupchat;
 get_mod({xabber_conversation, _, _, _, _, _, _, _, _, _,
 	 _, _, _}) ->
     xabbersynchronization;
@@ -1882,7 +1889,6 @@ get_mod({xabbergroupchat_invite_query, _}) ->
 get_mod({xabbergroupchat_replace_message, _, _, _, _,
 	 _}) ->
     xabbergroupchat;
-get_mod({xmppreference, _, _, _, _, _}) -> xep0372;
 get_mod({disco_info, _, _, _, _}) -> xep0030;
 get_mod({oob_x, _, _, _}) -> xep0066;
 get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->
@@ -2013,8 +2019,6 @@ get_mod({xabber_retract_all, _, _, _, _}) ->
     xabberrewrite;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
 get_mod({unique_received, _, _, _, _, _}) -> unique;
-get_mod({xabbergroupchat, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({xabbergroupchat_index, _}) -> xabbergroupchat;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;

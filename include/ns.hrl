@@ -206,5 +206,6 @@
 -define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"http://xabber.com/protocol/groupchat#default-rights">>).
 -define(NS_GROUPCHAT_MEMBERS, <<"http://xabber.com/protocol/groupchat#members">>).
 -define(NS_GROUPCHAT_CREATE, <<"http://xabber.com/protocol/groupchat#create">>).
+-define(NS_GROUPCHAT_DELETE, <<"http://xabber.com/protocol/groupchat#delete">>).
 -define(NS_XABBER_SYNCHRONIZATION, <<"http://xabber.com/protocol/synchronization">>).
 -define(NS_JINGLE_MESSAGE, <<"urn:xmpp:jingle-message:0">>).
