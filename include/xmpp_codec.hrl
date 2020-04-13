@@ -1413,6 +1413,7 @@
                         stanza_error() |
                         muc_subscribe() |
                         bind() |
+                        text() |
                         delay() |
                         stream_error() |
                         xabber_conversation() |
@@ -1523,6 +1524,7 @@
                         xabbertoken_issue() |
                         sic() |
                         mix_join() |
+                        search() |
                         avatar_pointer() |
                         xdata() |
                         vcard_xupdate() |
@@ -1653,7 +1655,6 @@
                         xabbergroupchat() |
                         xabber_replace() |
                         block_id() |
-                        text() |
                         ps_subscribe() |
                         vcard_org() |
                         xabbergroup_peer() |
@@ -1668,7 +1669,6 @@
                         feature_sm() |
                         body_x() |
                         csi() |
-                        search() |
                         disclosure() |
                         delegation() |
                         ps_options() |
