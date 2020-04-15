@@ -9,6 +9,10 @@ do_decode(<<"replaced">>,
 	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
     decode_xabber_replaced(<<"http://xabber.com/protocol/rewrite">>,
 			   Opts, El);
+do_decode(<<"retry">>,
+	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_delivery_retry(<<"http://xabber.com/protocol/delivery">>,
+			  Opts, El);
 do_decode(<<"request">>,
 	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
     decode_unique_request(<<"http://xabber.com/protocol/delivery">>,
@@ -29,6 +33,8 @@ do_decode(Name, XMLNS, _, _) ->
 tags() ->
     [{<<"replaced">>,
       <<"http://xabber.com/protocol/rewrite">>},
+     {<<"retry">>,
+      <<"http://xabber.com/protocol/delivery">>},
      {<<"request">>,
       <<"http://xabber.com/protocol/delivery">>},
      {<<"received">>,
@@ -43,15 +49,20 @@ do_encode({unique_received, _, _, _, _, _} = Received,
     encode_unique_received(Received, TopXMLNS);
 do_encode({unique_request, _, _} = Request, TopXMLNS) ->
     encode_unique_request(Request, TopXMLNS);
+do_encode({delivery_retry, _} = Retry, TopXMLNS) ->
+    encode_delivery_retry(Retry, TopXMLNS);
 do_encode({replaced, _, _} = Replaced, TopXMLNS) ->
     encode_xabber_replaced(Replaced, TopXMLNS).
 
+do_get_name({delivery_retry, _}) -> <<"retry">>;
 do_get_name({replaced, _, _}) -> <<"replaced">>;
 do_get_name({unique_received, _, _, _, _, _}) ->
     <<"received">>;
 do_get_name({unique_request, _, _}) -> <<"request">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
+do_get_ns({delivery_retry, _}) ->
+    <<"http://xabber.com/protocol/delivery">>;
 do_get_ns({replaced, _, _}) ->
     <<"http://xabber.com/protocol/rewrite">>;
 do_get_ns({unique_received, _, _, _, _, _}) ->
@@ -65,12 +76,14 @@ pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 5) ->
     [origin_id, stanza_id, previous_id, time, forwarded];
 pp(unique_request, 2) -> [retry, to];
+pp(delivery_retry, 1) -> [to];
 pp(replaced, 2) -> [stamp, body];
 pp(_, _) -> no.
 
 records() ->
     [{unique_time, 2}, {unique_received, 5},
-     {unique_request, 2}, {replaced, 2}].
+     {unique_request, 2}, {delivery_retry, 1},
+     {replaced, 2}].
 
 dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
 
@@ -137,6 +150,46 @@ decode_xabber_replaced_attr_body(__TopXMLNS, _val) ->
 encode_xabber_replaced_attr_body(<<>>, _acc) -> _acc;
 encode_xabber_replaced_attr_body(_val, _acc) ->
     [{<<"body">>, _val} | _acc].
+
+decode_delivery_retry(__TopXMLNS, __Opts,
+		      {xmlel, <<"retry">>, _attrs, _els}) ->
+    To = decode_delivery_retry_attrs(__TopXMLNS, _attrs,
+				     undefined),
+    {delivery_retry, To}.
+
+decode_delivery_retry_attrs(__TopXMLNS,
+			    [{<<"to">>, _val} | _attrs], _To) ->
+    decode_delivery_retry_attrs(__TopXMLNS, _attrs, _val);
+decode_delivery_retry_attrs(__TopXMLNS, [_ | _attrs],
+			    To) ->
+    decode_delivery_retry_attrs(__TopXMLNS, _attrs, To);
+decode_delivery_retry_attrs(__TopXMLNS, [], To) ->
+    decode_delivery_retry_attr_to(__TopXMLNS, To).
+
+encode_delivery_retry({delivery_retry, To},
+		      __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = encode_delivery_retry_attr_to(To,
+					   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+								      __TopXMLNS)),
+    {xmlel, <<"retry">>, _attrs, _els}.
+
+decode_delivery_retry_attr_to(__TopXMLNS, undefined) ->
+    undefined;
+decode_delivery_retry_attr_to(__TopXMLNS, _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"to">>, <<"retry">>, __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_delivery_retry_attr_to(undefined, _acc) -> _acc;
+encode_delivery_retry_attr_to(_val, _acc) ->
+    [{<<"to">>, jid:encode(_val)} | _acc].
 
 decode_unique_request(__TopXMLNS, __Opts,
 		      {xmlel, <<"request">>, _attrs, _els}) ->

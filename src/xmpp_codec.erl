@@ -303,6 +303,9 @@ get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
 get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
+get_mod(<<"mention">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"nick">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"internal-server-error">>,
@@ -520,6 +523,9 @@ get_mod(<<"processing-failed">>,
 get_mod(<<"address">>,
 	<<"http://jabber.org/protocol/address">>) ->
     xep0033;
+get_mod(<<"retry">>,
+	<<"http://xabber.com/protocol/delivery">>) ->
+    unique;
 get_mod(<<"c">>,
 	<<"http://jabber.org/protocol/caps">>) ->
     xep0115;
@@ -1922,6 +1928,8 @@ get_mod({push_disable, _, _}) -> xep0357;
 get_mod({unique_time, _, _}) -> unique;
 get_mod({xabbergroupchat_description, _}) ->
     xabbergroupchat;
+get_mod({xabber_groupchat_mention, _}) ->
+    xabbergroupchat;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _, _, _, _, _, _, _, _, _}) ->
@@ -2024,6 +2032,7 @@ get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
 get_mod({encryption_key, _}) -> xep0357;
+get_mod({delivery_retry, _}) -> unique;
 get_mod({xabbertoken_query, _}) -> xabbertoken;
 get_mod({xabbergroupchat_invite, _, _, _, _, _}) ->
     xabbergroupchat;

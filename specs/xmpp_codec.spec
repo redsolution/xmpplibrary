@@ -4211,6 +4211,17 @@
            ]
            }).
 
+-xml(delivery_retry,
+     #elem{name = <<"retry">>,
+           xmlns = <<"http://xabber.com/protocol/delivery">>,
+           module = 'unique',
+           result = {delivery_retry, '$to'},
+           attrs = [#attr{name = <<"to">>,
+                                     dec = {jid, decode, []},
+                                     enc = {jid, encode, []}}
+                      ]
+           }).
+
 -xml(previous_id,
      #elem{name = <<"previous-id">>,
 	   xmlns = <<"http://xabber.com/protocol/previous">>,
@@ -5159,6 +5170,16 @@
 	   module = 'xabbergroupchat',
 	   result = '$cdata',
 	   cdata = #cdata{label = '$cdata'}}).
+
+-xml(xabber_groupchat_mention,
+     #elem{name = <<"mention">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabber_groupchat_mention, '$target'},
+     attrs = [
+     #attr{name = <<"target">>}
+     ]
+     }).
 
 -xml(xabber_retract_message,
      #elem{name = <<"retract-message">>,
