@@ -3955,22 +3955,19 @@
 
 -xml(push_enable,
      #elem{name = <<"enable">>,
-	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   xmlns = <<"urn:xmpp:push:0">>,
 	   module = 'xep0357',
-	   result = {push_enable, '$jid', '$node', '$xdata', '$push_security'},
+	   result = {push_enable, '$jid', '$node', '$xdata'},
 	   attrs = [#attr{name = <<"jid">>,
 			  dec = {jid, decode, []},
 			  enc = {jid, encode, []},
 			  required = true},
 		    #attr{name = <<"node">>}],
-	   refs = [
-	   #ref{name = xdata, min = 0, max = 1},
-	   #ref{name = push_security, min = 0, max = 1}
-	   ]}).
+	   refs = [#ref{name = xdata, min = 0, max = 1}]}).
 
 -xml(push_disable,
      #elem{name = <<"disable">>,
-	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   xmlns = <<"urn:xmpp:push:0">>,
 	   module = 'xep0357',
 	   result = {push_disable, '$jid', '$node'},
 	   attrs = [#attr{name = <<"jid">>,
@@ -3981,16 +3978,50 @@
 
 -xml(push_notification,
      #elem{name = <<"notification">>,
-	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   xmlns = <<"urn:xmpp:push:0">>,
 	   module = 'xep0357',
-	   result = {push_notification, '$xdata', '$_els'},
+	   result = {push_notification, '$xdata'},
+	   refs = [#ref{name = xdata, min = 0, max = 1}]}).
+
+
+-xml(xabber_push_enable,
+     #elem{name = <<"enable">>,
+	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   module = 'xabberpush',
+	   result = {xabber_push_enable, '$jid', '$node', '$xdata', '$push_security'},
+	   attrs = [#attr{name = <<"jid">>,
+			  dec = {jid, decode, []},
+			  enc = {jid, encode, []},
+			  required = true},
+		    #attr{name = <<"node">>}],
+	   refs = [
+	   #ref{name = xdata, min = 0, max = 1},
+	   #ref{name = push_security, min = 0, max = 1}
+	   ]}).
+
+-xml(xabber_push_disable,
+     #elem{name = <<"disable">>,
+	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   module = 'xabberpush',
+	   result = {xabber_push_disable, '$jid', '$node'},
+	   attrs = [#attr{name = <<"jid">>,
+			  dec = {jid, decode, []},
+			  enc = {jid, encode, []},
+			  required = true},
+		    #attr{name = <<"node">>}]}).
+
+-xml(xabber_push_notification,
+     #elem{name = <<"notification">>,
+	   xmlns = <<"https://xabber.com/protocol/push">>,
+	   module = 'xabberpush',
+	   result = {xabber_push_notification, '$xdata', '$_els'},
 	   refs = [#ref{name = xdata, min = 0, max = 1}]}).
 
 -xml(push_security,
      #elem{name = <<"security">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xep0357',
-	   result = {push_security, '$cipher', '$encryption_key'},
+	   module = 'xabberpush',
+	   result = {xabber_push_security, '$cipher', '$encryption_key'},
 	   attrs = [#attr{name = <<"cipher">>,
        			  required = true}],
 	   refs = [#ref{name = encryption_key, min = 0, max = 1}]}).
@@ -3998,8 +4029,8 @@
 -xml(encryption_key,
      #elem{name = <<"encryption-key">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xep0357',
-	   result = {encryption_key, '$data'},
+	   module = 'xabberpush',
+	   result = {xabber_encryption_key, '$data'},
 	   cdata = #cdata{label = '$data',
 			  required = true,
 			  dec = {base64, decode, []},
@@ -4008,13 +4039,13 @@
 -xml(push_call,
      #elem{name = <<"call">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xep0357',
+	   module = 'xabberpush',
 	   result = {push_call}}).
 
 -xml(encrypted,
      #elem{name = <<"encrypted">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xep0357',
+	   module = 'xabberpush',
 	   result = {encrypted, '$iv-length', '$data'},
 	   attrs = [#attr{name = <<"iv-length">>,
 	              dec = {dec_int, [0, infinity]},
@@ -5408,7 +5439,7 @@
      #elem{name = <<"conversation">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$retract', '$unread', '$unread_mention', '$displayed', '$delivered', '$call', '$last', '$_els'},
+     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$_els'},
      attrs = [
      #attr{name = <<"jid">>,
            required = true,
@@ -5417,15 +5448,16 @@
      #attr{name = <<"stamp">>},
      #attr{name = <<"thread">>},
      #attr{name = <<"type">>}
-     ],
-     refs = [
-     #ref{name = xabber_conversation_retract, min = 0, max = 1, label = '$retract'},
-     #ref{name = xabber_conversation_unread, min = 0, max = 1, label = '$unread'},
-     #ref{name = xabber_conversation_unread_mention, min = 0, max = 1, label = '$unread_mention'},
-     #ref{name = xabber_conversation_displayed, min = 0, max = 1, label = '$displayed'},
-     #ref{name = xabber_conversation_delivered, min = 0, max = 1, label = '$delivered'},
-     #ref{name = xabber_conversation_call, min = 0, max = 1, label = '$call'},
-     #ref{name = xabber_conversation_last, min = 0, max = 1, label = '$last'}
+     ]
+     }).
+
+-xml(xabber_metadata,
+     #elem{name = <<"metadata">>,
+     xmlns = <<"http://xabber.com/protocol/synchronization">>,
+	   module = 'xabbersynchronization',
+     result = {xabber_metadata, '$node', '$_els'},
+     attrs = [
+     #attr{name = <<"node">>}
      ]
      }).
 
