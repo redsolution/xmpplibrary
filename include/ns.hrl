@@ -152,6 +152,7 @@
 -define(NS_PING, <<"urn:xmpp:ping">>).
 -define(NS_PUSH_0, <<"urn:xmpp:push:0">>).
 -define(NS_XABBER_PUSH, <<"https://xabber.com/protocol/push">>).
+-define(NS_XABBER_PUSH_INFO, <<"https://xabber.com/protocol/push#info">>).
 -define(NS_CARBONS_2, <<"urn:xmpp:carbons:2">>).
 -define(NS_CARBONS_1, <<"urn:xmpp:carbons:1">>).
 -define(NS_FORWARD, <<"urn:xmpp:forward:0">>).
@@ -197,6 +198,7 @@
 -define(NS_XABBER_REWRITE,<<"http://xabber.com/protocol/rewrite">>).
 -define(NS_XABBER_REWRITE_NOTIFY,<<"http://xabber.com/protocol/rewrite#notify">>).
 -define(NS_REFERENCE_0, <<"https://xabber.com/protocol/reference">>).
+-define(NS_XABBER_MARKUP, <<"https://xabber.com/protocol/markup">>).
 -define(NS_GROUPCHAT_UPDATE, <<"http://xabber.com/protocol/groupchat#update">>).
 -define(NS_GROUPCHAT_USER_UPDATED, <<"http://xabber.com/protocol/groupchat#user-updated">>).
 -define(NS_GROUPCHAT_USER_LEFT, <<"http://xabber.com/protocol/groupchat#left">>).

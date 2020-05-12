@@ -1257,7 +1257,8 @@
                  xdata :: 'undefined' | #xdata{}}).
 -type search() :: #search{}.
 
--record(xabber_groupchat_mention, {target = <<>> :: binary()}).
+-record(xabber_groupchat_mention, {node = <<>> :: binary(),
+                                   cdata = <<>> :: binary()}).
 -type xabber_groupchat_mention() :: #xabber_groupchat_mention{}.
 
 -record(xabbergroupchat_search, {name :: 'undefined' | binary(),
@@ -1459,6 +1460,7 @@
                         carbons_private() |
                         starttls() |
                         bookmark_url() |
+                        text() |
                         unique_received() |
                         mam_result() |
                         xabbergroupchat_restriction() |
@@ -1537,7 +1539,6 @@
                         xabbergroupchat_user_updated() |
                         xabbergroupchat_search() |
                         xabber_conversation_delivered() |
-                        search() |
                         sic() |
                         mix_join() |
                         delegation_query() |
@@ -1577,8 +1578,8 @@
                         stats() |
                         xdata_option() |
                         nick() |
+                        search() |
                         mam_query() |
-                        text() |
                         iq() |
                         xabbergroupchat_replaced() |
                         presence() |

@@ -5,10 +5,6 @@
 
 -compile(export_all).
 
-do_decode(<<"mention">>,
-	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
-    decode_xabber_groupchat_mention(<<"http://xabber.com/protocol/groupchat">>,
-				    Opts, El);
 do_decode(<<"reason">>,
 	  <<"http://xabber.com/protocol/groupchat">>, El, Opts) ->
     decode_xabbergroupchat_reason(<<"http://xabber.com/protocol/groupchat">>,
@@ -494,9 +490,7 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"mention">>,
-      <<"http://xabber.com/protocol/groupchat">>},
-     {<<"reason">>,
+    [{<<"reason">>,
       <<"http://xabber.com/protocol/groupchat">>},
      {<<"recipient">>,
       <<"http://xabber.com/protocol/groupchat">>},
@@ -871,10 +865,7 @@ do_encode({disclosure, _, _, _} = Disclosure,
 	  TopXMLNS) ->
     encode_xabbergroupchat_disclosure(Disclosure, TopXMLNS);
 do_encode({recipient, _} = Recipient, TopXMLNS) ->
-    encode_xabbergroupchat_recipient(Recipient, TopXMLNS);
-do_encode({xabber_groupchat_mention, _} = Mention,
-	  TopXMLNS) ->
-    encode_xabber_groupchat_mention(Mention, TopXMLNS).
+    encode_xabbergroupchat_recipient(Recipient, TopXMLNS).
 
 do_get_name({block_domain, _}) -> <<"domain">>;
 do_get_name({block_id, _}) -> <<"id">>;
@@ -886,8 +877,6 @@ do_get_name({disclosure, _, _, _}) -> <<"disclosure">>;
 do_get_name({recipient, _}) -> <<"recipient">>;
 do_get_name({x_not_present}) -> <<"x">>;
 do_get_name({x_present}) -> <<"x">>;
-do_get_name({xabber_groupchat_mention, _}) ->
-    <<"mention">>;
 do_get_name({xabbergroup_block, _, _, _}) ->
     <<"block">>;
 do_get_name({xabbergroup_contacts, _}) ->
@@ -985,8 +974,6 @@ do_get_ns({x_not_present}) ->
     <<"http://xabber.com/protocol/groupchat#not-present">>;
 do_get_ns({x_present}) ->
     <<"http://xabber.com/protocol/groupchat#present">>;
-do_get_ns({xabber_groupchat_mention, _}) ->
-    <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({xabbergroup_block, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#block">>;
 do_get_ns({xabbergroup_invite_user, _, _}) ->
@@ -1163,7 +1150,6 @@ pp(xabbergroupchat_replace_message, 5) ->
 pp(disclosed, 3) -> [user_card, reason, type];
 pp(disclosure, 3) -> [recipient, reason, type];
 pp(recipient, 1) -> [id];
-pp(xabber_groupchat_mention, 1) -> [target];
 pp(_, _) -> no.
 
 records() ->
@@ -1200,8 +1186,7 @@ records() ->
      {xabbergroupchat_replaced, 1},
      {xabbergroupchat_replace, 3},
      {xabbergroupchat_replace_message, 5}, {disclosed, 3},
-     {disclosure, 3}, {recipient, 1},
-     {xabber_groupchat_mention, 1}].
+     {disclosure, 3}, {recipient, 1}].
 
 dec_int(Val, Min, Max) ->
     case erlang:binary_to_integer(Val) of
@@ -1210,54 +1195,6 @@ dec_int(Val, Min, Max) ->
     end.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
-
-decode_xabber_groupchat_mention(__TopXMLNS, __Opts,
-				{xmlel, <<"mention">>, _attrs, _els}) ->
-    Target =
-	decode_xabber_groupchat_mention_attrs(__TopXMLNS,
-					      _attrs, undefined),
-    {xabber_groupchat_mention, Target}.
-
-decode_xabber_groupchat_mention_attrs(__TopXMLNS,
-				      [{<<"target">>, _val} | _attrs],
-				      _Target) ->
-    decode_xabber_groupchat_mention_attrs(__TopXMLNS,
-					  _attrs, _val);
-decode_xabber_groupchat_mention_attrs(__TopXMLNS,
-				      [_ | _attrs], Target) ->
-    decode_xabber_groupchat_mention_attrs(__TopXMLNS,
-					  _attrs, Target);
-decode_xabber_groupchat_mention_attrs(__TopXMLNS, [],
-				      Target) ->
-    decode_xabber_groupchat_mention_attr_target(__TopXMLNS,
-						Target).
-
-encode_xabber_groupchat_mention({xabber_groupchat_mention,
-				 Target},
-				__TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat">>,
-				    [], __TopXMLNS),
-    _els = [],
-    _attrs =
-	encode_xabber_groupchat_mention_attr_target(Target,
-						    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-									       __TopXMLNS)),
-    {xmlel, <<"mention">>, _attrs, _els}.
-
-decode_xabber_groupchat_mention_attr_target(__TopXMLNS,
-					    undefined) ->
-    <<>>;
-decode_xabber_groupchat_mention_attr_target(__TopXMLNS,
-					    _val) ->
-    _val.
-
-encode_xabber_groupchat_mention_attr_target(<<>>,
-					    _acc) ->
-    _acc;
-encode_xabber_groupchat_mention_attr_target(_val,
-					    _acc) ->
-    [{<<"target">>, _val} | _acc].
 
 decode_xabbergroupchat_reason(__TopXMLNS, __Opts,
 			      {xmlel, <<"reason">>, _attrs, _els}) ->

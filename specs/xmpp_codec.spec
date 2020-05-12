@@ -5204,12 +5204,13 @@
 
 -xml(xabber_groupchat_mention,
      #elem{name = <<"mention">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
-	   module = 'xabbergroupchat',
-     result = {xabber_groupchat_mention, '$target'},
+     xmlns = <<"https://xabber.com/protocol/markup">>,
+	   module = 'xabbermarkup',
+     result = {xabber_groupchat_mention,  '$node', '$cdata'},
      attrs = [
-     #attr{name = <<"target">>}
-     ]
+     #attr{name = <<"node">>}
+     ],
+     cdata = #cdata{label = '$cdata'}
      }).
 
 -xml(xabber_retract_message,

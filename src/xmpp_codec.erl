@@ -302,9 +302,6 @@ get_mod(<<"domain">>,
 	<<"http://xabber.com/protocol/groupchat#block">>) ->
     xabbergroupchat;
 get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
-get_mod(<<"mention">>,
-	<<"http://xabber.com/protocol/groupchat">>) ->
-    xabbergroupchat;
 get_mod(<<"nick">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"internal-server-error">>,
@@ -926,6 +923,9 @@ get_mod(<<"name">>,
 get_mod(<<"description">>,
 	<<"http://xabber.com/protocol/groupchat#create">>) ->
     xabbergroupchat;
+get_mod(<<"mention">>,
+	<<"https://xabber.com/protocol/markup">>) ->
+    xabbermarkup;
 get_mod(<<"jid-malformed">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1939,8 +1939,6 @@ get_mod({push_notification, _}) -> xep0357;
 get_mod({unique_time, _, _}) -> unique;
 get_mod({xabbergroupchat_description, _}) ->
     xabbergroupchat;
-get_mod({xabber_groupchat_mention, _}) ->
-    xabbergroupchat;
 get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _, _, _, _, _, _, _, _, _}) ->
@@ -2022,6 +2020,8 @@ get_mod({xabbergroupchat_permission, _, _}) ->
 get_mod({xabbergroupchat_replace, _, _, _}) ->
     xabbergroupchat;
 get_mod({disclosure, _, _, _}) -> xabbergroupchat;
+get_mod({xabber_groupchat_mention, _, _}) ->
+    xabbermarkup;
 get_mod({xabber_retract_all, _, _, _, _}) ->
     xabberrewrite;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
