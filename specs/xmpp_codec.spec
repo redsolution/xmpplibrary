@@ -4814,6 +4814,16 @@
      cdata = #cdata{label = '$cdata'}}
 ).
 
+-xml(xabbergroupchat_kick,
+     #elem{name = <<"kick">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_kick, '$id', '$jid'},
+     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
+      #ref{name = xabbergroupchat_block_jid, label = '$jid'}
+     ]}).
+).
+
 -xml(xabbergroupchat_block,
      #elem{name = <<"block">>,
      xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
@@ -4846,7 +4856,7 @@
 
 -xml(xabbergroupchat_block_jid,
      #elem{name = <<"jid">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat#block">>,
+     xmlns = [<<"http://xabber.com/protocol/groupchat">>,<<"http://xabber.com/protocol/groupchat#block">>],
 	   module = 'xabbergroupchat',
      result = {block_jid,'$cdata'},
      cdata = #cdata{label = '$cdata', required = true}}

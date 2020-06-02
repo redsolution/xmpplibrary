@@ -1477,6 +1477,9 @@ get_mod(<<"filename">>, <<"urn:xmpp:http:upload">>) ->
 get_mod(<<"ip">>,
 	<<"http://xabber.com/protocol/auth-tokens#items">>) ->
     xabbertoken;
+get_mod(<<"kick">>,
+	<<"http://xabber.com/protocol/groupchat">>) ->
+    xabbergroupchat;
 get_mod(<<"storage">>, <<"storage:bookmarks">>) ->
     xep0048;
 get_mod(<<"LINE">>, <<"vcard-temp">>) -> xep0054;
@@ -1978,6 +1981,7 @@ get_mod({collect, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_update, _, _, _, _, _, _, _,
 	 _}) ->
     xabbergroupchat;
+get_mod({xabbergroup_kick, _, _}) -> xabbergroupchat;
 get_mod({block_id, _}) -> xabbergroupchat;
 get_mod({block_jid, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_localpart, _}) ->
