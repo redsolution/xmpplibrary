@@ -702,23 +702,6 @@
               xmlns = <<>> :: binary()}).
 -type sic() :: #sic{}.
 
--record(xabbergroupchat_user_card, {id = <<>> :: binary(),
-                                    jid :: undefined | jid:jid(),
-                                    role :: 'undefined' | binary(),
-                                    badge :: 'undefined' | binary(),
-                                    nickname :: 'undefined' | binary(),
-                                    avatar :: 'undefined' | #avatar_meta{},
-                                    present :: 'undefined' | binary()}).
--type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
-
--record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{},
-                    reason :: 'undefined' | binary(),
-                    type = <<>> :: binary()}).
--type disclosed() :: #disclosed{}.
-
--record(xabbergroupchat_user_updated, {user :: 'undefined' | #xabbergroupchat_user_card{}}).
--type xabbergroupchat_user_updated() :: #xabbergroupchat_user_updated{}.
-
 -record(x_present, {}).
 -type x_present() :: #x_present{}.
 
@@ -762,9 +745,6 @@
 -record(sasl_failure, {reason :: 'aborted' | 'account-disabled' | 'bad-protocol' | 'credentials-expired' | 'encryption-required' | 'incorrect-encoding' | 'invalid-authzid' | 'invalid-mechanism' | 'malformed-request' | 'mechanism-too-weak' | 'not-authorized' | 'temporary-auth-failure' | 'undefined',
                        text = [] :: [#text{}]}).
 -type sasl_failure() :: #sasl_failure{}.
-
--record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).
--type xabbergroupchat_kicked() :: #xabbergroupchat_kicked{}.
 
 -record(carbons_sent, {forwarded :: #forwarded{}}).
 -type carbons_sent() :: #carbons_sent{}.
@@ -1370,6 +1350,27 @@
                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stanza_error() :: #stanza_error{}.
 
+-record(xabbergroupchat_user_card, {id = <<>> :: binary(),
+                                    jid :: undefined | jid:jid(),
+                                    role :: 'undefined' | binary(),
+                                    badge :: 'undefined' | binary(),
+                                    nickname :: 'undefined' | binary(),
+                                    avatar :: 'undefined' | #avatar_meta{},
+                                    present :: 'undefined' | binary(),
+                                    subscription :: 'undefined' | binary()}).
+-type xabbergroupchat_user_card() :: #xabbergroupchat_user_card{}.
+
+-record(disclosed, {user_card :: 'undefined' | #xabbergroupchat_user_card{},
+                    reason :: 'undefined' | binary(),
+                    type = <<>> :: binary()}).
+-type disclosed() :: #disclosed{}.
+
+-record(xabbergroupchat_kicked, {users = [] :: [#xabbergroupchat_user_card{}]}).
+-type xabbergroupchat_kicked() :: #xabbergroupchat_kicked{}.
+
+-record(xabbergroupchat_user_updated, {user :: 'undefined' | #xabbergroupchat_user_card{}}).
+-type xabbergroupchat_user_updated() :: #xabbergroupchat_user_updated{}.
+
 -record(block_domain, {cdata = <<>> :: binary()}).
 -type block_domain() :: #block_domain{}.
 
@@ -1454,7 +1455,6 @@
                         receipt_request() |
                         privilege() |
                         avatar_pointer() |
-                        text() |
                         xabber_delete() |
                         xevent() |
                         vcard_sound() |
@@ -1518,7 +1518,6 @@
                         expire() |
                         db_feature() |
                         unique_time() |
-                        search() |
                         oob_x() |
                         compressed() |
                         sasl_mechanisms() |
@@ -1628,6 +1627,7 @@
                         ps_publish() |
                         caps() |
                         xabber_push_notification() |
+                        text() |
                         avatar_meta() |
                         muc_unique() |
                         legacy_auth_feature() |
@@ -1657,6 +1657,7 @@
                         upload_slot() |
                         unique_request() |
                         ping() |
+                        search() |
                         last() |
                         xabbergroupchat_permission() |
                         sm_enable() |

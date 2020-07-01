@@ -4934,14 +4934,15 @@
     #elem{name = <<"user">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_user_card, '$id', '$jid', '$role', '$badge', '$nickname', '$avatar', '$present'},
+     result = {xabbergroupchat_user_card, '$id', '$jid', '$role', '$badge', '$nickname', '$avatar', '$present', '$subscription'},
      attrs = [#attr{name = <<"id">>}],
      refs = [#ref{name = xabbergroupchat_jid, min = 0, max = 1, label = '$jid'},
              #ref{name = xabbergroupchat_user_role, min = 0, max = 1, label = '$role'},
              #ref{name = xabbergroupchat_user_nickname, min = 0, max = 1, label = '$nickname'},
              #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
              #ref{name = xabbergroupchat_user_badge, min = 0, max = 1, label = '$badge'},
-             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'}
+             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'},
+             #ref{name = xabbergroupchat_subscription, min = 0, max = 1, label = '$subscription'}
              ]
               }
 ).

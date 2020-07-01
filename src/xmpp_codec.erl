@@ -1866,6 +1866,9 @@ get_mod({xabber_conversation, _, _, _, _, _}) ->
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
+get_mod({xabbergroupchat_user_card, _, _, _, _, _, _, _,
+	 _}) ->
+    xabbergroupchat;
 get_mod({xabbergroup_domains, _}) -> xabbergroupchat;
 get_mod({block_list, _}) -> xep0191;
 get_mod({carbons_received, _}) -> xep0280;
@@ -2044,9 +2047,6 @@ get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
 get_mod({xabbertoken_field, _, _, _, _, _, _, _}) ->
     xabbertoken;
-get_mod({xabbergroupchat_user_card, _, _, _, _, _, _,
-	 _}) ->
-    xabbergroupchat;
 get_mod({xabber_metadata, _, _}) ->
     xabbersynchronization;
 get_mod({unblock, _}) -> xep0191;

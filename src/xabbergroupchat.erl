@@ -794,7 +794,7 @@ do_encode({xabbergroupchat_kicked, _} = Kicked,
 	  TopXMLNS) ->
     encode_xabbergroupchat_kicked(Kicked, TopXMLNS);
 do_encode({xabbergroupchat_user_card, _, _, _, _, _, _,
-	   _} =
+	   _, _} =
 	      User,
 	  TopXMLNS) ->
     encode_xabbergroupchat_user_card(User, TopXMLNS);
@@ -960,7 +960,7 @@ do_get_name({xabbergroupchat_update, _, _, _, _, _, _,
 	     _, _}) ->
     <<"update">>;
 do_get_name({xabbergroupchat_user_card, _, _, _, _, _,
-	     _, _}) ->
+	     _, _, _}) ->
     <<"user">>;
 do_get_name({xabbergroupchat_user_updated, _}) ->
     <<"user-updated">>;
@@ -1054,7 +1054,7 @@ do_get_ns({xabbergroupchat_update, _, _, _, _, _, _, _,
 	   _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({xabbergroupchat_user_card, _, _, _, _, _, _,
-	   _}) ->
+	   _, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
 do_get_ns({xabbergroupchat_user_updated, _}) ->
     <<"http://xabber.com/protocol/groupchat">>;
@@ -1139,8 +1139,9 @@ pp(xabbergroupchat_search, 5) ->
     [name, description, model, anonymous, rsm];
 pp(xabbergroupchat_user_updated, 1) -> [user];
 pp(xabbergroupchat_kicked, 1) -> [users];
-pp(xabbergroupchat_user_card, 7) ->
-    [id, jid, role, badge, nickname, avatar, present];
+pp(xabbergroupchat_user_card, 8) ->
+    [id, jid, role, badge, nickname, avatar, present,
+     subscription];
 pp(xabbergroupchat, 6) ->
     [xmlns, id, version, rsm, sub_els, cdata];
 pp(xabbergroup_contacts, 1) -> [contact];
@@ -1187,7 +1188,7 @@ records() ->
      {xabbergroupchat_search, 5},
      {xabbergroupchat_user_updated, 1},
      {xabbergroupchat_kicked, 1},
-     {xabbergroupchat_user_card, 7}, {xabbergroupchat, 6},
+     {xabbergroupchat_user_card, 8}, {xabbergroupchat, 6},
      {xabbergroup_contacts, 1}, {xabbergroup_domains, 1},
      {xabbergroupchat_pinned_message, 1},
      {xabbergroupchat_index, 1}, {xabbergroupchat_name, 1},
@@ -3222,25 +3223,27 @@ encode_xabbergroupchat_user_role_cdata(_val, _acc) ->
 
 decode_xabbergroupchat_user_card(__TopXMLNS, __Opts,
 				 {xmlel, <<"user">>, _attrs, _els}) ->
-    {Avatar, Present, Jid, Badge, Nickname, Role} =
+    {Avatar, Present, Jid, Badge, Nickname, Role,
+     Subscription} =
 	decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					     _els, undefined, undefined,
 					     undefined, undefined, undefined,
-					     undefined),
+					     undefined, undefined),
     Id = decode_xabbergroupchat_user_card_attrs(__TopXMLNS,
 						_attrs, undefined),
     {xabbergroupchat_user_card, Id, Jid, Role, Badge,
-     Nickname, Avatar, Present}.
+     Nickname, Avatar, Present, Subscription}.
 
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [], Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
-    {Avatar, Present, Jid, Badge, Nickname, Role};
+				     Role, Subscription) ->
+    {Avatar, Present, Jid, Badge, Nickname, Role,
+     Subscription};
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"jid">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3250,17 +3253,19 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       decode_xabbergroupchat_jid(<<"http://xabber.com/protocol/groupchat">>,
 									  __Opts,
 									  _el),
-					       Badge, Nickname, Role);
+					       Badge, Nickname, Role,
+					       Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"role">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3270,17 +3275,19 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       Badge, Nickname,
 					       decode_xabbergroupchat_user_role(<<"http://xabber.com/protocol/groupchat">>,
 										__Opts,
-										_el));
+										_el),
+					       Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"nickname">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3291,17 +3298,18 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       decode_xabbergroupchat_user_nickname(<<"http://xabber.com/protocol/groupchat">>,
 										    __Opts,
 										    _el),
-					       Role);
+					       Role, Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"metadata">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3312,17 +3320,18 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 									  __Opts,
 									  _el),
 					       Present, Jid, Badge, Nickname,
-					       Role);
+					       Role, Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"badge">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3332,17 +3341,18 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       decode_xabbergroupchat_user_badge(<<"http://xabber.com/protocol/groupchat">>,
 										 __Opts,
 										 _el),
-					       Nickname, Role);
+					       Nickname, Role, Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [{xmlel, <<"present">>, _attrs, _} = _el
 				      | _els],
 				     Avatar, Present, Jid, Badge, Nickname,
-				     Role) ->
+				     Role, Subscription) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -3352,18 +3362,42 @@ decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       decode_xabbergroupchat_online(<<"http://xabber.com/protocol/groupchat">>,
 									     __Opts,
 									     _el),
-					       Jid, Badge, Nickname, Role);
+					       Jid, Badge, Nickname, Role,
+					       Subscription);
       _ ->
 	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					       _els, Avatar, Present, Jid,
-					       Badge, Nickname, Role)
+					       Badge, Nickname, Role,
+					       Subscription)
+    end;
+decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
+				     [{xmlel, <<"subscription">>, _attrs, _} =
+					  _el
+				      | _els],
+				     Avatar, Present, Jid, Badge, Nickname,
+				     Role, Subscription) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"http://xabber.com/protocol/groupchat">> ->
+	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
+					       _els, Avatar, Present, Jid,
+					       Badge, Nickname, Role,
+					       decode_xabbergroupchat_subscription(<<"http://xabber.com/protocol/groupchat">>,
+										   __Opts,
+										   _el));
+      _ ->
+	  decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
+					       _els, Avatar, Present, Jid,
+					       Badge, Nickname, Role,
+					       Subscription)
     end;
 decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 				     [_ | _els], Avatar, Present, Jid, Badge,
-				     Nickname, Role) ->
+				     Nickname, Role, Subscription) ->
     decode_xabbergroupchat_user_card_els(__TopXMLNS, __Opts,
 					 _els, Avatar, Present, Jid, Badge,
-					 Nickname, Role).
+					 Nickname, Role, Subscription).
 
 decode_xabbergroupchat_user_card_attrs(__TopXMLNS,
 				       [{<<"id">>, _val} | _attrs], _Id) ->
@@ -3380,7 +3414,7 @@ decode_xabbergroupchat_user_card_attrs(__TopXMLNS, [],
 
 encode_xabbergroupchat_user_card({xabbergroupchat_user_card,
 				  Id, Jid, Role, Badge, Nickname, Avatar,
-				  Present},
+				  Present, Subscription},
 				 __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat">>,
@@ -3398,7 +3432,9 @@ encode_xabbergroupchat_user_card({xabbergroupchat_user_card,
 																													    __NewTopXMLNS,
 																													    'encode_xabbergroupchat_user_card_$role'(Role,
 																																		     __NewTopXMLNS,
-																																		     []))))))),
+																																		     'encode_xabbergroupchat_user_card_$subscription'(Subscription,
+																																								      __NewTopXMLNS,
+																																								      [])))))))),
     _attrs = encode_xabbergroupchat_user_card_attr_id(Id,
 						      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 										 __TopXMLNS)),
@@ -3449,6 +3485,15 @@ encode_xabbergroupchat_user_card({xabbergroupchat_user_card,
 'encode_xabbergroupchat_user_card_$role'(Role,
 					 __TopXMLNS, _acc) ->
     [encode_xabbergroupchat_user_role(Role, __TopXMLNS)
+     | _acc].
+
+'encode_xabbergroupchat_user_card_$subscription'(undefined,
+						 __TopXMLNS, _acc) ->
+    _acc;
+'encode_xabbergroupchat_user_card_$subscription'(Subscription,
+						 __TopXMLNS, _acc) ->
+    [encode_xabbergroupchat_subscription(Subscription,
+					 __TopXMLNS)
      | _acc].
 
 decode_xabbergroupchat_user_card_attr_id(__TopXMLNS,
