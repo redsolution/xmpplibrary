@@ -9,6 +9,13 @@
                     {'end', erlang:timestamp()} |
                     {'withtext', binary()} |
                     {'last', boolean()} |
+                    {'filter_encrypted', boolean()} |
+                    {'filter_audio', boolean()} |
+                    {'filter_image', boolean()} |
+                    {'filter_document', boolean()} |
+                    {'filter_video', boolean()} |
+                    {'filter_voice', boolean()} |
+                    {'filter_sticker', boolean()} |
                     {'stanza-id', binary()}.
 -type result() :: [property()].
 

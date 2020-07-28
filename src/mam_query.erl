@@ -88,6 +88,23 @@ encode(List, Lang) when is_list(List) ->
 	    {withtext, _, _} -> erlang:error({badarg, Opt});
 	    {last, Val} -> [encode_last(Val, Lang)];
 	    {last, _, _} -> erlang:error({badarg, Opt});
+	    {filter_encrypted, Val} ->
+		[encode_filter_encrypted(Val, Lang)];
+	    {filter_encrypted, _, _} -> erlang:error({badarg, Opt});
+	    {filter_audio, Val} -> [encode_filter_audio(Val, Lang)];
+	    {filter_audio, _, _} -> erlang:error({badarg, Opt});
+	    {filter_image, Val} -> [encode_filter_image(Val, Lang)];
+	    {filter_image, _, _} -> erlang:error({badarg, Opt});
+	    {filter_document, Val} ->
+		[encode_filter_document(Val, Lang)];
+	    {filter_document, _, _} -> erlang:error({badarg, Opt});
+	    {filter_video, Val} -> [encode_filter_video(Val, Lang)];
+	    {filter_video, _, _} -> erlang:error({badarg, Opt});
+	    {filter_voice, Val} -> [encode_filter_voice(Val, Lang)];
+	    {filter_voice, _, _} -> erlang:error({badarg, Opt});
+	    {filter_sticker, Val} ->
+		[encode_filter_sticker(Val, Lang)];
+	    {filter_sticker, _, _} -> erlang:error({badarg, Opt});
 	    {'stanza-id', Val} -> ['encode_stanza-id'(Val, Lang)];
 	    {'stanza-id', _, _} -> erlang:error({badarg, Opt});
 	    #xdata_field{} -> [Opt];
@@ -217,6 +234,262 @@ decode([#xdata_field{var =
 		   <<"{http://xabber.com/protocol/archive}last">>,
 		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_en"
+			   "crypted">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_encrypted, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_en"
+			   "crypted">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_en"
+			   "crypted">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_en"
+				"crypted">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_en"
+			   "crypted">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_en"
+		     "crypted">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_audio">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_audio, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_audio">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_audio">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_audio">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_audio">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_audio">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_image">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_image, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_image">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_image">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_image">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_image">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_image">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_do"
+			   "cument">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_document, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_do"
+			   "cument">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_do"
+			   "cument">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_do"
+				"cument">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_do"
+			   "cument">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_do"
+		     "cument">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_video">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_video, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_video">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_video">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_video">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_video">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_video">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_voice">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_voice, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_voice">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_voice">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_voice">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_voice">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_voice">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_st"
+			   "icker">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try dec_bool(Value) of
+      Result ->
+	  decode(Fs, [{filter_sticker, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value,
+			 <<"{http://xabber.com/protocol/archive}filter_st"
+			   "icker">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_st"
+			   "icker">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var =
+			      <<"{http://xabber.com/protocol/archive}filter_st"
+				"icker">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var =
+			 <<"{http://xabber.com/protocol/archive}filter_st"
+			   "icker">>}
+	| _],
+       _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values,
+		   <<"{http://xabber.com/protocol/archive}filter_st"
+		     "icker">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var =
 			 <<"{urn:xmpp:sid:0}stanza-id">>,
 		     values = [Value]}
 	| Fs],
@@ -313,6 +586,106 @@ encode_last(Value, Lang) ->
 		     xmpp_tr:tr(Lang,
 				<<"Fetch only the last message from each "
 				  "conversation">>)}.
+
+encode_filter_encrypted(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_en"
+		       "crypted">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the encrypted messages">>)}.
+
+encode_filter_audio(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_audio">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with audio">>)}.
+
+encode_filter_image(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_image">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with images">>)}.
+
+encode_filter_document(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_do"
+		       "cument">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with documents">>)}.
+
+encode_filter_video(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_video">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with videos">>)}.
+
+encode_filter_voice(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_voice">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang, <<"Fetch only the voice messages">>)}.
+
+encode_filter_sticker(Value, Lang) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var =
+		     <<"{http://xabber.com/protocol/archive}filter_st"
+		       "icker">>,
+		 values = Values, required = false, type = boolean,
+		 options = Opts, desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with stickers">>)}.
 
 'encode_stanza-id'(Value, Lang) ->
     Values = case Value of

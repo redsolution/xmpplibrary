@@ -4056,6 +4056,12 @@
 			  dec = {base64, decode, []},
 			  enc = {base64, encode, []}}}).
 
+-xml(encrypted_message,
+     #elem{name = <<"encrypted">>,
+	   xmlns = <<"urn:xmpp:omemo:1">>,
+	   module = 'xep0384',
+	   result = {encrypted_message, '$_els'}}).
+
 -xml(thumbnail,
      #elem{name = <<"thumbnail">>,
 	   xmlns = <<"urn:xmpp:thumbs:1">>,
@@ -5406,6 +5412,45 @@
                           dec = {dec_int, [0, infinity]},
                           enc = {enc_int, []}}
                     ]}).
+
+-xml(geoloc,
+     #elem{name = <<"geoloc">>,
+           xmlns = <<"http://jabber.org/protocol/geoloc">>,
+	       module = xep0080,
+           result = {geoloc}}).
+
+-xml(voice_message,
+     #elem{name = <<"voice-message">>,
+           xmlns = <<"https://xabber.com/protocol/voice-message">>,
+	       module = xep_voice,
+           result = {voice_message}}).
+
+-xml(sticker,
+     #elem{name = <<"sticker">>,
+           xmlns = <<"https://xabber.com/protocol/sticker">>,
+	       module = xep_sticker,
+           result = {sticker}}).
+
+-xml(xabber_file_sharing,
+     #elem{name = <<"file-sharing">>,
+           xmlns = <<"https://xabber.com/protocol/otb">>,
+	   module = xep_otb,
+           result = {xabber_file_sharing, '$file'},
+           refs = [#ref{name = xabber_file, min = 1, max =1, label = '$file'}]}).
+
+-xml(xabber_file,
+     #elem{name = <<"file">>,
+           xmlns = <<"https://xabber.com/protocol/otb">>,
+	   module = xep_otb,
+           result = {xabber_file, '$type', '$_els'},
+           refs = [#ref{name = xabber_media_type_otb, min = 0, max = 1, label = '$type'}]}).
+
+-xml(xabber_media_type_otb,
+     #elem{name = <<"media-type">>,
+	   xmlns = <<"https://xabber.com/protocol/otb">>,
+	   module = 'xep_otb',
+	   result = '$cdata',
+	   cdata = #cdata{required = true}}).
 
 -xml(xabber_synchronization,
      #elem{name = <<"synchronization">>,
