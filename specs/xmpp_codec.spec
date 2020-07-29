@@ -5417,26 +5417,35 @@
      #elem{name = <<"geoloc">>,
            xmlns = <<"http://jabber.org/protocol/geoloc">>,
 	       module = xep0080,
-           result = {geoloc}}).
+           result = {geoloc, '$_els'}}).
 
 -xml(voice_message,
      #elem{name = <<"voice-message">>,
            xmlns = <<"https://xabber.com/protocol/voice-message">>,
 	       module = xep_voice,
-           result = {voice_message}}).
+           result = {voice_message, '$_els'}}).
 
 -xml(sticker,
      #elem{name = <<"sticker">>,
            xmlns = <<"https://xabber.com/protocol/sticker">>,
 	       module = xep_sticker,
-           result = {sticker}}).
+           result = {sticker, '$_els'}}).
 
 -xml(xabber_file_sharing,
      #elem{name = <<"file-sharing">>,
            xmlns = <<"https://xabber.com/protocol/otb">>,
 	   module = xep_otb,
-           result = {xabber_file_sharing, '$file'},
-           refs = [#ref{name = xabber_file, min = 1, max =1, label = '$file'}]}).
+           result = {xabber_file_sharing, '$file', '$sources'},
+           refs = [#ref{name = xabber_file, min = 1, max = 1, label = '$file'},
+                   #ref{name = xabber_file_sources, min = 1, max = 1, label = '$sources'}
+                  ]}).
+
+-xml(xabber_file_sources,
+     #elem{name = <<"sources">>,
+           xmlns = <<"https://xabber.com/protocol/otb">>,
+	   module = xep_otb,
+           result = {xabber_sources, '$_els'}
+           }).
 
 -xml(xabber_file,
      #elem{name = <<"file">>,

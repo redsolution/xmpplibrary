@@ -1097,6 +1097,9 @@ get_mod(<<"purge">>,
 get_mod(<<"disable">>,
 	<<"https://xabber.com/protocol/push">>) ->
     xabberpush;
+get_mod(<<"sources">>,
+	<<"https://xabber.com/protocol/otb">>) ->
+    xep_otb;
 get_mod(<<"MODEM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"ORGUNIT">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"UID">>, <<"vcard-temp">>) -> xep0054;
@@ -1882,6 +1885,7 @@ get_mod({xabbergroupchat, _, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_security, _, _}) -> xabberpush;
+get_mod({sticker, _}) -> xep_sticker;
 get_mod({xabber_conversation, _, _, _, _, _}) ->
     xabbersynchronization;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
@@ -1919,7 +1923,6 @@ get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({xabbertoken_issue, _, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_restriction, _, _}) ->
     xabbergroupchat;
-get_mod({xabber_file_sharing, _}) -> xep_otb;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({feature_register}) -> xep0077;
@@ -1974,6 +1977,7 @@ get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({version, _, _, _}) -> xep0092;
 get_mod({xabbergroupchat_membership, _}) ->
     xabbergroupchat;
+get_mod({xabber_file_sharing, _, _}) -> xep_otb;
 get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_photo, _, _, _}) -> xep0054;
 get_mod({ps_publish, _, _}) -> xep0060;
@@ -1992,6 +1996,7 @@ get_mod({adhoc_command, _, _, _, _, _, _, _, _}) ->
 get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbergroupchat_status, _}) -> xabbergroupchat;
+get_mod({xabber_sources, _}) -> xep_otb;
 get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
@@ -2023,6 +2028,7 @@ get_mod({xabbergroupchat_retract_invalidate, _}) ->
     xabbergroupchat;
 get_mod({xabber_retract_invalidate, _}) ->
     xabberrewrite;
+get_mod({voice_message, _}) -> xep_voice;
 get_mod({xabber_deleted_conversation}) ->
     xabbersynchronization;
 get_mod({idle, _}) -> xep0319;
@@ -2060,12 +2066,10 @@ get_mod({xabbergroupchat_invite, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({xabbergroupchat_privacy, _}) ->
     xabbergroupchat;
-get_mod({sticker}) -> xep_sticker;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
 get_mod({xabbertoken_field, _, _, _, _, _, _, _}) ->
     xabbertoken;
-get_mod({geoloc}) -> xep0080;
 get_mod({xabber_metadata, _, _}) ->
     xabbersynchronization;
 get_mod({unblock, _}) -> xep0191;
@@ -2110,6 +2114,7 @@ get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
     rfc6120;
+get_mod({geoloc, _}) -> xep0080;
 get_mod({'see-other-host', _}) -> rfc6120;
 get_mod({muc_destroy, _, _, _, _}) -> xep0045;
 get_mod({hint, _}) -> xep0334;
@@ -2154,7 +2159,6 @@ get_mod({nick, _}) -> xep0172;
 get_mod({xabber_synchronization_query, _, _, _}) ->
     xabbersynchronization;
 get_mod({avatar_info, _, _, _, _, _, _}) -> xep0084;
-get_mod({voice_message}) -> xep_voice;
 get_mod({privacy_list, _, _}) -> xep0016;
 get_mod({forwarded, _, _}) -> xep0297;
 get_mod({feature_sm, _}) -> xep0198;
