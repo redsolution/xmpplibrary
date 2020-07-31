@@ -5496,9 +5496,78 @@
      #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_synchronization_query, '$stamp', '$rsm', '$_els'},
+     result = {xabber_synchronization_query, '$stamp', '$rsm', '$xdata', '$_els'},
      attrs = [#attr{name = <<"stamp">>}],
-     refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]
+     refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'},
+              #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]
+     }).
+
+-xml(xabber_synchronization_pin,
+     #elem{name = <<"pin">>,
+     xmlns = <<"http://xabber.com/protocol/pinned">>,
+	   module = 'xabbersynchronization_pinned',
+     result = {xabber_synchronization_pin, '$conversation'},
+     refs = [
+     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
+     ]
+     }).
+
+-xml(xabber_synchronization_unpin,
+     #elem{name = <<"unpin">>,
+     xmlns = <<"http://xabber.com/protocol/pinned">>,
+	   module = 'xabbersynchronization_pinned',
+     result = {xabber_synchronization_unpin, '$conversation'},
+     refs = [
+     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
+     ]
+     }).
+
+-xml(xabber_pinned_conversation,
+     #elem{name = <<"pinned">>,
+     xmlns = <<"http://xabber.com/protocol/pinned">>,
+	   module = 'xabbersynchronization_pinned',
+     result = {xabber_pinned_conversation}
+     }).
+
+-xml(xabber_unpinned_conversation,
+     #elem{name = <<"unpinned">>,
+     xmlns = <<"http://xabber.com/protocol/pinned">>,
+	   module = 'xabbersynchronization_pinned',
+     result = {xabber_unpinned_conversation}
+     }).
+
+-xml(xabber_synchronization_archive,
+     #elem{name = <<"archive">>,
+     xmlns = <<"http://xabber.com/protocol/archived">>,
+	   module = 'xabbersynchronization_archived',
+     result = {xabber_synchronization_archive, '$conversation'},
+     refs = [
+     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
+     ]
+     }).
+
+-xml(xabber_synchronization_unarchive,
+     #elem{name = <<"unarchive">>,
+     xmlns = <<"http://xabber.com/protocol/archived">>,
+	   module = 'xabbersynchronization_archived',
+     result = {xabber_synchronization_unarchive, '$conversation'},
+     refs = [
+     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
+     ]
+     }).
+
+-xml(xabber_archived_conversation,
+     #elem{name = <<"archived">>,
+     xmlns = <<"http://xabber.com/protocol/archived">>,
+	   module = 'xabbersynchronization_archived',
+     result = {xabber_archived_conversation}
+     }).
+
+-xml(xabber_unarchived_conversation,
+     #elem{name = <<"unarchived">>,
+     xmlns = <<"http://xabber.com/protocol/archived">>,
+	   module = 'xabbersynchronization_archived',
+     result = {xabber_unarchived_conversation}
      }).
 
 -xml(xabber_conversation,

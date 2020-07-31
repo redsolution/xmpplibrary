@@ -212,3 +212,6 @@
 -define(NS_GROUPCHAT_DELETE, <<"http://xabber.com/protocol/groupchat#delete">>).
 -define(NS_XABBER_SYNCHRONIZATION, <<"http://xabber.com/protocol/synchronization">>).
 -define(NS_JINGLE_MESSAGE, <<"urn:xmpp:jingle-message:0">>).
+-define(NS_XABBER_ARCHIVE, <<"http://xabber.com/protocol/archive">>).
+-define(NS_XABBER_ARCHIVED, <<"http://xabber.com/protocol/archived">>).
+-define(NS_XABBER_PINNED, <<"http://xabber.com/protocol/pinned">>).

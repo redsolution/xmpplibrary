@@ -113,7 +113,7 @@ do_encode({xabber_delete, _} = Delete, TopXMLNS) ->
 do_encode({xabber_deleted_conversation} = Deleted,
 	  TopXMLNS) ->
     encode_xabber_deleted_conversation(Deleted, TopXMLNS);
-do_encode({xabber_synchronization_query, _, _, _} =
+do_encode({xabber_synchronization_query, _, _, _, _} =
 	      Query,
 	  TopXMLNS) ->
     encode_xabber_synchronization_query(Query, TopXMLNS);
@@ -174,7 +174,8 @@ do_get_name({xabber_deleted_conversation}) ->
 do_get_name({xabber_metadata, _, _}) -> <<"metadata">>;
 do_get_name({xabber_synchronization, _, _, _}) ->
     <<"synchronization">>;
-do_get_name({xabber_synchronization_query, _, _, _}) ->
+do_get_name({xabber_synchronization_query, _, _, _,
+	     _}) ->
     <<"query">>.
 
 do_get_ns({xabber_conversation, _, _, _, _, _}) ->
@@ -201,11 +202,11 @@ do_get_ns({xabber_metadata, _, _}) ->
     <<"http://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_synchronization, _, _, _}) ->
     <<"http://xabber.com/protocol/synchronization">>;
-do_get_ns({xabber_synchronization_query, _, _, _}) ->
+do_get_ns({xabber_synchronization_query, _, _, _, _}) ->
     <<"http://xabber.com/protocol/synchronization">>.
 
 get_els({xabber_synchronization_query, _stamp, _rsm,
-	 _sub_els}) ->
+	 _xdata, _sub_els}) ->
     _sub_els;
 get_els({xabber_conversation, _type, _jid, _stamp,
 	 _thread, _sub_els}) ->
@@ -216,9 +217,11 @@ get_els({xabber_conversation_last, _sub_els}) ->
 get_els({xabber_conversation_call, _sub_els}) ->
     _sub_els.
 
-set_els({xabber_synchronization_query, _stamp, _rsm, _},
+set_els({xabber_synchronization_query, _stamp, _rsm,
+	 _xdata, _},
 	_sub_els) ->
-    {xabber_synchronization_query, _stamp, _rsm, _sub_els};
+    {xabber_synchronization_query, _stamp, _rsm, _xdata,
+     _sub_els};
 set_els({xabber_conversation, _type, _jid, _stamp,
 	 _thread, _},
 	_sub_els) ->
@@ -235,8 +238,8 @@ pp(xabber_synchronization, 3) ->
     [stamp, conversation, rsm];
 pp(xabber_delete, 1) -> [conversation];
 pp(xabber_deleted_conversation, 0) -> [];
-pp(xabber_synchronization_query, 3) ->
-    [stamp, rsm, sub_els];
+pp(xabber_synchronization_query, 4) ->
+    [stamp, rsm, xdata, sub_els];
 pp(xabber_conversation, 5) ->
     [type, jid, stamp, thread, sub_els];
 pp(xabber_metadata, 2) -> [node, sub_els];
@@ -252,7 +255,7 @@ pp(_, _) -> no.
 records() ->
     [{xabber_synchronization, 3}, {xabber_delete, 1},
      {xabber_deleted_conversation, 0},
-     {xabber_synchronization_query, 3},
+     {xabber_synchronization_query, 4},
      {xabber_conversation, 5}, {xabber_metadata, 2},
      {xabber_conversation_retract, 1},
      {xabber_conversation_unread, 2},
@@ -845,46 +848,68 @@ encode_xabber_conversation_attr_type(_val, _acc) ->
 
 decode_xabber_synchronization_query(__TopXMLNS, __Opts,
 				    {xmlel, <<"query">>, _attrs, _els}) ->
-    {Rsm, __Els} =
+    {Xdata, Rsm, __Els} =
 	decode_xabber_synchronization_query_els(__TopXMLNS,
-						__Opts, _els, undefined, []),
+						__Opts, _els, undefined,
+						undefined, []),
     Stamp =
 	decode_xabber_synchronization_query_attrs(__TopXMLNS,
 						  _attrs, undefined),
-    {xabber_synchronization_query, Stamp, Rsm, __Els}.
+    {xabber_synchronization_query, Stamp, Rsm, Xdata,
+     __Els}.
 
 decode_xabber_synchronization_query_els(__TopXMLNS,
-					__Opts, [], Rsm, __Els) ->
-    {Rsm, lists:reverse(__Els)};
+					__Opts, [], Xdata, Rsm, __Els) ->
+    {Xdata, Rsm, lists:reverse(__Els)};
 decode_xabber_synchronization_query_els(__TopXMLNS,
 					__Opts,
 					[{xmlel, <<"set">>, _attrs, _} = _el
 					 | _els],
-					Rsm, __Els) ->
+					Xdata, Rsm, __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://jabber.org/protocol/rsm">> ->
 	  decode_xabber_synchronization_query_els(__TopXMLNS,
-						  __Opts, _els,
+						  __Opts, _els, Xdata,
 						  xep0059:decode_rsm_set(<<"http://jabber.org/protocol/rsm">>,
 									 __Opts,
 									 _el),
 						  __Els);
       _ ->
 	  decode_xabber_synchronization_query_els(__TopXMLNS,
-						  __Opts, _els, Rsm,
+						  __Opts, _els, Xdata, Rsm,
+						  [_el | __Els])
+    end;
+decode_xabber_synchronization_query_els(__TopXMLNS,
+					__Opts,
+					[{xmlel, <<"x">>, _attrs, _} = _el
+					 | _els],
+					Xdata, Rsm, __Els) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"jabber:x:data">> ->
+	  decode_xabber_synchronization_query_els(__TopXMLNS,
+						  __Opts, _els,
+						  xep0004:decode_xdata(<<"jabber:x:data">>,
+								       __Opts,
+								       _el),
+						  Rsm, __Els);
+      _ ->
+	  decode_xabber_synchronization_query_els(__TopXMLNS,
+						  __Opts, _els, Xdata, Rsm,
 						  [_el | __Els])
     end;
 decode_xabber_synchronization_query_els(__TopXMLNS,
 					__Opts,
 					[{xmlel, _name, _attrs, _} = _el
 					 | _els],
-					Rsm, __Els) ->
+					Xdata, Rsm, __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
       true ->
 	  decode_xabber_synchronization_query_els(__TopXMLNS,
-						  __Opts, _els, Rsm,
+						  __Opts, _els, Xdata, Rsm,
 						  [_el | __Els]);
       false ->
 	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
@@ -892,11 +917,12 @@ decode_xabber_synchronization_query_els(__TopXMLNS,
 	  case xmpp_codec:get_mod(_name, __XMLNS) of
 	    undefined ->
 		decode_xabber_synchronization_query_els(__TopXMLNS,
-							__Opts, _els, Rsm,
-							[_el | __Els]);
+							__Opts, _els, Xdata,
+							Rsm, [_el | __Els]);
 	    Mod ->
 		decode_xabber_synchronization_query_els(__TopXMLNS,
-							__Opts, _els, Rsm,
+							__Opts, _els, Xdata,
+							Rsm,
 							[Mod:do_decode(_name,
 								       __XMLNS,
 								       _el,
@@ -905,9 +931,10 @@ decode_xabber_synchronization_query_els(__TopXMLNS,
 	  end
     end;
 decode_xabber_synchronization_query_els(__TopXMLNS,
-					__Opts, [_ | _els], Rsm, __Els) ->
+					__Opts, [_ | _els], Xdata, Rsm,
+					__Els) ->
     decode_xabber_synchronization_query_els(__TopXMLNS,
-					    __Opts, _els, Rsm, __Els).
+					    __Opts, _els, Xdata, Rsm, __Els).
 
 decode_xabber_synchronization_query_attrs(__TopXMLNS,
 					  [{<<"stamp">>, _val} | _attrs],
@@ -924,7 +951,7 @@ decode_xabber_synchronization_query_attrs(__TopXMLNS,
 						   Stamp).
 
 encode_xabber_synchronization_query({xabber_synchronization_query,
-				     Stamp, Rsm, __Els},
+				     Stamp, Rsm, Xdata, __Els},
 				    __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
@@ -932,14 +959,23 @@ encode_xabber_synchronization_query({xabber_synchronization_query,
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
 	     ++
-	     lists:reverse('encode_xabber_synchronization_query_$rsm'(Rsm,
-								      __NewTopXMLNS,
-								      [])),
+	     lists:reverse('encode_xabber_synchronization_query_$xdata'(Xdata,
+									__NewTopXMLNS,
+									'encode_xabber_synchronization_query_$rsm'(Rsm,
+														   __NewTopXMLNS,
+														   []))),
     _attrs =
 	encode_xabber_synchronization_query_attr_stamp(Stamp,
 						       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 										  __TopXMLNS)),
     {xmlel, <<"query">>, _attrs, _els}.
+
+'encode_xabber_synchronization_query_$xdata'(undefined,
+					     __TopXMLNS, _acc) ->
+    _acc;
+'encode_xabber_synchronization_query_$xdata'(Xdata,
+					     __TopXMLNS, _acc) ->
+    [xep0004:encode_xdata(Xdata, __TopXMLNS) | _acc].
 
 'encode_xabber_synchronization_query_$rsm'(undefined,
 					   __TopXMLNS, _acc) ->
