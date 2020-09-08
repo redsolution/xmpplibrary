@@ -437,6 +437,11 @@ do_decode(<<"reason">>,
 	  Opts) ->
     decode_xabbergroupchat_invite_reason(<<"http://xabber.com/protocol/groupchat#invite">>,
 					 Opts, El);
+do_decode(<<"decline">>,
+	  <<"http://xabber.com/protocol/groupchat#invite">>, El,
+	  Opts) ->
+    decode_xabbergroup_decline(<<"http://xabber.com/protocol/groupchat#invite">>,
+			       Opts, El);
 do_decode(<<"revoke">>,
 	  <<"http://xabber.com/protocol/groupchat#invite">>, El,
 	  Opts) ->
@@ -686,6 +691,8 @@ tags() ->
       <<"http://xabber.com/protocol/groupchat#invite">>},
      {<<"reason">>,
       <<"http://xabber.com/protocol/groupchat#invite">>},
+     {<<"decline">>,
+      <<"http://xabber.com/protocol/groupchat#invite">>},
      {<<"revoke">>,
       <<"http://xabber.com/protocol/groupchat#invite">>},
      {<<"invite">>,
@@ -737,6 +744,8 @@ do_encode({xabbergroupchat_invite, _, _, _, _, _} =
 do_encode({xabbergroupchat_revoke, _} = Revoke,
 	  TopXMLNS) ->
     encode_xabbergroupchat_revoke(Revoke, TopXMLNS);
+do_encode({xabbergroup_decline} = Decline, TopXMLNS) ->
+    encode_xabbergroup_decline(Decline, TopXMLNS);
 do_encode({xabbergroup_invite_user, _, _} = User,
 	  TopXMLNS) ->
     encode_xabbergroupchat_invite_user(User, TopXMLNS);
@@ -894,6 +903,7 @@ do_get_name({xabbergroup_block, _, _, _}) ->
     <<"block">>;
 do_get_name({xabbergroup_contacts, _}) ->
     <<"contacts">>;
+do_get_name({xabbergroup_decline}) -> <<"decline">>;
 do_get_name({xabbergroup_domains, _}) -> <<"domains">>;
 do_get_name({xabbergroup_invite_user, _, _}) ->
     <<"user">>;
@@ -990,6 +1000,8 @@ do_get_ns({x_present}) ->
     <<"http://xabber.com/protocol/groupchat#present">>;
 do_get_ns({xabbergroup_block, _, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#block">>;
+do_get_ns({xabbergroup_decline}) ->
+    <<"http://xabber.com/protocol/groupchat#invite">>;
 do_get_ns({xabbergroup_invite_user, _, _}) ->
     <<"http://xabber.com/protocol/groupchat#invite">>;
 do_get_ns({xabbergroup_kick, _, _}) ->
@@ -1112,6 +1124,7 @@ pp(xabbergroupchat_invite_query, 1) -> [user];
 pp(xabbergroupchat_invite, 5) ->
     [jid, invite_jid, send, reason, user];
 pp(xabbergroupchat_revoke, 1) -> [jid];
+pp(xabbergroup_decline, 0) -> [];
 pp(xabbergroup_invite_user, 2) -> [jid, id];
 pp(xabbergroupchat_query_rights, 3) ->
     [item, restriction, sub_els];
@@ -1176,7 +1189,7 @@ records() ->
      {xabbergroupchat_restriction, 2}, {collect, 1},
      {xabbergroupchat_invite_query, 1},
      {xabbergroupchat_invite, 5},
-     {xabbergroupchat_revoke, 1},
+     {xabbergroupchat_revoke, 1}, {xabbergroup_decline, 0},
      {xabbergroup_invite_user, 2},
      {xabbergroupchat_query_rights, 3},
      {xabbergroupchat_query_item, 1},
@@ -6912,6 +6925,20 @@ decode_xabbergroupchat_invite_reason_cdata(__TopXMLNS,
 encode_xabbergroupchat_invite_reason_cdata(_val,
 					   _acc) ->
     [{xmlcdata, _val} | _acc].
+
+decode_xabbergroup_decline(__TopXMLNS, __Opts,
+			   {xmlel, <<"decline">>, _attrs, _els}) ->
+    {xabbergroup_decline}.
+
+encode_xabbergroup_decline({xabbergroup_decline},
+			   __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/groupchat#invite">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"decline">>, _attrs, _els}.
 
 decode_xabbergroupchat_revoke(__TopXMLNS, __Opts,
 			      {xmlel, <<"revoke">>, _attrs, _els}) ->

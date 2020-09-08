@@ -1808,7 +1808,7 @@
                      '$mailer', '$tz', '$geo', '$title', '$role', '$logo',
                      '$org', '$categories', '$note', '$prodid', %% '$agent',
                      '$rev', '$sort_string', '$sound', '$uid', '$url', '$class',
-                     '$key', '$desc'},
+                     '$key', '$desc', '$privacy', '$index', '$membership', '$status', '$parent'},
            refs = [#ref{name = vcard_N, min = 0, max = 1, label = '$n'},
                    #ref{name = vcard_ADR, label = '$adr'},
                    #ref{name = vcard_LABEL, label = '$label'},
@@ -1840,7 +1840,28 @@
                    #ref{name = vcard_DESC, min = 0, max = 1, label = '$desc'},
                    #ref{name = vcard_CATEGORIES, default = [], min = 0, max = 1,
                         label = '$categories'},
-                   #ref{name = vcard_CLASS, min = 0, max = 1, label = '$class'}]}).
+                   #ref{name = vcard_CLASS, min = 0, max = 1, label = '$class'},
+                   #ref{name = vcard_PRIVACY, min = 0, max = 1, label = '$privacy'},
+                   #ref{name = vcard_INDEX, min = 0, max = 1, label = '$index'},
+                   #ref{name = vcard_MEMBERSHIP, min = 0, max = 1, label = '$membership'},
+                   #ref{name = vcard_STATUS, min = 0, max = 1, label = '$status'},
+                   #ref{name = vcard_PARENT_GROUP, min = 0, max = 1, label = '$parent'}
+                   ]}).
+
+-xml(vcard_PRIVACY, #elem{name = <<"X-PRIVACY">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
+
+-xml(vcard_INDEX, #elem{name = <<"X-INDEX">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
+
+-xml(vcard_MEMBERSHIP, #elem{name = <<"X-MEMBERSHIP">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
+
+-xml(vcard_STATUS, #elem{name = <<"X-STATUS">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
+
+-xml(vcard_PARENT_GROUP, #elem{name = <<"X-PARENT-GROUP">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
 
 -xml(vcard_xupdate_photo,
      #elem{name = <<"photo">>,
@@ -4555,6 +4576,13 @@
      refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$jid'}
              ]
               }).
+
+-xml(xabbergroup_decline,
+     #elem{name = <<"decline">>,
+     xmlns = <<"http://xabber.com/protocol/groupchat#invite">>,
+	   module = 'xabbergroupchat',
+     result = {xabbergroup_decline}
+     }).
 
 -xml(xabbergroupchat_invite_reason,
      #elem{name = <<"reason">>,

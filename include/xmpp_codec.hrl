@@ -544,6 +544,9 @@
                      type = <<>> :: binary()}).
 -type disclosure() :: #disclosure{}.
 
+-record(xabbergroup_decline, {}).
+-type xabbergroup_decline() :: #xabbergroup_decline{}.
+
 -record(idle, {since = <<>> :: binary()}).
 -type idle() :: #idle{}.
 
@@ -736,17 +739,6 @@
 -record(x_present, {}).
 -type x_present() :: #x_present{}.
 
--record(receipt_request, {}).
--type receipt_request() :: #receipt_request{}.
-
--record(vcard_email, {home = false :: boolean(),
-                      work = false :: boolean(),
-                      internet = false :: boolean(),
-                      pref = false :: boolean(),
-                      x400 = false :: boolean(),
-                      userid :: 'undefined' | binary()}).
--type vcard_email() :: #vcard_email{}.
-
 -record(db_result, {from = <<>> :: binary(),
                     to = <<>> :: binary(),
                     type :: 'error' | 'invalid' | 'undefined' | 'valid',
@@ -833,6 +825,17 @@
 
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
+
+-record(receipt_request, {}).
+-type receipt_request() :: #receipt_request{}.
+
+-record(vcard_email, {home = false :: boolean(),
+                      work = false :: boolean(),
+                      internet = false :: boolean(),
+                      pref = false :: boolean(),
+                      x400 = false :: boolean(),
+                      userid :: 'undefined' | binary()}).
+-type vcard_email() :: #vcard_email{}.
 
 -record(xabbertoken_feature, {}).
 -type xabbertoken_feature() :: #xabbertoken_feature{}.
@@ -1473,294 +1476,300 @@
                      url :: 'undefined' | binary(),
                      class :: 'confidential' | 'private' | 'public' | 'undefined',
                      key :: 'undefined' | #vcard_key{},
-                     desc :: 'undefined' | binary()}).
+                     desc :: 'undefined' | binary(),
+                     privacy :: 'undefined' | binary(),
+                     index :: 'undefined' | binary(),
+                     membership :: 'undefined' | binary(),
+                     status :: 'undefined' | binary(),
+                     parent :: 'undefined' | binary()}).
 -type vcard_temp() :: #vcard_temp{}.
 
--type xmpp_element() :: xabbergroupchat_revoke() |
+-type xmpp_element() :: message_displayed() |
+                        xabber_encryption_key() |
                         privacy_item() |
-                        unique_request() |
-                        xabbergroup_block() |
+                        xabbergroupchat_pinned_message() |
+                        unique_time() |
+                        xabbergroup_domains() |
                         stanza_error() |
-                        muc_subscribe() |
+                        addresses() |
+                        shim() |
+                        muc() |
+                        jingle_propose() |
                         bind() |
-                        delay() |
+                        chatstate() |
+                        idle() |
                         stream_error() |
-                        carbons_sent() |
-                        thumbnail() |
-                        feature_csi() |
-                        xabbergroupchat_query_item() |
-                        xabber_retract_all() |
+                        mix_join() |
+                        xabber_replace_message() |
+                        xabbergroup_invite_user() |
                         register() |
-                        push_call() |
                         private() |
-                        xabber_sources() |
-                        xabber_retract_invalidate() |
+                        sticker() |
+                        xabber_replace() |
                         stat_error() |
-                        xabbertoken_field() |
-                        push_enable() |
+                        sm_resumed() |
+                        xabbergroupchat_x() |
                         address() |
-                        muc_invite() |
-                        receipt_request() |
-                        xabbergroupchat_kicked() |
-                        avatar_info() |
-                        voice_message() |
-                        xevent() |
+                        ps_options() |
+                        media() |
+                        encrypted() |
+                        encrypted_message() |
+                        block_id() |
+                        mam_result() |
+                        delegation() |
+                        xabber_retract_activate() |
                         vcard_sound() |
-                        x_conference() |
-                        xabbertoken_x_token() |
-                        avatar_data() |
-                        carbons_private() |
+                        x_present() |
+                        csi() |
+                        muc_subscriptions() |
+                        xabbertoken_issue() |
                         starttls() |
                         bookmark_url() |
-                        text() |
-                        unique_time() |
-                        xabber_pinned_conversation() |
-                        mam_result() |
-                        block_jid() |
-                        xabbergroupchat_permission() |
-                        replaced() |
-                        ps_event() |
-                        mam_archived() |
-                        xabber_unpinned_conversation() |
-                        xmpp_session() |
-                        push_notification() |
-                        xabbergroupchat_create() |
-                        xabbergroupchat_invite() |
-                        xabber_unarchived_conversation() |
-                        privacy_list() |
-                        idle() |
-                        roster_query() |
-                        muc_unsubscribe() |
-                        sticker() |
-                        gone() |
-                        xabber_file_sharing() |
-                        carbons_disable() |
-                        xcaptcha() |
-                        version() |
-                        rsm_first() |
-                        muc_admin() |
-                        jingle_reject() |
-                        xabber_conversation_retract() |
-                        xabbergroupchat_search() |
-                        collect() |
-                        carbons_enable() |
-                        xabber_replace() |
-                        xabber_retract_user() |
-                        sasl_abort() |
-                        delegated() |
-                        xabbergroupchat_name() |
-                        bytestreams() |
-                        xabber_synchronization_pin() |
-                        xabber_metadata() |
-                        xabbertoken_feature() |
-                        offline() |
-                        xabbertoken_issue() |
-                        disclosed() |
-                        unblock() |
-                        adhoc_note() |
-                        mam_prefs() |
-                        disclosure() |
-                        xabbergroupchat_user_updated() |
-                        vcard_name() |
-                        search_item() |
-                        ps_error() |
-                        upload_request() |
-                        block() |
-                        muc_item() |
-                        pubsub() |
-                        xabber_retract_activate() |
-                        xabber_conversation_call() |
-                        xabber_conversation_delivered() |
-                        search() |
-                        privilege() |
-                        expire() |
-                        db_feature() |
+                        avatar_data() |
+                        xabber_conversation() |
                         oob_x() |
-                        xabbergroupchat_user_card() |
+                        xabber_synchronization() |
+                        adhoc_actions() |
+                        db_feature() |
+                        rsm_first() |
+                        ps_items() |
+                        xmpp_session() |
+                        ps_event() |
+                        privacy_list() |
+                        message_markable() |
+                        roster_query() |
+                        xabbertoken_feature() |
+                        xabbergroupchat_restriction() |
+                        jingle_accept() |
+                        muc_unique() |
+                        xabber_retract_invalidate() |
+                        feature_sm() |
+                        gone() |
+                        mam_archived() |
+                        xabbergroupchat_kicked() |
+                        push_notification() |
+                        version() |
+                        xabber_conversation_last() |
+                        xabber_pinned_conversation() |
+                        hint() |
+                        mam_fin() |
+                        xabber_groupchat_mention() |
+                        xabbertoken_revoke() |
+                        recipient() |
+                        sasl_abort() |
+                        offline() |
+                        jingle_reject() |
+                        media_uri() |
+                        muc_item() |
+                        xabbergroupchat_query_item() |
+                        db_verify() |
+                        delay() |
+                        xabber_synchronization_unpin() |
+                        sm_r() |
+                        xabbergroupchat_retract_all() |
+                        carbons_disable() |
+                        xabbergroupchat_status() |
+                        unblock() |
+                        carbons_enable() |
+                        xabbertoken_revoke_all() |
+                        xabbergroupchat_replace_message() |
+                        vcard_name() |
+                        block_domain() |
+                        xabbergroupchat_retract_message() |
+                        mix_leave() |
+                        block() |
+                        ps_subscribe() |
+                        xabber_retract_all() |
+                        xabber_unarchived_conversation() |
+                        adhoc_command() |
+                        search_item() |
+                        thumbnail() |
+                        delegation_query() |
+                        ps_error() |
+                        xabbergroup_unblock() |
                         compressed() |
                         sasl_mechanisms() |
-                        xabbergroupchat_pinned_message() |
+                        unique_request() |
                         'see-other-host'() |
+                        xabbertoken_query() |
                         compression() |
-                        xabbergroupchat_restriction() |
-                        media_uri() |
-                        encrypted() |
+                        xabber_push_disable() |
                         sasl_failure() |
                         redirect() |
-                        xabber_file() |
-                        privilege_perm() |
+                        previous_id() |
+                        voice_message() |
+                        bob_data() |
+                        streamhost() |
+                        push_call() |
                         bookmark_storage() |
                         vcard_temp() |
+                        xabbergroupchat_name() |
                         starttls_proceed() |
-                        avatar_meta() |
-                        receipt_response() |
                         vcard_adr() |
-                        xabber_synchronization() |
-                        xabber_conversation_unread() |
-                        block_domain() |
-                        xabbergroup_unblock() |
-                        xabber_conversation_unread_mention() |
-                        sic() |
-                        mix_join() |
+                        xabbergroup_contacts() |
+                        collect() |
+                        xabber_file_sharing() |
+                        xabber_unpinned_conversation() |
+                        origin_id() |
+                        xabber_synchronization_unarchive() |
+                        delegated() |
+                        receipt_request() |
+                        ps_unsubscribe() |
+                        xabbergroupchat_localpart() |
                         xdata() |
-                        xabber_conversation_displayed() |
-                        vcard_xupdate() |
-                        xabber_synchronization_unpin() |
-                        xabber_encryption_key() |
+                        xabber_synchronization_archive() |
                         privacy_query() |
-                        streamhost() |
-                        muc_owner() |
-                        carbons_received() |
-                        xabber_archived_conversation() |
-                        sm_resumed() |
-                        addresses() |
-                        message_displayed() |
+                        bytestreams() |
+                        mam_query() |
+                        pubsub_owner() |
+                        expire() |
+                        mix_participant() |
+                        handshake() |
+                        upload_request() |
+                        xabber_synchronization_pin() |
+                        nick() |
+                        xabber_conversation_displayed() |
                         feature_register() |
                         disco_item() |
                         stat() |
-                        block_id() |
-                        db_verify() |
-                        xabber_delete() |
+                        xabbergroup_kick() |
+                        xabber_file() |
                         starttls_failure() |
-                        xabbergroupchat_replace() |
-                        sm_r() |
-                        upload_request_0() |
+                        ps_publish() |
+                        sm_enable() |
+                        xabbergroup_decline() |
                         rsm_set() |
                         vcard_photo() |
-                        adhoc_actions() |
-                        xabber_groupchat_mention() |
-                        push_disable() |
+                        stanza_id() |
+                        block_jid() |
+                        disclosed() |
+                        xabbergroupchat_description() |
+                        xabber_conversation_retract() |
                         vcard_label() |
                         roster_item() |
-                        sm_a() |
-                        xabbergroupchat_retract_query() |
-                        delegation_query() |
+                        stream_start() |
+                        replaced() |
+                        muc_decline() |
                         disco_items() |
-                        mam_fin() |
-                        message_received() |
+                        sic() |
+                        xabber_push_enable() |
+                        xabber_conversation_unread() |
                         legacy_auth() |
                         stats() |
-                        xdata_option() |
-                        nick() |
-                        xabbergroupchat_x() |
-                        mam_query() |
-                        xabber_synchronization_query() |
+                        xevent() |
+                        sm_a() |
+                        message_received() |
+                        xabber_sources() |
                         iq() |
-                        xabbergroupchat_retract_message() |
-                        xabber_synchronization_unarchive() |
+                        feature_csi() |
+                        xabber_synchronization_query() |
                         presence() |
-                        chatstate() |
-                        sm_enabled() |
-                        xabber_replace_message() |
-                        x_present() |
-                        ps_subscription() |
-                        muc_subscriptions() |
-                        muc_destroy() |
-                        xabbergroupchat_invite_query() |
-                        stream_start() |
-                        x_not_present() |
-                        vcard_key() |
-                        xabbertoken_revoke() |
-                        rosterver_feature() |
-                        unique_received() |
-                        vcard_email() |
-                        muc() |
-                        handshake() |
-                        hint() |
-                        identity() |
-                        stream_features() |
-                        delegation() |
-                        xabbergroupchat() |
-                        xabbergroupchat_status() |
-                        compress() |
-                        xabbergroup_contacts() |
-                        xabber_deleted_conversation() |
-                        xabbergroup_invite_user() |
-                        xabber_push_security() |
-                        pubsub_owner() |
-                        disco_info() |
-                        ps_items() |
-                        upload_slot_0() |
-                        jingle_accept() |
-                        stanza_id() |
-                        ps_publish() |
-                        xabbergroup_domains() |
-                        avatar_pointer() |
-                        caps() |
                         xabber_retract_message() |
-                        xabber_push_notification() |
-                        muc_unique() |
-                        legacy_auth_feature() |
+                        xabbertoken_field() |
+                        upload_slot_0() |
+                        disclosure() |
+                        xabber_deleted_conversation() |
+                        receipt_response() |
+                        xabbergroupchat_user_card() |
+                        xabbergroupchat_permission() |
+                        vcard_key() |
                         delivery_retry() |
-                        xabbergroup_kick() |
-                        xabbergroupchat_membership() |
-                        xabbergroupchat_retract_user() |
-                        sasl_challenge() |
-                        xabbertoken_query() |
-                        xabbertoken_revoke_all() |
-                        sasl_auth() |
-                        body_x() |
-                        xabbergroupchat_query_rights() |
-                        muc_decline() |
-                        xabbergroupchat_replaced() |
+                        muc_actor() |
+                        xabbertoken_x_token() |
+                        muc_admin() |
+                        xabbergroup_block() |
+                        avatar_pointer() |
+                        xabbergroupchat() |
+                        xabbergroupchat_search() |
+                        rosterver_feature() |
+                        avatar_info() |
                         xabbergroup_peer() |
-                        message_markable() |
-                        previous_id() |
-                        xabber_conversation() |
+                        vcard_email() |
+                        db_result() |
+                        identity() |
+                        sm_failed() |
+                        stream_features() |
+                        ps_retract() |
+                        xabbergroupchat_replaced() |
+                        compress() |
+                        xabbergroupchat_create() |
+                        xabbergroupchat_retract_invalidate() |
+                        avatar_meta() |
+                        xabbergroupchat_retract_user() |
+                        xabbergroupchat_query_rights() |
+                        upload_slot() |
+                        muc_invite() |
+                        xabbergroupchat_revoke() |
+                        push_disable() |
+                        xmppreference() |
+                        disco_info() |
+                        xabber_conversation_call() |
+                        ps_item() |
+                        muc_history() |
+                        xabber_push_notification() |
+                        caps() |
+                        muc_owner() |
+                        legacy_auth_feature() |
+                        unique_received() |
+                        body_x() |
+                        xabbergroupchat_index() |
+                        xabbertoken_x_fields() |
+                        xabbergroupchat_privacy() |
+                        sasl_challenge() |
+                        text() |
+                        sasl_auth() |
+                        geoloc() |
+                        xabbergroupchat_invite() |
+                        xabbergroupchat_membership() |
+                        xabbergroupchat_user_updated() |
+                        xabber_metadata() |
                         sasl_success() |
                         bookmark_conference() |
-                        mix_leave() |
-                        xabbergroupchat_update() |
                         message() |
-                        xabbergroupchat_replace_message() |
-                        sm_resume() |
-                        forwarded() |
-                        xabber_push_enable() |
-                        offline_item() |
-                        upload_slot() |
-                        xabbergroupchat_description() |
+                        muc_unsubscribe() |
+                        xabbergroupchat_retract_query() |
+                        mam_prefs() |
+                        search() |
+                        upload_request_0() |
+                        xabbergroupchat_update() |
                         ping() |
-                        jingle_propose() |
+                        privilege_perm() |
+                        xabber_conversation_delivered() |
+                        xdata_option() |
                         last() |
-                        sm_enable() |
-                        xabbergroupchat_privacy() |
-                        ps_item() |
+                        carbons_sent() |
+                        xdata_field() |
                         vcard_tel() |
-                        xabber_push_disable() |
-                        sm_failed() |
-                        geoloc() |
+                        push_enable() |
+                        sm_enabled() |
                         vcard_geo() |
-                        muc_actor() |
-                        xabber_synchronization_archive() |
-                        shim() |
-                        xabbergroupchat_retract_all() |
+                        xabber_delete() |
+                        forwarded() |
+                        muc_user() |
                         time() |
                         compress_failure() |
                         sasl_response() |
-                        origin_id() |
-                        ps_retract() |
+                        xabber_conversation_unread_mention() |
+                        vcard_xupdate() |
                         vcard_logo() |
+                        privilege() |
                         block_list() |
-                        xdata_field() |
-                        bob_data() |
-                        db_result() |
-                        xabbertoken_x_fields() |
-                        ps_subscribe() |
-                        xabber_conversation_last() |
+                        xabber_retract_user() |
+                        carbons_private() |
+                        adhoc_note() |
+                        xabbergroupchat_replace() |
+                        xcaptcha() |
+                        xabber_archived_conversation() |
                         vcard_org() |
-                        xabbergroupchat_localpart() |
-                        mix_participant() |
-                        media() |
-                        ps_unsubscribe() |
-                        xmppreference() |
-                        encrypted_message() |
-                        muc_user() |
+                        offline_item() |
+                        pubsub() |
+                        sm_resume() |
+                        xabber_push_security() |
                         ps_affiliation() |
-                        adhoc_command() |
-                        recipient() |
-                        feature_sm() |
-                        xabbergroupchat_index() |
-                        csi() |
-                        xabbergroupchat_retract_invalidate() |
-                        ps_options() |
-                        muc_history().
+                        x_not_present() |
+                        muc_destroy() |
+                        xabbergroupchat_invite_query() |
+                        carbons_received() |
+                        x_conference() |
+                        muc_subscribe() |
+                        ps_subscription().
