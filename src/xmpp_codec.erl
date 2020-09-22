@@ -2024,10 +2024,10 @@ get_mod({vcard_photo, _, _, _}) -> xep0054;
 get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
-get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	 _, _, _, _, _, _, _, _, _}) ->
-    xabbergroupchat;
 get_mod({media_uri, _, _}) -> xep0221;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
+	 _, _}) ->
+    xabbergroupchat;
 get_mod({sasl_success, _}) -> rfc6120;
 get_mod({compress, _}) -> xep0138;
 get_mod({xdata_field, _, _, _, _, _, _, _, _}) ->

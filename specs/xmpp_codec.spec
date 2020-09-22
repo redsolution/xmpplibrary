@@ -4661,20 +4661,13 @@
      <<"http://xabber.com/protocol/groupchat#update">>,
      <<"http://xabber.com/protocol/groupchat#user-updated">>],
 	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$xmlns', '$type', '$version', '$no_permission', '$name', '$description', '$model',
-     '$searchable', '$anonymous','$localpart', '$pinned', '$domains', '$contacts',  '$members', '$present', '$parent', '$jid', '$_els'},
+     result = {xabbergroupchat_x, '$xmlns', '$type', '$version', '$no_permission', '$domains', '$contacts',  '$members', '$present', '$parent', '$jid', '$_els'},
      attrs = [
      #attr{name = <<"xmlns">>},
      #attr{name = <<"type">>},
      #attr{name = <<"version">>}
      ],
-     refs = [#ref{name = xabbergroupchat_name, min = 0, max = 1, label = '$name'},
-             #ref{name = xabbergroupchat_description, min = 0, max = 1, label = '$description'},
-             #ref{name = xabbergroupchat_model, min = 0, max = 1, label = '$model'},
-             #ref{name = xabbergroupchat_anonymous, min = 0, max = 1, label = '$anonymous'},
-             #ref{name = xabbergroupchat_localpart, min = 0, max = 1, label = '$localpart'},
-             #ref{name = xabbergroupchat_searchable, min = 0, max = 1, label = '$searchable'},
-             #ref{name = xabbergroupchat_message, min = 0, max = 1, label = '$pinned'},
+     refs = [
              #ref{name = xabbergroupchat_domains, min = 0, max = 1, label = '$domains'},
              #ref{name = xabbergroupchat_contacts, min = 0, max = 1, label = '$contacts'},
              #ref{name = xabbergroupchat_no_permission, min = 0, max = 1, label = '$no_permission'},
@@ -5007,14 +5000,6 @@
 
 -xml(xabbergroupchat_user_badge,
      #elem{name = <<"badge">>,
-     xmlns = <<"http://xabber.com/protocol/groupchat">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat_user_id,
-     #elem{name = <<"id">>,
      xmlns = <<"http://xabber.com/protocol/groupchat">>,
 	   module = 'xabbergroupchat',
      result = '$cdata',
