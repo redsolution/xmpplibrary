@@ -10,10 +10,10 @@ do_decode(<<"invalidate">>,
 	  Opts) ->
     decode_xabber_retract_invalidate(<<"http://xabber.com/protocol/rewrite#notify">>,
 				     Opts, El);
-do_decode(<<"activate">>,
+do_decode(<<"query">>,
 	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_retract_activate(<<"http://xabber.com/protocol/rewrite">>,
-				   Opts, El);
+    decode_xabber_retract_query(<<"http://xabber.com/protocol/rewrite">>,
+				Opts, El);
 do_decode(<<"body">>,
 	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
     decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite">>,
@@ -76,8 +76,7 @@ do_decode(Name, XMLNS, _, _) ->
 tags() ->
     [{<<"invalidate">>,
       <<"http://xabber.com/protocol/rewrite#notify">>},
-     {<<"activate">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+     {<<"query">>, <<"http://xabber.com/protocol/rewrite">>},
      {<<"body">>, <<"http://xabber.com/protocol/rewrite">>},
      {<<"body">>,
       <<"http://xabber.com/protocol/rewrite#notify">>},
@@ -102,20 +101,21 @@ tags() ->
      {<<"retract-message">>,
       <<"http://xabber.com/protocol/rewrite#notify">>}].
 
-do_encode({xabber_retract_message, _, _, _, _, _, _} =
+do_encode({xabber_retract_message, _, _, _, _, _, _,
+	   _} =
 	      Retract_message,
 	  TopXMLNS) ->
     encode_xabber_retract_message(Retract_message,
 				  TopXMLNS);
-do_encode({xabber_retract_all, _, _, _, _} =
+do_encode({xabber_retract_all, _, _, _, _, _} =
 	      Retract_all,
 	  TopXMLNS) ->
     encode_xabber_retract_all(Retract_all, TopXMLNS);
-do_encode({xabber_retract_user, _, _, _, _, _, _} =
+do_encode({xabber_retract_user, _, _, _, _, _, _, _} =
 	      Retract_user,
 	  TopXMLNS) ->
     encode_xabber_retract_user(Retract_user, TopXMLNS);
-do_encode({xabber_replace, _, _, _, _, _, _, _} =
+do_encode({xabber_replace, _, _, _, _, _, _, _, _} =
 	      Replace,
 	  TopXMLNS) ->
     encode_xabber_replace(Replace, TopXMLNS);
@@ -123,86 +123,89 @@ do_encode({xabber_replace_message, _, _, _, _, _, _} =
 	      Message,
 	  TopXMLNS) ->
     encode_xabber_replace_message(Message, TopXMLNS);
-do_encode({xabber_retract_activate, _, _} = Activate,
+do_encode({xabber_retract_query, _, _, _} = Query,
 	  TopXMLNS) ->
-    encode_xabber_retract_activate(Activate, TopXMLNS);
+    encode_xabber_retract_query(Query, TopXMLNS);
 do_encode({xabber_retract_invalidate, _} = Invalidate,
 	  TopXMLNS) ->
     encode_xabber_retract_invalidate(Invalidate, TopXMLNS).
 
-do_get_name({xabber_replace, _, _, _, _, _, _, _}) ->
+do_get_name({xabber_replace, _, _, _, _, _, _, _, _}) ->
     <<"replace">>;
 do_get_name({xabber_replace_message, _, _, _, _, _,
 	     _}) ->
     <<"message">>;
-do_get_name({xabber_retract_activate, _, _}) ->
-    <<"activate">>;
-do_get_name({xabber_retract_all, _, _, _, _}) ->
+do_get_name({xabber_retract_all, _, _, _, _, _}) ->
     <<"retract-all">>;
 do_get_name({xabber_retract_invalidate, _}) ->
     <<"invalidate">>;
-do_get_name({xabber_retract_message, _, _, _, _, _,
+do_get_name({xabber_retract_message, _, _, _, _, _, _,
 	     _}) ->
     <<"retract-message">>;
-do_get_name({xabber_retract_user, _, _, _, _, _, _}) ->
+do_get_name({xabber_retract_query, _, _, _}) ->
+    <<"query">>;
+do_get_name({xabber_retract_user, _, _, _, _, _, _,
+	     _}) ->
     <<"retract-user">>.
 
-do_get_ns({xabber_replace, Xmlns, _, _, _, _, _, _}) ->
+do_get_ns({xabber_replace, Xmlns, _, _, _, _, _, _,
+	   _}) ->
     Xmlns;
 do_get_ns({xabber_replace_message, _, _, _, _, _, _}) ->
     <<"http://xabber.com/protocol/rewrite">>;
-do_get_ns({xabber_retract_activate, _, _}) ->
-    <<"http://xabber.com/protocol/rewrite">>;
-do_get_ns({xabber_retract_all, Xmlns, _, _, _}) ->
+do_get_ns({xabber_retract_all, Xmlns, _, _, _, _}) ->
     Xmlns;
 do_get_ns({xabber_retract_invalidate, _}) ->
     <<"http://xabber.com/protocol/rewrite#notify">>;
-do_get_ns({xabber_retract_message, Xmlns, _, _, _, _,
+do_get_ns({xabber_retract_message, Xmlns, _, _, _, _, _,
 	   _}) ->
     Xmlns;
-do_get_ns({xabber_retract_user, Xmlns, _, _, _, _,
+do_get_ns({xabber_retract_query, _, _, _}) ->
+    <<"http://xabber.com/protocol/rewrite">>;
+do_get_ns({xabber_retract_user, Xmlns, _, _, _, _, _,
 	   _}) ->
     Xmlns.
 
 get_els({xabber_replace, _xmlns, _id, _by, _version,
-	 _conversation, _xabber_replace_message, _sub_els}) ->
+	 _conversation, _type, _xabber_replace_message,
+	 _sub_els}) ->
     _sub_els;
 get_els({xabber_replace_message, _from, _to, _body,
 	 _stanza_id, _replaced, _sub_els}) ->
     _sub_els.
 
 set_els({xabber_replace, _xmlns, _id, _by, _version,
-	 _conversation, _xabber_replace_message, _},
+	 _conversation, _type, _xabber_replace_message, _},
 	_sub_els) ->
     {xabber_replace, _xmlns, _id, _by, _version,
-     _conversation, _xabber_replace_message, _sub_els};
+     _conversation, _type, _xabber_replace_message,
+     _sub_els};
 set_els({xabber_replace_message, _from, _to, _body,
 	 _stanza_id, _replaced, _},
 	_sub_els) ->
     {xabber_replace_message, _from, _to, _body, _stanza_id,
      _replaced, _sub_els}.
 
-pp(xabber_retract_message, 6) ->
-    [xmlns, id, by, symmetric, version, conversation];
-pp(xabber_retract_all, 4) ->
-    [xmlns, symmetric, version, conversation];
-pp(xabber_retract_user, 6) ->
-    [xmlns, id, by, symmetric, version, conversation];
-pp(xabber_replace, 7) ->
-    [xmlns, id, by, version, conversation,
+pp(xabber_retract_message, 7) ->
+    [xmlns, id, by, symmetric, version, conversation, type];
+pp(xabber_retract_all, 5) ->
+    [xmlns, symmetric, version, conversation, type];
+pp(xabber_retract_user, 7) ->
+    [xmlns, id, by, symmetric, version, conversation, type];
+pp(xabber_replace, 8) ->
+    [xmlns, id, by, version, conversation, type,
      xabber_replace_message, sub_els];
 pp(xabber_replace_message, 6) ->
     [from, to, body, stanza_id, replaced, sub_els];
-pp(xabber_retract_activate, 2) ->
-    [version, 'less-than'];
+pp(xabber_retract_query, 3) ->
+    [version, 'less-than', type];
 pp(xabber_retract_invalidate, 1) -> [version];
 pp(_, _) -> no.
 
 records() ->
-    [{xabber_retract_message, 6}, {xabber_retract_all, 4},
-     {xabber_retract_user, 6}, {xabber_replace, 7},
-     {xabber_replace_message, 6},
-     {xabber_retract_activate, 2},
+    [{xabber_retract_message, 7}, {xabber_retract_all, 5},
+     {xabber_retract_user, 7}, {xabber_replace, 8},
+     {xabber_replace_message, 6}, {xabber_retract_query, 3},
      {xabber_retract_invalidate, 1}].
 
 dec_bool(<<"false">>) -> false;
@@ -275,86 +278,105 @@ encode_xabber_retract_invalidate_attr_version(_val,
 					      _acc) ->
     [{<<"version">>, enc_int(_val)} | _acc].
 
-decode_xabber_retract_activate(__TopXMLNS, __Opts,
-			       {xmlel, <<"activate">>, _attrs, _els}) ->
-    {Version, Less_than} =
-	decode_xabber_retract_activate_attrs(__TopXMLNS, _attrs,
-					     undefined, undefined),
-    {xabber_retract_activate, Version, Less_than}.
+decode_xabber_retract_query(__TopXMLNS, __Opts,
+			    {xmlel, <<"query">>, _attrs, _els}) ->
+    {Type, Version, Less_than} =
+	decode_xabber_retract_query_attrs(__TopXMLNS, _attrs,
+					  undefined, undefined, undefined),
+    {xabber_retract_query, Version, Less_than, Type}.
 
-decode_xabber_retract_activate_attrs(__TopXMLNS,
-				     [{<<"version">>, _val} | _attrs], _Version,
-				     Less_than) ->
-    decode_xabber_retract_activate_attrs(__TopXMLNS, _attrs,
-					 _val, Less_than);
-decode_xabber_retract_activate_attrs(__TopXMLNS,
-				     [{<<"less-than">>, _val} | _attrs],
-				     Version, _Less_than) ->
-    decode_xabber_retract_activate_attrs(__TopXMLNS, _attrs,
-					 Version, _val);
-decode_xabber_retract_activate_attrs(__TopXMLNS,
-				     [_ | _attrs], Version, Less_than) ->
-    decode_xabber_retract_activate_attrs(__TopXMLNS, _attrs,
-					 Version, Less_than);
-decode_xabber_retract_activate_attrs(__TopXMLNS, [],
-				     Version, Less_than) ->
-    {decode_xabber_retract_activate_attr_version(__TopXMLNS,
-						 Version),
-     'decode_xabber_retract_activate_attr_less-than'(__TopXMLNS,
-						     Less_than)}.
+decode_xabber_retract_query_attrs(__TopXMLNS,
+				  [{<<"type">>, _val} | _attrs], _Type, Version,
+				  Less_than) ->
+    decode_xabber_retract_query_attrs(__TopXMLNS, _attrs,
+				      _val, Version, Less_than);
+decode_xabber_retract_query_attrs(__TopXMLNS,
+				  [{<<"version">>, _val} | _attrs], Type,
+				  _Version, Less_than) ->
+    decode_xabber_retract_query_attrs(__TopXMLNS, _attrs,
+				      Type, _val, Less_than);
+decode_xabber_retract_query_attrs(__TopXMLNS,
+				  [{<<"less-than">>, _val} | _attrs], Type,
+				  Version, _Less_than) ->
+    decode_xabber_retract_query_attrs(__TopXMLNS, _attrs,
+				      Type, Version, _val);
+decode_xabber_retract_query_attrs(__TopXMLNS,
+				  [_ | _attrs], Type, Version, Less_than) ->
+    decode_xabber_retract_query_attrs(__TopXMLNS, _attrs,
+				      Type, Version, Less_than);
+decode_xabber_retract_query_attrs(__TopXMLNS, [], Type,
+				  Version, Less_than) ->
+    {decode_xabber_retract_query_attr_type(__TopXMLNS,
+					   Type),
+     decode_xabber_retract_query_attr_version(__TopXMLNS,
+					      Version),
+     'decode_xabber_retract_query_attr_less-than'(__TopXMLNS,
+						  Less_than)}.
 
-encode_xabber_retract_activate({xabber_retract_activate,
-				Version, Less_than},
-			       __TopXMLNS) ->
+encode_xabber_retract_query({xabber_retract_query,
+			     Version, Less_than, Type},
+			    __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/rewrite">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
-	'encode_xabber_retract_activate_attr_less-than'(Less_than,
-							encode_xabber_retract_activate_attr_version(Version,
-												    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-															       __TopXMLNS))),
-    {xmlel, <<"activate">>, _attrs, _els}.
+	'encode_xabber_retract_query_attr_less-than'(Less_than,
+						     encode_xabber_retract_query_attr_version(Version,
+											      encode_xabber_retract_query_attr_type(Type,
+																    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																			       __TopXMLNS)))),
+    {xmlel, <<"query">>, _attrs, _els}.
 
-decode_xabber_retract_activate_attr_version(__TopXMLNS,
-					    undefined) ->
+decode_xabber_retract_query_attr_type(__TopXMLNS,
+				      undefined) ->
+    <<>>;
+decode_xabber_retract_query_attr_type(__TopXMLNS,
+				      _val) ->
+    _val.
+
+encode_xabber_retract_query_attr_type(<<>>, _acc) ->
+    _acc;
+encode_xabber_retract_query_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
+
+decode_xabber_retract_query_attr_version(__TopXMLNS,
+					 undefined) ->
     undefined;
-decode_xabber_retract_activate_attr_version(__TopXMLNS,
-					    _val) ->
+decode_xabber_retract_query_attr_version(__TopXMLNS,
+					 _val) ->
     case catch dec_int(_val, 0, infinity) of
       {'EXIT', _} ->
 	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"version">>, <<"activate">>,
+			{bad_attr_value, <<"version">>, <<"query">>,
 			 __TopXMLNS}});
       _res -> _res
     end.
 
-encode_xabber_retract_activate_attr_version(undefined,
-					    _acc) ->
+encode_xabber_retract_query_attr_version(undefined,
+					 _acc) ->
     _acc;
-encode_xabber_retract_activate_attr_version(_val,
-					    _acc) ->
+encode_xabber_retract_query_attr_version(_val, _acc) ->
     [{<<"version">>, enc_int(_val)} | _acc].
 
-'decode_xabber_retract_activate_attr_less-than'(__TopXMLNS,
-						undefined) ->
+'decode_xabber_retract_query_attr_less-than'(__TopXMLNS,
+					     undefined) ->
     undefined;
-'decode_xabber_retract_activate_attr_less-than'(__TopXMLNS,
-						_val) ->
+'decode_xabber_retract_query_attr_less-than'(__TopXMLNS,
+					     _val) ->
     case catch dec_int(_val, 0, infinity) of
       {'EXIT', _} ->
 	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"less-than">>, <<"activate">>,
+			{bad_attr_value, <<"less-than">>, <<"query">>,
 			 __TopXMLNS}});
       _res -> _res
     end.
 
-'encode_xabber_retract_activate_attr_less-than'(undefined,
-						_acc) ->
+'encode_xabber_retract_query_attr_less-than'(undefined,
+					     _acc) ->
     _acc;
-'encode_xabber_retract_activate_attr_less-than'(_val,
-						_acc) ->
+'encode_xabber_retract_query_attr_less-than'(_val,
+					     _acc) ->
     [{<<"less-than">>, enc_int(_val)} | _acc].
 
 decode_xabber_replace_message_body(__TopXMLNS, __Opts,
@@ -618,12 +640,12 @@ decode_xabber_replace(__TopXMLNS, __Opts,
     {Xabber_replace_message, __Els} =
 	decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
 				  undefined, []),
-    {Xmlns, Id, Version, Conversation, By} =
+    {Type, Xmlns, Id, Version, Conversation, By} =
 	decode_xabber_replace_attrs(__TopXMLNS, _attrs,
 				    undefined, undefined, undefined, undefined,
-				    undefined),
+				    undefined, undefined),
     {xabber_replace, Xmlns, Id, By, Version, Conversation,
-     Xabber_replace_message, __Els}.
+     Type, Xabber_replace_message, __Els}.
 
 decode_xabber_replace_els(__TopXMLNS, __Opts, [],
 			  Xabber_replace_message, __Els) ->
@@ -677,37 +699,43 @@ decode_xabber_replace_els(__TopXMLNS, __Opts,
 			      Xabber_replace_message, __Els).
 
 decode_xabber_replace_attrs(__TopXMLNS,
-			    [{<<"xmlns">>, _val} | _attrs], _Xmlns, Id, Version,
-			    Conversation, By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, _val,
-				Id, Version, Conversation, By);
-decode_xabber_replace_attrs(__TopXMLNS,
-			    [{<<"id">>, _val} | _attrs], Xmlns, _Id, Version,
-			    Conversation, By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Xmlns,
-				_val, Version, Conversation, By);
-decode_xabber_replace_attrs(__TopXMLNS,
-			    [{<<"version">>, _val} | _attrs], Xmlns, Id,
-			    _Version, Conversation, By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Xmlns,
-				Id, _val, Conversation, By);
-decode_xabber_replace_attrs(__TopXMLNS,
-			    [{<<"conversation">>, _val} | _attrs], Xmlns, Id,
-			    Version, _Conversation, By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Xmlns,
-				Id, Version, _val, By);
-decode_xabber_replace_attrs(__TopXMLNS,
-			    [{<<"by">>, _val} | _attrs], Xmlns, Id, Version,
-			    Conversation, _By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Xmlns,
-				Id, Version, Conversation, _val);
-decode_xabber_replace_attrs(__TopXMLNS, [_ | _attrs],
-			    Xmlns, Id, Version, Conversation, By) ->
-    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Xmlns,
-				Id, Version, Conversation, By);
-decode_xabber_replace_attrs(__TopXMLNS, [], Xmlns, Id,
+			    [{<<"type">>, _val} | _attrs], _Type, Xmlns, Id,
 			    Version, Conversation, By) ->
-    {decode_xabber_replace_attr_xmlns(__TopXMLNS, Xmlns),
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, _val,
+				Xmlns, Id, Version, Conversation, By);
+decode_xabber_replace_attrs(__TopXMLNS,
+			    [{<<"xmlns">>, _val} | _attrs], Type, _Xmlns, Id,
+			    Version, Conversation, By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				_val, Id, Version, Conversation, By);
+decode_xabber_replace_attrs(__TopXMLNS,
+			    [{<<"id">>, _val} | _attrs], Type, Xmlns, _Id,
+			    Version, Conversation, By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				Xmlns, _val, Version, Conversation, By);
+decode_xabber_replace_attrs(__TopXMLNS,
+			    [{<<"version">>, _val} | _attrs], Type, Xmlns, Id,
+			    _Version, Conversation, By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				Xmlns, Id, _val, Conversation, By);
+decode_xabber_replace_attrs(__TopXMLNS,
+			    [{<<"conversation">>, _val} | _attrs], Type, Xmlns,
+			    Id, Version, _Conversation, By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				Xmlns, Id, Version, _val, By);
+decode_xabber_replace_attrs(__TopXMLNS,
+			    [{<<"by">>, _val} | _attrs], Type, Xmlns, Id,
+			    Version, Conversation, _By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				Xmlns, Id, Version, Conversation, _val);
+decode_xabber_replace_attrs(__TopXMLNS, [_ | _attrs],
+			    Type, Xmlns, Id, Version, Conversation, By) ->
+    decode_xabber_replace_attrs(__TopXMLNS, _attrs, Type,
+				Xmlns, Id, Version, Conversation, By);
+decode_xabber_replace_attrs(__TopXMLNS, [], Type, Xmlns,
+			    Id, Version, Conversation, By) ->
+    {decode_xabber_replace_attr_type(__TopXMLNS, Type),
+     decode_xabber_replace_attr_xmlns(__TopXMLNS, Xmlns),
      decode_xabber_replace_attr_id(__TopXMLNS, Id),
      decode_xabber_replace_attr_version(__TopXMLNS, Version),
      decode_xabber_replace_attr_conversation(__TopXMLNS,
@@ -715,7 +743,8 @@ decode_xabber_replace_attrs(__TopXMLNS, [], Xmlns, Id,
      decode_xabber_replace_attr_by(__TopXMLNS, By)}.
 
 encode_xabber_replace({xabber_replace, Xmlns, Id, By,
-		       Version, Conversation, Xabber_replace_message, __Els},
+		       Version, Conversation, Type, Xabber_replace_message,
+		       __Els},
 		      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/rewrite">>,
@@ -731,8 +760,9 @@ encode_xabber_replace({xabber_replace, Xmlns, Id, By,
 					   encode_xabber_replace_attr_conversation(Conversation,
 										   encode_xabber_replace_attr_version(Version,
 														      encode_xabber_replace_attr_id(Id,
-																		    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																					       __TopXMLNS))))),
+																		    encode_xabber_replace_attr_type(Type,
+																						    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																									       __TopXMLNS)))))),
     {xmlel, <<"replace">>, _attrs, _els}.
 
 'encode_xabber_replace_$xabber_replace_message'(undefined,
@@ -743,6 +773,16 @@ encode_xabber_replace({xabber_replace, Xmlns, Id, By,
     [encode_xabber_replace_message(Xabber_replace_message,
 				   __TopXMLNS)
      | _acc].
+
+decode_xabber_replace_attr_type(__TopXMLNS,
+				undefined) ->
+    <<>>;
+decode_xabber_replace_attr_type(__TopXMLNS, _val) ->
+    _val.
+
+encode_xabber_replace_attr_type(<<>>, _acc) -> _acc;
+encode_xabber_replace_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
 
 decode_xabber_replace_attr_xmlns(__TopXMLNS,
 				 undefined) ->
@@ -816,57 +856,70 @@ encode_xabber_replace_attr_by(_val, _acc) ->
 
 decode_xabber_retract_user(__TopXMLNS, __Opts,
 			   {xmlel, <<"retract-user">>, _attrs, _els}) ->
-    {Xmlns, Id, Version, Conversation, Symmetric, By} =
+    {Type, Xmlns, Id, Version, Conversation, Symmetric,
+     By} =
 	decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
 					 undefined, undefined, undefined,
-					 undefined, undefined, undefined),
+					 undefined, undefined, undefined,
+					 undefined),
     {xabber_retract_user, Xmlns, Id, By, Symmetric, Version,
-     Conversation}.
+     Conversation, Type}.
 
 decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"xmlns">>, _val} | _attrs], _Xmlns, Id,
-				 Version, Conversation, Symmetric, By) ->
+				 [{<<"type">>, _val} | _attrs], _Type, Xmlns,
+				 Id, Version, Conversation, Symmetric, By) ->
     decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     _val, Id, Version, Conversation, Symmetric,
-				     By);
-decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"id">>, _val} | _attrs], Xmlns, _Id,
-				 Version, Conversation, Symmetric, By) ->
-    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, _val, Version, Conversation,
+				     _val, Xmlns, Id, Version, Conversation,
 				     Symmetric, By);
 decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"version">>, _val} | _attrs], Xmlns, Id,
-				 _Version, Conversation, Symmetric, By) ->
+				 [{<<"xmlns">>, _val} | _attrs], Type, _Xmlns,
+				 Id, Version, Conversation, Symmetric, By) ->
     decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, Id, _val, Conversation, Symmetric,
+				     Type, _val, Id, Version, Conversation,
+				     Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"id">>, _val} | _attrs], Type, Xmlns, _Id,
+				 Version, Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Type, Xmlns, _val, Version, Conversation,
+				     Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"version">>, _val} | _attrs], Type, Xmlns,
+				 Id, _Version, Conversation, Symmetric, By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Type, Xmlns, Id, _val, Conversation,
+				     Symmetric, By);
+decode_xabber_retract_user_attrs(__TopXMLNS,
+				 [{<<"conversation">>, _val} | _attrs], Type,
+				 Xmlns, Id, Version, _Conversation, Symmetric,
+				 By) ->
+    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
+				     Type, Xmlns, Id, Version, _val, Symmetric,
 				     By);
 decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"conversation">>, _val} | _attrs], Xmlns,
-				 Id, Version, _Conversation, Symmetric, By) ->
+				 [{<<"symmetric">>, _val} | _attrs], Type,
+				 Xmlns, Id, Version, Conversation, _Symmetric,
+				 By) ->
     decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, Id, Version, _val, Symmetric, By);
+				     Type, Xmlns, Id, Version, Conversation,
+				     _val, By);
 decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"symmetric">>, _val} | _attrs], Xmlns, Id,
-				 Version, Conversation, _Symmetric, By) ->
-    decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, Id, Version, Conversation, _val,
-				     By);
-decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [{<<"by">>, _val} | _attrs], Xmlns, Id,
+				 [{<<"by">>, _val} | _attrs], Type, Xmlns, Id,
 				 Version, Conversation, Symmetric, _By) ->
     decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, Id, Version, Conversation,
+				     Type, Xmlns, Id, Version, Conversation,
 				     Symmetric, _val);
 decode_xabber_retract_user_attrs(__TopXMLNS,
-				 [_ | _attrs], Xmlns, Id, Version, Conversation,
-				 Symmetric, By) ->
+				 [_ | _attrs], Type, Xmlns, Id, Version,
+				 Conversation, Symmetric, By) ->
     decode_xabber_retract_user_attrs(__TopXMLNS, _attrs,
-				     Xmlns, Id, Version, Conversation,
+				     Type, Xmlns, Id, Version, Conversation,
 				     Symmetric, By);
-decode_xabber_retract_user_attrs(__TopXMLNS, [], Xmlns,
-				 Id, Version, Conversation, Symmetric, By) ->
-    {decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
+decode_xabber_retract_user_attrs(__TopXMLNS, [], Type,
+				 Xmlns, Id, Version, Conversation, Symmetric,
+				 By) ->
+    {decode_xabber_retract_user_attr_type(__TopXMLNS, Type),
+     decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
 					   Xmlns),
      decode_xabber_retract_user_attr_id(__TopXMLNS, Id),
      decode_xabber_retract_user_attr_version(__TopXMLNS,
@@ -878,7 +931,7 @@ decode_xabber_retract_user_attrs(__TopXMLNS, [], Xmlns,
      decode_xabber_retract_user_attr_by(__TopXMLNS, By)}.
 
 encode_xabber_retract_user({xabber_retract_user, Xmlns,
-			    Id, By, Symmetric, Version, Conversation},
+			    Id, By, Symmetric, Version, Conversation, Type},
 			   __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/rewrite">>,
@@ -890,9 +943,22 @@ encode_xabber_retract_user({xabber_retract_user, Xmlns,
 											  encode_xabber_retract_user_attr_conversation(Conversation,
 																       encode_xabber_retract_user_attr_version(Version,
 																					       encode_xabber_retract_user_attr_id(Id,
-																										  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																													     __TopXMLNS)))))),
+																										  encode_xabber_retract_user_attr_type(Type,
+																														       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																																		  __TopXMLNS))))))),
     {xmlel, <<"retract-user">>, _attrs, _els}.
+
+decode_xabber_retract_user_attr_type(__TopXMLNS,
+				     undefined) ->
+    <<>>;
+decode_xabber_retract_user_attr_type(__TopXMLNS,
+				     _val) ->
+    _val.
+
+encode_xabber_retract_user_attr_type(<<>>, _acc) ->
+    _acc;
+encode_xabber_retract_user_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
 
 decode_xabber_retract_user_attr_xmlns(__TopXMLNS,
 				      undefined) ->
@@ -988,40 +1054,48 @@ encode_xabber_retract_user_attr_by(_val, _acc) ->
 
 decode_xabber_retract_all(__TopXMLNS, __Opts,
 			  {xmlel, <<"retract-all">>, _attrs, _els}) ->
-    {Xmlns, Version, Conversation, Symmetric} =
+    {Xmlns, Version, Conversation, Symmetric, Type} =
 	decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
 					undefined, undefined, undefined,
-					undefined),
+					undefined, undefined),
     {xabber_retract_all, Xmlns, Symmetric, Version,
-     Conversation}.
+     Conversation, Type}.
 
 decode_xabber_retract_all_attrs(__TopXMLNS,
 				[{<<"xmlns">>, _val} | _attrs], _Xmlns, Version,
-				Conversation, Symmetric) ->
+				Conversation, Symmetric, Type) ->
     decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
-				    _val, Version, Conversation, Symmetric);
+				    _val, Version, Conversation, Symmetric,
+				    Type);
 decode_xabber_retract_all_attrs(__TopXMLNS,
 				[{<<"version">>, _val} | _attrs], Xmlns,
-				_Version, Conversation, Symmetric) ->
+				_Version, Conversation, Symmetric, Type) ->
     decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
-				    Xmlns, _val, Conversation, Symmetric);
+				    Xmlns, _val, Conversation, Symmetric, Type);
 decode_xabber_retract_all_attrs(__TopXMLNS,
 				[{<<"conversation">>, _val} | _attrs], Xmlns,
-				Version, _Conversation, Symmetric) ->
+				Version, _Conversation, Symmetric, Type) ->
     decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
-				    Xmlns, Version, _val, Symmetric);
+				    Xmlns, Version, _val, Symmetric, Type);
 decode_xabber_retract_all_attrs(__TopXMLNS,
 				[{<<"symmetric">>, _val} | _attrs], Xmlns,
-				Version, Conversation, _Symmetric) ->
+				Version, Conversation, _Symmetric, Type) ->
     decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
-				    Xmlns, Version, Conversation, _val);
+				    Xmlns, Version, Conversation, _val, Type);
+decode_xabber_retract_all_attrs(__TopXMLNS,
+				[{<<"type">>, _val} | _attrs], Xmlns, Version,
+				Conversation, Symmetric, _Type) ->
+    decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
+				    Xmlns, Version, Conversation, Symmetric,
+				    _val);
 decode_xabber_retract_all_attrs(__TopXMLNS,
 				[_ | _attrs], Xmlns, Version, Conversation,
-				Symmetric) ->
+				Symmetric, Type) ->
     decode_xabber_retract_all_attrs(__TopXMLNS, _attrs,
-				    Xmlns, Version, Conversation, Symmetric);
+				    Xmlns, Version, Conversation, Symmetric,
+				    Type);
 decode_xabber_retract_all_attrs(__TopXMLNS, [], Xmlns,
-				Version, Conversation, Symmetric) ->
+				Version, Conversation, Symmetric, Type) ->
     {decode_xabber_retract_all_attr_xmlns(__TopXMLNS,
 					  Xmlns),
      decode_xabber_retract_all_attr_version(__TopXMLNS,
@@ -1029,22 +1103,23 @@ decode_xabber_retract_all_attrs(__TopXMLNS, [], Xmlns,
      decode_xabber_retract_all_attr_conversation(__TopXMLNS,
 						 Conversation),
      decode_xabber_retract_all_attr_symmetric(__TopXMLNS,
-					      Symmetric)}.
+					      Symmetric),
+     decode_xabber_retract_all_attr_type(__TopXMLNS, Type)}.
 
 encode_xabber_retract_all({xabber_retract_all, Xmlns,
-			   Symmetric, Version, Conversation},
+			   Symmetric, Version, Conversation, Type},
 			  __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/rewrite">>,
 						 <<"http://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [],
-    _attrs =
-	encode_xabber_retract_all_attr_symmetric(Symmetric,
-						 encode_xabber_retract_all_attr_conversation(Conversation,
-											     encode_xabber_retract_all_attr_version(Version,
-																    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																			       __TopXMLNS)))),
+    _attrs = encode_xabber_retract_all_attr_type(Type,
+						 encode_xabber_retract_all_attr_symmetric(Symmetric,
+											  encode_xabber_retract_all_attr_conversation(Conversation,
+																      encode_xabber_retract_all_attr_version(Version,
+																					     xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																									__TopXMLNS))))),
     {xmlel, <<"retract-all">>, _attrs, _els}.
 
 decode_xabber_retract_all_attr_xmlns(__TopXMLNS,
@@ -1112,63 +1187,87 @@ encode_xabber_retract_all_attr_symmetric(undefined,
 encode_xabber_retract_all_attr_symmetric(_val, _acc) ->
     [{<<"symmetric">>, enc_bool(_val)} | _acc].
 
+decode_xabber_retract_all_attr_type(__TopXMLNS,
+				    undefined) ->
+    <<>>;
+decode_xabber_retract_all_attr_type(__TopXMLNS, _val) ->
+    _val.
+
+encode_xabber_retract_all_attr_type(<<>>, _acc) -> _acc;
+encode_xabber_retract_all_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
+
 decode_xabber_retract_message(__TopXMLNS, __Opts,
 			      {xmlel, <<"retract-message">>, _attrs, _els}) ->
-    {Xmlns, Id, Version, Conversation, Symmetric, By} =
+    {Type, Xmlns, Id, Version, Conversation, Symmetric,
+     By} =
 	decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
 					    undefined, undefined, undefined,
-					    undefined, undefined, undefined),
+					    undefined, undefined, undefined,
+					    undefined),
     {xabber_retract_message, Xmlns, Id, By, Symmetric,
-     Version, Conversation}.
+     Version, Conversation, Type}.
 
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"xmlns">>, _val} | _attrs], _Xmlns, Id,
-				    Version, Conversation, Symmetric, By) ->
+				    [{<<"type">>, _val} | _attrs], _Type, Xmlns,
+				    Id, Version, Conversation, Symmetric, By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					_val, Id, Version, Conversation,
+					_val, Xmlns, Id, Version, Conversation,
 					Symmetric, By);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"id">>, _val} | _attrs], Xmlns, _Id,
-				    Version, Conversation, Symmetric, By) ->
+				    [{<<"xmlns">>, _val} | _attrs], Type,
+				    _Xmlns, Id, Version, Conversation,
+				    Symmetric, By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, _val, Version, Conversation,
+					Type, _val, Id, Version, Conversation,
 					Symmetric, By);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"version">>, _val} | _attrs], Xmlns, Id,
-				    _Version, Conversation, Symmetric, By) ->
+				    [{<<"id">>, _val} | _attrs], Type, Xmlns,
+				    _Id, Version, Conversation, Symmetric,
+				    By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, Id, _val, Conversation,
+					Type, Xmlns, _val, Version,
+					Conversation, Symmetric, By);
+decode_xabber_retract_message_attrs(__TopXMLNS,
+				    [{<<"version">>, _val} | _attrs], Type,
+				    Xmlns, Id, _Version, Conversation,
+				    Symmetric, By) ->
+    decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
+					Type, Xmlns, Id, _val, Conversation,
 					Symmetric, By);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"conversation">>, _val} | _attrs],
+				    [{<<"conversation">>, _val} | _attrs], Type,
 				    Xmlns, Id, Version, _Conversation,
 				    Symmetric, By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, Id, Version, _val, Symmetric,
-					By);
+					Type, Xmlns, Id, Version, _val,
+					Symmetric, By);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"symmetric">>, _val} | _attrs], Xmlns,
-				    Id, Version, Conversation, _Symmetric,
-				    By) ->
+				    [{<<"symmetric">>, _val} | _attrs], Type,
+				    Xmlns, Id, Version, Conversation,
+				    _Symmetric, By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, Id, Version, Conversation, _val,
-					By);
+					Type, Xmlns, Id, Version, Conversation,
+					_val, By);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [{<<"by">>, _val} | _attrs], Xmlns, Id,
-				    Version, Conversation, Symmetric, _By) ->
+				    [{<<"by">>, _val} | _attrs], Type, Xmlns,
+				    Id, Version, Conversation, Symmetric,
+				    _By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, Id, Version, Conversation,
+					Type, Xmlns, Id, Version, Conversation,
 					Symmetric, _val);
 decode_xabber_retract_message_attrs(__TopXMLNS,
-				    [_ | _attrs], Xmlns, Id, Version,
+				    [_ | _attrs], Type, Xmlns, Id, Version,
 				    Conversation, Symmetric, By) ->
     decode_xabber_retract_message_attrs(__TopXMLNS, _attrs,
-					Xmlns, Id, Version, Conversation,
+					Type, Xmlns, Id, Version, Conversation,
 					Symmetric, By);
 decode_xabber_retract_message_attrs(__TopXMLNS, [],
-				    Xmlns, Id, Version, Conversation, Symmetric,
-				    By) ->
-    {decode_xabber_retract_message_attr_xmlns(__TopXMLNS,
+				    Type, Xmlns, Id, Version, Conversation,
+				    Symmetric, By) ->
+    {decode_xabber_retract_message_attr_type(__TopXMLNS,
+					     Type),
+     decode_xabber_retract_message_attr_xmlns(__TopXMLNS,
 					      Xmlns),
      decode_xabber_retract_message_attr_id(__TopXMLNS, Id),
      decode_xabber_retract_message_attr_version(__TopXMLNS,
@@ -1180,7 +1279,8 @@ decode_xabber_retract_message_attrs(__TopXMLNS, [],
      decode_xabber_retract_message_attr_by(__TopXMLNS, By)}.
 
 encode_xabber_retract_message({xabber_retract_message,
-			       Xmlns, Id, By, Symmetric, Version, Conversation},
+			       Xmlns, Id, By, Symmetric, Version, Conversation,
+			       Type},
 			      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"http://xabber.com/protocol/rewrite">>,
@@ -1192,9 +1292,22 @@ encode_xabber_retract_message({xabber_retract_message,
 												encode_xabber_retract_message_attr_conversation(Conversation,
 																		encode_xabber_retract_message_attr_version(Version,
 																							   encode_xabber_retract_message_attr_id(Id,
-																												 xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																															    __TopXMLNS)))))),
+																												 encode_xabber_retract_message_attr_type(Type,
+																																	 xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																																				    __TopXMLNS))))))),
     {xmlel, <<"retract-message">>, _attrs, _els}.
+
+decode_xabber_retract_message_attr_type(__TopXMLNS,
+					undefined) ->
+    <<>>;
+decode_xabber_retract_message_attr_type(__TopXMLNS,
+					_val) ->
+    _val.
+
+encode_xabber_retract_message_attr_type(<<>>, _acc) ->
+    _acc;
+encode_xabber_retract_message_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
 
 decode_xabber_retract_message_attr_xmlns(__TopXMLNS,
 					 undefined) ->

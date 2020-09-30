@@ -459,7 +459,8 @@
                               by :: undefined | jid:jid(),
                               symmetric :: 'false' | 'true' | 'undefined',
                               version :: 'undefined' | non_neg_integer(),
-                              conversation :: undefined | jid:jid()}).
+                              conversation :: undefined | jid:jid(),
+                              type = <<>> :: binary()}).
 -type xabber_retract_user() :: #xabber_retract_user{}.
 
 -record(muc_actor, {jid :: undefined | jid:jid(),
@@ -560,10 +561,6 @@
 -record(sasl_response, {text = <<>> :: binary()}).
 -type sasl_response() :: #sasl_response{}.
 
--record(xabber_retract_activate, {version :: 'undefined' | non_neg_integer(),
-                                  'less-than' :: 'undefined' | non_neg_integer()}).
--type xabber_retract_activate() :: #xabber_retract_activate{}.
-
 -record(xabbergroupchat_retract_invalidate, {version = <<>> :: binary()}).
 -type xabbergroupchat_retract_invalidate() :: #xabbergroupchat_retract_invalidate{}.
 
@@ -612,7 +609,8 @@
 -record(xabber_retract_all, {xmlns = <<>> :: binary(),
                              symmetric :: 'false' | 'true' | 'undefined',
                              version :: 'undefined' | non_neg_integer(),
-                             conversation :: undefined | jid:jid()}).
+                             conversation :: undefined | jid:jid(),
+                             type = <<>> :: binary()}).
 -type xabber_retract_all() :: #xabber_retract_all{}.
 
 -record(push_call, {}).
@@ -888,7 +886,8 @@
                                  by :: undefined | jid:jid(),
                                  symmetric :: 'false' | 'true' | 'undefined',
                                  version :: 'undefined' | non_neg_integer(),
-                                 conversation :: undefined | jid:jid()}).
+                                 conversation :: undefined | jid:jid(),
+                                 type = <<>> :: binary()}).
 -type xabber_retract_message() :: #xabber_retract_message{}.
 
 -record(bytestreams, {hosts = [] :: [#streamhost{}],
@@ -944,6 +943,7 @@
                          by :: undefined | jid:jid(),
                          version :: 'undefined' | non_neg_integer(),
                          conversation :: undefined | jid:jid(),
+                         type = <<>> :: binary(),
                          xabber_replace_message :: 'undefined' | #xabber_replace_message{},
                          sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabber_replace() :: #xabber_replace{}.
@@ -1026,6 +1026,11 @@
                       items = [] :: [#disco_item{}],
                       rsm :: 'undefined' | #rsm_set{}}).
 -type disco_items() :: #disco_items{}.
+
+-record(xabber_retract_query, {version :: 'undefined' | non_neg_integer(),
+                               'less-than' :: 'undefined' | non_neg_integer(),
+                               type = <<>> :: binary()}).
+-type xabber_retract_query() :: #xabber_retract_query{}.
 
 -record(xabbergroupchat_invite_query, {user = [] :: [#xabbergroup_invite_user{}]}).
 -type xabbergroupchat_invite_query() :: #xabbergroupchat_invite_query{}.
@@ -1487,6 +1492,7 @@
                         shim() |
                         muc() |
                         bind() |
+                        text() |
                         chatstate() |
                         stream_error() |
                         mix_join() |
@@ -1517,7 +1523,6 @@
                         bookmark_url() |
                         avatar_data() |
                         oob_x() |
-                        text() |
                         xabber_retract_all() |
                         adhoc_actions() |
                         xabber_delete() |
@@ -1582,7 +1587,6 @@
                         xabbergroup_unblock() |
                         compressed() |
                         sasl_mechanisms() |
-                        search() |
                         unique_request() |
                         'see-other-host'() |
                         xabbertoken_query() |
@@ -1640,7 +1644,7 @@
                         roster_item() |
                         stream_start() |
                         xabbergroupchat_status() |
-                        xabber_retract_activate() |
+                        xabber_retract_query() |
                         muc_decline() |
                         disco_items() |
                         sic() |
@@ -1710,6 +1714,7 @@
                         xabbergroupchat_invite() |
                         xabbergroupchat_retract_message() |
                         xabbergroupchat_user_updated() |
+                        search() |
                         xabber_conversation_retract() |
                         sasl_success() |
                         bookmark_conference() |

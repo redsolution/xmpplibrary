@@ -5247,8 +5247,8 @@
      #elem{name = <<"retract-message">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_retract_message, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation'},
-     attrs = [
+     result = {xabber_retract_message, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation', '$type'},
+     attrs = [#attr{name = <<"type">>},
               #attr{name = <<"xmlns">>},
               #attr{name = <<"id">>,
               dec = {dec_int, [0, infinity]},
@@ -5274,7 +5274,7 @@
      #elem{name = <<"retract-all">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_retract_all, '$xmlns', '$symmetric', '$version', '$conversation'},
+     result = {xabber_retract_all, '$xmlns', '$symmetric', '$version', '$conversation', '$type'},
      attrs = [
               #attr{name = <<"xmlns">>},
               #attr{name = <<"version">>,
@@ -5287,7 +5287,8 @@
               #attr{name = <<"symmetric">>,
               enc = {enc_bool, []},
               dec = {dec_bool, []}
-              }
+              },
+              #attr{name = <<"type">>}
               ]
      }).
 
@@ -5295,8 +5296,8 @@
      #elem{name = <<"retract-user">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_retract_user, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation'},
-     attrs = [
+     result = {xabber_retract_user, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation', '$type'},
+     attrs = [#attr{name = <<"type">>},
               #attr{name = <<"xmlns">>},
               #attr{name = <<"id">>},
               #attr{name = <<"version">>,
@@ -5320,8 +5321,8 @@
      #elem{name = <<"replace">>,
      xmlns = [<<"http://xabber.com/protocol/rewrite">>,<<"http://xabber.com/protocol/rewrite#notify">>],
 	   module = 'xabberrewrite',
-     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$xabber_replace_message', '$_els'},
-     attrs = [
+     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$type', '$xabber_replace_message', '$_els'},
+     attrs = [#attr{name = <<"type">>},
               #attr{name = <<"xmlns">>},
               #attr{name = <<"id">>,
               dec = {dec_int, [0, infinity]},
@@ -5377,12 +5378,13 @@
                     #attr{name = <<"body">>}
                     ]}).
 
--xml(xabber_retract_activate,
-     #elem{name = <<"activate">>,
+-xml(xabber_retract_query,
+     #elem{name = <<"query">>,
      xmlns = <<"http://xabber.com/protocol/rewrite">>,
 	   module = 'xabberrewrite',
-     result = {xabber_retract_activate, '$version', '$less-than'},
-     attrs = [#attr{name = <<"version">>,
+     result = {xabber_retract_query, '$version', '$less-than', '$type'},
+     attrs = [#attr{name = <<"type">>},
+              #attr{name = <<"version">>,
                 dec = {dec_int, [0, infinity]},
                 enc = {enc_int, []}},
               #attr{name = <<"less-than">>,
