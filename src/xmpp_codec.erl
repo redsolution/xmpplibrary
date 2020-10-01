@@ -908,6 +908,7 @@ get_mod(<<"register">>,
 get_mod(<<"optional">>,
 	<<"urn:ietf:params:xml:ns:xmpp-session">>) ->
     rfc3921;
+get_mod(<<"X-MEMBERS">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"offline">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(<<"x">>,
 	<<"http://xabber.com/protocol/groupchat#system-m"
@@ -1917,6 +1918,10 @@ get_mod({ps_item, _, _, _, _, _}) -> xep0060;
 get_mod({body_x, _, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat, _, _, _, _, _, _}) ->
     xabbergroupchat;
+get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	 _, _, _, _}) ->
+    xep0054;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_security, _, _}) -> xabberpush;
 get_mod({sticker, _}) -> xep_sticker;
@@ -2078,10 +2083,6 @@ get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
 get_mod({unique_received, _, _, _, _, _}) -> unique;
 get_mod({xabbergroupchat_index, _}) -> xabbergroupchat;
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
-get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
-	 _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	 _, _, _}) ->
-    xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
 get_mod({delivery_retry, _}) -> unique;

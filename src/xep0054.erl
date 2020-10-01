@@ -18,6 +18,9 @@ do_decode(<<"X-INDEX">>, <<"vcard-temp">>, El, Opts) ->
 do_decode(<<"X-PRIVACY">>, <<"vcard-temp">>, El,
 	  Opts) ->
     decode_vcard_PRIVACY(<<"vcard-temp">>, Opts, El);
+do_decode(<<"X-MEMBERS">>, <<"vcard-temp">>, El,
+	  Opts) ->
+    decode_vcard_MEMBERS(<<"vcard-temp">>, Opts, El);
 do_decode(<<"vCard">>, <<"vcard-temp">>, El, Opts) ->
     decode_vcard_temp(<<"vcard-temp">>, Opts, El);
 do_decode(<<"CLASS">>, <<"vcard-temp">>, El, Opts) ->
@@ -186,6 +189,7 @@ tags() ->
      {<<"X-MEMBERSHIP">>, <<"vcard-temp">>},
      {<<"X-INDEX">>, <<"vcard-temp">>},
      {<<"X-PRIVACY">>, <<"vcard-temp">>},
+     {<<"X-MEMBERS">>, <<"vcard-temp">>},
      {<<"vCard">>, <<"vcard-temp">>},
      {<<"CLASS">>, <<"vcard-temp">>},
      {<<"CATEGORIES">>, <<"vcard-temp">>},
@@ -296,7 +300,7 @@ do_encode({vcard_key, _, _} = Key, TopXMLNS) ->
     encode_vcard_KEY(Key, TopXMLNS);
 do_encode({vcard_temp, _, _, _, _, _, _, _, _, _, _, _,
 	   _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	   _, _, _, _} =
+	   _, _, _, _, _} =
 	      Vcard,
 	  TopXMLNS) ->
     encode_vcard_temp(Vcard, TopXMLNS).
@@ -320,7 +324,7 @@ do_get_name({vcard_tel, _, _, _, _, _, _, _, _, _, _, _,
     <<"TEL">>;
 do_get_name({vcard_temp, _, _, _, _, _, _, _, _, _, _,
 	     _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	     _, _, _, _, _}) ->
+	     _, _, _, _, _, _}) ->
     <<"vCard">>.
 
 do_get_ns({vcard_adr, _, _, _, _, _, _, _, _, _, _, _,
@@ -343,7 +347,7 @@ do_get_ns({vcard_tel, _, _, _, _, _, _, _, _, _, _, _,
     <<"vcard-temp">>;
 do_get_ns({vcard_temp, _, _, _, _, _, _, _, _, _, _, _,
 	   _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	   _, _, _, _}) ->
+	   _, _, _, _, _}) ->
     <<"vcard-temp">>.
 
 pp(vcard_name, 5) ->
@@ -364,19 +368,19 @@ pp(vcard_photo, 3) -> [type, binval, extval];
 pp(vcard_org, 2) -> [name, units];
 pp(vcard_sound, 3) -> [phonetic, binval, extval];
 pp(vcard_key, 2) -> [type, cred];
-pp(vcard_temp, 34) ->
+pp(vcard_temp, 35) ->
     [version, fn, n, nickname, photo, bday, adr, label, tel,
      email, jabberid, mailer, tz, geo, title, role, logo,
      org, categories, note, prodid, rev, sort_string, sound,
      uid, url, class, key, desc, privacy, index, membership,
-     status, parent];
+     status, parent, members];
 pp(_, _) -> no.
 
 records() ->
     [{vcard_name, 5}, {vcard_adr, 14}, {vcard_label, 8},
      {vcard_tel, 14}, {vcard_email, 6}, {vcard_geo, 2},
      {vcard_logo, 3}, {vcard_photo, 3}, {vcard_org, 2},
-     {vcard_sound, 3}, {vcard_key, 2}, {vcard_temp, 34}].
+     {vcard_sound, 3}, {vcard_key, 2}, {vcard_temp, 35}].
 
 decode_vcard_PARENT_GROUP(__TopXMLNS, __Opts,
 			  {xmlel, <<"X-PARENT-GROUP">>, _attrs, _els}) ->
@@ -548,44 +552,78 @@ encode_vcard_PRIVACY_cdata(<<>>, _acc) -> _acc;
 encode_vcard_PRIVACY_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
+decode_vcard_MEMBERS(__TopXMLNS, __Opts,
+		     {xmlel, <<"X-MEMBERS">>, _attrs, _els}) ->
+    Cdata = decode_vcard_MEMBERS_els(__TopXMLNS, __Opts,
+				     _els, <<>>),
+    Cdata.
+
+decode_vcard_MEMBERS_els(__TopXMLNS, __Opts, [],
+			 Cdata) ->
+    decode_vcard_MEMBERS_cdata(__TopXMLNS, Cdata);
+decode_vcard_MEMBERS_els(__TopXMLNS, __Opts,
+			 [{xmlcdata, _data} | _els], Cdata) ->
+    decode_vcard_MEMBERS_els(__TopXMLNS, __Opts, _els,
+			     <<Cdata/binary, _data/binary>>);
+decode_vcard_MEMBERS_els(__TopXMLNS, __Opts, [_ | _els],
+			 Cdata) ->
+    decode_vcard_MEMBERS_els(__TopXMLNS, __Opts, _els,
+			     Cdata).
+
+encode_vcard_MEMBERS(Cdata, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"vcard-temp">>, [],
+				    __TopXMLNS),
+    _els = encode_vcard_MEMBERS_cdata(Cdata, []),
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"X-MEMBERS">>, _attrs, _els}.
+
+decode_vcard_MEMBERS_cdata(__TopXMLNS, <<>>) -> <<>>;
+decode_vcard_MEMBERS_cdata(__TopXMLNS, _val) -> _val.
+
+encode_vcard_MEMBERS_cdata(<<>>, _acc) -> _acc;
+encode_vcard_MEMBERS_cdata(_val, _acc) ->
+    [{xmlcdata, _val} | _acc].
+
 decode_vcard_temp(__TopXMLNS, __Opts,
 		  {xmlel, <<"vCard">>, _attrs, _els}) ->
-    {Membership, Mailer, Adr, Status, Class, Categories,
-     Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-     Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-     Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-     Photo, Logo, Geo} =
+    {Membership, Mailer, Adr, Members, Status, Class,
+     Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+     Note, Role, Title, Nickname, Rev, Sort_string, Org,
+     Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+     Fn, Version, N, Photo, Logo, Geo} =
 	decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
 			      undefined, undefined, [], undefined, undefined,
-			      [], undefined, undefined, undefined, undefined,
+			      undefined, [], undefined, undefined, undefined,
 			      undefined, undefined, undefined, undefined,
 			      undefined, undefined, undefined, undefined,
 			      undefined, undefined, undefined, undefined,
-			      undefined, undefined, undefined, [], [], [],
-			      undefined, undefined, undefined, undefined,
-			      undefined, undefined),
+			      undefined, undefined, undefined, undefined, [],
+			      [], [], undefined, undefined, undefined,
+			      undefined, undefined, undefined),
     {vcard_temp, Version, Fn, N, Nickname, Photo, Bday, Adr,
      Label, Tel, Email, Jabberid, Mailer, Tz, Geo, Title,
      Role, Logo, Org, Categories, Note, Prodid, Rev,
      Sort_string, Sound, Uid, Url, Class, Key, Desc, Privacy,
-     Index, Membership, Status, Parent}.
+     Index, Membership, Status, Parent, Members}.
 
 decode_vcard_temp_els(__TopXMLNS, __Opts, [],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
-    {Membership, Mailer, lists:reverse(Adr), Status, Class,
-     Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
-     Note, Role, Title, Nickname, Rev, Sort_string, Org,
-     Index, Privacy, Bday, Key, Tz, Url,
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
+    {Membership, Mailer, lists:reverse(Adr), Members,
+     Status, Class, Categories, Desc, Parent, Uid, Prodid,
+     Jabberid, Sound, Note, Role, Title, Nickname, Rev,
+     Sort_string, Org, Index, Privacy, Bday, Key, Tz, Url,
      lists:reverse(Email), lists:reverse(Tel),
      lists:reverse(Label), Fn, Version, N, Photo, Logo, Geo};
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"N">>, _attrs, _} = _el | _els], Membership,
-		      Mailer, Adr, Status, Class, Categories, Desc, Parent,
-		      Uid, Prodid, Jabberid, Sound, Note, Role, Title,
+		      Mailer, Adr, Members, Status, Class, Categories, Desc,
+		      Parent, Uid, Prodid, Jabberid, Sound, Note, Role, Title,
 		      Nickname, Rev, Sort_string, Org, Index, Privacy, Bday,
 		      Key, Tz, Url, Email, Tel, Label, Fn, Version, N, Photo,
 		      Logo, Geo) ->
@@ -594,7 +632,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -603,7 +641,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -612,11 +650,11 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"ADR">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -625,14 +663,14 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Membership, Mailer,
 				[decode_vcard_ADR(<<"vcard-temp">>, __Opts, _el)
 				 | Adr],
-				Status, Class, Categories, Desc, Parent, Uid,
-				Prodid, Jabberid, Sound, Note, Role, Title,
-				Nickname, Rev, Sort_string, Org, Index, Privacy,
-				Bday, Key, Tz, Url, Email, Tel, Label, Fn,
-				Version, N, Photo, Logo, Geo);
+				Members, Status, Class, Categories, Desc,
+				Parent, Uid, Prodid, Jabberid, Sound, Note,
+				Role, Title, Nickname, Rev, Sort_string, Org,
+				Index, Privacy, Bday, Key, Tz, Url, Email, Tel,
+				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -641,17 +679,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"LABEL">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -662,7 +700,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -671,17 +709,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"TEL">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -691,7 +729,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -700,17 +738,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"EMAIL">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -721,7 +759,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Tel, Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -730,17 +768,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"GEO">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -750,7 +788,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 						 _el));
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -759,17 +797,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"LOGO">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -779,7 +817,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -788,17 +826,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"PHOTO">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -808,7 +846,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -817,17 +855,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"ORG">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string,
@@ -836,7 +874,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -845,17 +883,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"SOUND">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				decode_vcard_SOUND(<<"vcard-temp">>, __Opts,
 						   _el),
@@ -864,7 +902,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Tel, Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -873,17 +911,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"KEY">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday,
@@ -892,7 +930,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -901,17 +939,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"VERSION">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -921,7 +959,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -930,8 +968,8 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"FN">>, _attrs, _} = _el | _els], Membership,
-		      Mailer, Adr, Status, Class, Categories, Desc, Parent,
-		      Uid, Prodid, Jabberid, Sound, Note, Role, Title,
+		      Mailer, Adr, Members, Status, Class, Categories, Desc,
+		      Parent, Uid, Prodid, Jabberid, Sound, Note, Role, Title,
 		      Nickname, Rev, Sort_string, Org, Index, Privacy, Bday,
 		      Key, Tz, Url, Email, Tel, Label, Fn, Version, N, Photo,
 		      Logo, Geo) ->
@@ -940,7 +978,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -949,7 +987,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -958,17 +996,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"NICKNAME">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title,
 				decode_vcard_NICKNAME(<<"vcard-temp">>, __Opts,
@@ -978,7 +1016,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -987,17 +1025,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"BDAY">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy,
@@ -1007,7 +1045,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1016,17 +1054,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"JABBERID">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid,
 				decode_vcard_JABBERID(<<"vcard-temp">>, __Opts,
 						      _el),
@@ -1036,7 +1074,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1045,11 +1083,11 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"MAILER">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1058,14 +1096,14 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Membership,
 				decode_vcard_MAILER(<<"vcard-temp">>, __Opts,
 						    _el),
-				Adr, Status, Class, Categories, Desc, Parent,
-				Uid, Prodid, Jabberid, Sound, Note, Role, Title,
-				Nickname, Rev, Sort_string, Org, Index, Privacy,
-				Bday, Key, Tz, Url, Email, Tel, Label, Fn,
-				Version, N, Photo, Logo, Geo);
+				Adr, Members, Status, Class, Categories, Desc,
+				Parent, Uid, Prodid, Jabberid, Sound, Note,
+				Role, Title, Nickname, Rev, Sort_string, Org,
+				Index, Privacy, Bday, Key, Tz, Url, Email, Tel,
+				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1074,8 +1112,8 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"TZ">>, _attrs, _} = _el | _els], Membership,
-		      Mailer, Adr, Status, Class, Categories, Desc, Parent,
-		      Uid, Prodid, Jabberid, Sound, Note, Role, Title,
+		      Mailer, Adr, Members, Status, Class, Categories, Desc,
+		      Parent, Uid, Prodid, Jabberid, Sound, Note, Role, Title,
 		      Nickname, Rev, Sort_string, Org, Index, Privacy, Bday,
 		      Key, Tz, Url, Email, Tel, Label, Fn, Version, N, Photo,
 		      Logo, Geo) ->
@@ -1084,7 +1122,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key,
@@ -1093,7 +1131,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1102,17 +1140,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"TITLE">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role,
 				decode_vcard_TITLE(<<"vcard-temp">>, __Opts,
@@ -1122,7 +1160,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1131,17 +1169,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"ROLE">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note,
 				decode_vcard_ROLE(<<"vcard-temp">>, __Opts,
@@ -1151,7 +1189,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1160,17 +1198,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"NOTE">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound,
 				decode_vcard_NOTE(<<"vcard-temp">>, __Opts,
@@ -1180,7 +1218,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1189,17 +1227,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"PRODID">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid,
 				decode_vcard_PRODID(<<"vcard-temp">>, __Opts,
 						    _el),
@@ -1209,7 +1247,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1218,17 +1256,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"REV">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname,
 				decode_vcard_REV(<<"vcard-temp">>, __Opts, _el),
@@ -1237,7 +1275,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1246,17 +1284,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"SORT-STRING">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				decode_vcard_SORT_STRING(<<"vcard-temp">>,
@@ -1265,7 +1303,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Tel, Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1274,17 +1312,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"UID">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent,
 				decode_vcard_UID(<<"vcard-temp">>, __Opts, _el),
 				Prodid, Jabberid, Sound, Note, Role, Title,
@@ -1293,7 +1331,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1302,17 +1340,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"URL">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1321,7 +1359,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1330,17 +1368,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"DESC">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories,
 				decode_vcard_DESC(<<"vcard-temp">>, __Opts,
 						  _el),
@@ -1350,7 +1388,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1359,17 +1397,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"CATEGORIES">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				decode_vcard_CATEGORIES(<<"vcard-temp">>,
 							__Opts, _el),
 				Desc, Parent, Uid, Prodid, Jabberid, Sound,
@@ -1378,7 +1416,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Tel, Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1387,17 +1425,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"CLASS">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status,
+				Membership, Mailer, Adr, Members, Status,
 				decode_vcard_CLASS(<<"vcard-temp">>, __Opts,
 						   _el),
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
@@ -1407,7 +1445,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1416,17 +1454,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"X-PRIVACY">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index,
@@ -1436,7 +1474,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1445,17 +1483,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"X-INDEX">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org,
@@ -1465,7 +1503,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1474,11 +1512,11 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"X-MEMBERSHIP">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1486,14 +1524,14 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
 				decode_vcard_MEMBERSHIP(<<"vcard-temp">>,
 							__Opts, _el),
-				Mailer, Adr, Status, Class, Categories, Desc,
-				Parent, Uid, Prodid, Jabberid, Sound, Note,
-				Role, Title, Nickname, Rev, Sort_string, Org,
-				Index, Privacy, Bday, Key, Tz, Url, Email, Tel,
-				Label, Fn, Version, N, Photo, Logo, Geo);
+				Mailer, Adr, Members, Status, Class, Categories,
+				Desc, Parent, Uid, Prodid, Jabberid, Sound,
+				Note, Role, Title, Nickname, Rev, Sort_string,
+				Org, Index, Privacy, Bday, Key, Tz, Url, Email,
+				Tel, Label, Fn, Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1502,17 +1540,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"X-STATUS">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr,
+				Membership, Mailer, Adr, Members,
 				decode_vcard_STATUS(<<"vcard-temp">>, __Opts,
 						    _el),
 				Class, Categories, Desc, Parent, Uid, Prodid,
@@ -1522,7 +1560,7 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1531,17 +1569,17 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts,
 		      [{xmlel, <<"X-PARENT-GROUP">>, _attrs, _} = _el | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"vcard-temp">> ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc,
 				decode_vcard_PARENT_GROUP(<<"vcard-temp">>,
 							  __Opts, _el),
@@ -1551,7 +1589,36 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Version, N, Photo, Logo, Geo);
       _ ->
 	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-				Membership, Mailer, Adr, Status, Class,
+				Membership, Mailer, Adr, Members, Status, Class,
+				Categories, Desc, Parent, Uid, Prodid, Jabberid,
+				Sound, Note, Role, Title, Nickname, Rev,
+				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
+				Url, Email, Tel, Label, Fn, Version, N, Photo,
+				Logo, Geo)
+    end;
+decode_vcard_temp_els(__TopXMLNS, __Opts,
+		      [{xmlel, <<"X-MEMBERS">>, _attrs, _} = _el | _els],
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"vcard-temp">> ->
+	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
+				Membership, Mailer, Adr,
+				decode_vcard_MEMBERS(<<"vcard-temp">>, __Opts,
+						     _el),
+				Status, Class, Categories, Desc, Parent, Uid,
+				Prodid, Jabberid, Sound, Note, Role, Title,
+				Nickname, Rev, Sort_string, Org, Index, Privacy,
+				Bday, Key, Tz, Url, Email, Tel, Label, Fn,
+				Version, N, Photo, Logo, Geo);
+      _ ->
+	  decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
+				Membership, Mailer, Adr, Members, Status, Class,
 				Categories, Desc, Parent, Uid, Prodid, Jabberid,
 				Sound, Note, Role, Title, Nickname, Rev,
 				Sort_string, Org, Index, Privacy, Bday, Key, Tz,
@@ -1559,23 +1626,24 @@ decode_vcard_temp_els(__TopXMLNS, __Opts,
 				Logo, Geo)
     end;
 decode_vcard_temp_els(__TopXMLNS, __Opts, [_ | _els],
-		      Membership, Mailer, Adr, Status, Class, Categories,
-		      Desc, Parent, Uid, Prodid, Jabberid, Sound, Note, Role,
-		      Title, Nickname, Rev, Sort_string, Org, Index, Privacy,
-		      Bday, Key, Tz, Url, Email, Tel, Label, Fn, Version, N,
-		      Photo, Logo, Geo) ->
+		      Membership, Mailer, Adr, Members, Status, Class,
+		      Categories, Desc, Parent, Uid, Prodid, Jabberid, Sound,
+		      Note, Role, Title, Nickname, Rev, Sort_string, Org,
+		      Index, Privacy, Bday, Key, Tz, Url, Email, Tel, Label,
+		      Fn, Version, N, Photo, Logo, Geo) ->
     decode_vcard_temp_els(__TopXMLNS, __Opts, _els,
-			  Membership, Mailer, Adr, Status, Class, Categories,
-			  Desc, Parent, Uid, Prodid, Jabberid, Sound, Note,
-			  Role, Title, Nickname, Rev, Sort_string, Org, Index,
-			  Privacy, Bday, Key, Tz, Url, Email, Tel, Label, Fn,
-			  Version, N, Photo, Logo, Geo).
+			  Membership, Mailer, Adr, Members, Status, Class,
+			  Categories, Desc, Parent, Uid, Prodid, Jabberid,
+			  Sound, Note, Role, Title, Nickname, Rev, Sort_string,
+			  Org, Index, Privacy, Bday, Key, Tz, Url, Email, Tel,
+			  Label, Fn, Version, N, Photo, Logo, Geo).
 
 encode_vcard_temp({vcard_temp, Version, Fn, N, Nickname,
 		   Photo, Bday, Adr, Label, Tel, Email, Jabberid, Mailer,
 		   Tz, Geo, Title, Role, Logo, Org, Categories, Note,
 		   Prodid, Rev, Sort_string, Sound, Uid, Url, Class, Key,
-		   Desc, Privacy, Index, Membership, Status, Parent},
+		   Desc, Privacy, Index, Membership, Status, Parent,
+		   Members},
 		  __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"vcard-temp">>, [],
@@ -1587,69 +1655,71 @@ encode_vcard_temp({vcard_temp, Version, Fn, N, Nickname,
 										  __NewTopXMLNS,
 										  'encode_vcard_temp_$adr'(Adr,
 													   __NewTopXMLNS,
-													   'encode_vcard_temp_$status'(Status,
-																       __NewTopXMLNS,
-																       'encode_vcard_temp_$class'(Class,
-																				  __NewTopXMLNS,
-																				  'encode_vcard_temp_$categories'(Categories,
-																								  __NewTopXMLNS,
-																								  'encode_vcard_temp_$desc'(Desc,
-																											    __NewTopXMLNS,
-																											    'encode_vcard_temp_$parent'(Parent,
-																															__NewTopXMLNS,
-																															'encode_vcard_temp_$uid'(Uid,
-																																		 __NewTopXMLNS,
-																																		 'encode_vcard_temp_$prodid'(Prodid,
-																																					     __NewTopXMLNS,
-																																					     'encode_vcard_temp_$jabberid'(Jabberid,
-																																									   __NewTopXMLNS,
-																																									   'encode_vcard_temp_$sound'(Sound,
-																																												      __NewTopXMLNS,
-																																												      'encode_vcard_temp_$note'(Note,
-																																																__NewTopXMLNS,
-																																																'encode_vcard_temp_$role'(Role,
-																																																			  __NewTopXMLNS,
-																																																			  'encode_vcard_temp_$title'(Title,
-																																																						     __NewTopXMLNS,
-																																																						     'encode_vcard_temp_$nickname'(Nickname,
-																																																										   __NewTopXMLNS,
-																																																										   'encode_vcard_temp_$rev'(Rev,
-																																																													    __NewTopXMLNS,
-																																																													    'encode_vcard_temp_$sort_string'(Sort_string,
-																																																																	     __NewTopXMLNS,
-																																																																	     'encode_vcard_temp_$org'(Org,
-																																																																				      __NewTopXMLNS,
-																																																																				      'encode_vcard_temp_$index'(Index,
-																																																																								 __NewTopXMLNS,
-																																																																								 'encode_vcard_temp_$privacy'(Privacy,
+													   'encode_vcard_temp_$members'(Members,
+																	__NewTopXMLNS,
+																	'encode_vcard_temp_$status'(Status,
+																				    __NewTopXMLNS,
+																				    'encode_vcard_temp_$class'(Class,
+																							       __NewTopXMLNS,
+																							       'encode_vcard_temp_$categories'(Categories,
+																											       __NewTopXMLNS,
+																											       'encode_vcard_temp_$desc'(Desc,
+																															 __NewTopXMLNS,
+																															 'encode_vcard_temp_$parent'(Parent,
+																																		     __NewTopXMLNS,
+																																		     'encode_vcard_temp_$uid'(Uid,
+																																					      __NewTopXMLNS,
+																																					      'encode_vcard_temp_$prodid'(Prodid,
+																																									  __NewTopXMLNS,
+																																									  'encode_vcard_temp_$jabberid'(Jabberid,
+																																													__NewTopXMLNS,
+																																													'encode_vcard_temp_$sound'(Sound,
+																																																   __NewTopXMLNS,
+																																																   'encode_vcard_temp_$note'(Note,
+																																																			     __NewTopXMLNS,
+																																																			     'encode_vcard_temp_$role'(Role,
+																																																						       __NewTopXMLNS,
+																																																						       'encode_vcard_temp_$title'(Title,
+																																																										  __NewTopXMLNS,
+																																																										  'encode_vcard_temp_$nickname'(Nickname,
+																																																														__NewTopXMLNS,
+																																																														'encode_vcard_temp_$rev'(Rev,
+																																																																	 __NewTopXMLNS,
+																																																																	 'encode_vcard_temp_$sort_string'(Sort_string,
+																																																																					  __NewTopXMLNS,
+																																																																					  'encode_vcard_temp_$org'(Org,
+																																																																								   __NewTopXMLNS,
+																																																																								   'encode_vcard_temp_$index'(Index,
 																																																																											      __NewTopXMLNS,
-																																																																											      'encode_vcard_temp_$bday'(Bday,
-																																																																															__NewTopXMLNS,
-																																																																															'encode_vcard_temp_$key'(Key,
-																																																																																		 __NewTopXMLNS,
-																																																																																		 'encode_vcard_temp_$tz'(Tz,
-																																																																																					 __NewTopXMLNS,
-																																																																																					 'encode_vcard_temp_$url'(Url,
-																																																																																								  __NewTopXMLNS,
-																																																																																								  'encode_vcard_temp_$email'(Email,
-																																																																																											     __NewTopXMLNS,
-																																																																																											     'encode_vcard_temp_$tel'(Tel,
-																																																																																														      __NewTopXMLNS,
-																																																																																														      'encode_vcard_temp_$label'(Label,
-																																																																																																		 __NewTopXMLNS,
-																																																																																																		 'encode_vcard_temp_$fn'(Fn,
-																																																																																																					 __NewTopXMLNS,
-																																																																																																					 'encode_vcard_temp_$version'(Version,
+																																																																											      'encode_vcard_temp_$privacy'(Privacy,
+																																																																															   __NewTopXMLNS,
+																																																																															   'encode_vcard_temp_$bday'(Bday,
+																																																																																		     __NewTopXMLNS,
+																																																																																		     'encode_vcard_temp_$key'(Key,
+																																																																																					      __NewTopXMLNS,
+																																																																																					      'encode_vcard_temp_$tz'(Tz,
+																																																																																								      __NewTopXMLNS,
+																																																																																								      'encode_vcard_temp_$url'(Url,
+																																																																																											       __NewTopXMLNS,
+																																																																																											       'encode_vcard_temp_$email'(Email,
+																																																																																															  __NewTopXMLNS,
+																																																																																															  'encode_vcard_temp_$tel'(Tel,
+																																																																																																		   __NewTopXMLNS,
+																																																																																																		   'encode_vcard_temp_$label'(Label,
+																																																																																																					      __NewTopXMLNS,
+																																																																																																					      'encode_vcard_temp_$fn'(Fn,
 																																																																																																								      __NewTopXMLNS,
-																																																																																																								      'encode_vcard_temp_$n'(N,
-																																																																																																											     __NewTopXMLNS,
-																																																																																																											     'encode_vcard_temp_$photo'(Photo,
-																																																																																																															__NewTopXMLNS,
-																																																																																																															'encode_vcard_temp_$logo'(Logo,
-																																																																																																																		  __NewTopXMLNS,
-																																																																																																																		  'encode_vcard_temp_$geo'(Geo,
-																																																																																																																					   __NewTopXMLNS,
-																																																																																																																					   []))))))))))))))))))))))))))))))))))),
+																																																																																																								      'encode_vcard_temp_$version'(Version,
+																																																																																																												   __NewTopXMLNS,
+																																																																																																												   'encode_vcard_temp_$n'(N,
+																																																																																																															  __NewTopXMLNS,
+																																																																																																															  'encode_vcard_temp_$photo'(Photo,
+																																																																																																																		     __NewTopXMLNS,
+																																																																																																																		     'encode_vcard_temp_$logo'(Logo,
+																																																																																																																					       __NewTopXMLNS,
+																																																																																																																					       'encode_vcard_temp_$geo'(Geo,
+																																																																																																																									__NewTopXMLNS,
+																																																																																																																									[])))))))))))))))))))))))))))))))))))),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"vCard">>, _attrs, _els}.
@@ -1673,6 +1743,13 @@ encode_vcard_temp({vcard_temp, Version, Fn, N, Nickname,
 			 _acc) ->
     'encode_vcard_temp_$adr'(_els, __TopXMLNS,
 			     [encode_vcard_ADR(Adr, __TopXMLNS) | _acc]).
+
+'encode_vcard_temp_$members'(undefined, __TopXMLNS,
+			     _acc) ->
+    _acc;
+'encode_vcard_temp_$members'(Members, __TopXMLNS,
+			     _acc) ->
+    [encode_vcard_MEMBERS(Members, __TopXMLNS) | _acc].
 
 'encode_vcard_temp_$status'(undefined, __TopXMLNS,
 			    _acc) ->

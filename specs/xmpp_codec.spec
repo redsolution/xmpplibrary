@@ -1808,7 +1808,7 @@
                      '$mailer', '$tz', '$geo', '$title', '$role', '$logo',
                      '$org', '$categories', '$note', '$prodid', %% '$agent',
                      '$rev', '$sort_string', '$sound', '$uid', '$url', '$class',
-                     '$key', '$desc', '$privacy', '$index', '$membership', '$status', '$parent'},
+                     '$key', '$desc', '$privacy', '$index', '$membership', '$status', '$parent', '$members'},
            refs = [#ref{name = vcard_N, min = 0, max = 1, label = '$n'},
                    #ref{name = vcard_ADR, label = '$adr'},
                    #ref{name = vcard_LABEL, label = '$label'},
@@ -1845,8 +1845,12 @@
                    #ref{name = vcard_INDEX, min = 0, max = 1, label = '$index'},
                    #ref{name = vcard_MEMBERSHIP, min = 0, max = 1, label = '$membership'},
                    #ref{name = vcard_STATUS, min = 0, max = 1, label = '$status'},
-                   #ref{name = vcard_PARENT_GROUP, min = 0, max = 1, label = '$parent'}
+                   #ref{name = vcard_PARENT_GROUP, min = 0, max = 1, label = '$parent'},
+                   #ref{name = vcard_MEMBERS, min = 0, max = 1, label = '$members'}
                    ]}).
+
+-xml(vcard_MEMBERS, #elem{name = <<"X-MEMBERS">>, xmlns = <<"vcard-temp">>,
+		      module = 'xep0054', result = '$cdata'}).
 
 -xml(vcard_PRIVACY, #elem{name = <<"X-PRIVACY">>, xmlns = <<"vcard-temp">>,
 		      module = 'xep0054', result = '$cdata'}).
