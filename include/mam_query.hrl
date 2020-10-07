@@ -8,14 +8,14 @@
                     {'start', erlang:timestamp()} |
                     {'end', erlang:timestamp()} |
                     {'withtext', binary()} |
-                    {'last', boolean()} |
-                    {'filter_encrypted', boolean()} |
-                    {'filter_audio', boolean()} |
-                    {'filter_image', boolean()} |
-                    {'filter_document', boolean()} |
-                    {'filter_video', boolean()} |
-                    {'filter_voice', boolean()} |
-                    {'filter_sticker', boolean()} |
+                    {'{https://xabber.com/protocol/archive}last', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_encrypted', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_audio', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_image', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_document', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_video', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_voice', boolean()} |
+                    {'{https://xabber.com/protocol/archive}filter_sticker', boolean()} |
                     {'stanza-id', binary()}.
 -type result() :: [property()].
 
