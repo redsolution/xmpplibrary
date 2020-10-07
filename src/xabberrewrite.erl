@@ -6,67 +6,67 @@
 -compile(export_all).
 
 do_decode(<<"invalidate">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_retract_invalidate(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_retract_invalidate(<<"https://xabber.com/protocol/rewrite#notify">>,
 				     Opts, El);
 do_decode(<<"query">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_retract_query(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_retract_query(<<"https://xabber.com/protocol/rewrite">>,
 				Opts, El);
 do_decode(<<"body">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_replace_message_body(<<"https://xabber.com/protocol/rewrite">>,
 				       Opts, El);
 do_decode(<<"body">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_replace_message_body(<<"https://xabber.com/protocol/rewrite#notify">>,
 				       Opts, El);
 do_decode(<<"message">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_replace_message(<<"https://xabber.com/protocol/rewrite">>,
 				  Opts, El);
 do_decode(<<"message">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_replace_message(<<"https://xabber.com/protocol/rewrite#notify">>,
 				  Opts, El);
 do_decode(<<"replace">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_replace(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_replace(<<"https://xabber.com/protocol/rewrite">>,
 			  Opts, El);
 do_decode(<<"replace">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_replace(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_replace(<<"https://xabber.com/protocol/rewrite#notify">>,
 			  Opts, El);
 do_decode(<<"retract-user">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_retract_user(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_retract_user(<<"https://xabber.com/protocol/rewrite">>,
 			       Opts, El);
 do_decode(<<"retract-user">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_retract_user(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_retract_user(<<"https://xabber.com/protocol/rewrite#notify">>,
 			       Opts, El);
 do_decode(<<"retract-all">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_retract_all(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_retract_all(<<"https://xabber.com/protocol/rewrite">>,
 			      Opts, El);
 do_decode(<<"retract-all">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_retract_all(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_retract_all(<<"https://xabber.com/protocol/rewrite#notify">>,
 			      Opts, El);
 do_decode(<<"retract-message">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_retract_message(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_retract_message(<<"https://xabber.com/protocol/rewrite">>,
 				  Opts, El);
 do_decode(<<"retract-message">>,
-	  <<"http://xabber.com/protocol/rewrite#notify">>, El,
+	  <<"https://xabber.com/protocol/rewrite#notify">>, El,
 	  Opts) ->
-    decode_xabber_retract_message(<<"http://xabber.com/protocol/rewrite#notify">>,
+    decode_xabber_retract_message(<<"https://xabber.com/protocol/rewrite#notify">>,
 				  Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -75,31 +75,32 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"invalidate">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
-     {<<"query">>, <<"http://xabber.com/protocol/rewrite">>},
-     {<<"body">>, <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
+     {<<"query">>,
+      <<"https://xabber.com/protocol/rewrite">>},
+     {<<"body">>, <<"https://xabber.com/protocol/rewrite">>},
      {<<"body">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
      {<<"message">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"message">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
      {<<"replace">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"replace">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
      {<<"retract-user">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"retract-user">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
      {<<"retract-all">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"retract-all">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>},
+      <<"https://xabber.com/protocol/rewrite#notify">>},
      {<<"retract-message">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"retract-message">>,
-      <<"http://xabber.com/protocol/rewrite#notify">>}].
+      <<"https://xabber.com/protocol/rewrite#notify">>}].
 
 do_encode({xabber_retract_message, _, _, _, _, _, _,
 	   _} =
@@ -152,16 +153,16 @@ do_get_ns({xabber_replace, Xmlns, _, _, _, _, _, _,
 	   _}) ->
     Xmlns;
 do_get_ns({xabber_replace_message, _, _, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/rewrite">>;
+    <<"https://xabber.com/protocol/rewrite">>;
 do_get_ns({xabber_retract_all, Xmlns, _, _, _, _}) ->
     Xmlns;
 do_get_ns({xabber_retract_invalidate, _}) ->
-    <<"http://xabber.com/protocol/rewrite#notify">>;
+    <<"https://xabber.com/protocol/rewrite#notify">>;
 do_get_ns({xabber_retract_message, Xmlns, _, _, _, _, _,
 	   _}) ->
     Xmlns;
 do_get_ns({xabber_retract_query, _, _, _}) ->
-    <<"http://xabber.com/protocol/rewrite">>;
+    <<"https://xabber.com/protocol/rewrite">>;
 do_get_ns({xabber_retract_user, Xmlns, _, _, _, _, _,
 	   _}) ->
     Xmlns.
@@ -249,7 +250,7 @@ encode_xabber_retract_invalidate({xabber_retract_invalidate,
 				  Version},
 				 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/rewrite#notify">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/rewrite#notify">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -317,7 +318,7 @@ encode_xabber_retract_query({xabber_retract_query,
 			     Version, Less_than, Type},
 			    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/rewrite">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/rewrite">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -403,8 +404,8 @@ decode_xabber_replace_message_body_els(__TopXMLNS,
 
 encode_xabber_replace_message_body(Cdata, __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = encode_xabber_replace_message_body_cdata(Cdata,
 						    []),
@@ -445,17 +446,17 @@ decode_xabber_replace_message_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/rewrite">> ->
+      <<"https://xabber.com/protocol/rewrite">> ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    _els, Replaced, Stanza_id,
-					    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite">>,
+					    decode_xabber_replace_message_body(<<"https://xabber.com/protocol/rewrite">>,
 									       __Opts,
 									       _el),
 					    __Els);
-      <<"http://xabber.com/protocol/rewrite#notify">> ->
+      <<"https://xabber.com/protocol/rewrite#notify">> ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    _els, Replaced, Stanza_id,
-					    decode_xabber_replace_message_body(<<"http://xabber.com/protocol/rewrite#notify">>,
+					    decode_xabber_replace_message_body(<<"https://xabber.com/protocol/rewrite#notify">>,
 									       __Opts,
 									       _el),
 					    __Els);
@@ -490,10 +491,10 @@ decode_xabber_replace_message_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/rewrite">> ->
+      <<"https://xabber.com/protocol/rewrite">> ->
 	  decode_xabber_replace_message_els(__TopXMLNS, __Opts,
 					    _els,
-					    unique:decode_xabber_replaced(<<"http://xabber.com/protocol/rewrite">>,
+					    unique:decode_xabber_replaced(<<"https://xabber.com/protocol/rewrite">>,
 									  __Opts,
 									  _el),
 					    Stanza_id, Body, __Els);
@@ -555,8 +556,8 @@ encode_xabber_replace_message({xabber_replace_message,
 			       From, To, Body, Stanza_id, Replaced, __Els},
 			      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
@@ -656,14 +657,14 @@ decode_xabber_replace_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/rewrite">> ->
+      <<"https://xabber.com/protocol/rewrite">> ->
 	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
-				    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite">>,
+				    decode_xabber_replace_message(<<"https://xabber.com/protocol/rewrite">>,
 								  __Opts, _el),
 				    __Els);
-      <<"http://xabber.com/protocol/rewrite#notify">> ->
+      <<"https://xabber.com/protocol/rewrite#notify">> ->
 	  decode_xabber_replace_els(__TopXMLNS, __Opts, _els,
-				    decode_xabber_replace_message(<<"http://xabber.com/protocol/rewrite#notify">>,
+				    decode_xabber_replace_message(<<"https://xabber.com/protocol/rewrite#notify">>,
 								  __Opts, _el),
 				    __Els);
       _ ->
@@ -747,8 +748,8 @@ encode_xabber_replace({xabber_replace, Xmlns, Id, By,
 		       __Els},
 		      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
@@ -934,8 +935,8 @@ encode_xabber_retract_user({xabber_retract_user, Xmlns,
 			    Id, By, Symmetric, Version, Conversation, Type},
 			   __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [],
     _attrs = encode_xabber_retract_user_attr_by(By,
@@ -1110,8 +1111,8 @@ encode_xabber_retract_all({xabber_retract_all, Xmlns,
 			   Symmetric, Version, Conversation, Type},
 			  __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [],
     _attrs = encode_xabber_retract_all_attr_type(Type,
@@ -1283,8 +1284,8 @@ encode_xabber_retract_message({xabber_retract_message,
 			       Type},
 			      __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
-						[<<"http://xabber.com/protocol/rewrite">>,
-						 <<"http://xabber.com/protocol/rewrite#notify">>],
+						[<<"https://xabber.com/protocol/rewrite">>,
+						 <<"https://xabber.com/protocol/rewrite#notify">>],
 						__TopXMLNS),
     _els = [],
     _attrs = encode_xabber_retract_message_attr_by(By,

@@ -6,69 +6,69 @@
 -compile(export_all).
 
 do_decode(<<"call">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_call(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_call(<<"https://xabber.com/protocol/synchronization">>,
 				    Opts, El);
 do_decode(<<"last-message">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_last(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_last(<<"https://xabber.com/protocol/synchronization">>,
 				    Opts, El);
 do_decode(<<"unread-mention">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_unread_mention(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_unread_mention(<<"https://xabber.com/protocol/synchronization">>,
 					      Opts, El);
 do_decode(<<"delivered">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_delivered(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_delivered(<<"https://xabber.com/protocol/synchronization">>,
 					 Opts, El);
 do_decode(<<"displayed">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_displayed(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_displayed(<<"https://xabber.com/protocol/synchronization">>,
 					 Opts, El);
 do_decode(<<"unread">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_unread(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_unread(<<"https://xabber.com/protocol/synchronization">>,
 				      Opts, El);
 do_decode(<<"retract">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation_retract(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation_retract(<<"https://xabber.com/protocol/synchronization">>,
 				       Opts, El);
 do_decode(<<"metadata">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_metadata(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_metadata(<<"https://xabber.com/protocol/synchronization">>,
 			   Opts, El);
 do_decode(<<"conversation">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 			       Opts, El);
 do_decode(<<"query">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_synchronization_query(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_synchronization_query(<<"https://xabber.com/protocol/synchronization">>,
 					Opts, El);
 do_decode(<<"deleted">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_deleted_conversation(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_deleted_conversation(<<"https://xabber.com/protocol/synchronization">>,
 				       Opts, El);
 do_decode(<<"delete">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_synchronization_delete(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_synchronization_delete(<<"https://xabber.com/protocol/synchronization">>,
 					 Opts, El);
 do_decode(<<"synchronization">>,
-	  <<"http://xabber.com/protocol/synchronization">>, El,
+	  <<"https://xabber.com/protocol/synchronization">>, El,
 	  Opts) ->
-    decode_xabber_synchronization(<<"http://xabber.com/protocol/synchronization">>,
+    decode_xabber_synchronization(<<"https://xabber.com/protocol/synchronization">>,
 				  Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -77,31 +77,31 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"call">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"last-message">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"unread-mention">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"delivered">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"displayed">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"unread">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"retract">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"metadata">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"conversation">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"query">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"deleted">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"delete">>,
-      <<"http://xabber.com/protocol/synchronization">>},
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"synchronization">>,
-      <<"http://xabber.com/protocol/synchronization">>}].
+      <<"https://xabber.com/protocol/synchronization">>}].
 
 do_encode({xabber_synchronization, _, _, _} =
 	      Synchronization,
@@ -179,31 +179,31 @@ do_get_name({xabber_synchronization_query, _, _, _,
     <<"query">>.
 
 do_get_ns({xabber_conversation, _, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_call, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_delivered, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_displayed, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_last, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_retract, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_unread, _, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_conversation_unread_mention, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_delete, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_deleted_conversation}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_metadata, _, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_synchronization, _, _, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>;
+    <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({xabber_synchronization_query, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/synchronization">>.
+    <<"https://xabber.com/protocol/synchronization">>.
 
 get_els({xabber_synchronization_query, _stamp, _rsm,
 	 _xdata, _sub_els}) ->
@@ -314,7 +314,7 @@ encode_xabber_conversation_call({xabber_conversation_call,
 				 __Els},
 				__TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
@@ -363,7 +363,7 @@ encode_xabber_conversation_last({xabber_conversation_last,
 				 __Els},
 				__TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
@@ -398,7 +398,7 @@ encode_xabber_conversation_unread_mention({xabber_conversation_unread_mention,
 					   Id},
 					  __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -444,7 +444,7 @@ encode_xabber_conversation_delivered({xabber_conversation_delivered,
 				      Id},
 				     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -489,7 +489,7 @@ encode_xabber_conversation_displayed({xabber_conversation_displayed,
 				      Id},
 				     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -542,7 +542,7 @@ encode_xabber_conversation_unread({xabber_conversation_unread,
 				   Count, After},
 				  __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -609,7 +609,7 @@ encode_xabber_conversation_retract({xabber_conversation_retract,
 				    Version},
 				   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
@@ -686,7 +686,7 @@ decode_xabber_metadata_attrs(__TopXMLNS, [], Node) ->
 encode_xabber_metadata({xabber_metadata, Node, __Els},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
@@ -781,7 +781,7 @@ encode_xabber_conversation({xabber_conversation, Type,
 			    Jid, Stamp, Thread, __Els},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
@@ -954,7 +954,7 @@ encode_xabber_synchronization_query({xabber_synchronization_query,
 				     Stamp, Rsm, Xdata, __Els},
 				    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
@@ -1005,7 +1005,7 @@ decode_xabber_deleted_conversation(__TopXMLNS, __Opts,
 encode_xabber_deleted_conversation({xabber_deleted_conversation},
 				   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -1032,10 +1032,10 @@ decode_xabber_synchronization_delete_els(__TopXMLNS,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_delete_els(__TopXMLNS,
 						   __Opts, _els,
-						   [decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+						   [decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 									       __Opts,
 									       _el)
 						    | Conversation]);
@@ -1052,7 +1052,7 @@ encode_xabber_synchronization_delete({xabber_delete,
 				      Conversation},
 				     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_delete_$conversation'(Conversation,
@@ -1093,10 +1093,10 @@ decode_xabber_synchronization_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_els(__TopXMLNS, __Opts,
 					    _els, Rsm,
-					    [decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+					    [decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 									__Opts,
 									_el)
 					     | Conversation]);
@@ -1142,7 +1142,7 @@ encode_xabber_synchronization({xabber_synchronization,
 			       Stamp, Conversation, Rsm},
 			      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/synchronization">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_$rsm'(Rsm,

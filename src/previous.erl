@@ -6,8 +6,8 @@
 -compile(export_all).
 
 do_decode(<<"previous-id">>,
-	  <<"http://xabber.com/protocol/previous">>, El, Opts) ->
-    decode_previous_id(<<"http://xabber.com/protocol/previous">>,
+	  <<"https://xabber.com/protocol/previous">>, El, Opts) ->
+    decode_previous_id(<<"https://xabber.com/protocol/previous">>,
 		       Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -16,7 +16,7 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"previous-id">>,
-      <<"http://xabber.com/protocol/previous">>}].
+      <<"https://xabber.com/protocol/previous">>}].
 
 do_encode({previous_id, _} = Previous_id, TopXMLNS) ->
     encode_previous_id(Previous_id, TopXMLNS).
@@ -24,7 +24,7 @@ do_encode({previous_id, _} = Previous_id, TopXMLNS) ->
 do_get_name({previous_id, _}) -> <<"previous-id">>.
 
 do_get_ns({previous_id, _}) ->
-    <<"http://xabber.com/protocol/previous">>.
+    <<"https://xabber.com/protocol/previous">>.
 
 pp(previous_id, 1) -> [id];
 pp(_, _) -> no.
@@ -48,7 +48,7 @@ decode_previous_id_attrs(__TopXMLNS, [], Id) ->
 
 encode_previous_id({previous_id, Id}, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/previous">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/previous">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_previous_id_attr_id(Id,

@@ -6,99 +6,99 @@
 -compile(export_all).
 
 do_decode(<<"ip">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_ip_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_ip_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 			       Opts, El);
 do_decode(<<"token-uid">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_uid_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_uid_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				Opts, El);
 do_decode(<<"description">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_desc_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_desc_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				 Opts, El);
 do_decode(<<"expire">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_expire_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_expire_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				   Opts, El);
 do_decode(<<"last-auth">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_last_auth(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_last_auth(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				 Opts, El);
 do_decode(<<"field">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_field(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_field(<<"https://xabber.com/protocol/auth-tokens#items">>,
 			     Opts, El);
 do_decode(<<"x">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_x_tokens(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_x_tokens(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				Opts, El);
 do_decode(<<"query">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken_query(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken_query(<<"https://xabber.com/protocol/auth-tokens#items">>,
 			     Opts, El);
 do_decode(<<"expire">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_expire(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_expire(<<"https://xabber.com/protocol/auth-tokens">>,
 			      Opts, El);
 do_decode(<<"device">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_device(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_device(<<"https://xabber.com/protocol/auth-tokens">>,
 			      Opts, El);
 do_decode(<<"client">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_client(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_client(<<"https://xabber.com/protocol/auth-tokens">>,
 			      Opts, El);
 do_decode(<<"token-uid">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_uid(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_uid(<<"https://xabber.com/protocol/auth-tokens">>,
 			   Opts, El);
 do_decode(<<"token">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens">>,
 		       Opts, El);
 do_decode(<<"token">>,
-	  <<"http://xabber.com/protocol/auth-tokens#items">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens#items">>, El,
 	  Opts) ->
-    decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens#items">>,
+    decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens#items">>,
 		       Opts, El);
 do_decode(<<"revoke-all">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_revoke_all(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_revoke_all(<<"https://xabber.com/protocol/auth-tokens">>,
 				  Opts, El);
 do_decode(<<"x-token">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_feature(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_feature(<<"https://xabber.com/protocol/auth-tokens">>,
 			       Opts, El);
 do_decode(<<"revoke">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_revoke(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_revoke(<<"https://xabber.com/protocol/auth-tokens">>,
 			      Opts, El);
 do_decode(<<"x">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_x_token(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_x_token(<<"https://xabber.com/protocol/auth-tokens">>,
 			       Opts, El);
 do_decode(<<"issue">>,
-	  <<"http://xabber.com/protocol/auth-tokens">>, El,
+	  <<"https://xabber.com/protocol/auth-tokens">>, El,
 	  Opts) ->
-    decode_xabbertoken_issue(<<"http://xabber.com/protocol/auth-tokens">>,
+    decode_xabbertoken_issue(<<"https://xabber.com/protocol/auth-tokens">>,
 			     Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -107,42 +107,43 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"ip">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"token-uid">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"description">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"expire">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"last-auth">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"field">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"x">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"query">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"expire">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"device">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"client">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"token-uid">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"token">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"token">>,
-      <<"http://xabber.com/protocol/auth-tokens#items">>},
+      <<"https://xabber.com/protocol/auth-tokens#items">>},
      {<<"revoke-all">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"x-token">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"revoke">>,
-      <<"http://xabber.com/protocol/auth-tokens">>},
-     {<<"x">>, <<"http://xabber.com/protocol/auth-tokens">>},
+      <<"https://xabber.com/protocol/auth-tokens">>},
+     {<<"x">>,
+      <<"https://xabber.com/protocol/auth-tokens">>},
      {<<"issue">>,
-      <<"http://xabber.com/protocol/auth-tokens">>}].
+      <<"https://xabber.com/protocol/auth-tokens">>}].
 
 do_encode({xabbertoken_issue, _, _, _} = Issue,
 	  TopXMLNS) ->
@@ -179,21 +180,21 @@ do_get_name({xabbertoken_x_fields, _}) -> <<"x">>;
 do_get_name({xabbertoken_x_token, _, _, _}) -> <<"x">>.
 
 do_get_ns({xabbertoken_feature}) ->
-    <<"http://xabber.com/protocol/auth-tokens">>;
+    <<"https://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_field, _, _, _, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens#items">>;
+    <<"https://xabber.com/protocol/auth-tokens#items">>;
 do_get_ns({xabbertoken_issue, _, _, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens">>;
+    <<"https://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_query, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens#items">>;
+    <<"https://xabber.com/protocol/auth-tokens#items">>;
 do_get_ns({xabbertoken_revoke, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens">>;
+    <<"https://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_revoke_all}) ->
-    <<"http://xabber.com/protocol/auth-tokens">>;
+    <<"https://xabber.com/protocol/auth-tokens">>;
 do_get_ns({xabbertoken_x_fields, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens#items">>;
+    <<"https://xabber.com/protocol/auth-tokens#items">>;
 do_get_ns({xabbertoken_x_token, _, _, _}) ->
-    <<"http://xabber.com/protocol/auth-tokens">>.
+    <<"https://xabber.com/protocol/auth-tokens">>.
 
 pp(xabbertoken_issue, 3) -> [client, device, expire];
 pp(xabbertoken_x_token, 3) ->
@@ -233,7 +234,7 @@ decode_xabbertoken_ip_item_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_ip_item(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_ip_item_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -269,7 +270,7 @@ decode_xabbertoken_uid_item_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_uid_item(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_uid_item_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -305,7 +306,7 @@ decode_xabbertoken_desc_item_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_desc_item(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_desc_item_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -341,7 +342,7 @@ decode_xabbertoken_expire_item_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_expire_item(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_expire_item_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -380,7 +381,7 @@ decode_xabbertoken_last_auth_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_last_auth(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_last_auth_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -416,10 +417,10 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
 				       Ip, Last, Client, Expire, Device,
-				       decode_xabbertoken_uid_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+				       decode_xabbertoken_uid_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 								   __Opts,
 								   _el));
       _ ->
@@ -432,10 +433,10 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
 				       Ip, Last,
-				       decode_xabbertoken_client(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken_client(<<"https://xabber.com/protocol/auth-tokens">>,
 								 __Opts, _el),
 				       Expire, Device, Token);
       _ ->
@@ -448,10 +449,10 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
 				       Ip, Last, Client, Expire,
-				       decode_xabbertoken_device(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken_device(<<"https://xabber.com/protocol/auth-tokens">>,
 								 __Opts, _el),
 				       Token);
       _ ->
@@ -464,9 +465,9 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
-				       decode_xabbertoken_ip_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+				       decode_xabbertoken_ip_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 								  __Opts, _el),
 				       Last, Client, Expire, Device, Token);
       _ ->
@@ -479,10 +480,10 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
 				       Ip,
-				       decode_xabbertoken_last_auth(<<"http://xabber.com/protocol/auth-tokens#items">>,
+				       decode_xabbertoken_last_auth(<<"https://xabber.com/protocol/auth-tokens#items">>,
 								    __Opts,
 								    _el),
 				       Client, Expire, Device, Token);
@@ -496,10 +497,10 @@ decode_xabbertoken_field_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_field_els(__TopXMLNS, __Opts, _els,
 				       Ip, Last, Client,
-				       decode_xabbertoken_expire_item(<<"http://xabber.com/protocol/auth-tokens#items">>,
+				       decode_xabbertoken_expire_item(<<"https://xabber.com/protocol/auth-tokens#items">>,
 								      __Opts,
 								      _el),
 				       Device, Token);
@@ -527,7 +528,7 @@ encode_xabbertoken_field({xabbertoken_field, Var, Token,
 			  Client, Device, Ip, Last, Expire},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els = lists:reverse('encode_xabbertoken_field_$ip'(Ip,
 							__NewTopXMLNS,
@@ -614,10 +615,10 @@ decode_xabbertoken_x_tokens_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_x_tokens_els(__TopXMLNS, __Opts,
 					  _els,
-					  [decode_xabbertoken_field(<<"http://xabber.com/protocol/auth-tokens#items">>,
+					  [decode_xabbertoken_field(<<"https://xabber.com/protocol/auth-tokens#items">>,
 								    __Opts, _el)
 					   | Field]);
       _ ->
@@ -633,7 +634,7 @@ encode_xabbertoken_x_tokens({xabbertoken_x_fields,
 			     Field},
 			    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabbertoken_x_tokens_$field'(Field,
@@ -667,13 +668,13 @@ decode_xabbertoken_query_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_query_els(__TopXMLNS, __Opts, _els,
-				       decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens">>,
 							  __Opts, _el));
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_query_els(__TopXMLNS, __Opts, _els,
-				       decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens#items">>,
+				       decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens#items">>,
 							  __Opts, _el));
       _ ->
 	  decode_xabbertoken_query_els(__TopXMLNS, __Opts, _els,
@@ -687,7 +688,7 @@ decode_xabbertoken_query_els(__TopXMLNS, __Opts,
 encode_xabbertoken_query({xabbertoken_query, Token},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens#items">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens#items">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabbertoken_query_$token'(Token,
@@ -723,7 +724,7 @@ decode_xabbertoken_expire_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_expire(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_expire_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -759,7 +760,7 @@ decode_xabbertoken_device_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_device(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_device_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -795,7 +796,7 @@ decode_xabbertoken_client_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_client(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_client_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -831,7 +832,7 @@ decode_xabbertoken_uid_els(__TopXMLNS, __Opts,
 
 encode_xabbertoken_uid(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = encode_xabbertoken_uid_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -864,8 +865,8 @@ decode_xabbertoken_els(__TopXMLNS, __Opts, [_ | _els],
 
 encode_xabbertoken(Cdata, __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
-						[<<"http://xabber.com/protocol/auth-tokens">>,
-						 <<"http://xabber.com/protocol/auth-tokens#items">>],
+						[<<"https://xabber.com/protocol/auth-tokens">>,
+						 <<"https://xabber.com/protocol/auth-tokens#items">>],
 						__TopXMLNS),
     _els = encode_xabbertoken_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -887,7 +888,7 @@ decode_xabbertoken_revoke_all(__TopXMLNS, __Opts,
 encode_xabbertoken_revoke_all({xabbertoken_revoke_all},
 			      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -901,7 +902,7 @@ decode_xabbertoken_feature(__TopXMLNS, __Opts,
 encode_xabbertoken_feature({xabbertoken_feature},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -924,9 +925,9 @@ decode_xabbertoken_revoke_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_revoke_els(__TopXMLNS, __Opts, _els,
-					[decode_xabbertoken_uid(<<"http://xabber.com/protocol/auth-tokens">>,
+					[decode_xabbertoken_uid(<<"https://xabber.com/protocol/auth-tokens">>,
 								__Opts, _el)
 					 | Token_uid]);
       _ ->
@@ -942,7 +943,7 @@ encode_xabbertoken_revoke({xabbertoken_revoke,
 			   Token_uid},
 			  __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabbertoken_revoke_$token_uid'(Token_uid,
@@ -979,15 +980,15 @@ decode_xabbertoken_x_token_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_x_token_els(__TopXMLNS, __Opts, _els,
 					 Token_uid, Expire,
-					 decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens">>,
+					 decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens">>,
 							    __Opts, _el));
-      <<"http://xabber.com/protocol/auth-tokens#items">> ->
+      <<"https://xabber.com/protocol/auth-tokens#items">> ->
 	  decode_xabbertoken_x_token_els(__TopXMLNS, __Opts, _els,
 					 Token_uid, Expire,
-					 decode_xabbertoken(<<"http://xabber.com/protocol/auth-tokens#items">>,
+					 decode_xabbertoken(<<"https://xabber.com/protocol/auth-tokens#items">>,
 							    __Opts, _el));
       _ ->
 	  decode_xabbertoken_x_token_els(__TopXMLNS, __Opts, _els,
@@ -1000,9 +1001,9 @@ decode_xabbertoken_x_token_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_x_token_els(__TopXMLNS, __Opts, _els,
-					 decode_xabbertoken_uid(<<"http://xabber.com/protocol/auth-tokens">>,
+					 decode_xabbertoken_uid(<<"https://xabber.com/protocol/auth-tokens">>,
 								__Opts, _el),
 					 Expire, Token);
       _ ->
@@ -1015,10 +1016,10 @@ decode_xabbertoken_x_token_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_x_token_els(__TopXMLNS, __Opts, _els,
 					 Token_uid,
-					 decode_xabbertoken_expire(<<"http://xabber.com/protocol/auth-tokens">>,
+					 decode_xabbertoken_expire(<<"https://xabber.com/protocol/auth-tokens">>,
 								   __Opts, _el),
 					 Token);
       _ ->
@@ -1034,7 +1035,7 @@ encode_xabbertoken_x_token({xabbertoken_x_token, Token,
 			    Token_uid, Expire},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabbertoken_x_token_$token_uid'(Token_uid,
@@ -1085,9 +1086,9 @@ decode_xabbertoken_issue_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_issue_els(__TopXMLNS, __Opts, _els,
-				       decode_xabbertoken_client(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken_client(<<"https://xabber.com/protocol/auth-tokens">>,
 								 __Opts, _el),
 				       Expire, Device);
       _ ->
@@ -1100,10 +1101,10 @@ decode_xabbertoken_issue_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_issue_els(__TopXMLNS, __Opts, _els,
 				       Client, Expire,
-				       decode_xabbertoken_device(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken_device(<<"https://xabber.com/protocol/auth-tokens">>,
 								 __Opts, _el));
       _ ->
 	  decode_xabbertoken_issue_els(__TopXMLNS, __Opts, _els,
@@ -1115,10 +1116,10 @@ decode_xabbertoken_issue_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/auth-tokens">> ->
+      <<"https://xabber.com/protocol/auth-tokens">> ->
 	  decode_xabbertoken_issue_els(__TopXMLNS, __Opts, _els,
 				       Client,
-				       decode_xabbertoken_expire(<<"http://xabber.com/protocol/auth-tokens">>,
+				       decode_xabbertoken_expire(<<"https://xabber.com/protocol/auth-tokens">>,
 								 __Opts, _el),
 				       Device);
       _ ->
@@ -1134,7 +1135,7 @@ encode_xabbertoken_issue({xabbertoken_issue, Client,
 			  Device, Expire},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/auth-tokens">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/auth-tokens">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabbertoken_issue_$client'(Client,

@@ -188,30 +188,30 @@
 -define(NS_AVATAR_DATA, <<"urn:xmpp:avatar:data">>).
 -define(NS_AVATAR_METADATA, <<"urn:xmpp:avatar:metadata">>).
 -define(NS_PEP_VCARD_CONVERSION_0, <<"urn:xmpp:pep-vcard-conversion:0">>).
--define(NS_UNIQUE, <<"http://xabber.com/protocol/delivery">>).
--define(NS_PREVIOUS, <<"http://xabber.com/protocol/previous">>).
--define(NS_GROUPCHAT, <<"http://xabber.com/protocol/groupchat">>).
--define(NS_XABBER_TOKEN,<<"http://xabber.com/protocol/auth-tokens">>).
--define(NS_XABBER_TOKEN_QUERY,<<"http://xabber.com/protocol/auth-tokens#items">>).
--define(NS_GROUPCHAT_RETRACT,<<"http://xabber.com/protocol/retract">>).
--define(NS_GROUPCHAT_RETRACT_HISTORY,<<"http://xabber.com/protocol/groupchat#history">>).
--define(NS_XABBER_REWRITE,<<"http://xabber.com/protocol/rewrite">>).
--define(NS_XABBER_REWRITE_NOTIFY,<<"http://xabber.com/protocol/rewrite#notify">>).
+-define(NS_UNIQUE, <<"https://xabber.com/protocol/delivery">>).
+-define(NS_PREVIOUS, <<"https://xabber.com/protocol/previous">>).
+-define(NS_GROUPCHAT, <<"https://xabber.com/protocol/groups">>).
+-define(NS_XABBER_TOKEN,<<"https://xabber.com/protocol/auth-tokens">>).
+-define(NS_XABBER_TOKEN_QUERY,<<"https://xabber.com/protocol/auth-tokens#items">>).
+-define(NS_GROUPCHAT_RETRACT,<<"https://xabber.com/protocol/retract">>).
+-define(NS_GROUPCHAT_RETRACT_HISTORY,<<"https://xabber.com/protocol/groups#history">>).
+-define(NS_XABBER_REWRITE,<<"https://xabber.com/protocol/rewrite">>).
+-define(NS_XABBER_REWRITE_NOTIFY,<<"https://xabber.com/protocol/rewrite#notify">>).
 -define(NS_REFERENCE_0, <<"https://xabber.com/protocol/reference">>).
 -define(NS_XABBER_MARKUP, <<"https://xabber.com/protocol/markup">>).
--define(NS_GROUPCHAT_UPDATE, <<"http://xabber.com/protocol/groupchat#update">>).
--define(NS_GROUPCHAT_USER_UPDATED, <<"http://xabber.com/protocol/groupchat#user-updated">>).
--define(NS_GROUPCHAT_USER_LEFT, <<"http://xabber.com/protocol/groupchat#left">>).
--define(NS_GROUPCHAT_USER_JOIN, <<"http://xabber.com/protocol/groupchat#join">>).
--define(NS_GROUPCHAT_USER_KICK, <<"http://xabber.com/protocol/groupchat#kick">>).
--define(NS_GROUPCHAT_SYSTEM_MESSAGE, <<"http://xabber.com/protocol/groupchat#system-message">>).
--define(NS_GROUPCHAT_RIGHTS, <<"http://xabber.com/protocol/groupchat#rights">>).
--define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"http://xabber.com/protocol/groupchat#default-rights">>).
--define(NS_GROUPCHAT_MEMBERS, <<"http://xabber.com/protocol/groupchat#members">>).
--define(NS_GROUPCHAT_CREATE, <<"http://xabber.com/protocol/groupchat#create">>).
--define(NS_GROUPCHAT_DELETE, <<"http://xabber.com/protocol/groupchat#delete">>).
--define(NS_XABBER_SYNCHRONIZATION, <<"http://xabber.com/protocol/synchronization">>).
+-define(NS_GROUPCHAT_UPDATE, <<"https://xabber.com/protocol/groups#update">>).
+-define(NS_GROUPCHAT_USER_UPDATED, <<"https://xabber.com/protocol/groups#user-updated">>).
+-define(NS_GROUPCHAT_USER_LEFT, <<"https://xabber.com/protocol/groups#left">>).
+-define(NS_GROUPCHAT_USER_JOIN, <<"https://xabber.com/protocol/groups#join">>).
+-define(NS_GROUPCHAT_USER_KICK, <<"https://xabber.com/protocol/groups#kick">>).
+-define(NS_GROUPCHAT_SYSTEM_MESSAGE, <<"https://xabber.com/protocol/groups#system-message">>).
+-define(NS_GROUPCHAT_RIGHTS, <<"https://xabber.com/protocol/groups#rights">>).
+-define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"https://xabber.com/protocol/groups#default-rights">>).
+-define(NS_GROUPCHAT_MEMBERS, <<"https://xabber.com/protocol/groups#members">>).
+-define(NS_GROUPCHAT_CREATE, <<"https://xabber.com/protocol/groups#create">>).
+-define(NS_GROUPCHAT_DELETE, <<"https://xabber.com/protocol/groups#delete">>).
+-define(NS_XABBER_SYNCHRONIZATION, <<"https://xabber.com/protocol/synchronization">>).
 -define(NS_JINGLE_MESSAGE, <<"urn:xmpp:jingle-message:0">>).
--define(NS_XABBER_ARCHIVE, <<"http://xabber.com/protocol/archive">>).
--define(NS_XABBER_ARCHIVED, <<"http://xabber.com/protocol/archived">>).
--define(NS_XABBER_PINNED, <<"http://xabber.com/protocol/pinned">>).
+-define(NS_XABBER_ARCHIVE, <<"https://xabber.com/protocol/archive">>).
+-define(NS_XABBER_ARCHIVED, <<"https://xabber.com/protocol/archived">>).
+-define(NS_XABBER_PINNED, <<"https://xabber.com/protocol/pinned">>).

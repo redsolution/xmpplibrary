@@ -6,24 +6,24 @@
 -compile(export_all).
 
 do_decode(<<"replaced">>,
-	  <<"http://xabber.com/protocol/rewrite">>, El, Opts) ->
-    decode_xabber_replaced(<<"http://xabber.com/protocol/rewrite">>,
+	  <<"https://xabber.com/protocol/rewrite">>, El, Opts) ->
+    decode_xabber_replaced(<<"https://xabber.com/protocol/rewrite">>,
 			   Opts, El);
 do_decode(<<"retry">>,
-	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
-    decode_delivery_retry(<<"http://xabber.com/protocol/delivery">>,
+	  <<"https://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_delivery_retry(<<"https://xabber.com/protocol/delivery">>,
 			  Opts, El);
 do_decode(<<"request">>,
-	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
-    decode_unique_request(<<"http://xabber.com/protocol/delivery">>,
+	  <<"https://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_request(<<"https://xabber.com/protocol/delivery">>,
 			  Opts, El);
 do_decode(<<"received">>,
-	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
-    decode_unique_received(<<"http://xabber.com/protocol/delivery">>,
+	  <<"https://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_received(<<"https://xabber.com/protocol/delivery">>,
 			   Opts, El);
 do_decode(<<"time">>,
-	  <<"http://xabber.com/protocol/delivery">>, El, Opts) ->
-    decode_unique_time(<<"http://xabber.com/protocol/delivery">>,
+	  <<"https://xabber.com/protocol/delivery">>, El, Opts) ->
+    decode_unique_time(<<"https://xabber.com/protocol/delivery">>,
 		       Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -32,15 +32,15 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"replaced">>,
-      <<"http://xabber.com/protocol/rewrite">>},
+      <<"https://xabber.com/protocol/rewrite">>},
      {<<"retry">>,
-      <<"http://xabber.com/protocol/delivery">>},
+      <<"https://xabber.com/protocol/delivery">>},
      {<<"request">>,
-      <<"http://xabber.com/protocol/delivery">>},
+      <<"https://xabber.com/protocol/delivery">>},
      {<<"received">>,
-      <<"http://xabber.com/protocol/delivery">>},
+      <<"https://xabber.com/protocol/delivery">>},
      {<<"time">>,
-      <<"http://xabber.com/protocol/delivery">>}].
+      <<"https://xabber.com/protocol/delivery">>}].
 
 do_encode({unique_time, _, _} = Time, TopXMLNS) ->
     encode_unique_time(Time, TopXMLNS);
@@ -62,15 +62,15 @@ do_get_name({unique_request, _, _}) -> <<"request">>;
 do_get_name({unique_time, _, _}) -> <<"time">>.
 
 do_get_ns({delivery_retry, _}) ->
-    <<"http://xabber.com/protocol/delivery">>;
+    <<"https://xabber.com/protocol/delivery">>;
 do_get_ns({replaced, _, _}) ->
-    <<"http://xabber.com/protocol/rewrite">>;
+    <<"https://xabber.com/protocol/rewrite">>;
 do_get_ns({unique_received, _, _, _, _, _}) ->
-    <<"http://xabber.com/protocol/delivery">>;
+    <<"https://xabber.com/protocol/delivery">>;
 do_get_ns({unique_request, _, _}) ->
-    <<"http://xabber.com/protocol/delivery">>;
+    <<"https://xabber.com/protocol/delivery">>;
 do_get_ns({unique_time, _, _}) ->
-    <<"http://xabber.com/protocol/delivery">>.
+    <<"https://xabber.com/protocol/delivery">>.
 
 pp(unique_time, 2) -> [stamp, by];
 pp(unique_received, 5) ->
@@ -115,7 +115,7 @@ decode_xabber_replaced_attrs(__TopXMLNS, [], Stamp,
 encode_xabber_replaced({replaced, Stamp, Body},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/rewrite">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/rewrite">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_xabber_replaced_attr_body(Body,
@@ -169,7 +169,7 @@ decode_delivery_retry_attrs(__TopXMLNS, [], To) ->
 encode_delivery_retry({delivery_retry, To},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_delivery_retry_attr_to(To,
@@ -217,7 +217,7 @@ decode_unique_request_attrs(__TopXMLNS, [], Retry,
 encode_unique_request({unique_request, Retry, To},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_unique_request_attr_to(To,
@@ -306,10 +306,10 @@ decode_unique_received_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/previous">> ->
+      <<"https://xabber.com/protocol/previous">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
 				     Forwarded,
-				     previous:decode_previous_id(<<"http://xabber.com/protocol/previous">>,
+				     previous:decode_previous_id(<<"https://xabber.com/protocol/previous">>,
 								 __Opts, _el),
 				     Stanza_id, Origin_id, Time);
       _ ->
@@ -341,11 +341,11 @@ decode_unique_received_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/delivery">> ->
+      <<"https://xabber.com/protocol/delivery">> ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
 				     Forwarded, Previous_id, Stanza_id,
 				     Origin_id,
-				     decode_unique_time(<<"http://xabber.com/protocol/delivery">>,
+				     decode_unique_time(<<"https://xabber.com/protocol/delivery">>,
 							__Opts, _el));
       _ ->
 	  decode_unique_received_els(__TopXMLNS, __Opts, _els,
@@ -363,7 +363,7 @@ encode_unique_received({unique_received, Origin_id,
 			Stanza_id, Previous_id, Time, Forwarded},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_unique_received_$forwarded'(Forwarded,
@@ -443,7 +443,7 @@ decode_unique_time_attrs(__TopXMLNS, [], Stamp, By) ->
 encode_unique_time({unique_time, Stamp, By},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/delivery">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/delivery">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = encode_unique_time_attr_by(By,

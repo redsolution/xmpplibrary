@@ -6,20 +6,20 @@
 -compile(export_all).
 
 do_decode(<<"unarchived">>,
-	  <<"http://xabber.com/protocol/archived">>, El, Opts) ->
-    decode_xabber_unarchived_conversation(<<"http://xabber.com/protocol/archived">>,
+	  <<"https://xabber.com/protocol/archived">>, El, Opts) ->
+    decode_xabber_unarchived_conversation(<<"https://xabber.com/protocol/archived">>,
 					  Opts, El);
 do_decode(<<"archived">>,
-	  <<"http://xabber.com/protocol/archived">>, El, Opts) ->
-    decode_xabber_archived_conversation(<<"http://xabber.com/protocol/archived">>,
+	  <<"https://xabber.com/protocol/archived">>, El, Opts) ->
+    decode_xabber_archived_conversation(<<"https://xabber.com/protocol/archived">>,
 					Opts, El);
 do_decode(<<"unarchive">>,
-	  <<"http://xabber.com/protocol/archived">>, El, Opts) ->
-    decode_xabber_synchronization_unarchive(<<"http://xabber.com/protocol/archived">>,
+	  <<"https://xabber.com/protocol/archived">>, El, Opts) ->
+    decode_xabber_synchronization_unarchive(<<"https://xabber.com/protocol/archived">>,
 					    Opts, El);
 do_decode(<<"archive">>,
-	  <<"http://xabber.com/protocol/archived">>, El, Opts) ->
-    decode_xabber_synchronization_archive(<<"http://xabber.com/protocol/archived">>,
+	  <<"https://xabber.com/protocol/archived">>, El, Opts) ->
+    decode_xabber_synchronization_archive(<<"https://xabber.com/protocol/archived">>,
 					  Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -28,13 +28,13 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"unarchived">>,
-      <<"http://xabber.com/protocol/archived">>},
+      <<"https://xabber.com/protocol/archived">>},
      {<<"archived">>,
-      <<"http://xabber.com/protocol/archived">>},
+      <<"https://xabber.com/protocol/archived">>},
      {<<"unarchive">>,
-      <<"http://xabber.com/protocol/archived">>},
+      <<"https://xabber.com/protocol/archived">>},
      {<<"archive">>,
-      <<"http://xabber.com/protocol/archived">>}].
+      <<"https://xabber.com/protocol/archived">>}].
 
 do_encode({xabber_synchronization_archive, _} = Archive,
 	  TopXMLNS) ->
@@ -63,13 +63,13 @@ do_get_name({xabber_unarchived_conversation}) ->
     <<"unarchived">>.
 
 do_get_ns({xabber_archived_conversation}) ->
-    <<"http://xabber.com/protocol/archived">>;
+    <<"https://xabber.com/protocol/archived">>;
 do_get_ns({xabber_synchronization_archive, _}) ->
-    <<"http://xabber.com/protocol/archived">>;
+    <<"https://xabber.com/protocol/archived">>;
 do_get_ns({xabber_synchronization_unarchive, _}) ->
-    <<"http://xabber.com/protocol/archived">>;
+    <<"https://xabber.com/protocol/archived">>;
 do_get_ns({xabber_unarchived_conversation}) ->
-    <<"http://xabber.com/protocol/archived">>.
+    <<"https://xabber.com/protocol/archived">>.
 
 pp(xabber_synchronization_archive, 1) -> [conversation];
 pp(xabber_synchronization_unarchive, 1) ->
@@ -93,7 +93,7 @@ decode_xabber_unarchived_conversation(__TopXMLNS,
 encode_xabber_unarchived_conversation({xabber_unarchived_conversation},
 				      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/archived">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/archived">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -107,7 +107,7 @@ decode_xabber_archived_conversation(__TopXMLNS, __Opts,
 encode_xabber_archived_conversation({xabber_archived_conversation},
 				    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/archived">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/archived">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -141,11 +141,11 @@ decode_xabber_synchronization_unarchive_els(__TopXMLNS,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_unarchive_els(__TopXMLNS,
 						      __Opts, _els,
 						      {value,
-						       xabbersynchronization:decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+						       xabbersynchronization:decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 													__Opts,
 													_el)});
       _ ->
@@ -162,7 +162,7 @@ encode_xabber_synchronization_unarchive({xabber_synchronization_unarchive,
 					 Conversation},
 					__TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/archived">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/archived">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_unarchive_$conversation'(Conversation,
@@ -204,11 +204,11 @@ decode_xabber_synchronization_archive_els(__TopXMLNS,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_archive_els(__TopXMLNS,
 						    __Opts, _els,
 						    {value,
-						     xabbersynchronization:decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+						     xabbersynchronization:decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 												      __Opts,
 												      _el)});
       _ ->
@@ -224,7 +224,7 @@ encode_xabber_synchronization_archive({xabber_synchronization_archive,
 				       Conversation},
 				      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/archived">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/archived">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_archive_$conversation'(Conversation,

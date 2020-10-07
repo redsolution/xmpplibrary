@@ -1653,7 +1653,6 @@
                         xabber_conversation_unread() |
                         legacy_auth() |
                         stats() |
-                        search() |
                         sm_resumed() |
                         ps_subscription() |
                         message_received() |
@@ -1681,6 +1680,7 @@
                         vcard_key() |
                         unique_request() |
                         avatar_info() |
+                        text() |
                         block_domain() |
                         rosterver_feature() |
                         avatar_data() |
@@ -1701,7 +1701,6 @@
                         xmppreference() |
                         disco_info() |
                         muc_unsubscribe() |
-                        text() |
                         xabber_conversation_call() |
                         mam_archived() |
                         delegation() |
@@ -1750,6 +1749,7 @@
                         privilege_perm() |
                         vcard_geo() |
                         xabber_delete() |
+                        search() |
                         ps_event() |
                         time() |
                         delegated() |

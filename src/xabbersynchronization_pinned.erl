@@ -6,20 +6,20 @@
 -compile(export_all).
 
 do_decode(<<"unpinned">>,
-	  <<"http://xabber.com/protocol/pinned">>, El, Opts) ->
-    decode_xabber_unpinned_conversation(<<"http://xabber.com/protocol/pinned">>,
+	  <<"https://xabber.com/protocol/pinned">>, El, Opts) ->
+    decode_xabber_unpinned_conversation(<<"https://xabber.com/protocol/pinned">>,
 					Opts, El);
 do_decode(<<"pinned">>,
-	  <<"http://xabber.com/protocol/pinned">>, El, Opts) ->
-    decode_xabber_pinned_conversation(<<"http://xabber.com/protocol/pinned">>,
+	  <<"https://xabber.com/protocol/pinned">>, El, Opts) ->
+    decode_xabber_pinned_conversation(<<"https://xabber.com/protocol/pinned">>,
 				      Opts, El);
 do_decode(<<"unpin">>,
-	  <<"http://xabber.com/protocol/pinned">>, El, Opts) ->
-    decode_xabber_synchronization_unpin(<<"http://xabber.com/protocol/pinned">>,
+	  <<"https://xabber.com/protocol/pinned">>, El, Opts) ->
+    decode_xabber_synchronization_unpin(<<"https://xabber.com/protocol/pinned">>,
 					Opts, El);
 do_decode(<<"pin">>,
-	  <<"http://xabber.com/protocol/pinned">>, El, Opts) ->
-    decode_xabber_synchronization_pin(<<"http://xabber.com/protocol/pinned">>,
+	  <<"https://xabber.com/protocol/pinned">>, El, Opts) ->
+    decode_xabber_synchronization_pin(<<"https://xabber.com/protocol/pinned">>,
 				      Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -28,10 +28,11 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"unpinned">>,
-      <<"http://xabber.com/protocol/pinned">>},
-     {<<"pinned">>, <<"http://xabber.com/protocol/pinned">>},
-     {<<"unpin">>, <<"http://xabber.com/protocol/pinned">>},
-     {<<"pin">>, <<"http://xabber.com/protocol/pinned">>}].
+      <<"https://xabber.com/protocol/pinned">>},
+     {<<"pinned">>,
+      <<"https://xabber.com/protocol/pinned">>},
+     {<<"unpin">>, <<"https://xabber.com/protocol/pinned">>},
+     {<<"pin">>, <<"https://xabber.com/protocol/pinned">>}].
 
 do_encode({xabber_synchronization_pin, _} = Pin,
 	  TopXMLNS) ->
@@ -56,13 +57,13 @@ do_get_name({xabber_unpinned_conversation}) ->
     <<"unpinned">>.
 
 do_get_ns({xabber_pinned_conversation}) ->
-    <<"http://xabber.com/protocol/pinned">>;
+    <<"https://xabber.com/protocol/pinned">>;
 do_get_ns({xabber_synchronization_pin, _}) ->
-    <<"http://xabber.com/protocol/pinned">>;
+    <<"https://xabber.com/protocol/pinned">>;
 do_get_ns({xabber_synchronization_unpin, _}) ->
-    <<"http://xabber.com/protocol/pinned">>;
+    <<"https://xabber.com/protocol/pinned">>;
 do_get_ns({xabber_unpinned_conversation}) ->
-    <<"http://xabber.com/protocol/pinned">>.
+    <<"https://xabber.com/protocol/pinned">>.
 
 pp(xabber_synchronization_pin, 1) -> [conversation];
 pp(xabber_synchronization_unpin, 1) -> [conversation];
@@ -83,7 +84,7 @@ decode_xabber_unpinned_conversation(__TopXMLNS, __Opts,
 encode_xabber_unpinned_conversation({xabber_unpinned_conversation},
 				    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/pinned">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/pinned">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -97,7 +98,7 @@ decode_xabber_pinned_conversation(__TopXMLNS, __Opts,
 encode_xabber_pinned_conversation({xabber_pinned_conversation},
 				  __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/pinned">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/pinned">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -129,11 +130,11 @@ decode_xabber_synchronization_unpin_els(__TopXMLNS,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_unpin_els(__TopXMLNS,
 						  __Opts, _els,
 						  {value,
-						   xabbersynchronization:decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+						   xabbersynchronization:decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 												    __Opts,
 												    _el)});
       _ ->
@@ -149,7 +150,7 @@ encode_xabber_synchronization_unpin({xabber_synchronization_unpin,
 				     Conversation},
 				    __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/pinned">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/pinned">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_unpin_$conversation'(Conversation,
@@ -189,11 +190,11 @@ decode_xabber_synchronization_pin_els(__TopXMLNS,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"http://xabber.com/protocol/synchronization">> ->
+      <<"https://xabber.com/protocol/synchronization">> ->
 	  decode_xabber_synchronization_pin_els(__TopXMLNS,
 						__Opts, _els,
 						{value,
-						 xabbersynchronization:decode_xabber_conversation(<<"http://xabber.com/protocol/synchronization">>,
+						 xabbersynchronization:decode_xabber_conversation(<<"https://xabber.com/protocol/synchronization">>,
 												  __Opts,
 												  _el)});
       _ ->
@@ -209,7 +210,7 @@ encode_xabber_synchronization_pin({xabber_synchronization_pin,
 				   Conversation},
 				  __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"http://xabber.com/protocol/pinned">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/pinned">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_synchronization_pin_$conversation'(Conversation,
