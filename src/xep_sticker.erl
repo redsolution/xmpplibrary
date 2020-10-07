@@ -6,8 +6,8 @@
 -compile(export_all).
 
 do_decode(<<"sticker">>,
-	  <<"https://xabber.com/protocol/sticker">>, El, Opts) ->
-    decode_sticker(<<"https://xabber.com/protocol/sticker">>,
+	  <<"https://xabber.com/protocol/stickers">>, El, Opts) ->
+    decode_sticker(<<"https://xabber.com/protocol/stickers">>,
 		   Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -16,7 +16,7 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"sticker">>,
-      <<"https://xabber.com/protocol/sticker">>}].
+      <<"https://xabber.com/protocol/stickers">>}].
 
 do_encode({sticker, _} = Sticker, TopXMLNS) ->
     encode_sticker(Sticker, TopXMLNS).
@@ -24,7 +24,7 @@ do_encode({sticker, _} = Sticker, TopXMLNS) ->
 do_get_name({sticker, _}) -> <<"sticker">>.
 
 do_get_ns({sticker, _}) ->
-    <<"https://xabber.com/protocol/sticker">>.
+    <<"https://xabber.com/protocol/stickers">>.
 
 get_els({sticker, _sub_els}) -> _sub_els.
 
@@ -68,7 +68,7 @@ decode_sticker_els(__TopXMLNS, __Opts, [_ | _els],
 
 encode_sticker({sticker, __Els}, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/sticker">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/stickers">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],

@@ -5418,7 +5418,7 @@
 
 -xml(xmppreference,
      #elem{name = <<"reference">>,
-           xmlns = <<"https://xabber.com/protocol/reference">>,
+           xmlns = <<"https://xabber.com/protocol/references">>,
 	   module = xep0372,
            result = {xmppreference, '$type', '$begin', '$end', '$_els'},
            attrs = [#attr{name = <<"type">>,

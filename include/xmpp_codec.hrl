@@ -1521,6 +1521,7 @@
                         delivery_retry() |
                         starttls() |
                         bookmark_url() |
+                        text() |
                         delegation_query() |
                         xabber_conversation() |
                         xabbergroup_kick() |
@@ -1680,7 +1681,6 @@
                         vcard_key() |
                         unique_request() |
                         avatar_info() |
-                        text() |
                         block_domain() |
                         rosterver_feature() |
                         avatar_data() |
@@ -1740,6 +1740,7 @@
                         mam_query() |
                         ping() |
                         xabber_conversation_delivered() |
+                        search() |
                         last() |
                         carbons_received() |
                         ps_affiliation() |
@@ -1749,7 +1750,6 @@
                         privilege_perm() |
                         vcard_geo() |
                         xabber_delete() |
-                        search() |
                         ps_event() |
                         time() |
                         delegated() |

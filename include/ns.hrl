@@ -197,7 +197,7 @@
 -define(NS_GROUPCHAT_RETRACT_HISTORY,<<"https://xabber.com/protocol/groups#history">>).
 -define(NS_XABBER_REWRITE,<<"https://xabber.com/protocol/rewrite">>).
 -define(NS_XABBER_REWRITE_NOTIFY,<<"https://xabber.com/protocol/rewrite#notify">>).
--define(NS_REFERENCE_0, <<"https://xabber.com/protocol/reference">>).
+-define(NS_REFERENCE_0, <<"https://xabber.com/protocol/references">>).
 -define(NS_XABBER_MARKUP, <<"https://xabber.com/protocol/markup">>).
 -define(NS_GROUPCHAT_UPDATE, <<"https://xabber.com/protocol/groups#update">>).
 -define(NS_GROUPCHAT_USER_UPDATED, <<"https://xabber.com/protocol/groups#user-updated">>).

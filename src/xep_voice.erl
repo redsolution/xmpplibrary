@@ -6,9 +6,9 @@
 -compile(export_all).
 
 do_decode(<<"voice-message">>,
-	  <<"https://xabber.com/protocol/voice-message">>, El,
+	  <<"https://xabber.com/protocol/voice-messages">>, El,
 	  Opts) ->
-    decode_voice_message(<<"https://xabber.com/protocol/voice-message">>,
+    decode_voice_message(<<"https://xabber.com/protocol/voice-messages">>,
 			 Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -17,7 +17,7 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"voice-message">>,
-      <<"https://xabber.com/protocol/voice-message">>}].
+      <<"https://xabber.com/protocol/voice-messages">>}].
 
 do_encode({voice_message, _} = Voice_message,
 	  TopXMLNS) ->
@@ -26,7 +26,7 @@ do_encode({voice_message, _} = Voice_message,
 do_get_name({voice_message, _}) -> <<"voice-message">>.
 
 do_get_ns({voice_message, _}) ->
-    <<"https://xabber.com/protocol/voice-message">>.
+    <<"https://xabber.com/protocol/voice-messages">>.
 
 get_els({voice_message, _sub_els}) -> _sub_els.
 
@@ -75,7 +75,7 @@ decode_voice_message_els(__TopXMLNS, __Opts, [_ | _els],
 encode_voice_message({voice_message, __Els},
 		     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/voice-message">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/voice-messages">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],

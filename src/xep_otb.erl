@@ -6,20 +6,20 @@
 -compile(export_all).
 
 do_decode(<<"media-type">>,
-	  <<"https://xabber.com/protocol/otb">>, El, Opts) ->
-    decode_xabber_media_type_otb(<<"https://xabber.com/protocol/otb">>,
+	  <<"https://xabber.com/protocol/files">>, El, Opts) ->
+    decode_xabber_media_type_otb(<<"https://xabber.com/protocol/files">>,
 				 Opts, El);
 do_decode(<<"file">>,
-	  <<"https://xabber.com/protocol/otb">>, El, Opts) ->
-    decode_xabber_file(<<"https://xabber.com/protocol/otb">>,
+	  <<"https://xabber.com/protocol/files">>, El, Opts) ->
+    decode_xabber_file(<<"https://xabber.com/protocol/files">>,
 		       Opts, El);
 do_decode(<<"sources">>,
-	  <<"https://xabber.com/protocol/otb">>, El, Opts) ->
-    decode_xabber_file_sources(<<"https://xabber.com/protocol/otb">>,
+	  <<"https://xabber.com/protocol/files">>, El, Opts) ->
+    decode_xabber_file_sources(<<"https://xabber.com/protocol/files">>,
 			       Opts, El);
 do_decode(<<"file-sharing">>,
-	  <<"https://xabber.com/protocol/otb">>, El, Opts) ->
-    decode_xabber_file_sharing(<<"https://xabber.com/protocol/otb">>,
+	  <<"https://xabber.com/protocol/files">>, El, Opts) ->
+    decode_xabber_file_sharing(<<"https://xabber.com/protocol/files">>,
 			       Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -28,11 +28,12 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"media-type">>,
-      <<"https://xabber.com/protocol/otb">>},
-     {<<"file">>, <<"https://xabber.com/protocol/otb">>},
-     {<<"sources">>, <<"https://xabber.com/protocol/otb">>},
+      <<"https://xabber.com/protocol/files">>},
+     {<<"file">>, <<"https://xabber.com/protocol/files">>},
+     {<<"sources">>,
+      <<"https://xabber.com/protocol/files">>},
      {<<"file-sharing">>,
-      <<"https://xabber.com/protocol/otb">>}].
+      <<"https://xabber.com/protocol/files">>}].
 
 do_encode({xabber_file_sharing, _, _} = File_sharing,
 	  TopXMLNS) ->
@@ -48,11 +49,11 @@ do_get_name({xabber_file_sharing, _, _}) ->
 do_get_name({xabber_sources, _}) -> <<"sources">>.
 
 do_get_ns({xabber_file, _, _}) ->
-    <<"https://xabber.com/protocol/otb">>;
+    <<"https://xabber.com/protocol/files">>;
 do_get_ns({xabber_file_sharing, _, _}) ->
-    <<"https://xabber.com/protocol/otb">>;
+    <<"https://xabber.com/protocol/files">>;
 do_get_ns({xabber_sources, _}) ->
-    <<"https://xabber.com/protocol/otb">>.
+    <<"https://xabber.com/protocol/files">>.
 
 get_els({xabber_sources, _sub_els}) -> _sub_els;
 get_els({xabber_file, _type, _sub_els}) -> _sub_els.
@@ -91,7 +92,7 @@ decode_xabber_media_type_otb_els(__TopXMLNS, __Opts,
 
 encode_xabber_media_type_otb(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/otb">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/files">>,
 				    [], __TopXMLNS),
     _els = encode_xabber_media_type_otb_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -122,9 +123,9 @@ decode_xabber_file_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"https://xabber.com/protocol/otb">> ->
+      <<"https://xabber.com/protocol/files">> ->
 	  decode_xabber_file_els(__TopXMLNS, __Opts, _els,
-				 decode_xabber_media_type_otb(<<"https://xabber.com/protocol/otb">>,
+				 decode_xabber_media_type_otb(<<"https://xabber.com/protocol/files">>,
 							      __Opts, _el),
 				 __Els);
       _ ->
@@ -160,7 +161,7 @@ decode_xabber_file_els(__TopXMLNS, __Opts, [_ | _els],
 encode_xabber_file({xabber_file, Type, __Els},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/otb">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/files">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
@@ -215,7 +216,7 @@ decode_xabber_file_sources_els(__TopXMLNS, __Opts,
 encode_xabber_file_sources({xabber_sources, __Els},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/otb">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/files">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
@@ -250,11 +251,11 @@ decode_xabber_file_sharing_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"https://xabber.com/protocol/otb">> ->
+      <<"https://xabber.com/protocol/files">> ->
 	  decode_xabber_file_sharing_els(__TopXMLNS, __Opts, _els,
 					 Sources,
 					 {value,
-					  decode_xabber_file(<<"https://xabber.com/protocol/otb">>,
+					  decode_xabber_file(<<"https://xabber.com/protocol/files">>,
 							     __Opts, _el)});
       _ ->
 	  decode_xabber_file_sharing_els(__TopXMLNS, __Opts, _els,
@@ -266,10 +267,10 @@ decode_xabber_file_sharing_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"https://xabber.com/protocol/otb">> ->
+      <<"https://xabber.com/protocol/files">> ->
 	  decode_xabber_file_sharing_els(__TopXMLNS, __Opts, _els,
 					 {value,
-					  decode_xabber_file_sources(<<"https://xabber.com/protocol/otb">>,
+					  decode_xabber_file_sources(<<"https://xabber.com/protocol/files">>,
 								     __Opts,
 								     _el)},
 					 File);
@@ -286,7 +287,7 @@ encode_xabber_file_sharing({xabber_file_sharing, File,
 			    Sources},
 			   __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/otb">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/files">>,
 				    [], __TopXMLNS),
     _els =
 	lists:reverse('encode_xabber_file_sharing_$sources'(Sources,

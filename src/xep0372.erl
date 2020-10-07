@@ -6,9 +6,9 @@
 -compile(export_all).
 
 do_decode(<<"reference">>,
-	  <<"https://xabber.com/protocol/reference">>, El,
+	  <<"https://xabber.com/protocol/references">>, El,
 	  Opts) ->
-    decode_xmppreference(<<"https://xabber.com/protocol/reference">>,
+    decode_xmppreference(<<"https://xabber.com/protocol/references">>,
 			 Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
@@ -17,7 +17,7 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() ->
     [{<<"reference">>,
-      <<"https://xabber.com/protocol/reference">>}].
+      <<"https://xabber.com/protocol/references">>}].
 
 do_encode({xmppreference, _, _, _, _} = Reference,
 	  TopXMLNS) ->
@@ -27,7 +27,7 @@ do_get_name({xmppreference, _, _, _, _}) ->
     <<"reference">>.
 
 do_get_ns({xmppreference, _, _, _, _}) ->
-    <<"https://xabber.com/protocol/reference">>.
+    <<"https://xabber.com/protocol/references">>.
 
 get_els({xmppreference, _type, _begin, _end,
 	 _sub_els}) ->
@@ -113,7 +113,7 @@ encode_xmppreference({xmppreference, Type, Begin, End,
 		      __Els},
 		     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/reference">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/references">>,
 				    [], __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
