@@ -1,0 +1,14 @@
+<form_type>
+  <name>https://xabber.com/protocol/groups#status</name>
+  <doc>XEP-GROUPS</doc>
+  <desc>Form to filter syncronization query</desc>
+  <field var='status'
+	 type='text-single'
+	 label='Status of group'/>
+</form_type>
+
+<!--
+Local Variables:
+mode: xml
+End:
+-->
