@@ -5012,7 +5012,9 @@
 
 -xml(xabbergroupchat,
      #elem{name = <<"query">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>,<<"https://xabber.com/protocol/groups#default-rights">>,<<"https://xabber.com/protocol/groups#members">>,<<"https://xabber.com/protocol/groups#delete">>],
+     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>,
+     <<"https://xabber.com/protocol/groups#default-rights">>,<<"https://xabber.com/protocol/groups#members">>,
+     <<"https://xabber.com/protocol/groups#delete">>,<<"https://xabber.com/protocol/groups#status">>],
 	   module = 'xabbergroupchat',
      result = {xabbergroupchat, '$xmlns', '$id', '$version', '$rsm', '$_els', '$cdata'},
      attrs = [#attr{name = <<"xmlns">>},

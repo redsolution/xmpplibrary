@@ -206,6 +206,7 @@
 -define(NS_GROUPCHAT_USER_KICK, <<"https://xabber.com/protocol/groups#kick">>).
 -define(NS_GROUPCHAT_SYSTEM_MESSAGE, <<"https://xabber.com/protocol/groups#system-message">>).
 -define(NS_GROUPCHAT_RIGHTS, <<"https://xabber.com/protocol/groups#rights">>).
+-define(NS_GROUPCHAT_STATUS, <<"https://xabber.com/protocol/groups#status">>).
 -define(NS_GROUPCHAT_DEFAULT_RIGHTS, <<"https://xabber.com/protocol/groups#default-rights">>).
 -define(NS_GROUPCHAT_MEMBERS, <<"https://xabber.com/protocol/groups#members">>).
 -define(NS_GROUPCHAT_CREATE, <<"https://xabber.com/protocol/groups#create">>).

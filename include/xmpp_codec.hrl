@@ -1506,6 +1506,7 @@
                         address() |
                         ps_publish() |
                         muc_destroy() |
+                        text() |
                         muc_history() |
                         media_uri() |
                         xabber_encryption_key() |
@@ -1521,7 +1522,6 @@
                         delivery_retry() |
                         starttls() |
                         bookmark_url() |
-                        text() |
                         delegation_query() |
                         xabber_conversation() |
                         xabbergroup_kick() |
@@ -1592,6 +1592,7 @@
                         sasl_failure() |
                         redirect() |
                         voice_message() |
+                        search() |
                         bookmark_storage() |
                         privilege() |
                         vcard_temp() |
@@ -1740,7 +1741,6 @@
                         mam_query() |
                         ping() |
                         xabber_conversation_delivered() |
-                        search() |
                         last() |
                         carbons_received() |
                         ps_affiliation() |

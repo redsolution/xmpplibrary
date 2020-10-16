@@ -199,6 +199,11 @@ do_decode(<<"query">>,
 	  Opts) ->
     decode_xabbergroupchat(<<"https://xabber.com/protocol/groups#delete">>,
 			   Opts, El);
+do_decode(<<"query">>,
+	  <<"https://xabber.com/protocol/groups#status">>, El,
+	  Opts) ->
+    decode_xabbergroupchat(<<"https://xabber.com/protocol/groups#status">>,
+			   Opts, El);
 do_decode(<<"badge">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_xabbergroupchat_user_badge(<<"https://xabber.com/protocol/groups">>,
@@ -579,6 +584,8 @@ tags() ->
       <<"https://xabber.com/protocol/groups#members">>},
      {<<"query">>,
       <<"https://xabber.com/protocol/groups#delete">>},
+     {<<"query">>,
+      <<"https://xabber.com/protocol/groups#status">>},
      {<<"badge">>, <<"https://xabber.com/protocol/groups">>},
      {<<"nickname">>,
       <<"https://xabber.com/protocol/groups">>},
@@ -2933,7 +2940,8 @@ encode_xabbergroupchat({xabbergroupchat, Xmlns, Id,
 						 <<"https://xabber.com/protocol/groups#default-ri"
 						   "ghts">>,
 						 <<"https://xabber.com/protocol/groups#members">>,
-						 <<"https://xabber.com/protocol/groups#delete">>],
+						 <<"https://xabber.com/protocol/groups#delete">>,
+						 <<"https://xabber.com/protocol/groups#status">>],
 						__TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els]
