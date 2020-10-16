@@ -1,14 +1,14 @@
 <form_type>
-  <name>http://xabber.com/protocol/synchronization</name>
+  <name>https://xabber.com/protocol/synchronization</name>
   <doc>XEP-SYNC</doc>
   <desc>Form to filter syncronization query</desc>
-  <field var='{http://xabber.com/protocol/synchronization}pinned_first'
+  <field var='{https://xabber.com/protocol/synchronization}pinned_first'
 	 type='boolean'
 	 label='Pinned conversations will be first in query'/>
-  <field var='{http://xabber.com/protocol/synchronization}filter_pinned'
+  <field var='{https://xabber.com/protocol/synchronization}filter_pinned'
 	 type='boolean'
 	 label='Fetch only pinned conversations'/>
-  <field var='{http://xabber.com/protocol/synchronization}filter_archived'
+  <field var='{https://xabber.com/protocol/synchronization}filter_archived'
 	 type='boolean'
 	 label='Fetch only archived conversations'/>
 </form_type>

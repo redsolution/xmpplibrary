@@ -1,6 +1,6 @@
 %% Created automatically by xdata generator (xdata_codec.erl)
 %% Source: sync_query.xdata
-%% Form type: http://xabber.com/protocol/synchronization
+%% Form type: https://xabber.com/protocol/synchronization
 %% Document: XEP-SYNC
 
 -module(sync_query).
@@ -68,12 +68,12 @@ decode(Fs, Acc) ->
 	of
       false -> decode(Fs, Acc, []);
       #xdata_field{values =
-		       [<<"http://xabber.com/protocol/synchronization">>]} ->
+		       [<<"https://xabber.com/protocol/synchronization">>]} ->
 	  decode(Fs, Acc, []);
       _ ->
 	  erlang:error({?MODULE,
 			{form_type_mismatch,
-			 <<"http://xabber.com/protocol/synchronization">>}})
+			 <<"https://xabber.com/protocol/synchronization">>}})
     end.
 
 encode(Cfg) -> encode(Cfg, <<"en">>).
@@ -95,12 +95,12 @@ encode(List, Lang) when is_list(List) ->
     FormType = #xdata_field{var = <<"FORM_TYPE">>,
 			    type = hidden,
 			    values =
-				[<<"http://xabber.com/protocol/synchronization">>]},
+				[<<"https://xabber.com/protocol/synchronization">>]},
     [FormType | lists:flatten(Fs)].
 
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}p"
-			   "inned_first">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "pinned_first">>,
 		     values = [Value]}
 	| Fs],
        Acc, Required) ->
@@ -111,36 +111,36 @@ decode([#xdata_field{var =
       _:_ ->
 	  erlang:error({?MODULE,
 			{bad_var_value,
-			 <<"{http://xabber.com/protocol/synchronization}p"
-			   "inned_first">>,
-			 <<"http://xabber.com/protocol/synchronization">>}})
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "pinned_first">>,
+			 <<"https://xabber.com/protocol/synchronization">>}})
     end;
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}p"
-			   "inned_first">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "pinned_first">>,
 		     values = []} =
 	    F
 	| Fs],
        Acc, Required) ->
     decode([F#xdata_field{var =
-			      <<"{http://xabber.com/protocol/synchronization}p"
-				"inned_first">>,
+			      <<"{https://xabber.com/protocol/synchronization}"
+				"pinned_first">>,
 			  values = [<<>>]}
 	    | Fs],
 	   Acc, Required);
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}p"
-			   "inned_first">>}
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "pinned_first">>}
 	| _],
        _, _) ->
     erlang:error({?MODULE,
 		  {too_many_values,
-		   <<"{http://xabber.com/protocol/synchronization}p"
-		     "inned_first">>,
-		   <<"http://xabber.com/protocol/synchronization">>}});
+		   <<"{https://xabber.com/protocol/synchronization}"
+		     "pinned_first">>,
+		   <<"https://xabber.com/protocol/synchronization">>}});
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_pinned">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_pinned">>,
 		     values = [Value]}
 	| Fs],
        Acc, Required) ->
@@ -151,36 +151,36 @@ decode([#xdata_field{var =
       _:_ ->
 	  erlang:error({?MODULE,
 			{bad_var_value,
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_pinned">>,
-			 <<"http://xabber.com/protocol/synchronization">>}})
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_pinned">>,
+			 <<"https://xabber.com/protocol/synchronization">>}})
     end;
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_pinned">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_pinned">>,
 		     values = []} =
 	    F
 	| Fs],
        Acc, Required) ->
     decode([F#xdata_field{var =
-			      <<"{http://xabber.com/protocol/synchronization}f"
-				"ilter_pinned">>,
+			      <<"{https://xabber.com/protocol/synchronization}"
+				"filter_pinned">>,
 			  values = [<<>>]}
 	    | Fs],
 	   Acc, Required);
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_pinned">>}
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_pinned">>}
 	| _],
        _, _) ->
     erlang:error({?MODULE,
 		  {too_many_values,
-		   <<"{http://xabber.com/protocol/synchronization}f"
-		     "ilter_pinned">>,
-		   <<"http://xabber.com/protocol/synchronization">>}});
+		   <<"{https://xabber.com/protocol/synchronization}"
+		     "filter_pinned">>,
+		   <<"https://xabber.com/protocol/synchronization">>}});
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_archived">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_archived">>,
 		     values = [Value]}
 	| Fs],
        Acc, Required) ->
@@ -191,38 +191,38 @@ decode([#xdata_field{var =
       _:_ ->
 	  erlang:error({?MODULE,
 			{bad_var_value,
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_archived">>,
-			 <<"http://xabber.com/protocol/synchronization">>}})
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_archived">>,
+			 <<"https://xabber.com/protocol/synchronization">>}})
     end;
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_archived">>,
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_archived">>,
 		     values = []} =
 	    F
 	| Fs],
        Acc, Required) ->
     decode([F#xdata_field{var =
-			      <<"{http://xabber.com/protocol/synchronization}f"
-				"ilter_archived">>,
+			      <<"{https://xabber.com/protocol/synchronization}"
+				"filter_archived">>,
 			  values = [<<>>]}
 	    | Fs],
 	   Acc, Required);
 decode([#xdata_field{var =
-			 <<"{http://xabber.com/protocol/synchronization}f"
-			   "ilter_archived">>}
+			 <<"{https://xabber.com/protocol/synchronization}"
+			   "filter_archived">>}
 	| _],
        _, _) ->
     erlang:error({?MODULE,
 		  {too_many_values,
-		   <<"{http://xabber.com/protocol/synchronization}f"
-		     "ilter_archived">>,
-		   <<"http://xabber.com/protocol/synchronization">>}});
+		   <<"{https://xabber.com/protocol/synchronization}"
+		     "filter_archived">>,
+		   <<"https://xabber.com/protocol/synchronization">>}});
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
 	   erlang:error({?MODULE,
 			 {unknown_var, Var,
-			  <<"http://xabber.com/protocol/synchronization">>}});
+			  <<"https://xabber.com/protocol/synchronization">>}});
        true -> decode(Fs, Acc, Required)
     end;
 decode([], Acc, []) -> Acc.
@@ -234,8 +234,8 @@ encode_pinned_first(Value, Lang) ->
 	     end,
     Opts = [],
     #xdata_field{var =
-		     <<"{http://xabber.com/protocol/synchronization}p"
-		       "inned_first">>,
+		     <<"{https://xabber.com/protocol/synchronization}"
+		       "pinned_first">>,
 		 values = Values, required = false, type = boolean,
 		 options = Opts, desc = <<>>,
 		 label =
@@ -250,8 +250,8 @@ encode_filter_pinned(Value, Lang) ->
 	     end,
     Opts = [],
     #xdata_field{var =
-		     <<"{http://xabber.com/protocol/synchronization}f"
-		       "ilter_pinned">>,
+		     <<"{https://xabber.com/protocol/synchronization}"
+		       "filter_pinned">>,
 		 values = Values, required = false, type = boolean,
 		 options = Opts, desc = <<>>,
 		 label =
@@ -265,8 +265,8 @@ encode_filter_archived(Value, Lang) ->
 	     end,
     Opts = [],
     #xdata_field{var =
-		     <<"{http://xabber.com/protocol/synchronization}f"
-		       "ilter_archived">>,
+		     <<"{https://xabber.com/protocol/synchronization}"
+		       "filter_archived">>,
 		 values = Values, required = false, type = boolean,
 		 options = Opts, desc = <<>>,
 		 label =

@@ -1,6 +1,6 @@
 %% Created automatically by xdata generator (xdata_codec.erl)
 %% Source: sync_query.xdata
-%% Form type: http://xabber.com/protocol/synchronization
+%% Form type: https://xabber.com/protocol/synchronization
 %% Document: XEP-SYNC
 
 
