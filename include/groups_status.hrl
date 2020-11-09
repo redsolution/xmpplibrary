@@ -4,7 +4,15 @@
 %% Document: XEP-GROUPS
 
 
--type property() :: {'status', binary()}.
+-type property() :: {'header1', binary()} |
+                    {'header2', binary()} |
+                    {'status', binary()} |
+                    {'fiesta', binary()} |
+                    {'discussion', binary()} |
+                    {'regulated', binary()} |
+                    {'limited', binary()} |
+                    {'restricted', binary()} |
+                    {'inactive', binary()}.
 -type result() :: [property()].
 
 -type form() :: [property() | xdata_field()].

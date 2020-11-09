@@ -1,10 +1,36 @@
 <form_type>
   <name>https://xabber.com/protocol/groups#status</name>
   <doc>XEP-GROUPS</doc>
-  <desc>Form to filter syncronization query</desc>
-  <field var='status'
+  <desc>Change status to change behaviour of group</desc>
+   <field var='header1' type='fixed' />
+   <field var='header2' type='fixed' />
+   <field var='status'
 	 type='text-single'
 	 label='Status of group'/>
+   <field var='fiesta' type='fixed'>
+    <desc>Everything is allowed, no restrictions. Stickers, pictures, voice messages are allowed.</desc>
+    <value>chat</value>
+   </field>
+   <field var='discussion' type='fixed'>
+    <desc>Regular chat. There is no limit on the number of messages. Limited voice messages</desc>
+    <value>active</value>
+   </field>
+   <field var='regulated' type='fixed'>
+    <desc>Regulated chat. Only text messages and images. Limit on the number of messages per minute.</desc>
+    <value>away</value>
+   </field>
+   <field var='limited' type='fixed'>
+    <desc>Limited discussion. Text messages only. Limit on the number of messages per minute.</desc>
+    <value>xa</value>
+   </field>
+   <field var='restricted' type='fixed'>
+    <desc>Chat is allowed only for administrators</desc>
+    <value>dnd</value>
+   </field>
+   <field var='inactive' type='fixed'>
+    <desc>Chat is off</desc>
+    <value>inactive</value>
+   </field>
 </form_type>
 
 <!--
