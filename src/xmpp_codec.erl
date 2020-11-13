@@ -887,6 +887,9 @@ get_mod(<<"subscriptions">>, <<"urn:xmpp:mucsub:0">>) ->
 get_mod(<<"resumed">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"slot">>, <<"urn:xmpp:http:upload:0">>) ->
     xep0363;
+get_mod(<<"x">>,
+	<<"https://xabber.com/protocol/delivery">>) ->
+    unique;
 get_mod(<<"stream:features">>, <<"jabber:server">>) ->
     rfc6120;
 get_mod(<<"request">>,
@@ -2178,6 +2181,7 @@ get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
 get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
+get_mod({delivery_x, _}) -> unique;
 get_mod({xabber_retract_user, _, _, _, _, _, _, _}) ->
     xabberrewrite;
 get_mod({bookmark_conference, _, _, _, _, _}) ->

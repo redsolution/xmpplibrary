@@ -4284,6 +4284,13 @@
                       ]
            }).
 
+-xml(delivery_x,
+         #elem{name = <<"x">>,
+               xmlns = <<"https://xabber.com/protocol/delivery">>,
+               module = 'unique',
+               result = {delivery_x, '$_els'}
+               }).
+
 -xml(previous_id,
      #elem{name = <<"previous-id">>,
 	   xmlns = <<"https://xabber.com/protocol/previous">>,
