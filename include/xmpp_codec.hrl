@@ -134,9 +134,6 @@
                     data = <<>> :: binary()}).
 -type rsm_first() :: #rsm_first{}.
 
--record(recipient, {id = <<>> :: binary()}).
--type recipient() :: #recipient{}.
-
 -record(streamhost, {jid :: jid:jid(),
                      host = <<>> :: binary(),
                      port = 1080 :: non_neg_integer()}).
@@ -157,6 +154,9 @@
 -record(unique_request, {retry = <<>> :: binary(),
                          to :: undefined | jid:jid()}).
 -type unique_request() :: #unique_request{}.
+
+-record(recipient, {id = <<>> :: binary()}).
+-type recipient() :: #recipient{}.
 
 -record(carbons_enable, {}).
 -type carbons_enable() :: #carbons_enable{}.
@@ -196,6 +196,12 @@
 
 -record(ping, {}).
 -type ping() :: #ping{}.
+
+-record(channel_x, {xmlns = <<>> :: binary(),
+                    type = <<>> :: binary(),
+                    version = <<>> :: binary(),
+                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type channel_x() :: #channel_x{}.
 
 -record(delay, {stamp :: erlang:timestamp(),
                 from :: undefined | jid:jid(),
@@ -312,6 +318,9 @@
 -record(block_id, {cdata = <<>> :: binary()}).
 -type block_id() :: #block_id{}.
 
+-record(channel_localpart, {cdata = <<>> :: binary()}).
+-type channel_localpart() :: #channel_localpart{}.
+
 -record(xabbergroupchat_replaced, {stamp = <<>> :: binary()}).
 -type xabbergroupchat_replaced() :: #xabbergroupchat_replaced{}.
 
@@ -326,6 +335,12 @@
 -record(privilege, {perms = [] :: [#privilege_perm{}],
                     forwarded :: 'undefined' | #forwarded{}}).
 -type privilege() :: #privilege{}.
+
+-record(channel_contact, {cdata = <<>> :: binary()}).
+-type channel_contact() :: #channel_contact{}.
+
+-record(channel_contacts, {contact = [] :: [#channel_contact{}]}).
+-type channel_contacts() :: #channel_contacts{}.
 
 -record(xabber_conversation_unread, {count :: 'undefined' | non_neg_integer(),
                                      'after' = <<>> :: binary()}).
@@ -442,6 +457,9 @@
 -record(xabbergroupchat_description, {cdata = <<>> :: binary()}).
 -type xabbergroupchat_description() :: #xabbergroupchat_description{}.
 
+-record(channel_description, {cdata = <<>> :: binary()}).
+-type channel_description() :: #channel_description{}.
+
 -record(xabber_metadata, {node = <<>> :: binary(),
                           sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabber_metadata() :: #xabber_metadata{}.
@@ -551,6 +569,9 @@
 -record(xabbergroup_decline, {}).
 -type xabbergroup_decline() :: #xabbergroup_decline{}.
 
+-record(channel_query_delete, {cdata = <<>> :: binary()}).
+-type channel_query_delete() :: #channel_query_delete{}.
+
 -record(idle, {since = <<>> :: binary()}).
 -type idle() :: #idle{}.
 
@@ -575,6 +596,9 @@
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
+
+-record(channel_index, {cdata = <<>> :: binary()}).
+-type channel_index() :: #channel_index{}.
 
 -record(xabber_encryption_key, {data = <<>> :: binary()}).
 -type xabber_encryption_key() :: #xabber_encryption_key{}.
@@ -641,6 +665,12 @@
                           expiry :: undefined | erlang:timestamp()}).
 -type ps_subscription() :: #ps_subscription{}.
 
+-record(channel_domain, {cdata = <<>> :: binary()}).
+-type channel_domain() :: #channel_domain{}.
+
+-record(channel_domains, {domain = [] :: [#channel_domain{}]}).
+-type channel_domains() :: #channel_domains{}.
+
 -record(xabber_synchronization_unpin, {conversation :: #xabber_conversation{}}).
 -type xabber_synchronization_unpin() :: #xabber_synchronization_unpin{}.
 
@@ -658,6 +688,9 @@
 -record(avatar_meta, {info = [] :: [#avatar_info{}],
                       pointer :: 'undefined' | #avatar_pointer{}}).
 -type avatar_meta() :: #avatar_meta{}.
+
+-record(channel_membership, {cdata = <<>> :: binary()}).
+-type channel_membership() :: #channel_membership{}.
 
 -record(bob_data, {cid = <<>> :: binary(),
                    'max-age' :: 'undefined' | non_neg_integer(),
@@ -914,6 +947,9 @@
                       sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xdata_field() :: #xdata_field{}.
 
+-record(channel_name, {cdata = <<>> :: binary()}).
+-type channel_name() :: #channel_name{}.
+
 -record(push_disable, {jid :: jid:jid(),
                        node = <<>> :: binary()}).
 -type push_disable() :: #push_disable{}.
@@ -925,6 +961,16 @@
                                   version = <<>> :: binary(),
                                   message :: 'undefined' | #xabbergroupchat_replace_message{}}).
 -type xabbergroupchat_replace() :: #xabbergroupchat_replace{}.
+
+-record(channel_user_card, {id = <<>> :: binary(),
+                            jid :: 'undefined' | binary(),
+                            role :: 'undefined' | binary(),
+                            nickname :: 'undefined' | binary(),
+                            badge :: 'undefined' | binary(),
+                            avatar :: 'undefined' | #avatar_meta{},
+                            present :: 'undefined' | binary(),
+                            subscription :: 'undefined' | binary()}).
+-type channel_user_card() :: #channel_user_card{}.
 
 -record(xabber_replace_message, {from :: undefined | jid:jid(),
                                  to :: undefined | jid:jid(),
@@ -1029,6 +1075,13 @@
                       items = [] :: [#disco_item{}],
                       rsm :: 'undefined' | #rsm_set{}}).
 -type disco_items() :: #disco_items{}.
+
+-record(channel_query, {xmlns = <<>> :: binary(),
+                        id = <<>> :: binary(),
+                        version :: 'undefined' | non_neg_integer(),
+                        rsm :: 'undefined' | #rsm_set{},
+                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type channel_query() :: #channel_query{}.
 
 -record(xabber_retract_query, {version :: 'undefined' | non_neg_integer(),
                                'less-than' :: 'undefined' | non_neg_integer(),
@@ -1259,18 +1312,6 @@
                      xdata = [] :: [#xdata{}]}).
 -type disco_info() :: #disco_info{}.
 
--record(xabbertoken_field, {var = <<>> :: binary(),
-                            token :: 'undefined' | binary(),
-                            client :: 'undefined' | binary(),
-                            device :: 'undefined' | binary(),
-                            ip :: 'undefined' | binary(),
-                            last :: 'undefined' | binary(),
-                            expire :: 'undefined' | binary()}).
--type xabbertoken_field() :: #xabbertoken_field{}.
-
--record(xabbertoken_x_fields, {field = [] :: [#xabbertoken_field{}]}).
--type xabbertoken_x_fields() :: #xabbertoken_x_fields{}.
-
 -record(sasl_mechanisms, {list = [] :: [binary()]}).
 -type sasl_mechanisms() :: #sasl_mechanisms{}.
 
@@ -1304,6 +1345,18 @@
                  xdata :: 'undefined' | #xdata{}}).
 -type search() :: #search{}.
 
+-record(xabbertoken_field, {var = <<>> :: binary(),
+                            token :: 'undefined' | binary(),
+                            client :: 'undefined' | binary(),
+                            device :: 'undefined' | binary(),
+                            ip :: 'undefined' | binary(),
+                            last :: 'undefined' | binary(),
+                            expire :: 'undefined' | binary()}).
+-type xabbertoken_field() :: #xabbertoken_field{}.
+
+-record(xabbertoken_x_fields, {field = [] :: [#xabbertoken_field{}]}).
+-type xabbertoken_x_fields() :: #xabbertoken_x_fields{}.
+
 -record(xabber_archived_conversation, {}).
 -type xabber_archived_conversation() :: #xabber_archived_conversation{}.
 
@@ -1311,41 +1364,9 @@
                                    cdata = <<>> :: binary()}).
 -type xabber_groupchat_mention() :: #xabber_groupchat_mention{}.
 
--record(xabbergroupchat_search, {name :: 'undefined' | binary(),
-                                 description :: 'undefined' | binary(),
-                                 model :: 'undefined' | binary(),
-                                 anonymous :: 'undefined' | binary(),
-                                 rsm :: 'undefined' | #rsm_set{}}).
--type xabbergroupchat_search() :: #xabbergroupchat_search{}.
-
--record(xabbergroupchat_create, {name :: 'undefined' | binary(),
-                                 description :: 'undefined' | binary(),
-                                 model :: 'undefined' | binary(),
-                                 searchable :: 'undefined' | binary(),
-                                 anonymous :: 'undefined' | binary(),
-                                 localpart :: 'undefined' | binary(),
-                                 pinned :: 'undefined' | binary(),
-                                 domains :: 'undefined' | #xabbergroup_domains{},
-                                 contacts :: 'undefined' | #xabbergroup_contacts{},
-                                 peer :: 'undefined' | #xabbergroup_peer{}}).
--type xabbergroupchat_create() :: #xabbergroupchat_create{}.
-
--record(xabbergroupchat_update, {name :: 'undefined' | binary(),
-                                 description :: 'undefined' | binary(),
-                                 model :: 'undefined' | binary(),
-                                 searchable :: 'undefined' | binary(),
-                                 owner :: 'undefined' | {binary()},
-                                 pinned :: 'undefined' | binary(),
-                                 domains :: 'undefined' | #xabbergroup_domains{},
-                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
--type xabbergroupchat_update() :: #xabbergroupchat_update{}.
-
 -record(delegation, {delegated = [] :: [#delegated{}],
                      forwarded :: 'undefined' | #forwarded{}}).
 -type delegation() :: #delegation{}.
-
--record(push_notification, {xdata :: 'undefined' | #xdata{}}).
--type push_notification() :: #push_notification{}.
 
 -record(xabber_pinned_conversation, {}).
 -type xabber_pinned_conversation() :: #xabber_pinned_conversation{}.
@@ -1440,6 +1461,38 @@
                        text = [] :: [#text{}]}).
 -type stream_error() :: #stream_error{}.
 
+-record(xabbergroupchat_search, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 anonymous :: 'undefined' | binary(),
+                                 rsm :: 'undefined' | #rsm_set{}}).
+-type xabbergroupchat_search() :: #xabbergroupchat_search{}.
+
+-record(xabbergroupchat_create, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 searchable :: 'undefined' | binary(),
+                                 anonymous :: 'undefined' | binary(),
+                                 localpart :: 'undefined' | binary(),
+                                 pinned :: 'undefined' | binary(),
+                                 domains :: 'undefined' | #xabbergroup_domains{},
+                                 contacts :: 'undefined' | #xabbergroup_contacts{},
+                                 peer :: 'undefined' | #xabbergroup_peer{}}).
+-type xabbergroupchat_create() :: #xabbergroupchat_create{}.
+
+-record(xabbergroupchat_update, {name :: 'undefined' | binary(),
+                                 description :: 'undefined' | binary(),
+                                 model :: 'undefined' | binary(),
+                                 searchable :: 'undefined' | binary(),
+                                 owner :: 'undefined' | {binary()},
+                                 pinned :: 'undefined' | binary(),
+                                 domains :: 'undefined' | #xabbergroup_domains{},
+                                 contacts :: 'undefined' | #xabbergroup_contacts{}}).
+-type xabbergroupchat_update() :: #xabbergroupchat_update{}.
+
+-record(push_notification, {xdata :: 'undefined' | #xdata{}}).
+-type push_notification() :: #push_notification{}.
+
 -record(time, {tzo :: 'undefined' | {integer(),integer()},
                utc :: undefined | erlang:timestamp()}).
 -type time() :: #time{}.
@@ -1497,8 +1550,10 @@
                         jingle_accept() |
                         stream_error() |
                         xabber_groupchat_mention() |
+                        channel_query() |
                         xabber_push_security() |
                         forwarded() |
+                        channel_localpart() |
                         xabbergroupchat_invite() |
                         voice_message() |
                         register() |
@@ -1522,13 +1577,13 @@
                         search_item() |
                         vcard_sound() |
                         feature_csi() |
-                        search() |
                         bytestreams() |
                         delivery_retry() |
                         starttls() |
                         bookmark_url() |
                         delegation_query() |
                         pubsub_owner() |
+                        text() |
                         xabbertoken_field() |
                         xevent() |
                         xabber_conversation() |
@@ -1545,6 +1600,7 @@
                         receipt_response() |
                         jingle_reject() |
                         muc() |
+                        channel_user_card() |
                         gone() |
                         xmppreference() |
                         xabbergroupchat_restriction() |
@@ -1565,6 +1621,7 @@
                         idle() |
                         xabbergroupchat_replace_message() |
                         xabbergroupchat_query_rights() |
+                        channel_description() |
                         xabber_sources() |
                         adhoc_note() |
                         unique_received() |
@@ -1572,6 +1629,7 @@
                         push_notification() |
                         unblock() |
                         body_x() |
+                        channel_domains() |
                         carbons_disable() |
                         adhoc_actions() |
                         xabbergroupchat_replace() |
@@ -1613,12 +1671,14 @@
                         xabber_pinned_conversation() |
                         xabbergroup_kick() |
                         stanza_id() |
+                        channel_membership() |
                         ps_subscribe() |
                         sm_failed() |
                         xdata() |
                         xabber_unpinned_conversation() |
                         disclosure() |
                         xabber_synchronization() |
+                        channel_index() |
                         xabber_push_enable() |
                         privacy_query() |
                         addresses() |
@@ -1636,6 +1696,7 @@
                         disco_item() |
                         sm_a() |
                         stat() |
+                        channel_domain() |
                         muc_admin() |
                         xabbergroupchat_index() |
                         xdata_option() |
@@ -1647,11 +1708,13 @@
                         mam_result() |
                         xabbertoken_feature() |
                         delivery_x() |
+                        channel_query_delete() |
                         rsm_set() |
                         thumbnail() |
                         vcard_photo() |
                         xabbergroup_unblock() |
                         xabber_metadata() |
+                        channel_x() |
                         vcard_label() |
                         roster_item() |
                         handshake() |
@@ -1690,13 +1753,14 @@
                         sic() |
                         muc_invite() |
                         sm_r() |
-                        text() |
                         stream_features() |
                         ps_options() |
+                        channel_contact() |
                         xabbertoken_query() |
                         xabbergroupchat_retract_invalidate() |
                         compress() |
                         xabbergroupchat_retract_all() |
+                        channel_contacts() |
                         xabbergroupchat_retract_message() |
                         xabbergroupchat_revoke() |
                         xabbergroupchat_create() |
@@ -1710,6 +1774,7 @@
                         mam_archived() |
                         delegation() |
                         muc_item() |
+                        search() |
                         caps() |
                         upload_slot_0() |
                         delay() |
@@ -1725,6 +1790,7 @@
                         sasl_auth() |
                         ps_error() |
                         xabbergroupchat_pinned_message() |
+                        channel_name() |
                         xabbergroupchat_invite_query() |
                         xabbergroupchat_retract_query() |
                         offline() |

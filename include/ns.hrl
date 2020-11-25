@@ -216,3 +216,7 @@
 -define(NS_XABBER_ARCHIVE, <<"https://xabber.com/protocol/archive">>).
 -define(NS_XABBER_ARCHIVED, <<"https://xabber.com/protocol/archived">>).
 -define(NS_XABBER_PINNED, <<"https://xabber.com/protocol/pinned">>).
+-define(NS_CHANNELS, <<"https://xabber.com/protocol/channels">>).
+-define(NS_CHANNELS_CREATE, <<"https://xabber.com/protocol/channels#create">>).
+-define(NS_CHANNELS_DELETE, <<"https://xabber.com/protocol/channels#delete">>).
+-define(NS_CHANNELS_SYSTEM_MESSAGE, <<"https://xabber.com/protocol/channels#system-message">>).

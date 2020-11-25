@@ -5742,6 +5742,208 @@
 	   result = {idle, '$since'},
 	   attrs = [#attr{name = <<"since">>}]}).
 
+-xml(channel_query,
+     #elem{name = <<"query">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_query, '$xmlns', '$id', '$version', '$rsm', '$_els'},
+     attrs = [#attr{name = <<"xmlns">>},
+     #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                   enc = {enc_int, []}},
+     #attr{name = <<"id">>}],
+     refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]
+     }).
+
+-xml(channel_query_delete,
+     #elem{name = <<"query">>,
+     xmlns = <<"https://xabber.com/protocol/channels#delete">>,
+	   module = 'xabberchannels',
+     result = {channel_query_delete, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_name,
+     #elem{name = <<"name">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_name, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_localpart,
+     #elem{name = <<"localpart">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_localpart, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_membership,
+     #elem{name = <<"membership">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_membership, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_description,
+     #elem{name = <<"description">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_description, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_index,
+     #elem{name = <<"index">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_index, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_contacts,
+     #elem{name = <<"contacts">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_contacts, '$contact'},
+     refs = [#ref{name = channel_contact, label = '$contact' }]
+     }).
+
+-xml(channel_domains,
+     #elem{name = <<"domains">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_domains, '$domain'},
+     refs = [#ref{name = channel_domain, label = '$domain' }]
+     }).
+
+-xml(channel_contact,
+     #elem{name = <<"contact">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_contact, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+
+-xml(channel_domain,
+     #elem{name = <<"domain">>,
+     xmlns = [
+     <<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#create">>
+     ],
+	   module = 'xabberchannels',
+     result = {channel_domain, '$cdata'},
+     cdata = #cdata{label = '$cdata'}
+     }).
+
+-xml(channel_x,
+     #elem{name = <<"x">>,
+     xmlns = [<<"https://xabber.com/protocol/channels">>,
+     <<"https://xabber.com/protocol/channels#system-message">>],
+	   module = 'xabberchannels',
+     result = {channel_x, '$xmlns', '$type', '$version', '$_els'},
+     attrs = [
+     #attr{name = <<"xmlns">>},
+     #attr{name = <<"type">>},
+     #attr{name = <<"version">>}
+     ]
+              }).
+
+-xml(channel_user_card,
+     #elem{name = <<"user">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = {channel_user_card, '$id', '$jid', '$role', '$nickname', '$badge', '$avatar', '$present', '$subscription'},
+     attrs = [#attr{name = <<"id">>}],
+     refs = [#ref{name = channel_jid, min = 0, max = 1, label = '$jid'},
+             #ref{name = channel_user_role, min = 0, max = 1, label = '$role'},
+             #ref{name = channel_user_nickname, min = 0, max = 1, label = '$nickname'},
+             #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
+             #ref{name = channel_user_badge, min = 0, max = 1, label = '$badge'},
+             #ref{name = channel_online, min = 0, max = 1, label = '$present'},
+             #ref{name = channel_subscription, min = 0, max = 1, label = '$subscription'}
+             ]
+     }
+     ).
+
+-xml(channel_jid,
+     #elem{name = <<"jid">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(channel_user_role,
+     #elem{name = <<"role">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(channel_online,
+     #elem{name = <<"present">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(channel_subscription,
+     #elem{name = <<"subscription">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata', required = true}}
+).
+
+-xml(channel_user_nickname,
+     #elem{name = <<"nickname">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata'}}
+).
+
+-xml(channel_user_badge,
+     #elem{name = <<"badge">>,
+     xmlns = <<"https://xabber.com/protocol/channels">>,
+	   module = 'xabberchannels',
+     result = '$cdata',
+     cdata = #cdata{label = '$cdata'}}
+).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
