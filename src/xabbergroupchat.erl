@@ -285,50 +285,6 @@ do_decode(<<"kick">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_xabbergroupchat_kick(<<"https://xabber.com/protocol/groups">>,
 				Opts, El);
-do_decode(<<"localpart">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_localpart(<<"https://xabber.com/protocol/groups">>,
-				     Opts, El);
-do_decode(<<"membership">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_model(<<"https://xabber.com/protocol/groups">>,
-				 Opts, El);
-do_decode(<<"description">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_description(<<"https://xabber.com/protocol/groups">>,
-				       Opts, El);
-do_decode(<<"privacy">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_anonymous(<<"https://xabber.com/protocol/groups">>,
-				     Opts, El);
-do_decode(<<"name">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_name(<<"https://xabber.com/protocol/groups">>,
-				Opts, El);
-do_decode(<<"index">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_searchable(<<"https://xabber.com/protocol/groups">>,
-				      Opts, El);
-do_decode(<<"pinned-message">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_message(<<"https://xabber.com/protocol/groups">>,
-				   Opts, El);
-do_decode(<<"domain">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_domain_create(<<"https://xabber.com/protocol/groups">>,
-					 Opts, El);
-do_decode(<<"domains">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_domains(<<"https://xabber.com/protocol/groups">>,
-				   Opts, El);
-do_decode(<<"contact">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_contact_create(<<"https://xabber.com/protocol/groups">>,
-					  Opts, El);
-do_decode(<<"contacts">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_contacts(<<"https://xabber.com/protocol/groups">>,
-				    Opts, El);
 do_decode(<<"present">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_xabbergroupchat_online(<<"https://xabber.com/protocol/groups">>,
@@ -357,10 +313,6 @@ do_decode(<<"parent-chat">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_xabbergroupchat_parent_chat(<<"https://xabber.com/protocol/groups">>,
 				       Opts, El);
-do_decode(<<"create">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_xabbergroupchat_create(<<"https://xabber.com/protocol/groups">>,
-				  Opts, El);
 do_decode(<<"x">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_xabbergroupchat_x(<<"https://xabber.com/protocol/groups">>,
@@ -616,26 +568,6 @@ tags() ->
      {<<"block">>,
       <<"https://xabber.com/protocol/groups#block">>},
      {<<"kick">>, <<"https://xabber.com/protocol/groups">>},
-     {<<"localpart">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"membership">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"description">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"privacy">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"name">>, <<"https://xabber.com/protocol/groups">>},
-     {<<"index">>, <<"https://xabber.com/protocol/groups">>},
-     {<<"pinned-message">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"domain">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"domains">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"contact">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"contacts">>,
-      <<"https://xabber.com/protocol/groups">>},
      {<<"present">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"members">>,
@@ -646,8 +578,6 @@ tags() ->
      {<<"peer-to-peer">>, <<"jabber:client">>},
      {<<"jid">>, <<"https://xabber.com/protocol/groups">>},
      {<<"parent-chat">>,
-      <<"https://xabber.com/protocol/groups">>},
-     {<<"create">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"x">>, <<"https://xabber.com/protocol/groups">>},
      {<<"x">>,
@@ -743,21 +673,14 @@ do_encode({xabbergroupchat_query_rights, _, _, _} =
 do_encode({xabbergroupchat_query_item, _} = Item,
 	  TopXMLNS) ->
     encode_xabbergroupchat_query_item(Item, TopXMLNS);
-do_encode({xabbergroupchat_update, _, _, _, _, _, _, _,
-	   _} =
-	      Update,
+do_encode({xabbergroupchat_update, _, _} = Update,
 	  TopXMLNS) ->
     encode_xabbergroupchat_update(Update, TopXMLNS);
-do_encode({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	   _, _} =
+do_encode({xabbergroupchat_x, _, _, _, _, _, _, _, _,
+	   _} =
 	      X,
 	  TopXMLNS) ->
     encode_xabbergroupchat_x(X, TopXMLNS);
-do_encode({xabbergroupchat_create, _, _, _, _, _, _, _,
-	   _, _, _} =
-	      Create,
-	  TopXMLNS) ->
-    encode_xabbergroupchat_create(Create, TopXMLNS);
 do_encode({xabbergroup_peer, _, _, _} = Peer_to_peer,
 	  TopXMLNS) ->
     encode_xabbergroupchat_peer(Peer_to_peer, TopXMLNS);
@@ -901,9 +824,6 @@ do_get_name({xabbergroup_unblock, _, _, _}) ->
     <<"unblock">>;
 do_get_name({xabbergroupchat, _, _, _, _, _, _}) ->
     <<"query">>;
-do_get_name({xabbergroupchat_create, _, _, _, _, _, _,
-	     _, _, _, _}) ->
-    <<"create">>;
 do_get_name({xabbergroupchat_description, _}) ->
     <<"description">>;
 do_get_name({xabbergroupchat_index, _}) -> <<"index">>;
@@ -953,8 +873,7 @@ do_get_name({xabbergroupchat_search, _, _, _, _, _}) ->
     <<"search">>;
 do_get_name({xabbergroupchat_status, _}) ->
     <<"status">>;
-do_get_name({xabbergroupchat_update, _, _, _, _, _, _,
-	     _, _}) ->
+do_get_name({xabbergroupchat_update, _, _}) ->
     <<"update">>;
 do_get_name({xabbergroupchat_user_card, _, _, _, _, _,
 	     _, _, _}) ->
@@ -962,7 +881,7 @@ do_get_name({xabbergroupchat_user_card, _, _, _, _, _,
 do_get_name({xabbergroupchat_user_updated, _}) ->
     <<"user-updated">>;
 do_get_name({xabbergroupchat_x, _, _, _, _, _, _, _, _,
-	     _, _, _}) ->
+	     _}) ->
     <<"x">>.
 
 do_get_ns({block_domain, _}) ->
@@ -987,8 +906,12 @@ do_get_ns({x_present}) ->
     <<"https://xabber.com/protocol/groups#present">>;
 do_get_ns({xabbergroup_block, _, _, _}) ->
     <<"https://xabber.com/protocol/groups#block">>;
+do_get_ns({xabbergroup_contacts, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroup_decline}) ->
     <<"https://xabber.com/protocol/groups#invite">>;
+do_get_ns({xabbergroup_domains, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroup_invite_user, _, _}) ->
     <<"https://xabber.com/protocol/groups#invite">>;
 do_get_ns({xabbergroup_kick, _, _}) ->
@@ -999,9 +922,6 @@ do_get_ns({xabbergroup_unblock, _, _, _}) ->
     <<"https://xabber.com/protocol/groups#block">>;
 do_get_ns({xabbergroupchat, Xmlns, _, _, _, _, _}) ->
     Xmlns;
-do_get_ns({xabbergroupchat_create, _, _, _, _, _, _, _,
-	   _, _, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroupchat_description, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroupchat_index, _}) ->
@@ -1049,8 +969,7 @@ do_get_ns({xabbergroupchat_search, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroupchat_status, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({xabbergroupchat_update, _, _, _, _, _, _, _,
-	   _}) ->
+do_get_ns({xabbergroupchat_update, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroupchat_user_card, _, _, _, _, _, _,
 	   _, _}) ->
@@ -1058,15 +977,15 @@ do_get_ns({xabbergroupchat_user_card, _, _, _, _, _, _,
 do_get_ns({xabbergroupchat_user_updated, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({xabbergroupchat_x, Xmlns, _, _, _, _, _, _,
-	   _, _, _, _}) ->
+	   _, _}) ->
     Xmlns.
 
 get_els({xabbergroupchat_query_rights, _item,
 	 _restriction, _sub_els}) ->
     _sub_els;
 get_els({xabbergroupchat_x, _xmlns, _type, _version,
-	 _no_permission, _domains, _contacts, _members, _present,
-	 _parent, _jid, _sub_els}) ->
+	 _no_permission, _members, _present, _parent, _jid,
+	 _sub_els}) ->
     _sub_els;
 get_els({xabbergroupchat, _xmlns, _id, _version, _rsm,
 	 _sub_els, _cdata}) ->
@@ -1081,12 +1000,11 @@ set_els({xabbergroupchat_query_rights, _item,
     {xabbergroupchat_query_rights, _item, _restriction,
      _sub_els};
 set_els({xabbergroupchat_x, _xmlns, _type, _version,
-	 _no_permission, _domains, _contacts, _members, _present,
-	 _parent, _jid, _},
+	 _no_permission, _members, _present, _parent, _jid, _},
 	_sub_els) ->
     {xabbergroupchat_x, _xmlns, _type, _version,
-     _no_permission, _domains, _contacts, _members, _present,
-     _parent, _jid, _sub_els};
+     _no_permission, _members, _present, _parent, _jid,
+     _sub_els};
 set_els({xabbergroupchat, _xmlns, _id, _version, _rsm,
 	 _, _cdata},
 	_sub_els) ->
@@ -1112,15 +1030,10 @@ pp(xabbergroup_invite_user, 2) -> [jid, id];
 pp(xabbergroupchat_query_rights, 3) ->
     [item, restriction, sub_els];
 pp(xabbergroupchat_query_item, 1) -> [id];
-pp(xabbergroupchat_update, 8) ->
-    [name, description, model, searchable, owner, pinned,
-     domains, contacts];
-pp(xabbergroupchat_x, 11) ->
-    [xmlns, type, version, no_permission, domains, contacts,
-     members, present, parent, jid, sub_els];
-pp(xabbergroupchat_create, 10) ->
-    [name, description, model, searchable, anonymous,
-     localpart, pinned, domains, contacts, peer];
+pp(xabbergroupchat_update, 2) -> [owner, pinned];
+pp(xabbergroupchat_x, 9) ->
+    [xmlns, type, version, no_permission, members, present,
+     parent, jid, sub_els];
 pp(xabbergroup_peer, 3) -> [jid, id, cdata];
 pp(body_x, 2) -> [lang, data];
 pp(xabbergroup_kick, 2) -> [id, jid];
@@ -1174,12 +1087,11 @@ records() ->
      {xabbergroup_invite_user, 2},
      {xabbergroupchat_query_rights, 3},
      {xabbergroupchat_query_item, 1},
-     {xabbergroupchat_update, 8}, {xabbergroupchat_x, 11},
-     {xabbergroupchat_create, 10}, {xabbergroup_peer, 3},
-     {body_x, 2}, {xabbergroup_kick, 2},
-     {xabbergroup_block, 3}, {xabbergroup_unblock, 3},
-     {block_id, 1}, {block_jid, 1}, {block_domain, 1},
-     {xabbergroupchat_search, 5},
+     {xabbergroupchat_update, 2}, {xabbergroupchat_x, 9},
+     {xabbergroup_peer, 3}, {body_x, 2},
+     {xabbergroup_kick, 2}, {xabbergroup_block, 3},
+     {xabbergroup_unblock, 3}, {block_id, 1}, {block_jid, 1},
+     {block_domain, 1}, {xabbergroupchat_search, 5},
      {xabbergroupchat_user_updated, 1},
      {xabbergroupchat_kicked, 1},
      {xabbergroupchat_user_card, 8}, {xabbergroupchat, 6},
@@ -3717,9 +3629,16 @@ decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    _els, Anonymous,
-					    decode_xabbergroupchat_name(<<"https://xabber.com/protocol/groups">>,
-									__Opts,
-									_el),
+					    decode_xabbergroupchat_query_name(<<"https://xabber.com/protocol/groups">>,
+									      __Opts,
+									      _el),
+					    Model, Rsm, Description);
+      <<"https://xabber.com/protocol/groups#create">> ->
+	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
+					    _els, Anonymous,
+					    decode_xabbergroupchat_query_name(<<"https://xabber.com/protocol/groups#create">>,
+									      __Opts,
+									      _el),
 					    Model, Rsm, Description);
       _ ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
@@ -3736,9 +3655,15 @@ decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    _els, Anonymous, Name, Model, Rsm,
-					    decode_xabbergroupchat_description(<<"https://xabber.com/protocol/groups">>,
-									       __Opts,
-									       _el));
+					    decode_xabbergroupchat_query_description(<<"https://xabber.com/protocol/groups">>,
+										     __Opts,
+										     _el));
+      <<"https://xabber.com/protocol/groups#create">> ->
+	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
+					    _els, Anonymous, Name, Model, Rsm,
+					    decode_xabbergroupchat_query_description(<<"https://xabber.com/protocol/groups#create">>,
+										     __Opts,
+										     _el));
       _ ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    _els, Anonymous, Name, Model, Rsm,
@@ -3754,9 +3679,16 @@ decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    _els, Anonymous, Name,
-					    decode_xabbergroupchat_model(<<"https://xabber.com/protocol/groups">>,
-									 __Opts,
-									 _el),
+					    decode_xabbergroupchat_query_membership(<<"https://xabber.com/protocol/groups">>,
+										    __Opts,
+										    _el),
+					    Rsm, Description);
+      <<"https://xabber.com/protocol/groups#create">> ->
+	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
+					    _els, Anonymous, Name,
+					    decode_xabbergroupchat_query_membership(<<"https://xabber.com/protocol/groups#create">>,
+										    __Opts,
+										    _el),
 					    Rsm, Description);
       _ ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
@@ -3764,7 +3696,7 @@ decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    Description)
     end;
 decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"privacy">>, _attrs, _} = _el
+				  [{xmlel, <<"index">>, _attrs, _} = _el
 				   | _els],
 				  Anonymous, Name, Model, Rsm, Description) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
@@ -3773,9 +3705,16 @@ decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
 					    _els,
-					    decode_xabbergroupchat_anonymous(<<"https://xabber.com/protocol/groups">>,
-									     __Opts,
-									     _el),
+					    decode_xabbergroupchat_query_index(<<"https://xabber.com/protocol/groups">>,
+									       __Opts,
+									       _el),
+					    Name, Model, Rsm, Description);
+      <<"https://xabber.com/protocol/groups#create">> ->
+	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
+					    _els,
+					    decode_xabbergroupchat_query_index(<<"https://xabber.com/protocol/groups#create">>,
+									       __Opts,
+									       _el),
 					    Name, Model, Rsm, Description);
       _ ->
 	  decode_xabbergroupchat_search_els(__TopXMLNS, __Opts,
@@ -3833,7 +3772,8 @@ encode_xabbergroupchat_search({xabbergroupchat_search,
     _acc;
 'encode_xabbergroupchat_search_$anonymous'(Anonymous,
 					   __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_anonymous(Anonymous, __TopXMLNS)
+    [encode_xabbergroupchat_query_index(Anonymous,
+					__TopXMLNS)
      | _acc].
 
 'encode_xabbergroupchat_search_$name'(undefined,
@@ -3841,14 +3781,16 @@ encode_xabbergroupchat_search({xabbergroupchat_search,
     _acc;
 'encode_xabbergroupchat_search_$name'(Name, __TopXMLNS,
 				      _acc) ->
-    [encode_xabbergroupchat_name(Name, __TopXMLNS) | _acc].
+    [encode_xabbergroupchat_query_name(Name, __TopXMLNS)
+     | _acc].
 
 'encode_xabbergroupchat_search_$model'(undefined,
 				       __TopXMLNS, _acc) ->
     _acc;
 'encode_xabbergroupchat_search_$model'(Model,
 				       __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_model(Model, __TopXMLNS)
+    [encode_xabbergroupchat_query_membership(Model,
+					     __TopXMLNS)
      | _acc].
 
 'encode_xabbergroupchat_search_$rsm'(undefined,
@@ -3863,8 +3805,8 @@ encode_xabbergroupchat_search({xabbergroupchat_search,
     _acc;
 'encode_xabbergroupchat_search_$description'(Description,
 					     __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_description(Description,
-					__TopXMLNS)
+    [encode_xabbergroupchat_query_description(Description,
+					      __TopXMLNS)
      | _acc].
 
 decode_xabbergroupchat_domain(__TopXMLNS, __Opts,
@@ -4352,499 +4294,6 @@ encode_xabbergroupchat_kick({xabbergroup_kick, Id, Jid},
 				      [encode_xabbergroupchat_id(Id, __TopXMLNS)
 				       | _acc]).
 
-decode_xabbergroupchat_localpart(__TopXMLNS, __Opts,
-				 {xmlel, <<"localpart">>, _attrs, _els}) ->
-    Cdata = decode_xabbergroupchat_localpart_els(__TopXMLNS,
-						 __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_localpart_els(__TopXMLNS, __Opts,
-				     [], Cdata) ->
-    decode_xabbergroupchat_localpart_cdata(__TopXMLNS,
-					   Cdata);
-decode_xabbergroupchat_localpart_els(__TopXMLNS, __Opts,
-				     [{xmlcdata, _data} | _els], Cdata) ->
-    decode_xabbergroupchat_localpart_els(__TopXMLNS, __Opts,
-					 _els, <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_localpart_els(__TopXMLNS, __Opts,
-				     [_ | _els], Cdata) ->
-    decode_xabbergroupchat_localpart_els(__TopXMLNS, __Opts,
-					 _els, Cdata).
-
-encode_xabbergroupchat_localpart(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_localpart_cdata(Cdata,
-						  []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"localpart">>, _attrs, _els}.
-
-decode_xabbergroupchat_localpart_cdata(__TopXMLNS,
-				       <<>>) ->
-    <<>>;
-decode_xabbergroupchat_localpart_cdata(__TopXMLNS,
-				       _val) ->
-    _val.
-
-encode_xabbergroupchat_localpart_cdata(<<>>, _acc) ->
-    _acc;
-encode_xabbergroupchat_localpart_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_model(__TopXMLNS, __Opts,
-			     {xmlel, <<"membership">>, _attrs, _els}) ->
-    Cdata = decode_xabbergroupchat_model_els(__TopXMLNS,
-					     __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_model_els(__TopXMLNS, __Opts, [],
-				 Cdata) ->
-    decode_xabbergroupchat_model_cdata(__TopXMLNS, Cdata);
-decode_xabbergroupchat_model_els(__TopXMLNS, __Opts,
-				 [{xmlcdata, _data} | _els], Cdata) ->
-    decode_xabbergroupchat_model_els(__TopXMLNS, __Opts,
-				     _els, <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_model_els(__TopXMLNS, __Opts,
-				 [_ | _els], Cdata) ->
-    decode_xabbergroupchat_model_els(__TopXMLNS, __Opts,
-				     _els, Cdata).
-
-encode_xabbergroupchat_model(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_model_cdata(Cdata, []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"membership">>, _attrs, _els}.
-
-decode_xabbergroupchat_model_cdata(__TopXMLNS, <<>>) ->
-    <<>>;
-decode_xabbergroupchat_model_cdata(__TopXMLNS, _val) ->
-    _val.
-
-encode_xabbergroupchat_model_cdata(<<>>, _acc) -> _acc;
-encode_xabbergroupchat_model_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_description(__TopXMLNS, __Opts,
-				   {xmlel, <<"description">>, _attrs, _els}) ->
-    Cdata =
-	decode_xabbergroupchat_description_els(__TopXMLNS,
-					       __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_description_els(__TopXMLNS,
-				       __Opts, [], Cdata) ->
-    decode_xabbergroupchat_description_cdata(__TopXMLNS,
-					     Cdata);
-decode_xabbergroupchat_description_els(__TopXMLNS,
-				       __Opts, [{xmlcdata, _data} | _els],
-				       Cdata) ->
-    decode_xabbergroupchat_description_els(__TopXMLNS,
-					   __Opts, _els,
-					   <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_description_els(__TopXMLNS,
-				       __Opts, [_ | _els], Cdata) ->
-    decode_xabbergroupchat_description_els(__TopXMLNS,
-					   __Opts, _els, Cdata).
-
-encode_xabbergroupchat_description(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_description_cdata(Cdata,
-						    []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"description">>, _attrs, _els}.
-
-decode_xabbergroupchat_description_cdata(__TopXMLNS,
-					 <<>>) ->
-    <<>>;
-decode_xabbergroupchat_description_cdata(__TopXMLNS,
-					 _val) ->
-    _val.
-
-encode_xabbergroupchat_description_cdata(<<>>, _acc) ->
-    _acc;
-encode_xabbergroupchat_description_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_anonymous(__TopXMLNS, __Opts,
-				 {xmlel, <<"privacy">>, _attrs, _els}) ->
-    Cdata = decode_xabbergroupchat_anonymous_els(__TopXMLNS,
-						 __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_anonymous_els(__TopXMLNS, __Opts,
-				     [], Cdata) ->
-    decode_xabbergroupchat_anonymous_cdata(__TopXMLNS,
-					   Cdata);
-decode_xabbergroupchat_anonymous_els(__TopXMLNS, __Opts,
-				     [{xmlcdata, _data} | _els], Cdata) ->
-    decode_xabbergroupchat_anonymous_els(__TopXMLNS, __Opts,
-					 _els, <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_anonymous_els(__TopXMLNS, __Opts,
-				     [_ | _els], Cdata) ->
-    decode_xabbergroupchat_anonymous_els(__TopXMLNS, __Opts,
-					 _els, Cdata).
-
-encode_xabbergroupchat_anonymous(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_anonymous_cdata(Cdata,
-						  []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"privacy">>, _attrs, _els}.
-
-decode_xabbergroupchat_anonymous_cdata(__TopXMLNS,
-				       <<>>) ->
-    <<>>;
-decode_xabbergroupchat_anonymous_cdata(__TopXMLNS,
-				       _val) ->
-    _val.
-
-encode_xabbergroupchat_anonymous_cdata(<<>>, _acc) ->
-    _acc;
-encode_xabbergroupchat_anonymous_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_name(__TopXMLNS, __Opts,
-			    {xmlel, <<"name">>, _attrs, _els}) ->
-    Cdata = decode_xabbergroupchat_name_els(__TopXMLNS,
-					    __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_name_els(__TopXMLNS, __Opts, [],
-				Cdata) ->
-    decode_xabbergroupchat_name_cdata(__TopXMLNS, Cdata);
-decode_xabbergroupchat_name_els(__TopXMLNS, __Opts,
-				[{xmlcdata, _data} | _els], Cdata) ->
-    decode_xabbergroupchat_name_els(__TopXMLNS, __Opts,
-				    _els, <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_name_els(__TopXMLNS, __Opts,
-				[_ | _els], Cdata) ->
-    decode_xabbergroupchat_name_els(__TopXMLNS, __Opts,
-				    _els, Cdata).
-
-encode_xabbergroupchat_name(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_name_cdata(Cdata, []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"name">>, _attrs, _els}.
-
-decode_xabbergroupchat_name_cdata(__TopXMLNS, <<>>) ->
-    <<>>;
-decode_xabbergroupchat_name_cdata(__TopXMLNS, _val) ->
-    _val.
-
-encode_xabbergroupchat_name_cdata(<<>>, _acc) -> _acc;
-encode_xabbergroupchat_name_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_searchable(__TopXMLNS, __Opts,
-				  {xmlel, <<"index">>, _attrs, _els}) ->
-    Cdata =
-	decode_xabbergroupchat_searchable_els(__TopXMLNS,
-					      __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_searchable_els(__TopXMLNS,
-				      __Opts, [], Cdata) ->
-    decode_xabbergroupchat_searchable_cdata(__TopXMLNS,
-					    Cdata);
-decode_xabbergroupchat_searchable_els(__TopXMLNS,
-				      __Opts, [{xmlcdata, _data} | _els],
-				      Cdata) ->
-    decode_xabbergroupchat_searchable_els(__TopXMLNS,
-					  __Opts, _els,
-					  <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_searchable_els(__TopXMLNS,
-				      __Opts, [_ | _els], Cdata) ->
-    decode_xabbergroupchat_searchable_els(__TopXMLNS,
-					  __Opts, _els, Cdata).
-
-encode_xabbergroupchat_searchable(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_searchable_cdata(Cdata,
-						   []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"index">>, _attrs, _els}.
-
-decode_xabbergroupchat_searchable_cdata(__TopXMLNS,
-					<<>>) ->
-    <<>>;
-decode_xabbergroupchat_searchable_cdata(__TopXMLNS,
-					_val) ->
-    _val.
-
-encode_xabbergroupchat_searchable_cdata(<<>>, _acc) ->
-    _acc;
-encode_xabbergroupchat_searchable_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_message(__TopXMLNS, __Opts,
-			       {xmlel, <<"pinned-message">>, _attrs, _els}) ->
-    Cdata = decode_xabbergroupchat_message_els(__TopXMLNS,
-					       __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_message_els(__TopXMLNS, __Opts,
-				   [], Cdata) ->
-    decode_xabbergroupchat_message_cdata(__TopXMLNS, Cdata);
-decode_xabbergroupchat_message_els(__TopXMLNS, __Opts,
-				   [{xmlcdata, _data} | _els], Cdata) ->
-    decode_xabbergroupchat_message_els(__TopXMLNS, __Opts,
-				       _els, <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_message_els(__TopXMLNS, __Opts,
-				   [_ | _els], Cdata) ->
-    decode_xabbergroupchat_message_els(__TopXMLNS, __Opts,
-				       _els, Cdata).
-
-encode_xabbergroupchat_message(Cdata, __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_message_cdata(Cdata, []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"pinned-message">>, _attrs, _els}.
-
-decode_xabbergroupchat_message_cdata(__TopXMLNS,
-				     <<>>) ->
-    <<>>;
-decode_xabbergroupchat_message_cdata(__TopXMLNS,
-				     _val) ->
-    _val.
-
-encode_xabbergroupchat_message_cdata(<<>>, _acc) ->
-    _acc;
-encode_xabbergroupchat_message_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_domain_create(__TopXMLNS, __Opts,
-				     {xmlel, <<"domain">>, _attrs, _els}) ->
-    Cdata =
-	decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-						 __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-					 __Opts, [], Cdata) ->
-    decode_xabbergroupchat_domain_create_cdata(__TopXMLNS,
-					       Cdata);
-decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-					 __Opts, [{xmlcdata, _data} | _els],
-					 Cdata) ->
-    decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-					     __Opts, _els,
-					     <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-					 __Opts, [_ | _els], Cdata) ->
-    decode_xabbergroupchat_domain_create_els(__TopXMLNS,
-					     __Opts, _els, Cdata).
-
-encode_xabbergroupchat_domain_create(Cdata,
-				     __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_xabbergroupchat_domain_create_cdata(Cdata,
-						      []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"domain">>, _attrs, _els}.
-
-decode_xabbergroupchat_domain_create_cdata(__TopXMLNS,
-					   <<>>) ->
-    <<>>;
-decode_xabbergroupchat_domain_create_cdata(__TopXMLNS,
-					   _val) ->
-    _val.
-
-encode_xabbergroupchat_domain_create_cdata(<<>>,
-					   _acc) ->
-    _acc;
-encode_xabbergroupchat_domain_create_cdata(_val,
-					   _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_domains(__TopXMLNS, __Opts,
-			       {xmlel, <<"domains">>, _attrs, _els}) ->
-    Domain = decode_xabbergroupchat_domains_els(__TopXMLNS,
-						__Opts, _els, []),
-    {xabbergroup_domains, Domain}.
-
-decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-				   [], Domain) ->
-    lists:reverse(Domain);
-decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-				   [{xmlel, <<"domain">>, _attrs, _} = _el
-				    | _els],
-				   Domain) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-					     _els,
-					     [decode_xabbergroupchat_domain_create(<<"https://xabber.com/protocol/groups">>,
-										   __Opts,
-										   _el)
-					      | Domain]);
-      _ ->
-	  decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-					     _els, Domain)
-    end;
-decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-				   [_ | _els], Domain) ->
-    decode_xabbergroupchat_domains_els(__TopXMLNS, __Opts,
-				       _els, Domain).
-
-encode_xabbergroupchat_domains({xabbergroup_domains,
-				Domain},
-			       __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_xabbergroupchat_domains_$domain'(Domain,
-							       __NewTopXMLNS,
-							       [])),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"domains">>, _attrs, _els}.
-
-'encode_xabbergroupchat_domains_$domain'([], __TopXMLNS,
-					 _acc) ->
-    _acc;
-'encode_xabbergroupchat_domains_$domain'([Domain
-					  | _els],
-					 __TopXMLNS, _acc) ->
-    'encode_xabbergroupchat_domains_$domain'(_els,
-					     __TopXMLNS,
-					     [encode_xabbergroupchat_domain_create(Domain,
-										   __TopXMLNS)
-					      | _acc]).
-
-decode_xabbergroupchat_contact_create(__TopXMLNS,
-				      __Opts,
-				      {xmlel, <<"contact">>, _attrs, _els}) ->
-    Cdata =
-	decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-						  __Opts, _els, <<>>),
-    Cdata.
-
-decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-					  __Opts, [], Cdata) ->
-    decode_xabbergroupchat_contact_create_cdata(__TopXMLNS,
-						Cdata);
-decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-					  __Opts, [{xmlcdata, _data} | _els],
-					  Cdata) ->
-    decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-					      __Opts, _els,
-					      <<Cdata/binary, _data/binary>>);
-decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-					  __Opts, [_ | _els], Cdata) ->
-    decode_xabbergroupchat_contact_create_els(__TopXMLNS,
-					      __Opts, _els, Cdata).
-
-encode_xabbergroupchat_contact_create(Cdata,
-				      __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els =
-	encode_xabbergroupchat_contact_create_cdata(Cdata, []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"contact">>, _attrs, _els}.
-
-decode_xabbergroupchat_contact_create_cdata(__TopXMLNS,
-					    <<>>) ->
-    <<>>;
-decode_xabbergroupchat_contact_create_cdata(__TopXMLNS,
-					    _val) ->
-    _val.
-
-encode_xabbergroupchat_contact_create_cdata(<<>>,
-					    _acc) ->
-    _acc;
-encode_xabbergroupchat_contact_create_cdata(_val,
-					    _acc) ->
-    [{xmlcdata, _val} | _acc].
-
-decode_xabbergroupchat_contacts(__TopXMLNS, __Opts,
-				{xmlel, <<"contacts">>, _attrs, _els}) ->
-    Contact =
-	decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-					    _els, []),
-    {xabbergroup_contacts, Contact}.
-
-decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-				    [], Contact) ->
-    lists:reverse(Contact);
-decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-				    [{xmlel, <<"contact">>, _attrs, _} = _el
-				     | _els],
-				    Contact) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-					      _els,
-					      [decode_xabbergroupchat_contact_create(<<"https://xabber.com/protocol/groups">>,
-										     __Opts,
-										     _el)
-					       | Contact]);
-      _ ->
-	  decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-					      _els, Contact)
-    end;
-decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-				    [_ | _els], Contact) ->
-    decode_xabbergroupchat_contacts_els(__TopXMLNS, __Opts,
-					_els, Contact).
-
-encode_xabbergroupchat_contacts({xabbergroup_contacts,
-				 Contact},
-				__TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_xabbergroupchat_contacts_$contact'(Contact,
-								 __NewTopXMLNS,
-								 [])),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"contacts">>, _attrs, _els}.
-
-'encode_xabbergroupchat_contacts_$contact'([],
-					   __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_contacts_$contact'([Contact
-					    | _els],
-					   __TopXMLNS, _acc) ->
-    'encode_xabbergroupchat_contacts_$contact'(_els,
-					       __TopXMLNS,
-					       [encode_xabbergroupchat_contact_create(Contact,
-										      __TopXMLNS)
-						| _acc]).
-
 decode_xabbergroupchat_online(__TopXMLNS, __Opts,
 			      {xmlel, <<"present">>, _attrs, _els}) ->
     Cdata = decode_xabbergroupchat_online_els(__TopXMLNS,
@@ -5170,487 +4619,47 @@ encode_xabbergroupchat_parent_chat_cdata(undefined,
 encode_xabbergroupchat_parent_chat_cdata(_val, _acc) ->
     [{xmlcdata, jid:encode(_val)} | _acc].
 
-decode_xabbergroupchat_create(__TopXMLNS, __Opts,
-			      {xmlel, <<"create">>, _attrs, _els}) ->
-    {Peer, Contacts, Domains, Anonymous, Pinned, Localpart,
-     Searchable, Name, Model, Description} =
-	decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					  _els, undefined, undefined, undefined,
-					  undefined, undefined, undefined,
-					  undefined, undefined, undefined,
-					  undefined),
-    {xabbergroupchat_create, Name, Description, Model,
-     Searchable, Anonymous, Localpart, Pinned, Domains,
-     Contacts, Peer}.
-
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [], Peer, Contacts, Domains, Anonymous,
-				  Pinned, Localpart, Searchable, Name, Model,
-				  Description) ->
-    {Peer, Contacts, Domains, Anonymous, Pinned, Localpart,
-     Searchable, Name, Model, Description};
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"name">>, _attrs, _} = _el | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable,
-					    decode_xabbergroupchat_name(<<"https://xabber.com/protocol/groups">>,
-									__Opts,
-									_el),
-					    Model, Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"description">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    decode_xabbergroupchat_description(<<"https://xabber.com/protocol/groups">>,
-									       __Opts,
-									       _el));
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"membership">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name,
-					    decode_xabbergroupchat_model(<<"https://xabber.com/protocol/groups">>,
-									 __Opts,
-									 _el),
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"privacy">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    decode_xabbergroupchat_anonymous(<<"https://xabber.com/protocol/groups">>,
-									     __Opts,
-									     _el),
-					    Pinned, Localpart, Searchable, Name,
-					    Model, Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"localpart">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned,
-					    decode_xabbergroupchat_localpart(<<"https://xabber.com/protocol/groups">>,
-									     __Opts,
-									     _el),
-					    Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"pinned-message">>, _attrs, _} =
-				       _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous,
-					    decode_xabbergroupchat_message(<<"https://xabber.com/protocol/groups">>,
-									   __Opts,
-									   _el),
-					    Localpart, Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"domains">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts,
-					    decode_xabbergroupchat_domains(<<"https://xabber.com/protocol/groups">>,
-									   __Opts,
-									   _el),
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"contacts">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer,
-					    decode_xabbergroupchat_contacts(<<"https://xabber.com/protocol/groups">>,
-									    __Opts,
-									    _el),
-					    Domains, Anonymous, Pinned,
-					    Localpart, Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"peer-to-peer">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els,
-					    decode_xabbergroupchat_peer(<<"https://xabber.com/protocol/groups">>,
-									__Opts,
-									_el),
-					    Contacts, Domains, Anonymous,
-					    Pinned, Localpart, Searchable, Name,
-					    Model, Description);
-      <<"jabber:client">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els,
-					    decode_xabbergroupchat_peer(<<"jabber:client">>,
-									__Opts,
-									_el),
-					    Contacts, Domains, Anonymous,
-					    Pinned, Localpart, Searchable, Name,
-					    Model, Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"index">>, _attrs, _} = _el
-				   | _els],
-				  Peer, Contacts, Domains, Anonymous, Pinned,
-				  Localpart, Searchable, Name, Model,
-				  Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    decode_xabbergroupchat_searchable(<<"https://xabber.com/protocol/groups">>,
-									      __Opts,
-									      _el),
-					    Name, Model, Description);
-      _ ->
-	  decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-					    _els, Peer, Contacts, Domains,
-					    Anonymous, Pinned, Localpart,
-					    Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				  [_ | _els], Peer, Contacts, Domains,
-				  Anonymous, Pinned, Localpart, Searchable,
-				  Name, Model, Description) ->
-    decode_xabbergroupchat_create_els(__TopXMLNS, __Opts,
-				      _els, Peer, Contacts, Domains, Anonymous,
-				      Pinned, Localpart, Searchable, Name,
-				      Model, Description).
-
-encode_xabbergroupchat_create({xabbergroupchat_create,
-			       Name, Description, Model, Searchable, Anonymous,
-			       Localpart, Pinned, Domains, Contacts, Peer},
-			      __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_xabbergroupchat_create_$peer'(Peer,
-							    __NewTopXMLNS,
-							    'encode_xabbergroupchat_create_$contacts'(Contacts,
-												      __NewTopXMLNS,
-												      'encode_xabbergroupchat_create_$domains'(Domains,
-																	       __NewTopXMLNS,
-																	       'encode_xabbergroupchat_create_$anonymous'(Anonymous,
-																							  __NewTopXMLNS,
-																							  'encode_xabbergroupchat_create_$pinned'(Pinned,
-																												  __NewTopXMLNS,
-																												  'encode_xabbergroupchat_create_$localpart'(Localpart,
-																																	     __NewTopXMLNS,
-																																	     'encode_xabbergroupchat_create_$searchable'(Searchable,
-																																							 __NewTopXMLNS,
-																																							 'encode_xabbergroupchat_create_$name'(Name,
-																																											       __NewTopXMLNS,
-																																											       'encode_xabbergroupchat_create_$model'(Model,
-																																																      __NewTopXMLNS,
-																																																      'encode_xabbergroupchat_create_$description'(Description,
-																																																						   __NewTopXMLNS,
-																																																						   []))))))))))),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"create">>, _attrs, _els}.
-
-'encode_xabbergroupchat_create_$peer'(undefined,
-				      __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$peer'(Peer, __TopXMLNS,
-				      _acc) ->
-    [encode_xabbergroupchat_peer(Peer, __TopXMLNS) | _acc].
-
-'encode_xabbergroupchat_create_$contacts'(undefined,
-					  __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$contacts'(Contacts,
-					  __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_contacts(Contacts, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$domains'(undefined,
-					 __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$domains'(Domains,
-					 __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_domains(Domains, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$anonymous'(undefined,
-					   __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$anonymous'(Anonymous,
-					   __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_anonymous(Anonymous, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$pinned'(undefined,
-					__TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$pinned'(Pinned,
-					__TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_message(Pinned, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$localpart'(undefined,
-					   __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$localpart'(Localpart,
-					   __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_localpart(Localpart, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$searchable'(undefined,
-					    __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$searchable'(Searchable,
-					    __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_searchable(Searchable,
-				       __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$name'(undefined,
-				      __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$name'(Name, __TopXMLNS,
-				      _acc) ->
-    [encode_xabbergroupchat_name(Name, __TopXMLNS) | _acc].
-
-'encode_xabbergroupchat_create_$model'(undefined,
-				       __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$model'(Model,
-				       __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_model(Model, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_create_$description'(undefined,
-					     __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_create_$description'(Description,
-					     __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_description(Description,
-					__TopXMLNS)
-     | _acc].
-
 decode_xabbergroupchat_x(__TopXMLNS, __Opts,
 			 {xmlel, <<"x">>, _attrs, _els}) ->
-    {Members, Contacts, Domains, Jid, Parent, Present,
-     No_permission, __Els} =
+    {Members, Jid, Parent, Present, No_permission, __Els} =
 	decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
 				     undefined, undefined, undefined, undefined,
-				     undefined, undefined, undefined, []),
+				     undefined, []),
     {Xmlns, Type, Version} =
 	decode_xabbergroupchat_x_attrs(__TopXMLNS, _attrs,
 				       undefined, undefined, undefined),
     {xabbergroupchat_x, Xmlns, Type, Version, No_permission,
-     Domains, Contacts, Members, Present, Parent, Jid,
-     __Els}.
+     Members, Present, Parent, Jid, __Els}.
 
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, [],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
-    {Members, Contacts, Domains, Jid, Parent, Present,
-     No_permission, lists:reverse(__Els)};
-decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
-			     [{xmlel, <<"domains">>, _attrs, _} = _el | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts,
-				       decode_xabbergroupchat_domains(<<"https://xabber.com/protocol/groups">>,
-								      __Opts,
-								      _el),
-				       Jid, Parent, Present, No_permission,
-				       __Els);
-      _ ->
-	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
-    end;
-decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
-			     [{xmlel, <<"contacts">>, _attrs, _} = _el | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members,
-				       decode_xabbergroupchat_contacts(<<"https://xabber.com/protocol/groups">>,
-								       __Opts,
-								       _el),
-				       Domains, Jid, Parent, Present,
-				       No_permission, __Els);
-      _ ->
-	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
-    end;
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
+    {Members, Jid, Parent, Present, No_permission,
+     lists:reverse(__Els)};
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, <<"no-permission">>, _attrs, _} = _el
 			      | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present,
+				       Members, Jid, Parent, Present,
 				       decode_xabbergroupchat_no_permission(<<"https://xabber.com/protocol/groups">>,
 									    __Opts,
 									    _el),
 				       __Els);
       _ ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els])
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, <<"members">>, _attrs, _} = _el | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -5659,103 +4668,101 @@ decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 				       decode_xabbergroupchat_members(<<"https://xabber.com/protocol/groups">>,
 								      __Opts,
 								      _el),
-				       Contacts, Domains, Jid, Parent, Present,
-				       No_permission, __Els);
+				       Jid, Parent, Present, No_permission,
+				       __Els);
       _ ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els])
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, <<"present">>, _attrs, _} = _el | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
+				       Members, Jid, Parent,
 				       decode_xabbergroupchat_online(<<"https://xabber.com/protocol/groups">>,
 								     __Opts,
 								     _el),
 				       No_permission, __Els);
       _ ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els])
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, <<"parent-chat">>, _attrs, _} = _el
 			      | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid,
+				       Members, Jid,
 				       decode_xabbergroupchat_parent_chat(<<"https://xabber.com/protocol/groups">>,
 									  __Opts,
 									  _el),
 				       Present, No_permission, __Els);
       _ ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els])
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, <<"jid">>, _attrs, _} = _el | _els],
-			     Members, Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Members, Jid, Parent, Present, No_permission,
+			     __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains,
+				       Members,
 				       decode_xabbergroupchat_jid(<<"https://xabber.com/protocol/groups">>,
 								  __Opts, _el),
 				       Parent, Present, No_permission, __Els);
       _ ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els])
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els])
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
 			     [{xmlel, _name, _attrs, _} = _el | _els], Members,
-			     Contacts, Domains, Jid, Parent, Present,
-			     No_permission, __Els) ->
+			     Jid, Parent, Present, No_permission, __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
       true ->
 	  decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				       Members, Contacts, Domains, Jid, Parent,
-				       Present, No_permission, [_el | __Els]);
+				       Members, Jid, Parent, Present,
+				       No_permission, [_el | __Els]);
       false ->
 	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 					__TopXMLNS),
 	  case xmpp_codec:get_mod(_name, __XMLNS) of
 	    undefined ->
 		decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-					     Members, Contacts, Domains, Jid,
-					     Parent, Present, No_permission,
-					     [_el | __Els]);
+					     Members, Jid, Parent, Present,
+					     No_permission, [_el | __Els]);
 	    Mod ->
 		decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-					     Members, Contacts, Domains, Jid,
-					     Parent, Present, No_permission,
+					     Members, Jid, Parent, Present,
+					     No_permission,
 					     [Mod:do_decode(_name, __XMLNS, _el,
 							    __Opts)
 					      | __Els])
 	  end
     end;
 decode_xabbergroupchat_x_els(__TopXMLNS, __Opts,
-			     [_ | _els], Members, Contacts, Domains, Jid,
-			     Parent, Present, No_permission, __Els) ->
+			     [_ | _els], Members, Jid, Parent, Present,
+			     No_permission, __Els) ->
     decode_xabbergroupchat_x_els(__TopXMLNS, __Opts, _els,
-				 Members, Contacts, Domains, Jid, Parent,
-				 Present, No_permission, __Els).
+				 Members, Jid, Parent, Present, No_permission,
+				 __Els).
 
 decode_xabbergroupchat_x_attrs(__TopXMLNS,
 			       [{<<"xmlns">>, _val} | _attrs], _Xmlns, Type,
@@ -5784,8 +4791,8 @@ decode_xabbergroupchat_x_attrs(__TopXMLNS, [], Xmlns,
 					   Version)}.
 
 encode_xabbergroupchat_x({xabbergroupchat_x, Xmlns,
-			  Type, Version, No_permission, Domains, Contacts,
-			  Members, Present, Parent, Jid, __Els},
+			  Type, Version, No_permission, Members, Present,
+			  Parent, Jid, __Els},
 			 __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"https://xabber.com/protocol/groups">>,
@@ -5803,19 +4810,15 @@ encode_xabbergroupchat_x({xabbergroupchat_x, Xmlns,
 	     ++
 	     lists:reverse('encode_xabbergroupchat_x_$members'(Members,
 							       __NewTopXMLNS,
-							       'encode_xabbergroupchat_x_$contacts'(Contacts,
-												    __NewTopXMLNS,
-												    'encode_xabbergroupchat_x_$domains'(Domains,
-																	__NewTopXMLNS,
-																	'encode_xabbergroupchat_x_$jid'(Jid,
-																					__NewTopXMLNS,
-																					'encode_xabbergroupchat_x_$parent'(Parent,
-																									   __NewTopXMLNS,
-																									   'encode_xabbergroupchat_x_$present'(Present,
-																													       __NewTopXMLNS,
-																													       'encode_xabbergroupchat_x_$no_permission'(No_permission,
-																																			 __NewTopXMLNS,
-																																			 [])))))))),
+							       'encode_xabbergroupchat_x_$jid'(Jid,
+											       __NewTopXMLNS,
+											       'encode_xabbergroupchat_x_$parent'(Parent,
+																  __NewTopXMLNS,
+																  'encode_xabbergroupchat_x_$present'(Present,
+																				      __NewTopXMLNS,
+																				      'encode_xabbergroupchat_x_$no_permission'(No_permission,
+																										__NewTopXMLNS,
+																										[])))))),
     _attrs = encode_xabbergroupchat_x_attr_version(Version,
 						   encode_xabbergroupchat_x_attr_type(Type,
 										      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
@@ -5828,22 +4831,6 @@ encode_xabbergroupchat_x({xabbergroupchat_x, Xmlns,
 'encode_xabbergroupchat_x_$members'(Members, __TopXMLNS,
 				    _acc) ->
     [encode_xabbergroupchat_members(Members, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_x_$contacts'(undefined,
-				     __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_x_$contacts'(Contacts,
-				     __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_contacts(Contacts, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_x_$domains'(undefined,
-				    __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_x_$domains'(Domains, __TopXMLNS,
-				    _acc) ->
-    [encode_xabbergroupchat_domains(Domains, __TopXMLNS)
      | _acc].
 
 'encode_xabbergroupchat_x_$jid'(undefined, __TopXMLNS,
@@ -5908,89 +4895,18 @@ encode_xabbergroupchat_x_attr_version(_val, _acc) ->
 
 decode_xabbergroupchat_update(__TopXMLNS, __Opts,
 			      {xmlel, <<"update">>, _attrs, _els}) ->
-    {Owner, Contacts, Domains, Pinned, Searchable, Name,
-     Model, Description} =
+    {Owner, Pinned} =
 	decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					  _els, undefined, undefined, undefined,
-					  undefined, undefined, undefined,
-					  undefined, undefined),
-    {xabbergroupchat_update, Name, Description, Model,
-     Searchable, Owner, Pinned, Domains, Contacts}.
+					  _els, undefined, undefined),
+    {xabbergroupchat_update, Owner, Pinned}.
 
 decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [], Owner, Contacts, Domains, Pinned,
-				  Searchable, Name, Model, Description) ->
-    {Owner, Contacts, Domains, Pinned, Searchable, Name,
-     Model, Description};
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"name">>, _attrs, _} = _el | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable,
-					    decode_xabbergroupchat_name(<<"https://xabber.com/protocol/groups">>,
-									__Opts,
-									_el),
-					    Model, Description);
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"description">>, _attrs, _} = _el
-				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    decode_xabbergroupchat_description(<<"https://xabber.com/protocol/groups">>,
-									       __Opts,
-									       _el));
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"membership">>, _attrs, _} = _el
-				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name,
-					    decode_xabbergroupchat_model(<<"https://xabber.com/protocol/groups">>,
-									 __Opts,
-									 _el),
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
+				  [], Owner, Pinned) ->
+    {Owner, Pinned};
 decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"owner">>, _attrs, _} = _el
 				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
+				  Owner, Pinned) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -6000,114 +4916,42 @@ decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
 					    decode_xabbergroupchat_owner(<<"https://xabber.com/protocol/groups">>,
 									 __Opts,
 									 _el),
-					    Contacts, Domains, Pinned,
-					    Searchable, Name, Model,
-					    Description);
+					    Pinned);
       _ ->
 	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
+					    _els, Owner, Pinned)
     end;
 decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
 				  [{xmlel, <<"pinned-message">>, _attrs, _} =
 				       _el
 				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    decode_xabbergroupchat_message(<<"https://xabber.com/protocol/groups">>,
-									   __Opts,
-									   _el),
-					    Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"domains">>, _attrs, _} = _el
-				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts,
-					    decode_xabbergroupchat_domains(<<"https://xabber.com/protocol/groups">>,
-									   __Opts,
-									   _el),
-					    Pinned, Searchable, Name, Model,
-					    Description);
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"contacts">>, _attrs, _} = _el
-				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
+				  Owner, Pinned) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
 					    _els, Owner,
-					    decode_xabbergroupchat_contacts(<<"https://xabber.com/protocol/groups">>,
-									    __Opts,
-									    _el),
-					    Domains, Pinned, Searchable, Name,
-					    Model, Description);
+					    decode_xabbergroupchat_query_message(<<"https://xabber.com/protocol/groups">>,
+										 __Opts,
+										 _el));
+      <<"https://xabber.com/protocol/groups#create">> ->
+	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
+					    _els, Owner,
+					    decode_xabbergroupchat_query_message(<<"https://xabber.com/protocol/groups#create">>,
+										 __Opts,
+										 _el));
       _ ->
 	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
+					    _els, Owner, Pinned)
     end;
 decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [{xmlel, <<"index">>, _attrs, _} = _el
-				   | _els],
-				  Owner, Contacts, Domains, Pinned, Searchable,
-				  Name, Model, Description) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned,
-					    decode_xabbergroupchat_searchable(<<"https://xabber.com/protocol/groups">>,
-									      __Opts,
-									      _el),
-					    Name, Model, Description);
-      _ ->
-	  decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-					    _els, Owner, Contacts, Domains,
-					    Pinned, Searchable, Name, Model,
-					    Description)
-    end;
-decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				  [_ | _els], Owner, Contacts, Domains, Pinned,
-				  Searchable, Name, Model, Description) ->
+				  [_ | _els], Owner, Pinned) ->
     decode_xabbergroupchat_update_els(__TopXMLNS, __Opts,
-				      _els, Owner, Contacts, Domains, Pinned,
-				      Searchable, Name, Model, Description).
+				      _els, Owner, Pinned).
 
 encode_xabbergroupchat_update({xabbergroupchat_update,
-			       Name, Description, Model, Searchable, Owner,
-			       Pinned, Domains, Contacts},
+			       Owner, Pinned},
 			      __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
@@ -6115,21 +4959,9 @@ encode_xabbergroupchat_update({xabbergroupchat_update,
     _els =
 	lists:reverse('encode_xabbergroupchat_update_$owner'(Owner,
 							     __NewTopXMLNS,
-							     'encode_xabbergroupchat_update_$contacts'(Contacts,
-												       __NewTopXMLNS,
-												       'encode_xabbergroupchat_update_$domains'(Domains,
-																		__NewTopXMLNS,
-																		'encode_xabbergroupchat_update_$pinned'(Pinned,
-																							__NewTopXMLNS,
-																							'encode_xabbergroupchat_update_$searchable'(Searchable,
-																												    __NewTopXMLNS,
-																												    'encode_xabbergroupchat_update_$name'(Name,
-																																	  __NewTopXMLNS,
-																																	  'encode_xabbergroupchat_update_$model'(Model,
-																																						 __NewTopXMLNS,
-																																						 'encode_xabbergroupchat_update_$description'(Description,
-																																											      __NewTopXMLNS,
-																																											      []))))))))),
+							     'encode_xabbergroupchat_update_$pinned'(Pinned,
+												     __NewTopXMLNS,
+												     []))),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"update">>, _attrs, _els}.
@@ -6142,61 +4974,13 @@ encode_xabbergroupchat_update({xabbergroupchat_update,
     [encode_xabbergroupchat_owner(Owner, __TopXMLNS)
      | _acc].
 
-'encode_xabbergroupchat_update_$contacts'(undefined,
-					  __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$contacts'(Contacts,
-					  __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_contacts(Contacts, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_update_$domains'(undefined,
-					 __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$domains'(Domains,
-					 __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_domains(Domains, __TopXMLNS)
-     | _acc].
-
 'encode_xabbergroupchat_update_$pinned'(undefined,
 					__TopXMLNS, _acc) ->
     _acc;
 'encode_xabbergroupchat_update_$pinned'(Pinned,
 					__TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_message(Pinned, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_update_$searchable'(undefined,
-					    __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$searchable'(Searchable,
-					    __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_searchable(Searchable,
-				       __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_update_$name'(undefined,
-				      __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$name'(Name, __TopXMLNS,
-				      _acc) ->
-    [encode_xabbergroupchat_name(Name, __TopXMLNS) | _acc].
-
-'encode_xabbergroupchat_update_$model'(undefined,
-				       __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$model'(Model,
-				       __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_model(Model, __TopXMLNS)
-     | _acc].
-
-'encode_xabbergroupchat_update_$description'(undefined,
-					     __TopXMLNS, _acc) ->
-    _acc;
-'encode_xabbergroupchat_update_$description'(Description,
-					     __TopXMLNS, _acc) ->
-    [encode_xabbergroupchat_description(Description,
-					__TopXMLNS)
+    [encode_xabbergroupchat_query_message(Pinned,
+					  __TopXMLNS)
      | _acc].
 
 decode_xabbergroupchat_query_item(__TopXMLNS, __Opts,

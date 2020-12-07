@@ -1844,9 +1844,6 @@ get_mod(<<"history">>,
     xep0045;
 get_mod(<<"inactive">>, <<"urn:xmpp:csi:0">>) ->
     xep0352;
-get_mod(<<"create">>,
-	<<"https://xabber.com/protocol/groups">>) ->
-    xabbergroupchat;
 get_mod(<<"domain">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xabbergroupchat;
@@ -2000,6 +1997,8 @@ get_mod({message_displayed, _, _}) -> xep0333;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
+get_mod({xabbergroupchat_update, _, _}) ->
+    xabbergroupchat;
 get_mod({block_domain, _}) -> xabbergroupchat;
 get_mod({xabber_file, _, _}) -> xep_otb;
 get_mod({xabber_synchronization_unpin, _}) ->
@@ -2008,6 +2007,9 @@ get_mod({jingle_propose, _, _}) -> xep0353;
 get_mod({channel_domain, _}) -> xabberchannels;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
+get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _,
+	 _}) ->
+    xabbergroupchat;
 get_mod({xmppreference, _, _, _, _}) -> xep0372;
 get_mod({channel_membership, _}) -> xabberchannels;
 get_mod({sasl_auth, _, _}) -> rfc6120;
@@ -2061,9 +2063,6 @@ get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
 get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->
     rfc6120;
 get_mod({streamhost, _, _, _}) -> xep0065;
-get_mod({xabbergroupchat_create, _, _, _, _, _, _, _, _,
-	 _, _}) ->
-    xabbergroupchat;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({xabbertoken_issue, _, _, _}) -> xabbertoken;
@@ -2127,9 +2126,6 @@ get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
 get_mod({media_uri, _, _}) -> xep0221;
-get_mod({xabbergroupchat_x, _, _, _, _, _, _, _, _, _,
-	 _, _}) ->
-    xabbergroupchat;
 get_mod({sasl_success, _}) -> rfc6120;
 get_mod({compress, _}) -> xep0138;
 get_mod({xdata_field, _, _, _, _, _, _, _, _}) ->
@@ -2343,9 +2339,6 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({previous_id, _}) -> previous;
-get_mod({xabbergroupchat_update, _, _, _, _, _, _, _,
-	 _}) ->
-    xabbergroupchat;
 get_mod({block_id, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_localpart, _}) ->
     xabbergroupchat;
