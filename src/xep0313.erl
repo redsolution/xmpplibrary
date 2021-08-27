@@ -83,6 +83,9 @@ do_decode(<<"query">>, <<"urn:xmpp:mam:2">>, El,
 do_decode(<<"query">>, <<"urn:xmpp:mam:tmp">>, El,
 	  Opts) ->
     decode_mam_query(<<"urn:xmpp:mam:tmp">>, Opts, El);
+do_decode(<<"flip-page">>, <<"urn:xmpp:mam:2">>, El,
+	  Opts) ->
+    decode_mam_flip_page(<<"urn:xmpp:mam:2">>, Opts, El);
 do_decode(<<"withtext">>, <<"urn:xmpp:mam:tmp">>, El,
 	  Opts) ->
     decode_mam_withtext(<<"urn:xmpp:mam:tmp">>, Opts, El);
@@ -129,12 +132,14 @@ tags() ->
      {<<"query">>, <<"urn:xmpp:mam:1">>},
      {<<"query">>, <<"urn:xmpp:mam:2">>},
      {<<"query">>, <<"urn:xmpp:mam:tmp">>},
+     {<<"flip-page">>, <<"urn:xmpp:mam:2">>},
      {<<"withtext">>, <<"urn:xmpp:mam:tmp">>},
      {<<"with">>, <<"urn:xmpp:mam:tmp">>},
      {<<"end">>, <<"urn:xmpp:mam:tmp">>},
      {<<"start">>, <<"urn:xmpp:mam:tmp">>}].
 
-do_encode({mam_query, _, _, _, _, _, _, _, _} = Query,
+do_encode({mam_query, _, _, _, _, _, _, _, _, _} =
+	      Query,
 	  TopXMLNS) ->
     encode_mam_query(Query, TopXMLNS);
 do_encode({mam_archived, _, _} = Archived, TopXMLNS) ->
@@ -150,7 +155,7 @@ do_encode({mam_fin, _, _, _, _, _} = Fin, TopXMLNS) ->
 do_get_name({mam_archived, _, _}) -> <<"archived">>;
 do_get_name({mam_fin, _, _, _, _, _}) -> <<"fin">>;
 do_get_name({mam_prefs, _, _, _, _}) -> <<"prefs">>;
-do_get_name({mam_query, _, _, _, _, _, _, _, _}) ->
+do_get_name({mam_query, _, _, _, _, _, _, _, _, _}) ->
     <<"query">>;
 do_get_name({mam_result, _, _, _, _}) -> <<"result">>.
 
@@ -158,7 +163,7 @@ do_get_ns({mam_archived, _, _}) ->
     <<"urn:xmpp:mam:tmp">>;
 do_get_ns({mam_fin, Xmlns, _, _, _, _}) -> Xmlns;
 do_get_ns({mam_prefs, Xmlns, _, _, _}) -> Xmlns;
-do_get_ns({mam_query, Xmlns, _, _, _, _, _, _, _}) ->
+do_get_ns({mam_query, Xmlns, _, _, _, _, _, _, _, _}) ->
     Xmlns;
 do_get_ns({mam_result, Xmlns, _, _, _}) -> Xmlns.
 
@@ -170,8 +175,9 @@ set_els({mam_result, _xmlns, _queryid, _id, _},
 	_sub_els) ->
     {mam_result, _xmlns, _queryid, _id, _sub_els}.
 
-pp(mam_query, 8) ->
-    [xmlns, id, start, 'end', with, withtext, rsm, xdata];
+pp(mam_query, 9) ->
+    [xmlns, id, start, 'end', with, withtext, rsm, flippage,
+     xdata];
 pp(mam_archived, 2) -> [by, id];
 pp(mam_result, 4) -> [xmlns, queryid, id, sub_els];
 pp(mam_prefs, 4) -> [xmlns, default, always, never];
@@ -179,7 +185,7 @@ pp(mam_fin, 5) -> [xmlns, id, rsm, stable, complete];
 pp(_, _) -> no.
 
 records() ->
-    [{mam_query, 8}, {mam_archived, 2}, {mam_result, 4},
+    [{mam_query, 9}, {mam_archived, 2}, {mam_result, 4},
      {mam_prefs, 4}, {mam_fin, 5}].
 
 dec_bool(<<"false">>) -> false;
@@ -771,21 +777,21 @@ encode_mam_archived_attr_by(_val, _acc) ->
 
 decode_mam_query(__TopXMLNS, __Opts,
 		 {xmlel, <<"query">>, _attrs, _els}) ->
-    {Xdata, Withtext, End, Start, With, Rsm} =
+    {Xdata, Withtext, End, Start, Flippage, With, Rsm} =
 	decode_mam_query_els(__TopXMLNS, __Opts, _els,
-			     undefined, undefined, undefined, undefined,
+			     undefined, undefined, undefined, undefined, false,
 			     undefined, undefined),
     {Id, Xmlns} = decode_mam_query_attrs(__TopXMLNS, _attrs,
 					 undefined, undefined),
     {mam_query, Xmlns, Id, Start, End, With, Withtext, Rsm,
-     Xdata}.
+     Flippage, Xdata}.
 
 decode_mam_query_els(__TopXMLNS, __Opts, [], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
-    {Xdata, Withtext, End, Start, With, Rsm};
+		     Withtext, End, Start, Flippage, With, Rsm) ->
+    {Xdata, Withtext, End, Start, Flippage, With, Rsm};
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"start">>, _attrs, _} = _el | _els], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
+		     Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -794,14 +800,14 @@ decode_mam_query_els(__TopXMLNS, __Opts,
 			       Withtext, End,
 			       decode_mam_start(<<"urn:xmpp:mam:tmp">>, __Opts,
 						_el),
-			       With, Rsm);
+			       Flippage, With, Rsm);
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"end">>, _attrs, _} = _el | _els], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
+		     Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -810,30 +816,30 @@ decode_mam_query_els(__TopXMLNS, __Opts,
 			       Withtext,
 			       decode_mam_end(<<"urn:xmpp:mam:tmp">>, __Opts,
 					      _el),
-			       Start, With, Rsm);
+			       Start, Flippage, With, Rsm);
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"with">>, _attrs, _} = _el | _els], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
+		     Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"urn:xmpp:mam:tmp">> ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start,
+			       Withtext, End, Start, Flippage,
 			       decode_mam_with(<<"urn:xmpp:mam:tmp">>, __Opts,
 					       _el),
 			       Rsm);
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"withtext">>, _attrs, _} = _el | _els],
-		     Xdata, Withtext, End, Start, With, Rsm) ->
+		     Xdata, Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -841,29 +847,45 @@ decode_mam_query_els(__TopXMLNS, __Opts,
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
 			       decode_mam_withtext(<<"urn:xmpp:mam:tmp">>,
 						   __Opts, _el),
-			       End, Start, With, Rsm);
+			       End, Start, Flippage, With, Rsm);
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"set">>, _attrs, _} = _el | _els], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
+		     Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://jabber.org/protocol/rsm">> ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With,
+			       Withtext, End, Start, Flippage, With,
 			       xep0059:decode_rsm_set(<<"http://jabber.org/protocol/rsm">>,
 						      __Opts, _el));
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
+    end;
+decode_mam_query_els(__TopXMLNS, __Opts,
+		     [{xmlel, <<"flip-page">>, _attrs, _} = _el | _els],
+		     Xdata, Withtext, End, Start, Flippage, With, Rsm) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"urn:xmpp:mam:2">> ->
+	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
+			       Withtext, End, Start,
+			       decode_mam_flip_page(<<"urn:xmpp:mam:2">>,
+						    __Opts, _el),
+			       With, Rsm);
+      _ ->
+	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts,
 		     [{xmlel, <<"x">>, _attrs, _} = _el | _els], Xdata,
-		     Withtext, End, Start, With, Rsm) ->
+		     Withtext, End, Start, Flippage, With, Rsm) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -871,15 +893,15 @@ decode_mam_query_els(__TopXMLNS, __Opts,
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els,
 			       xep0004:decode_xdata(<<"jabber:x:data">>, __Opts,
 						    _el),
-			       Withtext, End, Start, With, Rsm);
+			       Withtext, End, Start, Flippage, With, Rsm);
       _ ->
 	  decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			       Withtext, End, Start, With, Rsm)
+			       Withtext, End, Start, Flippage, With, Rsm)
     end;
 decode_mam_query_els(__TopXMLNS, __Opts, [_ | _els],
-		     Xdata, Withtext, End, Start, With, Rsm) ->
+		     Xdata, Withtext, End, Start, Flippage, With, Rsm) ->
     decode_mam_query_els(__TopXMLNS, __Opts, _els, Xdata,
-			 Withtext, End, Start, With, Rsm).
+			 Withtext, End, Start, Flippage, With, Rsm).
 
 decode_mam_query_attrs(__TopXMLNS,
 		       [{<<"queryid">>, _val} | _attrs], _Id, Xmlns) ->
@@ -895,7 +917,7 @@ decode_mam_query_attrs(__TopXMLNS, [], Id, Xmlns) ->
      decode_mam_query_attr_xmlns(__TopXMLNS, Xmlns)}.
 
 encode_mam_query({mam_query, Xmlns, Id, Start, End,
-		  With, Withtext, Rsm, Xdata},
+		  With, Withtext, Rsm, Flippage, Xdata},
 		 __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
 						[<<"urn:xmpp:mam:0">>,
@@ -911,11 +933,13 @@ encode_mam_query({mam_query, Xmlns, Id, Start, End,
 													__NewTopXMLNS,
 													'encode_mam_query_$start'(Start,
 																  __NewTopXMLNS,
-																  'encode_mam_query_$with'(With,
-																			   __NewTopXMLNS,
-																			   'encode_mam_query_$rsm'(Rsm,
-																						   __NewTopXMLNS,
-																						   []))))))),
+																  'encode_mam_query_$flippage'(Flippage,
+																			       __NewTopXMLNS,
+																			       'encode_mam_query_$with'(With,
+																							__NewTopXMLNS,
+																							'encode_mam_query_$rsm'(Rsm,
+																										__NewTopXMLNS,
+																										[])))))))),
     _attrs = encode_mam_query_attr_queryid(Id,
 					   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 								      __TopXMLNS)),
@@ -945,6 +969,12 @@ encode_mam_query({mam_query, Xmlns, Id, Start, End,
 'encode_mam_query_$start'(Start, __TopXMLNS, _acc) ->
     [encode_mam_start(Start, __TopXMLNS) | _acc].
 
+'encode_mam_query_$flippage'(false, __TopXMLNS, _acc) ->
+    _acc;
+'encode_mam_query_$flippage'(Flippage, __TopXMLNS,
+			     _acc) ->
+    [encode_mam_flip_page(Flippage, __TopXMLNS) | _acc].
+
 'encode_mam_query_$with'(undefined, __TopXMLNS, _acc) ->
     _acc;
 'encode_mam_query_$with'(With, __TopXMLNS, _acc) ->
@@ -966,6 +996,19 @@ encode_mam_query_attr_queryid(_val, _acc) ->
 decode_mam_query_attr_xmlns(__TopXMLNS, undefined) ->
     <<>>;
 decode_mam_query_attr_xmlns(__TopXMLNS, _val) -> _val.
+
+decode_mam_flip_page(__TopXMLNS, __Opts,
+		     {xmlel, <<"flip-page">>, _attrs, _els}) ->
+    true.
+
+encode_mam_flip_page(true, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:mam:2">>, [],
+				    __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"flip-page">>, _attrs, _els}.
 
 decode_mam_withtext(__TopXMLNS, __Opts,
 		    {xmlel, <<"withtext">>, _attrs, _els}) ->

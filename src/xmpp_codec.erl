@@ -1809,6 +1809,8 @@ get_mod(<<"FAMILY">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"headers">>,
 	<<"http://jabber.org/protocol/shim">>) ->
     xep0131;
+get_mod(<<"flip-page">>, <<"urn:xmpp:mam:2">>) ->
+    xep0313;
 get_mod(<<"received">>, <<"urn:xmpp:receipts">>) ->
     xep0184;
 get_mod(<<"contact">>,
@@ -2266,7 +2268,6 @@ get_mod({vcard_adr, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({ps_unsubscribe, _, _, _}) -> xep0060;
 get_mod({sm_resume, _, _, _}) -> xep0198;
 get_mod({push_enable, _, _, _}) -> xep0357;
-get_mod({mam_query, _, _, _, _, _, _, _, _}) -> xep0313;
 get_mod({db_result, _, _, _, _, _}) -> xep0220;
 get_mod({delivery_x, _}) -> unique;
 get_mod({xabber_retract_user, _, _, _, _, _, _, _}) ->
@@ -2318,6 +2319,8 @@ get_mod({xabber_synchronization, _, _, _}) ->
 get_mod({vcard_tel, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _}) ->
     xep0054;
+get_mod({mam_query, _, _, _, _, _, _, _, _, _}) ->
+    xep0313;
 get_mod({search_item, _, _, _, _, _}) -> xep0055;
 get_mod({roster_query, _, _}) -> rfc6121;
 get_mod({vcard_key, _, _}) -> xep0054;
