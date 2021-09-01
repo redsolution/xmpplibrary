@@ -86,8 +86,12 @@ encode(List, Lang) when is_list(List) ->
 	    {'end', _, _} -> erlang:error({badarg, Opt});
 	    {withtext, Val} -> [encode_withtext(Val, Lang)];
 	    {withtext, _, _} -> erlang:error({badarg, Opt});
-	    {last, Val} -> [encode_last(Val, Lang)];
-	    {last, _, _} -> erlang:error({badarg, Opt});
+	    {'before-id', Val} -> ['encode_before-id'(Val, Lang)];
+	    {'before-id', _, _} -> erlang:error({badarg, Opt});
+	    {'after-id', Val} -> ['encode_after-id'(Val, Lang)];
+	    {'after-id', _, _} -> erlang:error({badarg, Opt});
+	    {ids, Val} -> [encode_ids(Val, Lang)];
+	    {ids, _, _} -> erlang:error({badarg, Opt});
 	    {filter_encrypted, Val} ->
 		[encode_filter_encrypted(Val, Lang)];
 	    {filter_encrypted, _, _} -> erlang:error({badarg, Opt});
@@ -200,39 +204,68 @@ decode([#xdata_field{var = <<"withtext">>} | _], _,
     erlang:error({?MODULE,
 		  {too_many_values, <<"withtext">>,
 		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}last">>,
+decode([#xdata_field{var = <<"before-id">>,
 		     values = [Value]}
 	| Fs],
        Acc, Required) ->
-    try dec_bool(Value) of
-      Result -> decode(Fs, [{last, Result} | Acc], Required)
+    try Value of
+      Result ->
+	  decode(Fs, [{'before-id', Result} | Acc], Required)
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}last">>,
-			 <<"urn:xmpp:mam:1">>}})
+			{bad_var_value, <<"before-id">>, <<"urn:xmpp:mam:1">>}})
     end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}last">>,
+decode([#xdata_field{var = <<"before-id">>,
 		     values = []} =
 	    F
 	| Fs],
        Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}last">>,
+    decode([F#xdata_field{var = <<"before-id">>,
 			  values = [<<>>]}
 	    | Fs],
 	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}last">>}
-	| _],
-       _, _) ->
+decode([#xdata_field{var = <<"before-id">>} | _], _,
+       _) ->
     erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}last">>,
+		  {too_many_values, <<"before-id">>,
 		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var = <<"after-id">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try Value of
+      Result ->
+	  decode(Fs, [{'after-id', Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"after-id">>, <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var = <<"after-id">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var = <<"after-id">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var = <<"after-id">>} | _], _,
+       _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"after-id">>,
+		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var = <<"ids">>, values = Values}
+	| Fs],
+       Acc, Required) ->
+    try [Value || Value <- Values] of
+      Result -> decode(Fs, [{ids, Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"ids">>, <<"urn:xmpp:mam:1">>}})
+    end;
 decode([#xdata_field{var =
 			 <<"{https://xabber.com/protocol/archive}filter_e"
 			   "ncrypted">>,
@@ -596,20 +629,48 @@ encode_withtext(Value, Lang) ->
 		 desc = <<>>,
 		 label = xmpp_tr:tr(Lang, <<"Search the text">>)}.
 
-encode_last(Value, Lang) ->
+'encode_before-id'(Value, Lang) ->
     Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
+	       <<>> -> [];
+	       Value -> [Value]
 	     end,
     Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}last">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
+    #xdata_field{var = <<"before-id">>, values = Values,
+		 required = false, type = 'text-single', options = Opts,
+		 desc = <<>>,
 		 label =
 		     xmpp_tr:tr(Lang,
-				<<"Fetch only the last message from each "
-				  "conversation">>)}.
+				<<"A stanza ID indicating the last message "
+				  "in the query results.">>)}.
+
+'encode_after-id'(Value, Lang) ->
+    Values = case Value of
+	       <<>> -> [];
+	       Value -> [Value]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"after-id">>, values = Values,
+		 required = false, type = 'text-single', options = Opts,
+		 desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"A stanza ID indicating the first message "
+				  "in the query results.">>)}.
+
+encode_ids(Value, Lang) ->
+    Values = case Value of
+	       [] -> [];
+	       Value -> [Value]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"ids">>, values = Values,
+		 required = false, type = 'text-multi', options = Opts,
+		 desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"A list of stanza IDs corresponding to "
+				  "messages that should be included in "
+				  "query results.">>)}.
 
 encode_filter_encrypted(Value, Lang) ->
     Values = case Value of

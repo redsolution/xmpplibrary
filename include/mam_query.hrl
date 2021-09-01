@@ -8,7 +8,9 @@
                     {'start', erlang:timestamp()} |
                     {'end', erlang:timestamp()} |
                     {'withtext', binary()} |
-                    {'last', boolean()} |
+                    {'before-id', binary()} |
+                    {'after-id', binary()} |
+                    {'ids', [binary()]} |
                     {'filter_encrypted', boolean()} |
                     {'filter_audio', boolean()} |
                     {'filter_image', boolean()} |
