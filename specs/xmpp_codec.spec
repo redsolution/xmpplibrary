@@ -4088,11 +4088,11 @@
 			  dec = {base64, decode, []},
 			  enc = {base64, encode, []}}}).
 
--xml(encrypted_message,
+-xml(encrypted_message_omemo,
      #elem{name = <<"encrypted">>,
 	   xmlns = <<"urn:xmpp:omemo:1">>,
 	   module = 'xep0384',
-	   result = {encrypted_message, '$_els'}}).
+	   result = {encrypted_message_omemo, '$_els'}}).
 
 -xml(thumbnail,
      #elem{name = <<"thumbnail">>,
@@ -5387,31 +5387,7 @@
      #elem{name = <<"synchronization">>,
      xmlns = <<"https://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_synchronization, '$stamp', '$conversation', '$rsm'},
-     attrs = [
-     #attr{name = <<"stamp">>}
-     ],
-     refs = [
-     #ref{name = xabber_conversation, label = '$conversation'},
-     #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}
-     ]
-     }).
-
--xml(xabber_synchronization_delete,
-     #elem{name = <<"delete">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_delete, '$conversation'},
-     refs = [
-     #ref{name = xabber_conversation, label = '$conversation'}
-     ]
-     }).
-
--xml(xabber_deleted_conversation,
-     #elem{name = <<"deleted">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_deleted_conversation}
+     result = {xabber_synchronization}
      }).
 
 -xml(xabber_synchronization_query,
@@ -5424,87 +5400,25 @@
               #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]
      }).
 
--xml(xabber_synchronization_pin,
-     #elem{name = <<"pin">>,
-     xmlns = <<"https://xabber.com/protocol/pinned">>,
-	   module = 'xabbersynchronization_pinned',
-     result = {xabber_synchronization_pin, '$conversation'},
-     refs = [
-     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
-     ]
-     }).
-
--xml(xabber_synchronization_unpin,
-     #elem{name = <<"unpin">>,
-     xmlns = <<"https://xabber.com/protocol/pinned">>,
-	   module = 'xabbersynchronization_pinned',
-     result = {xabber_synchronization_unpin, '$conversation'},
-     refs = [
-     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
-     ]
-     }).
-
--xml(xabber_pinned_conversation,
-     #elem{name = <<"pinned">>,
-     xmlns = <<"https://xabber.com/protocol/pinned">>,
-	   module = 'xabbersynchronization_pinned',
-     result = {xabber_pinned_conversation}
-     }).
-
--xml(xabber_unpinned_conversation,
-     #elem{name = <<"unpinned">>,
-     xmlns = <<"https://xabber.com/protocol/pinned">>,
-	   module = 'xabbersynchronization_pinned',
-     result = {xabber_unpinned_conversation}
-     }).
-
--xml(xabber_synchronization_archive,
-     #elem{name = <<"archive">>,
-     xmlns = <<"https://xabber.com/protocol/archived">>,
-	   module = 'xabbersynchronization_archived',
-     result = {xabber_synchronization_archive, '$conversation'},
-     refs = [
-     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
-     ]
-     }).
-
--xml(xabber_synchronization_unarchive,
-     #elem{name = <<"unarchive">>,
-     xmlns = <<"https://xabber.com/protocol/archived">>,
-	   module = 'xabbersynchronization_archived',
-     result = {xabber_synchronization_unarchive, '$conversation'},
-     refs = [
-     #ref{name = xabber_conversation, min = 1, max = 1, label = '$conversation'}
-     ]
-     }).
-
--xml(xabber_archived_conversation,
-     #elem{name = <<"archived">>,
-     xmlns = <<"https://xabber.com/protocol/archived">>,
-	   module = 'xabbersynchronization_archived',
-     result = {xabber_archived_conversation}
-     }).
-
--xml(xabber_unarchived_conversation,
-     #elem{name = <<"unarchived">>,
-     xmlns = <<"https://xabber.com/protocol/archived">>,
-	   module = 'xabbersynchronization_archived',
-     result = {xabber_unarchived_conversation}
-     }).
-
 -xml(xabber_conversation,
      #elem{name = <<"conversation">>,
      xmlns = <<"https://xabber.com/protocol/synchronization">>,
 	   module = 'xabbersynchronization',
-     result = {xabber_conversation, '$type', '$jid', '$stamp', '$thread', '$_els'},
+     result = {xabber_conversation, '$type', '$jid', '$status', '$stamp', '$thread','$mute', '$pinned', '$_els'},
      attrs = [
      #attr{name = <<"jid">>,
            required = true,
            dec = {jid, decode, []},
            enc = {jid, encode, []}},
+     #attr{name = <<"type">>,
+           required = true},
+     #attr{name = <<"status">>,
+           dec = {dec_enum, [[active, deleted, archived]]},
+           enc = {enc_enum, []}},
      #attr{name = <<"stamp">>},
      #attr{name = <<"thread">>},
-     #attr{name = <<"type">>}
+     #attr{name = <<"mute">>, default = undefined},
+     #attr{name = <<"pinned">>, default = undefined}
      ]
      }).
 

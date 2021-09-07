@@ -7,8 +7,8 @@
 
 do_decode(<<"encrypted">>, <<"urn:xmpp:omemo:1">>, El,
 	  Opts) ->
-    decode_encrypted_message(<<"urn:xmpp:omemo:1">>, Opts,
-			     El);
+    decode_encrypted_message_omemo(<<"urn:xmpp:omemo:1">>,
+				   Opts, El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
 do_decode(Name, XMLNS, _, _) ->
@@ -16,61 +16,67 @@ do_decode(Name, XMLNS, _, _) ->
 
 tags() -> [{<<"encrypted">>, <<"urn:xmpp:omemo:1">>}].
 
-do_encode({encrypted_message, _} = Encrypted,
+do_encode({encrypted_message_omemo, _} = Encrypted,
 	  TopXMLNS) ->
-    encode_encrypted_message(Encrypted, TopXMLNS).
+    encode_encrypted_message_omemo(Encrypted, TopXMLNS).
 
-do_get_name({encrypted_message, _}) -> <<"encrypted">>.
+do_get_name({encrypted_message_omemo, _}) ->
+    <<"encrypted">>.
 
-do_get_ns({encrypted_message, _}) ->
+do_get_ns({encrypted_message_omemo, _}) ->
     <<"urn:xmpp:omemo:1">>.
 
-get_els({encrypted_message, _sub_els}) -> _sub_els.
+get_els({encrypted_message_omemo, _sub_els}) ->
+    _sub_els.
 
-set_els({encrypted_message, _}, _sub_els) ->
-    {encrypted_message, _sub_els}.
+set_els({encrypted_message_omemo, _}, _sub_els) ->
+    {encrypted_message_omemo, _sub_els}.
 
-pp(encrypted_message, 1) -> [sub_els];
+pp(encrypted_message_omemo, 1) -> [sub_els];
 pp(_, _) -> no.
 
-records() -> [{encrypted_message, 1}].
+records() -> [{encrypted_message_omemo, 1}].
 
-decode_encrypted_message(__TopXMLNS, __Opts,
-			 {xmlel, <<"encrypted">>, _attrs, _els}) ->
-    __Els = decode_encrypted_message_els(__TopXMLNS, __Opts,
-					 _els, []),
-    {encrypted_message, __Els}.
+decode_encrypted_message_omemo(__TopXMLNS, __Opts,
+			       {xmlel, <<"encrypted">>, _attrs, _els}) ->
+    __Els = decode_encrypted_message_omemo_els(__TopXMLNS,
+					       __Opts, _els, []),
+    {encrypted_message_omemo, __Els}.
 
-decode_encrypted_message_els(__TopXMLNS, __Opts, [],
-			     __Els) ->
+decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+				   [], __Els) ->
     lists:reverse(__Els);
-decode_encrypted_message_els(__TopXMLNS, __Opts,
-			     [{xmlel, _name, _attrs, _} = _el | _els], __Els) ->
+decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+				   [{xmlel, _name, _attrs, _} = _el | _els],
+				   __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
       true ->
-	  decode_encrypted_message_els(__TopXMLNS, __Opts, _els,
-				       [_el | __Els]);
+	  decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+					     _els, [_el | __Els]);
       false ->
 	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 					__TopXMLNS),
 	  case xmpp_codec:get_mod(_name, __XMLNS) of
 	    undefined ->
-		decode_encrypted_message_els(__TopXMLNS, __Opts, _els,
-					     [_el | __Els]);
+		decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+						   _els, [_el | __Els]);
 	    Mod ->
-		decode_encrypted_message_els(__TopXMLNS, __Opts, _els,
-					     [Mod:do_decode(_name, __XMLNS, _el,
-							    __Opts)
-					      | __Els])
+		decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+						   _els,
+						   [Mod:do_decode(_name,
+								  __XMLNS, _el,
+								  __Opts)
+						    | __Els])
 	  end
     end;
-decode_encrypted_message_els(__TopXMLNS, __Opts,
-			     [_ | _els], __Els) ->
-    decode_encrypted_message_els(__TopXMLNS, __Opts, _els,
-				 __Els).
+decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+				   [_ | _els], __Els) ->
+    decode_encrypted_message_omemo_els(__TopXMLNS, __Opts,
+				       _els, __Els).
 
-encode_encrypted_message({encrypted_message, __Els},
-			 __TopXMLNS) ->
+encode_encrypted_message_omemo({encrypted_message_omemo,
+				__Els},
+			       __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:omemo:1">>, [],
 				    __TopXMLNS),
