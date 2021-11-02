@@ -248,9 +248,6 @@ get_mod(<<"configuration-required">>,
 get_mod(<<"permission">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xabbergroupchat;
-get_mod(<<"field">>,
-	<<"https://xabber.com/protocol/auth-tokens#items">>) ->
-    xabbertoken;
 get_mod(<<"error">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"password">>, <<"jabber:iq:auth">>) ->
@@ -298,9 +295,6 @@ get_mod(<<"query">>, <<"jabber:iq:roster">>) -> rfc6121;
 get_mod(<<"NUMBER">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"notification">>, <<"urn:xmpp:push:0">>) ->
     xep0357;
-get_mod(<<"x">>,
-	<<"https://xabber.com/protocol/auth-tokens#items">>) ->
-    xabbertoken;
 get_mod(<<"item">>,
 	<<"https://xabber.com/protocol/groups#rights">>) ->
     xabbergroupchat;
@@ -409,6 +403,8 @@ get_mod(<<"description">>,
 get_mod(<<"conflict">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
+get_mod(<<"password">>, <<"jabber:iq:register">>) ->
+    xep0077;
 get_mod(<<"city">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"query">>, <<"urn:xmpp:delegation:1">>) ->
@@ -502,9 +498,6 @@ get_mod(<<"get">>, <<"urn:xmpp:http:upload:0">>) ->
 get_mod(<<"pointer">>,
 	<<"urn:xmpp:avatar:metadata">>) ->
     xep0084;
-get_mod(<<"expire">>,
-	<<"https://xabber.com/protocol/auth-tokens#items">>) ->
-    xabbertoken;
 get_mod(<<"x">>,
 	<<"https://xabber.com/protocol/groups#system-mes"
 	  "sage">>) ->
@@ -544,9 +537,6 @@ get_mod(<<"method">>,
 	<<"http://jabber.org/protocol/compress">>) ->
     xep0138;
 get_mod(<<"x">>, <<"jabber:x:data">>) -> xep0004;
-get_mod(<<"description">>,
-	<<"https://xabber.com/protocol/auth-tokens#items">>) ->
-    xabbertoken;
 get_mod(<<"no-permission">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xabbergroupchat;
@@ -753,6 +743,9 @@ get_mod(<<"never">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"metadata">>,
 	<<"urn:xmpp:avatar:metadata">>) ->
     xep0084;
+get_mod(<<"xtoken">>,
+	<<"https://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"password">>,
 	<<"http://jabber.org/protocol/muc#owner">>) ->
     xep0045;
@@ -941,9 +934,6 @@ get_mod(<<"payload-required">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
 get_mod(<<"address">>, <<"urn:xmpp:sic:1">>) -> xep0279;
-get_mod(<<"x">>,
-	<<"https://xabber.com/protocol/auth-tokens">>) ->
-    xabbertoken;
 get_mod(<<"invite">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xabbergroupchat;
@@ -998,9 +988,6 @@ get_mod(<<"bind">>,
     rfc6120;
 get_mod(<<"enable">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
-get_mod(<<"token-uid">>,
-	<<"https://xabber.com/protocol/auth-tokens">>) ->
-    xabbertoken;
 get_mod(<<"client">>,
 	<<"https://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
@@ -1023,6 +1010,9 @@ get_mod(<<"issue">>,
 get_mod(<<"state">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"utc">>, <<"urn:xmpp:time">>) -> xep0202;
+get_mod(<<"description">>,
+	<<"https://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"DOM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
@@ -1510,6 +1500,9 @@ get_mod(<<"publish-options">>,
 get_mod(<<"reason">>,
 	<<"http://jabber.org/protocol/muc#admin">>) ->
     xep0045;
+get_mod(<<"query">>,
+	<<"https://xabber.com/protocol/auth-tokens">>) ->
+    xabbertoken;
 get_mod(<<"left">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xabbergroupchat;
@@ -1534,9 +1527,6 @@ get_mod(<<"mechanism">>,
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
-get_mod(<<"token-uid">>,
-	<<"https://xabber.com/protocol/auth-tokens#items">>) ->
-    xabbertoken;
 get_mod(<<"x">>,
 	<<"https://xabber.com/protocol/groups#update">>) ->
     xabbergroupchat;
@@ -1948,8 +1938,6 @@ get_mod(<<"first">>, <<"jabber:iq:search">>) -> xep0055;
 get_mod(<<"query">>,
 	<<"https://xabber.com/protocol/channels">>) ->
     xabberchannels;
-get_mod(<<"password">>, <<"jabber:iq:register">>) ->
-    xep0077;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -2025,7 +2013,6 @@ get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->
 get_mod({streamhost, _, _, _}) -> xep0065;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({xdata_option, _, _}) -> xep0004;
-get_mod({xabbertoken_issue, _, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_restriction, _, _}) ->
     xabbergroupchat;
 get_mod({vcard_geo, _, _}) -> xep0054;
@@ -2061,6 +2048,8 @@ get_mod({mam_archived, _, _}) -> xep0313;
 get_mod({mix_participant, _, _}) -> xep0369;
 get_mod({encrypted, _, _}) -> xabberpush;
 get_mod({delegated, _, _}) -> xep0355;
+get_mod({xabbertoken_xtoken, _, _, _, _, _, _, _, _}) ->
+    xabbertoken;
 get_mod({replaced, _, _}) -> unique;
 get_mod({xmpp_session, _}) -> rfc3921;
 get_mod({ping}) -> xep0199;
@@ -2077,6 +2066,7 @@ get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _, _, _, _, _, _, _, _, _}) ->
     xep0077;
 get_mod({version, _, _, _}) -> xep0092;
+get_mod({xabbertoken_issue, _, _, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_membership, _}) ->
     xabbergroupchat;
 get_mod({xabber_file_sharing, _, _}) -> xep_otb;
@@ -2094,6 +2084,7 @@ get_mod({adhoc_command, _, _, _, _, _, _, _, _}) ->
     xep0050;
 get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
+get_mod({xabbertoken_query_items, _}) -> xabbertoken;
 get_mod({xabbergroupchat_status, _}) -> xabbergroupchat;
 get_mod({xabber_sources, _}) -> xep_otb;
 get_mod({channel_user_card, _, _, _, _, _, _, _, _}) ->
@@ -2146,8 +2137,6 @@ get_mod({xabbergroupchat_privacy, _}) ->
     xabbergroupchat;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
-get_mod({xabbertoken_field, _, _, _, _, _, _, _}) ->
-    xabbertoken;
 get_mod({xabber_metadata, _, _}) ->
     xabbersynchronization;
 get_mod({unblock, _}) -> xep0191;
@@ -2190,7 +2179,6 @@ get_mod({privilege, _, _}) -> xep0356;
 get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
-get_mod({xabbertoken_x_token, _, _, _}) -> xabbertoken;
 get_mod({xabber_retract_all, _, _, _, _, _}) ->
     xabberrewrite;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
@@ -2294,7 +2282,6 @@ get_mod({xabber_replace_message, _, _, _, _, _, _}) ->
 get_mod({muc_subscriptions, _}) -> p1_mucsub;
 get_mod({addresses, _}) -> xep0033;
 get_mod({push_call}) -> xabberpush;
-get_mod({xabbertoken_x_fields, _}) -> xabbertoken;
 get_mod({xabbergroup_contacts, _}) -> xabbergroupchat;
 get_mod({channel_domains, _}) -> xabberchannels;
 get_mod({channel_x, _, _, _, _}) -> xabberchannels;

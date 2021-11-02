@@ -4307,39 +4307,46 @@
 
 -xml(xabbertoken_issue,
      #elem{
-     name = <<"issue">>,
-     xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
-     module = 'xabbertoken',
-     result = {xabbertoken_issue, '$client', '$device', '$expire'},
-                refs = [#ref{name = xabbertoken_client, min = 0, max = 1, label = '$client'},
-                             #ref{name = xabbertoken_device, min = 0, max = 1, label = '$device'},
-                             #ref{name = xabbertoken_expire, min = 0, max = 1, label = '$expire'}
-                             ]
-                             }
+         name = <<"issue">>,
+         xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
+         module = 'xabbertoken',
+         result = {xabbertoken_issue, '$client', '$device', '$description', '$expire'},
+         refs = [
+            #ref{name = xabbertoken_client, min = 0, max = 1, label = '$client'},
+            #ref{name = xabbertoken_device, min = 0, max = 1, label = '$device'},
+            #ref{name = xabbertoken_description, min = 0, max = 1, label = '$description'},
+            #ref{name = xabbertoken_expire, min = 0, max = 1, label = '$expire'}
+         ]
+     }
 ).
 
--xml(xabbertoken_x_token,
+-xml(xabbertoken_xtoken,
      #elem{
-     name = <<"x">>,
-     xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
-     module = 'xabbertoken',
-     result = {xabbertoken_x_token, '$token', '$token_uid', '$expire'},
-                refs = [#ref{name = xabbertoken, min = 0, max = 1, label = '$token'},
-                             #ref{name = xabbertoken_uid, min = 0, max = 1, label = '$token_uid'},
-                             #ref{name = xabbertoken_expire, min = 0, max = 1, label = '$expire'}
-                             ]
-                             }
+         name = <<"xtoken">>,
+         xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
+         module = 'xabbertoken',
+         result = {xabbertoken_xtoken, '$token', '$uid', '$expire', '$client', '$device', '$description', '$ip', '$last_auth'},
+         attrs = [#attr{name = <<"uid">>, required = true}],
+         refs = [
+            #ref{name = xabbertoken, min = 0, max = 1, label = '$token'},
+            #ref{name = xabbertoken_client, min = 0, max = 1, label = '$client'},
+            #ref{name = xabbertoken_device, min = 0, max = 1, label = '$device'},
+            #ref{name = xabbertoken_description, min = 0, max = 1, label = '$description'},
+            #ref{name = xabbertoken_ip, min = 0, max = 1, label = '$ip'},
+            #ref{name = xabbertoken_last_auth, min = 0, max = 1, label = '$last_auth'},
+            #ref{name = xabbertoken_expire, min = 0, max = 1, label = '$expire'}
+         ]
+     }
 ).
 
 -xml(xabbertoken_revoke,
      #elem{
-     name = <<"revoke">>,
-     xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
-     module = 'xabbertoken',
-     result = {xabbertoken_revoke, '$token_uid'},
-                refs = [#ref{name = xabbertoken_uid, label = '$token_uid'}
-                             ]
-                             }
+         name = <<"revoke">>,
+         xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
+         module = 'xabbertoken',
+         result = {xabbertoken_revoke, '$xtokens'},
+         refs = [#ref{name = xabbertoken_xtoken, label = '$xtokens'}]
+     }
 ).
 
 -xml(xabbertoken_feature,
@@ -4365,15 +4372,6 @@
 }
 ).
 
--xml(xabbertoken_uid,
-    #elem{name = <<"token-uid">>,
-    xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
-    module = 'xabbertoken',
-    result = '$cdata',
-    cdata = #cdata{label = '$cdata', required = true}
-}
-).
-
 -xml(xabbertoken_client,
     #elem{name = <<"client">>,
     xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
@@ -4392,8 +4390,8 @@
 }
 ).
 
--xml(xabbertoken_expire,
-    #elem{name = <<"expire">>,
+-xml(xabbertoken_description,
+    #elem{name = <<"description">>,
     xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
     module = 'xabbertoken',
     result = '$cdata',
@@ -4401,41 +4399,13 @@
 }
 ).
 
--xml(xabbertoken_query,
-    #elem{name = <<"query">>,
-    xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
+-xml(xabbertoken_expire,
+    #elem{name = <<"expire">>,
+    xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
     module = 'xabbertoken',
-    result = {xabbertoken_query, '$token'},
-    refs = [#ref{name = xabbertoken, min = 0, max = 1, label = '$token'}]
-    }
-).
-
--xml(xabbertoken_x_tokens,
-     #elem{
-     name = <<"x">>,
-     xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
-     module = 'xabbertoken',
-     result = {xabbertoken_x_fields, '$field'},
-                refs = [#ref{name = xabbertoken_field, label = '$field'}
-                             ]
-                             }
-).
-
--xml(xabbertoken_field,
-     #elem{
-     name = <<"field">>,
-     xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
-     module = 'xabbertoken',
-     result = {xabbertoken_field, '$var', '$token', '$client', '$device', '$ip', '$last','$expire'},
-                refs = [#ref{name = xabbertoken_uid_item, min = 0, max = 1, label = '$token'},
-                             #ref{name = xabbertoken_client, min = 0, max = 1, label = '$client'},
-                             #ref{name = xabbertoken_device, min = 0, max = 1, label = '$device'},
-                             #ref{name = xabbertoken_ip_item, min = 0, max = 1, label = '$ip'},
-                             #ref{name = xabbertoken_last_auth, min = 0, max = 1, label = '$last'},
-                             #ref{name = xabbertoken_expire_item, min = 0, max = 1, label = '$expire'}
-                             ],
-     attrs = [#attr{name = <<"var">>, required = true}]
-                             }
+    result = '$cdata',
+    cdata = #cdata{default = <<"">>, label = '$cdata'}
+}
 ).
 
 -xml(xabbertoken_last_auth,
@@ -4447,41 +4417,33 @@
 }
 ).
 
--xml(xabbertoken_expire_item,
-    #elem{name = <<"expire">>,
-    xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
-    module = 'xabbertoken',
-    result = '$cdata',
-    cdata = #cdata{label = '$cdata'}
-}
-).
-
--xml(xabbertoken_desc_item,
-    #elem{name = <<"description">>,
-    xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
-    module = 'xabbertoken',
-    result = '$cdata',
-    cdata = #cdata{label = '$cdata'}
-}
-).
-
--xml(xabbertoken_uid_item,
-    #elem{name = <<"token-uid">>,
-    xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
-    module = 'xabbertoken',
-    result = '$cdata',
-    cdata = #cdata{label = '$cdata', required = true}
-}
-).
-
--xml(xabbertoken_ip_item,
+-xml(xabbertoken_ip,
     #elem{name = <<"ip">>,
     xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
     module = 'xabbertoken',
     result = '$cdata',
-    cdata = #cdata{label = '$cdata', required = true}
+    cdata = #cdata{label = '$cdata'}
 }
 ).
+
+-xml(xabbertoken_query,
+    #elem{name = <<"query">>,
+    xmlns = <<"https://xabber.com/protocol/auth-tokens">>,
+    module = 'xabbertoken',
+    result = {xabbertoken_query, '$xtoken'},
+    refs = [#ref{name = xabbertoken_xtoken, min = 1, max = 1,label = '$xtoken'}]
+    }
+).
+
+-xml(xabbertoken_query_items,
+    #elem{name = <<"query">>,
+    xmlns = <<"https://xabber.com/protocol/auth-tokens#items">>,
+    module = 'xabbertoken',
+    result = {xabbertoken_query_items, '$xtokens'},
+    refs = [#ref{name = xabbertoken_xtoken, label = '$xtokens'}]
+    }
+).
+
 -xml(xabbergroupchat_present,
      #elem{name = <<"x">>,
      xmlns = <<"https://xabber.com/protocol/groups#present">>,
