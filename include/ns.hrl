@@ -194,6 +194,8 @@
 -define(NS_GROUPCHAT, <<"https://xabber.com/protocol/groups">>).
 -define(NS_XABBER_TOKEN,<<"https://xabber.com/protocol/auth-tokens">>).
 -define(NS_XABBER_TOKEN_QUERY,<<"https://xabber.com/protocol/auth-tokens#items">>).
+-define(NS_DEVICES,<<"https://xabber.com/protocol/devices">>).
+-define(NS_DEVICES_QUERY,<<"https://xabber.com/protocol/devices#items">>).
 -define(NS_GROUPCHAT_RETRACT,<<"https://xabber.com/protocol/retract">>).
 -define(NS_GROUPCHAT_RETRACT_HISTORY,<<"https://xabber.com/protocol/groups#history">>).
 -define(NS_XABBER_REWRITE,<<"https://xabber.com/protocol/rewrite">>).

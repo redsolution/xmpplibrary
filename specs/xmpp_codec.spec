@@ -4444,6 +4444,153 @@
     }
 ).
 
+-xml(device_register,
+     #elem{
+         name = <<"register">>,
+         xmlns = <<"https://xabber.com/protocol/devices">>,
+         module = 'devices',
+         result = {device_register, '$device'},
+         refs = [
+            #ref{name = devices_device, min = 1, max = 1, label = '$device'}
+         ]
+     }
+).
+
+-xml(devices_device,
+     #elem{
+         name = <<"device">>,
+         xmlns = <<"https://xabber.com/protocol/devices">>,
+         module = 'devices',
+         result = {devices_device, '$secret', '$id', '$expire', '$client', '$info', '$description', '$ip', '$last_auth'},
+         attrs = [#attr{name = <<"id">>, default = undefined}],
+         refs = [
+            #ref{name = device_secret, min = 0, max = 1, label = '$secret'},
+            #ref{name = device_client, min = 0, max = 1, label = '$client'},
+            #ref{name = device_info, min = 0, max = 1, label = '$info'},
+            #ref{name = device_description, min = 0, max = 1, label = '$description'},
+            #ref{name = device_ip, min = 0, max = 1, label = '$ip'},
+            #ref{name = device_last_auth, min = 0, max = 1, label = '$last_auth'},
+            #ref{name = device_expire, min = 0, max = 1, label = '$expire'}
+         ]
+     }
+).
+
+-xml(devices_revoke,
+     #elem{
+        name = <<"revoke">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = {devices_revoke, '$devices'},
+        refs = [#ref{name = devices_device, label = '$devices'}]
+     }
+).
+
+-xml(devices_feature,
+     #elem{
+        name = <<"devices">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = {devices_feature}
+     }
+).
+
+-xml(devices_revoke_all,
+     #elem{
+        name = <<"revoke-all">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = {devices_revoke_all}
+     }
+).
+
+-xml(device_secret,
+    #elem{
+        name = <<"secret">>,
+        xmlns = [<<"https://xabber.com/protocol/devices">>],
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{label = '$cdata', required = true}
+}
+).
+
+-xml(device_client,
+    #elem{
+        name = <<"client">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{default = <<"">>, label = '$cdata'}
+    }
+).
+
+-xml(device_info,
+    #elem{
+        name = <<"info">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{default = <<"">>, label = '$cdata'}
+    }
+).
+
+-xml(device_description,
+    #elem{
+        name = <<"description">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{default = <<"">>, label = '$cdata'}
+    }
+).
+
+-xml(device_expire,
+    #elem{
+        name = <<"expire">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{default = <<"">>, label = '$cdata'}
+    }
+).
+
+-xml(device_last_auth,
+    #elem{
+        name = <<"last-auth">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{label = '$cdata'}
+    }
+).
+
+-xml(device_ip,
+    #elem{
+        name = <<"ip">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{label = '$cdata'}
+    }
+).
+
+-xml(devices_query,
+    #elem{name = <<"query">>,
+    xmlns = <<"https://xabber.com/protocol/devices">>,
+    module = 'devices',
+    result = {devices_query, '$device'},
+    refs = [#ref{name = devices_device, min = 1, max = 1,label = '$device'}]
+    }
+).
+
+-xml(devices_query_items,
+    #elem{name = <<"query">>,
+    xmlns = <<"https://xabber.com/protocol/devices#items">>,
+    module = 'devices',
+    result = {devices_query_items, '$devices'},
+    refs = [#ref{name = devices_device, label = '$devices'}]
+    }
+).
+
 -xml(xabbergroupchat_present,
      #elem{name = <<"x">>,
      xmlns = <<"https://xabber.com/protocol/groups#present">>,
