@@ -29,7 +29,7 @@ tags() ->
      {<<"item">>, <<"jabber:iq:roster">>},
      {<<"group">>, <<"jabber:iq:roster">>}].
 
-do_encode({roster_item, _, _, _, _, _} = Item,
+do_encode({roster_item, _, _, _, _, _, _} = Item,
 	  TopXMLNS) ->
     encode_roster_item(Item, TopXMLNS);
 do_encode({roster_query, _, _} = Query, TopXMLNS) ->
@@ -37,25 +37,26 @@ do_encode({roster_query, _, _} = Query, TopXMLNS) ->
 do_encode({rosterver_feature} = Ver, TopXMLNS) ->
     encode_rosterver_feature(Ver, TopXMLNS).
 
-do_get_name({roster_item, _, _, _, _, _}) -> <<"item">>;
+do_get_name({roster_item, _, _, _, _, _, _}) ->
+    <<"item">>;
 do_get_name({roster_query, _, _}) -> <<"query">>;
 do_get_name({rosterver_feature}) -> <<"ver">>.
 
-do_get_ns({roster_item, _, _, _, _, _}) ->
+do_get_ns({roster_item, _, _, _, _, _, _}) ->
     <<"jabber:iq:roster">>;
 do_get_ns({roster_query, _, _}) ->
     <<"jabber:iq:roster">>;
 do_get_ns({rosterver_feature}) ->
     <<"urn:xmpp:features:rosterver">>.
 
-pp(roster_item, 5) ->
-    [jid, name, groups, subscription, ask];
+pp(roster_item, 6) ->
+    [jid, name, groups, subscription, ask, approved];
 pp(roster_query, 2) -> [items, ver];
 pp(rosterver_feature, 0) -> [];
 pp(_, _) -> no.
 
 records() ->
-    [{roster_item, 5}, {roster_query, 2},
+    [{roster_item, 6}, {roster_query, 2},
      {rosterver_feature, 0}].
 
 dec_enum(Val, Enums) ->
@@ -150,10 +151,11 @@ decode_roster_item(__TopXMLNS, __Opts,
 		   {xmlel, <<"item">>, _attrs, _els}) ->
     Groups = decode_roster_item_els(__TopXMLNS, __Opts,
 				    _els, []),
-    {Jid, Name, Subscription, Ask} =
+    {Jid, Name, Subscription, Ask, Approved} =
 	decode_roster_item_attrs(__TopXMLNS, _attrs, undefined,
-				 undefined, undefined, undefined),
-    {roster_item, Jid, Name, Groups, Subscription, Ask}.
+				 undefined, undefined, undefined, undefined),
+    {roster_item, Jid, Name, Groups, Subscription, Ask,
+     Approved}.
 
 decode_roster_item_els(__TopXMLNS, __Opts, [],
 		       Groups) ->
@@ -179,38 +181,44 @@ decode_roster_item_els(__TopXMLNS, __Opts, [_ | _els],
 
 decode_roster_item_attrs(__TopXMLNS,
 			 [{<<"jid">>, _val} | _attrs], _Jid, Name, Subscription,
-			 Ask) ->
+			 Ask, Approved) ->
     decode_roster_item_attrs(__TopXMLNS, _attrs, _val, Name,
-			     Subscription, Ask);
+			     Subscription, Ask, Approved);
 decode_roster_item_attrs(__TopXMLNS,
 			 [{<<"name">>, _val} | _attrs], Jid, _Name,
-			 Subscription, Ask) ->
+			 Subscription, Ask, Approved) ->
     decode_roster_item_attrs(__TopXMLNS, _attrs, Jid, _val,
-			     Subscription, Ask);
+			     Subscription, Ask, Approved);
 decode_roster_item_attrs(__TopXMLNS,
 			 [{<<"subscription">>, _val} | _attrs], Jid, Name,
-			 _Subscription, Ask) ->
+			 _Subscription, Ask, Approved) ->
     decode_roster_item_attrs(__TopXMLNS, _attrs, Jid, Name,
-			     _val, Ask);
+			     _val, Ask, Approved);
 decode_roster_item_attrs(__TopXMLNS,
 			 [{<<"ask">>, _val} | _attrs], Jid, Name, Subscription,
-			 _Ask) ->
+			 _Ask, Approved) ->
     decode_roster_item_attrs(__TopXMLNS, _attrs, Jid, Name,
-			     Subscription, _val);
+			     Subscription, _val, Approved);
+decode_roster_item_attrs(__TopXMLNS,
+			 [{<<"approved">>, _val} | _attrs], Jid, Name,
+			 Subscription, Ask, _Approved) ->
+    decode_roster_item_attrs(__TopXMLNS, _attrs, Jid, Name,
+			     Subscription, Ask, _val);
 decode_roster_item_attrs(__TopXMLNS, [_ | _attrs], Jid,
-			 Name, Subscription, Ask) ->
+			 Name, Subscription, Ask, Approved) ->
     decode_roster_item_attrs(__TopXMLNS, _attrs, Jid, Name,
-			     Subscription, Ask);
+			     Subscription, Ask, Approved);
 decode_roster_item_attrs(__TopXMLNS, [], Jid, Name,
-			 Subscription, Ask) ->
+			 Subscription, Ask, Approved) ->
     {decode_roster_item_attr_jid(__TopXMLNS, Jid),
      decode_roster_item_attr_name(__TopXMLNS, Name),
      decode_roster_item_attr_subscription(__TopXMLNS,
 					  Subscription),
-     decode_roster_item_attr_ask(__TopXMLNS, Ask)}.
+     decode_roster_item_attr_ask(__TopXMLNS, Ask),
+     decode_roster_item_attr_approved(__TopXMLNS, Approved)}.
 
 encode_roster_item({roster_item, Jid, Name, Groups,
-		    Subscription, Ask},
+		    Subscription, Ask, Approved},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"jabber:iq:roster">>, [],
@@ -218,12 +226,13 @@ encode_roster_item({roster_item, Jid, Name, Groups,
     _els =
 	lists:reverse('encode_roster_item_$groups'(Groups,
 						   __NewTopXMLNS, [])),
-    _attrs = encode_roster_item_attr_ask(Ask,
-					 encode_roster_item_attr_subscription(Subscription,
-									      encode_roster_item_attr_name(Name,
-													   encode_roster_item_attr_jid(Jid,
-																       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																				  __TopXMLNS))))),
+    _attrs = encode_roster_item_attr_approved(Approved,
+					      encode_roster_item_attr_ask(Ask,
+									  encode_roster_item_attr_subscription(Subscription,
+													       encode_roster_item_attr_name(Name,
+																	    encode_roster_item_attr_jid(Jid,
+																					xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																								   __TopXMLNS)))))),
     {xmlel, <<"item">>, _attrs, _els}.
 
 'encode_roster_item_$groups'([], __TopXMLNS, _acc) ->
@@ -289,6 +298,16 @@ decode_roster_item_attr_ask(__TopXMLNS, _val) ->
 encode_roster_item_attr_ask(undefined, _acc) -> _acc;
 encode_roster_item_attr_ask(_val, _acc) ->
     [{<<"ask">>, enc_enum(_val)} | _acc].
+
+decode_roster_item_attr_approved(__TopXMLNS,
+				 undefined) ->
+    <<>>;
+decode_roster_item_attr_approved(__TopXMLNS, _val) ->
+    _val.
+
+encode_roster_item_attr_approved(<<>>, _acc) -> _acc;
+encode_roster_item_attr_approved(_val, _acc) ->
+    [{<<"approved">>, _val} | _acc].
 
 decode_roster_group(__TopXMLNS, __Opts,
 		    {xmlel, <<"group">>, _attrs, _els}) ->

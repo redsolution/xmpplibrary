@@ -61,7 +61,7 @@
            xmlns = <<"jabber:iq:roster">>,
 	   module = rfc6121,
            result = {roster_item, '$jid', '$name',
-                     '$groups', '$subscription', '$ask'},
+                     '$groups', '$subscription', '$ask', '$approved'},
            attrs = [#attr{name = <<"jid">>,
                           required = true,
                           dec = {jid, decode, []},
@@ -74,7 +74,8 @@
                           dec = {dec_enum, [[none,to,from,both,remove]]}},
                     #attr{name = <<"ask">>,
                           enc = {enc_enum, []},
-                          dec = {dec_enum, [[subscribe]]}}],
+                          dec = {dec_enum, [[subscribe]]}},
+                    #attr{name = <<"approved">>, default = <<"">>}],
            refs = [#ref{name = roster_group, label = '$groups'}]}).
 
 -xml(roster_query,

@@ -2114,7 +2114,6 @@ get_mod({xabbertoken_issue, _, _, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_membership, _}) ->
     xabbergroupchat;
 get_mod({xabber_file_sharing, _, _}) -> xep_otb;
-get_mod({roster_item, _, _, _, _, _}) -> rfc6121;
 get_mod({vcard_photo, _, _, _}) -> xep0054;
 get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({xcaptcha, _}) -> xep0158;
@@ -2173,6 +2172,7 @@ get_mod({xabbergroupchat_invite, _, _, _, _, _}) ->
     xabbergroupchat;
 get_mod({xabbergroupchat_privacy, _}) ->
     xabbergroupchat;
+get_mod({roster_item, _, _, _, _, _, _}) -> rfc6121;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
 get_mod({xabber_metadata, _, _}) ->
