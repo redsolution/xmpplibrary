@@ -18,7 +18,9 @@
                     {'filter_video', boolean()} |
                     {'filter_voice', boolean()} |
                     {'filter_sticker', boolean()} |
-                    {'stanza-id', binary()}.
+                    {'stanza-id', binary()} |
+                    {'with-tags', [binary()]} |
+                    {'payload-type', binary()}.
 -type result() :: [property()].
 
 -type form() :: [property() | xdata_field()].

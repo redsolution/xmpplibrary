@@ -111,6 +111,11 @@ encode(List, Lang) when is_list(List) ->
 	    {filter_sticker, _, _} -> erlang:error({badarg, Opt});
 	    {'stanza-id', Val} -> ['encode_stanza-id'(Val, Lang)];
 	    {'stanza-id', _, _} -> erlang:error({badarg, Opt});
+	    {'with-tags', Val} -> ['encode_with-tags'(Val, Lang)];
+	    {'with-tags', _, _} -> erlang:error({badarg, Opt});
+	    {'payload-type', Val} ->
+		['encode_payload-type'(Val, Lang)];
+	    {'payload-type', _, _} -> erlang:error({badarg, Opt});
 	    #xdata_field{} -> [Opt];
 	    _ -> []
 	  end
@@ -578,6 +583,45 @@ decode([#xdata_field{var =
     erlang:error({?MODULE,
 		  {too_many_values, <<"{urn:xmpp:sid:0}stanza-id">>,
 		   <<"urn:xmpp:mam:1">>}});
+decode([#xdata_field{var = <<"with-tags">>,
+		     values = Values}
+	| Fs],
+       Acc, Required) ->
+    try [Value || Value <- Values] of
+      Result ->
+	  decode(Fs, [{'with-tags', Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"with-tags">>, <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var = <<"payload-type">>,
+		     values = [Value]}
+	| Fs],
+       Acc, Required) ->
+    try Value of
+      Result ->
+	  decode(Fs, [{'payload-type', Result} | Acc], Required)
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"payload-type">>,
+			 <<"urn:xmpp:mam:1">>}})
+    end;
+decode([#xdata_field{var = <<"payload-type">>,
+		     values = []} =
+	    F
+	| Fs],
+       Acc, Required) ->
+    decode([F#xdata_field{var = <<"payload-type">>,
+			  values = [<<>>]}
+	    | Fs],
+	   Acc, Required);
+decode([#xdata_field{var = <<"payload-type">>} | _], _,
+       _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"payload-type">>,
+		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
 	   erlang:error({?MODULE,
@@ -788,3 +832,31 @@ encode_filter_sticker(Value, Lang) ->
 		 label =
 		     xmpp_tr:tr(Lang,
 				<<"Fetch one message from conversation">>)}.
+
+'encode_with-tags'(Value, Lang) ->
+    Values = case Value of
+	       [] -> [];
+	       Value -> [Value]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"with-tags">>, values = Values,
+		 required = false, type = 'text-multi', options = Opts,
+		 desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"A list of tags for messages that should "
+				  "be included in query results.">>)}.
+
+'encode_payload-type'(Value, Lang) ->
+    Values = case Value of
+	       <<>> -> [];
+	       Value -> [Value]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"payload-type">>, values = Values,
+		 required = false, type = 'text-single', options = Opts,
+		 desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				<<"Fetch only the messages with the specified "
+				  "payload-type">>)}.

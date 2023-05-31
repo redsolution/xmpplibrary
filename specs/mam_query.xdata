@@ -47,6 +47,12 @@
   <field var='{urn:xmpp:sid:0}stanza-id'
      type='text-single'
      label='Fetch one message from conversation'/>
+  <field var='with-tags'
+     type='text-multi'
+     label='A list of tags for messages that should be included in query results.'/>
+  <field var='payload-type'
+     type='text-single'
+     label='Fetch only the messages with the specified payload-type'/>
 </form_type>
 
 <!--
