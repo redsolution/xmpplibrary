@@ -595,9 +595,6 @@ get_mod(<<"not-subscribed">>,
 get_mod(<<"encryption-key">>,
 	<<"https://xabber.com/protocol/push">>) ->
     xabberpush;
-get_mod(<<"description">>,
-	<<"https://xabber.com/protocol/devices">>) ->
-    devices;
 get_mod(<<"contact">>,
 	<<"https://xabber.com/protocol/groups#create">>) ->
     xabbergroupchat;
@@ -1311,6 +1308,9 @@ get_mod(<<"actor">>,
     xep0045;
 get_mod(<<"withtext">>, <<"urn:xmpp:mam:tmp">>) ->
     xep0313;
+get_mod(<<"omemo-id">>,
+	<<"https://xabber.com/protocol/devices">>) ->
+    devices;
 get_mod(<<"peer-to-peer">>, <<"jabber:client">>) ->
     xabbergroupchat;
 get_mod(<<"displayed">>,
@@ -1451,6 +1451,9 @@ get_mod(<<"sent">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
 get_mod(<<"db:result">>, <<"jabber:server">>) ->
     xep0220;
+get_mod(<<"public-label">>,
+	<<"https://xabber.com/protocol/devices">>) ->
+    devices;
 get_mod(<<"group">>, <<"jabber:iq:roster">>) -> rfc6121;
 get_mod(<<"incorrect-encoding">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
@@ -1993,6 +1996,8 @@ get_mod({xabber_conversation_call, _}) ->
     xabbersynchronization;
 get_mod({message_markable}) -> xep0333;
 get_mod({last, _, _}) -> xep0012;
+get_mod({devices_device, _, _, _, _, _, _, _, _, _}) ->
+    devices;
 get_mod({xabbergroup_block, _, _, _}) ->
     xabbergroupchat;
 get_mod({message_displayed, _, _}) -> xep0333;
@@ -2329,8 +2334,6 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({previous_id, _}) -> previous;
-get_mod({devices_device, _, _, _, _, _, _, _, _}) ->
-    devices;
 get_mod({block_id, _}) -> xabbergroupchat;
 get_mod({xabbergroupchat_localpart, _}) ->
     xabbergroupchat;
