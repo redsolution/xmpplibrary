@@ -1529,7 +1529,6 @@
                         vcard_geo() |
                         mam_result() |
                         delegated() |
-                        search() |
                         delivery_retry() |
                         delivery_x() |
                         channel_domain() |
@@ -1574,6 +1573,7 @@
                         xabbergroup_unblock() |
                         starttls_failure() |
                         muc_item() |
+                        text() |
                         bytestreams() |
                         sasl_success() |
                         address() |
@@ -1680,9 +1680,9 @@
                         oob_x() |
                         recipient() |
                         carbons_private() |
-                        text() |
                         starttls() |
                         muc() |
+                        search() |
                         vcard_photo() |
                         compressed() |
                         sm_enabled() |

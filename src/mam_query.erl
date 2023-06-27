@@ -14,14 +14,6 @@
 
 -export_type([property/0, result/0, form/0]).
 
-dec_bool(<<"1">>) -> true;
-dec_bool(<<"0">>) -> false;
-dec_bool(<<"true">>) -> true;
-dec_bool(<<"false">>) -> false.
-
-enc_bool(true) -> <<"1">>;
-enc_bool(false) -> <<"0">>.
-
 format_error({form_type_mismatch, Type}) ->
     <<"FORM_TYPE doesn't match '", Type/binary, "'">>;
 format_error({bad_var_value, Var, Type}) ->
@@ -92,30 +84,12 @@ encode(List, Lang) when is_list(List) ->
 	    {'after-id', _, _} -> erlang:error({badarg, Opt});
 	    {ids, Val} -> [encode_ids(Val, Lang)];
 	    {ids, _, _} -> erlang:error({badarg, Opt});
-	    {filter_encrypted, Val} ->
-		[encode_filter_encrypted(Val, Lang)];
-	    {filter_encrypted, _, _} -> erlang:error({badarg, Opt});
-	    {filter_audio, Val} -> [encode_filter_audio(Val, Lang)];
-	    {filter_audio, _, _} -> erlang:error({badarg, Opt});
-	    {filter_image, Val} -> [encode_filter_image(Val, Lang)];
-	    {filter_image, _, _} -> erlang:error({badarg, Opt});
-	    {filter_document, Val} ->
-		[encode_filter_document(Val, Lang)];
-	    {filter_document, _, _} -> erlang:error({badarg, Opt});
-	    {filter_video, Val} -> [encode_filter_video(Val, Lang)];
-	    {filter_video, _, _} -> erlang:error({badarg, Opt});
-	    {filter_voice, Val} -> [encode_filter_voice(Val, Lang)];
-	    {filter_voice, _, _} -> erlang:error({badarg, Opt});
-	    {filter_sticker, Val} ->
-		[encode_filter_sticker(Val, Lang)];
-	    {filter_sticker, _, _} -> erlang:error({badarg, Opt});
-	    {'stanza-id', Val} -> ['encode_stanza-id'(Val, Lang)];
-	    {'stanza-id', _, _} -> erlang:error({badarg, Opt});
 	    {'with-tags', Val} -> ['encode_with-tags'(Val, Lang)];
 	    {'with-tags', _, _} -> erlang:error({badarg, Opt});
-	    {'payload-type', Val} ->
-		['encode_payload-type'(Val, Lang)];
-	    {'payload-type', _, _} -> erlang:error({badarg, Opt});
+	    {'conversation-type', Val} ->
+		['encode_conversation-type'(Val, Lang)];
+	    {'conversation-type', _, _} ->
+		erlang:error({badarg, Opt});
 	    #xdata_field{} -> [Opt];
 	    _ -> []
 	  end
@@ -271,318 +245,6 @@ decode([#xdata_field{var = <<"ids">>, values = Values}
 	  erlang:error({?MODULE,
 			{bad_var_value, <<"ids">>, <<"urn:xmpp:mam:1">>}})
     end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_e"
-			   "ncrypted">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_encrypted, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_e"
-			   "ncrypted">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_e"
-			   "ncrypted">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_e"
-				"ncrypted">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_e"
-			   "ncrypted">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_e"
-		     "ncrypted">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_a"
-			   "udio">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_audio, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_a"
-			   "udio">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_a"
-			   "udio">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_a"
-				"udio">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_a"
-			   "udio">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_a"
-		     "udio">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_i"
-			   "mage">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_image, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_i"
-			   "mage">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_i"
-			   "mage">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_i"
-				"mage">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_i"
-			   "mage">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_i"
-		     "mage">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_d"
-			   "ocument">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_document, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_d"
-			   "ocument">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_d"
-			   "ocument">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_d"
-				"ocument">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_d"
-			   "ocument">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_d"
-		     "ocument">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "ideo">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_video, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "ideo">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "ideo">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_v"
-				"ideo">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "ideo">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_v"
-		     "ideo">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "oice">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_voice, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "oice">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "oice">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_v"
-				"oice">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_v"
-			   "oice">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_v"
-		     "oice">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_s"
-			   "ticker">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try dec_bool(Value) of
-      Result ->
-	  decode(Fs, [{filter_sticker, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value,
-			 <<"{https://xabber.com/protocol/archive}filter_s"
-			   "ticker">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_s"
-			   "ticker">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{https://xabber.com/protocol/archive}filter_s"
-				"ticker">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{https://xabber.com/protocol/archive}filter_s"
-			   "ticker">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values,
-		   <<"{https://xabber.com/protocol/archive}filter_s"
-		     "ticker">>,
-		   <<"urn:xmpp:mam:1">>}});
-decode([#xdata_field{var =
-			 <<"{urn:xmpp:sid:0}stanza-id">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try Value of
-      Result ->
-	  decode(Fs, [{'stanza-id', Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value, <<"{urn:xmpp:sid:0}stanza-id">>,
-			 <<"urn:xmpp:mam:1">>}})
-    end;
-decode([#xdata_field{var =
-			 <<"{urn:xmpp:sid:0}stanza-id">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var =
-			      <<"{urn:xmpp:sid:0}stanza-id">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var =
-			 <<"{urn:xmpp:sid:0}stanza-id">>}
-	| _],
-       _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values, <<"{urn:xmpp:sid:0}stanza-id">>,
-		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var = <<"with-tags">>,
 		     values = Values}
 	| Fs],
@@ -595,32 +257,34 @@ decode([#xdata_field{var = <<"with-tags">>,
 	  erlang:error({?MODULE,
 			{bad_var_value, <<"with-tags">>, <<"urn:xmpp:mam:1">>}})
     end;
-decode([#xdata_field{var = <<"payload-type">>,
+decode([#xdata_field{var = <<"conversation-type">>,
 		     values = [Value]}
 	| Fs],
        Acc, Required) ->
     try Value of
       Result ->
-	  decode(Fs, [{'payload-type', Result} | Acc], Required)
+	  decode(Fs, [{'conversation-type', Result} | Acc],
+		 Required)
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"payload-type">>,
+			{bad_var_value, <<"conversation-type">>,
 			 <<"urn:xmpp:mam:1">>}})
     end;
-decode([#xdata_field{var = <<"payload-type">>,
+decode([#xdata_field{var = <<"conversation-type">>,
 		     values = []} =
 	    F
 	| Fs],
        Acc, Required) ->
-    decode([F#xdata_field{var = <<"payload-type">>,
+    decode([F#xdata_field{var = <<"conversation-type">>,
 			  values = [<<>>]}
 	    | Fs],
 	   Acc, Required);
-decode([#xdata_field{var = <<"payload-type">>} | _], _,
-       _) ->
+decode([#xdata_field{var = <<"conversation-type">>}
+	| _],
+       _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"payload-type">>,
+		  {too_many_values, <<"conversation-type">>,
 		   <<"urn:xmpp:mam:1">>}});
 decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
     if Var /= <<"FORM_TYPE">> ->
@@ -716,123 +380,6 @@ encode_ids(Value, Lang) ->
 				  "messages that should be included in "
 				  "query results.">>)}.
 
-encode_filter_encrypted(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_e"
-		       "ncrypted">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the encrypted messages">>)}.
-
-encode_filter_audio(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_a"
-		       "udio">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with audio">>)}.
-
-encode_filter_image(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_i"
-		       "mage">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with images">>)}.
-
-encode_filter_document(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_d"
-		       "ocument">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with documents">>)}.
-
-encode_filter_video(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_v"
-		       "ideo">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with videos">>)}.
-
-encode_filter_voice(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_v"
-		       "oice">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang, <<"Fetch only the voice messages">>)}.
-
-encode_filter_sticker(Value, Lang) ->
-    Values = case Value of
-	       undefined -> [];
-	       Value -> [enc_bool(Value)]
-	     end,
-    Opts = [],
-    #xdata_field{var =
-		     <<"{https://xabber.com/protocol/archive}filter_s"
-		       "ticker">>,
-		 values = Values, required = false, type = boolean,
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with stickers">>)}.
-
-'encode_stanza-id'(Value, Lang) ->
-    Values = case Value of
-	       <<>> -> [];
-	       Value -> [Value]
-	     end,
-    Opts = [],
-    #xdata_field{var = <<"{urn:xmpp:sid:0}stanza-id">>,
-		 values = Values, required = false, type = 'text-single',
-		 options = Opts, desc = <<>>,
-		 label =
-		     xmpp_tr:tr(Lang,
-				<<"Fetch one message from conversation">>)}.
-
 'encode_with-tags'(Value, Lang) ->
     Values = case Value of
 	       [] -> [];
@@ -847,16 +394,16 @@ encode_filter_sticker(Value, Lang) ->
 				<<"A list of tags for messages that should "
 				  "be included in query results.">>)}.
 
-'encode_payload-type'(Value, Lang) ->
+'encode_conversation-type'(Value, Lang) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
-    #xdata_field{var = <<"payload-type">>, values = Values,
-		 required = false, type = 'text-single', options = Opts,
-		 desc = <<>>,
+    #xdata_field{var = <<"conversation-type">>,
+		 values = Values, required = false, type = 'text-single',
+		 options = Opts, desc = <<>>,
 		 label =
 		     xmpp_tr:tr(Lang,
-				<<"Fetch only the messages with the specified "
-				  "payload-type">>)}.
+				<<"Fetch only messages related to the specified "
+				  "conversation type">>)}.

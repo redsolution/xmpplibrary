@@ -23,36 +23,12 @@
     <field var='ids'
      type='text-multi'
      label='A list of stanza IDs corresponding to messages that should be included in query results.'/>
-  <field var='{https://xabber.com/protocol/archive}filter_encrypted'
-     type='boolean'
-     label='Fetch only the encrypted messages'/>
-  <field var='{https://xabber.com/protocol/archive}filter_audio'
-     type='boolean'
-     label='Fetch only the messages with audio'/>
-  <field var='{https://xabber.com/protocol/archive}filter_image'
-     type='boolean'
-     label='Fetch only the messages with images'/>
-  <field var='{https://xabber.com/protocol/archive}filter_document'
-     type='boolean'
-     label='Fetch only the messages with documents'/>
-  <field var='{https://xabber.com/protocol/archive}filter_video'
-     type='boolean'
-     label='Fetch only the messages with videos'/>
-  <field var='{https://xabber.com/protocol/archive}filter_voice'
-     type='boolean'
-     label='Fetch only the voice messages'/>
-  <field var='{https://xabber.com/protocol/archive}filter_sticker'
-     type='boolean'
-     label='Fetch only the messages with stickers'/>
-  <field var='{urn:xmpp:sid:0}stanza-id'
-     type='text-single'
-     label='Fetch one message from conversation'/>
   <field var='with-tags'
      type='text-multi'
      label='A list of tags for messages that should be included in query results.'/>
-  <field var='payload-type'
+  <field var='conversation-type'
      type='text-single'
-     label='Fetch only the messages with the specified payload-type'/>
+     label='Fetch only messages related to the specified conversation type'/>
 </form_type>
 
 <!--

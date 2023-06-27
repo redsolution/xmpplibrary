@@ -11,16 +11,8 @@
                     {'before-id', binary()} |
                     {'after-id', binary()} |
                     {'ids', [binary()]} |
-                    {'filter_encrypted', boolean()} |
-                    {'filter_audio', boolean()} |
-                    {'filter_image', boolean()} |
-                    {'filter_document', boolean()} |
-                    {'filter_video', boolean()} |
-                    {'filter_voice', boolean()} |
-                    {'filter_sticker', boolean()} |
-                    {'stanza-id', binary()} |
                     {'with-tags', [binary()]} |
-                    {'payload-type', binary()}.
+                    {'conversation-type', binary()}.
 -type result() :: [property()].
 
 -type form() :: [property() | xdata_field()].
