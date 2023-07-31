@@ -127,7 +127,8 @@ do_encode({xabber_replace_message, _, _, _, _, _, _} =
 do_encode({xabber_retract_query, _, _, _} = Query,
 	  TopXMLNS) ->
     encode_xabber_retract_query(Query, TopXMLNS);
-do_encode({xabber_retract_invalidate, _} = Invalidate,
+do_encode({xabber_retract_invalidate, _, _, _} =
+	      Invalidate,
 	  TopXMLNS) ->
     encode_xabber_retract_invalidate(Invalidate, TopXMLNS).
 
@@ -138,7 +139,7 @@ do_get_name({xabber_replace_message, _, _, _, _, _,
     <<"message">>;
 do_get_name({xabber_retract_all, _, _, _, _, _}) ->
     <<"retract-all">>;
-do_get_name({xabber_retract_invalidate, _}) ->
+do_get_name({xabber_retract_invalidate, _, _, _}) ->
     <<"invalidate">>;
 do_get_name({xabber_retract_message, _, _, _, _, _, _,
 	     _}) ->
@@ -156,7 +157,7 @@ do_get_ns({xabber_replace_message, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/rewrite">>;
 do_get_ns({xabber_retract_all, Xmlns, _, _, _, _}) ->
     Xmlns;
-do_get_ns({xabber_retract_invalidate, _}) ->
+do_get_ns({xabber_retract_invalidate, _, _, _}) ->
     <<"https://xabber.com/protocol/rewrite#notify">>;
 do_get_ns({xabber_retract_message, Xmlns, _, _, _, _, _,
 	   _}) ->
@@ -200,14 +201,15 @@ pp(xabber_replace_message, 6) ->
     [from, to, body, stanza_id, replaced, sub_els];
 pp(xabber_retract_query, 3) ->
     [version, 'less-than', type];
-pp(xabber_retract_invalidate, 1) -> [version];
+pp(xabber_retract_invalidate, 3) ->
+    [version, conversation, type];
 pp(_, _) -> no.
 
 records() ->
     [{xabber_retract_message, 7}, {xabber_retract_all, 5},
      {xabber_retract_user, 7}, {xabber_replace, 8},
      {xabber_replace_message, 6}, {xabber_retract_query, 3},
-     {xabber_retract_invalidate, 1}].
+     {xabber_retract_invalidate, 3}].
 
 dec_bool(<<"false">>) -> false;
 dec_bool(<<"0">>) -> false;
@@ -227,36 +229,55 @@ enc_int(Int) -> erlang:integer_to_binary(Int).
 
 decode_xabber_retract_invalidate(__TopXMLNS, __Opts,
 				 {xmlel, <<"invalidate">>, _attrs, _els}) ->
-    Version =
+    {Version, Conversation, Type} =
 	decode_xabber_retract_invalidate_attrs(__TopXMLNS,
-					       _attrs, undefined),
-    {xabber_retract_invalidate, Version}.
+					       _attrs, undefined, undefined,
+					       undefined),
+    {xabber_retract_invalidate, Version, Conversation,
+     Type}.
 
 decode_xabber_retract_invalidate_attrs(__TopXMLNS,
 				       [{<<"version">>, _val} | _attrs],
-				       _Version) ->
+				       _Version, Conversation, Type) ->
     decode_xabber_retract_invalidate_attrs(__TopXMLNS,
-					   _attrs, _val);
+					   _attrs, _val, Conversation, Type);
 decode_xabber_retract_invalidate_attrs(__TopXMLNS,
-				       [_ | _attrs], Version) ->
+				       [{<<"conversation">>, _val} | _attrs],
+				       Version, _Conversation, Type) ->
     decode_xabber_retract_invalidate_attrs(__TopXMLNS,
-					   _attrs, Version);
+					   _attrs, Version, _val, Type);
+decode_xabber_retract_invalidate_attrs(__TopXMLNS,
+				       [{<<"type">>, _val} | _attrs], Version,
+				       Conversation, _Type) ->
+    decode_xabber_retract_invalidate_attrs(__TopXMLNS,
+					   _attrs, Version, Conversation, _val);
+decode_xabber_retract_invalidate_attrs(__TopXMLNS,
+				       [_ | _attrs], Version, Conversation,
+				       Type) ->
+    decode_xabber_retract_invalidate_attrs(__TopXMLNS,
+					   _attrs, Version, Conversation, Type);
 decode_xabber_retract_invalidate_attrs(__TopXMLNS, [],
-				       Version) ->
-    decode_xabber_retract_invalidate_attr_version(__TopXMLNS,
-						  Version).
+				       Version, Conversation, Type) ->
+    {decode_xabber_retract_invalidate_attr_version(__TopXMLNS,
+						   Version),
+     decode_xabber_retract_invalidate_attr_conversation(__TopXMLNS,
+							Conversation),
+     decode_xabber_retract_invalidate_attr_type(__TopXMLNS,
+						Type)}.
 
 encode_xabber_retract_invalidate({xabber_retract_invalidate,
-				  Version},
+				  Version, Conversation, Type},
 				 __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/rewrite#notify">>,
 				    [], __TopXMLNS),
     _els = [],
     _attrs =
-	encode_xabber_retract_invalidate_attr_version(Version,
-						      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-										 __TopXMLNS)),
+	encode_xabber_retract_invalidate_attr_type(Type,
+						   encode_xabber_retract_invalidate_attr_conversation(Conversation,
+												      encode_xabber_retract_invalidate_attr_version(Version,
+																		    xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																					       __TopXMLNS)))),
     {xmlel, <<"invalidate">>, _attrs, _els}.
 
 decode_xabber_retract_invalidate_attr_version(__TopXMLNS,
@@ -278,6 +299,40 @@ encode_xabber_retract_invalidate_attr_version(undefined,
 encode_xabber_retract_invalidate_attr_version(_val,
 					      _acc) ->
     [{<<"version">>, enc_int(_val)} | _acc].
+
+decode_xabber_retract_invalidate_attr_conversation(__TopXMLNS,
+						   undefined) ->
+    undefined;
+decode_xabber_retract_invalidate_attr_conversation(__TopXMLNS,
+						   _val) ->
+    case catch jid:decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"conversation">>, <<"invalidate">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_xabber_retract_invalidate_attr_conversation(undefined,
+						   _acc) ->
+    _acc;
+encode_xabber_retract_invalidate_attr_conversation(_val,
+						   _acc) ->
+    [{<<"conversation">>, jid:encode(_val)} | _acc].
+
+decode_xabber_retract_invalidate_attr_type(__TopXMLNS,
+					   undefined) ->
+    <<>>;
+decode_xabber_retract_invalidate_attr_type(__TopXMLNS,
+					   _val) ->
+    _val.
+
+encode_xabber_retract_invalidate_attr_type(<<>>,
+					   _acc) ->
+    _acc;
+encode_xabber_retract_invalidate_attr_type(_val,
+					   _acc) ->
+    [{<<"type">>, _val} | _acc].
 
 decode_xabber_retract_query(__TopXMLNS, __Opts,
 			    {xmlel, <<"query">>, _attrs, _els}) ->

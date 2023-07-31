@@ -5145,83 +5145,6 @@
      cdata = #cdata{label = '$cdata'}}
 ).
 
--xml(xabbergroupchat_retract_query,
-     #elem{name = <<"query">>,
-     xmlns = <<"https://xabber.com/protocol/retract">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_query, '$version', '$less_than'},
-     attrs = [#attr{name = <<"version">>}, #attr{name = <<"less_than">>}]
-     }).
-
--xml(xabbergroupchat_retract_message,
-     #elem{name = <<"retract-message">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_message, '$id', '$version'},
-     attrs = [#attr{name = <<"id">>},
-              #attr{name = <<"version">>}]
-     }).
-
--xml(xabbergroupchat_retract_user,
-     #elem{name = <<"retract-user">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_user, '$id', '$version'},
-     attrs = [#attr{name = <<"id">>},
-              #attr{name = <<"version">>}]
-     }).
-
--xml(xabbergroupchat_retract_all,
-     #elem{name = <<"retract-all">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_all, '$version'},
-     attrs = [#attr{name = <<"version">>}]
-     }).
-
--xml(xabbergroupchat_retract_invalidate,
-     #elem{name = <<"invalidate">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_retract_invalidate, '$version'},
-     attrs = [#attr{name = <<"version">>}]
-     }).
-
--xml(xabbergroupchat_replaced,
-     #elem{name = <<"replaced">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_replaced, '$stamp'},
-          attrs = [#attr{name = <<"stamp">>}]
-     }).
-
--xml(xabbergroupchat_replace,
-     #elem{name = <<"replace">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_replace, '$id', '$version', '$message'},
-          attrs = [#attr{name = <<"id">>},
-                   #attr{name = <<"version">>}],
-     refs = [#ref{name = xabbergroupchat_replace_message, min = 0, max =1, label = '$message'}]}).
-
--xml(xabbergroupchat_replace_message,
-     #elem{name = <<"message">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_replace_message, '$from', '$to', '$body', '$replaced', '$_els'},
-            attrs = [#attr{name = <<"from">>},
-                        #attr{name = <<"to">>}],
-     refs = [#ref{name = xabbergroupchat_replace_message_body, min = 0, max = 1, label = '$body'},
-             #ref{name = xabbergroupchat_replaced, min = 0, max = 1, label = '$replaced'}
-     ]}).
-
--xml(xabbergroupchat_replace_message_body,
-     #elem{name = <<"body">>,
-     xmlns = <<"https://xabber.com/protocol/groups#history">>,
-	   module = 'xabbergroupchat',
-	   result = '$cdata',
-	   cdata = #cdata{label = '$cdata'}}).
-
 -xml(xabbergroupchat_disclosed,
      #elem{name = <<"disclosed">>,
      xmlns = <<"https://xabber.com/protocol/groups">>,
@@ -5425,12 +5348,18 @@
 -xml(xabber_retract_invalidate,
      #elem{name = <<"invalidate">>,
      xmlns = <<"https://xabber.com/protocol/rewrite#notify">>,
-	   module = 'xabberrewrite',
-     result = {xabber_retract_invalidate, '$version'},
+     module = 'xabberrewrite',
+     result = {xabber_retract_invalidate, '$version', '$conversation','$type'},
      attrs = [
-     #attr{name = <<"version">>,
-                     dec = {dec_int, [0, infinity]},
-                     enc = {enc_int, []}}
+              #attr{name = <<"version">>,
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}
+              },
+              #attr{name = <<"conversation">>,
+                dec = {jid, decode, []},
+                enc = {jid, encode, []}
+              },
+              #attr{name = <<"type">>}
      ]
      }).
 
