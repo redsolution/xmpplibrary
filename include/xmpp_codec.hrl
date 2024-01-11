@@ -880,7 +880,7 @@
 -type vcard_xupdate() :: #vcard_xupdate{}.
 
 -record(xabber_retract_message, {xmlns = <<>> :: binary(),
-                                 id :: 'undefined' | non_neg_integer(),
+                                 id :: 'undefined' | binary(),
                                  by :: undefined | jid:jid(),
                                  symmetric :: 'false' | 'true' | 'undefined',
                                  version :: 'undefined' | non_neg_integer(),
@@ -945,7 +945,7 @@
 -type xabber_replace_message() :: #xabber_replace_message{}.
 
 -record(xabber_replace, {xmlns = <<>> :: binary(),
-                         id :: 'undefined' | non_neg_integer(),
+                         id :: 'undefined' | binary(),
                          by :: undefined | jid:jid(),
                          version :: 'undefined' | non_neg_integer(),
                          conversation :: undefined | jid:jid(),

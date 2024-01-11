@@ -848,17 +848,11 @@ decode_xabber_replace_attr_xmlns(__TopXMLNS, _val) ->
 
 decode_xabber_replace_attr_id(__TopXMLNS, undefined) ->
     undefined;
-decode_xabber_replace_attr_id(__TopXMLNS, _val) ->
-    case catch dec_int(_val, 0, infinity) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"id">>, <<"replace">>, __TopXMLNS}});
-      _res -> _res
-    end.
+decode_xabber_replace_attr_id(__TopXMLNS, _val) -> _val.
 
 encode_xabber_replace_attr_id(undefined, _acc) -> _acc;
 encode_xabber_replace_attr_id(_val, _acc) ->
-    [{<<"id">>, enc_int(_val)} | _acc].
+    [{<<"id">>, _val} | _acc].
 
 decode_xabber_replace_attr_version(__TopXMLNS,
 				   undefined) ->
@@ -1377,19 +1371,13 @@ decode_xabber_retract_message_attr_id(__TopXMLNS,
     undefined;
 decode_xabber_retract_message_attr_id(__TopXMLNS,
 				      _val) ->
-    case catch dec_int(_val, 0, infinity) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"id">>, <<"retract-message">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+    _val.
 
 encode_xabber_retract_message_attr_id(undefined,
 				      _acc) ->
     _acc;
 encode_xabber_retract_message_attr_id(_val, _acc) ->
-    [{<<"id">>, enc_int(_val)} | _acc].
+    [{<<"id">>, _val} | _acc].
 
 decode_xabber_retract_message_attr_version(__TopXMLNS,
 					   undefined) ->
