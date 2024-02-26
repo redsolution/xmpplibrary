@@ -5,14 +5,106 @@
 
 -module(groups_status).
 
--export([decode/1, decode/2, encode/1, encode/2,
-	 format_error/1, io_format_error/1]).
+-compile({nowarn_unused_function,
+	  [{dec_int, 3}, {dec_int, 1}, {dec_enum, 2},
+	   {dec_enum_int, 2}, {dec_enum_int, 4}, {enc_int, 1},
+	   {enc_enum, 1}, {enc_enum_int, 1}, {not_empty, 1},
+	   {dec_bool, 1}, {enc_bool, 1}, {dec_ip, 1},
+	   {enc_ip, 1}]}).
+
+-compile(nowarn_unused_vars).
+
+-dialyzer({nowarn_function, {dec_int, 3}}).
+
+-export([encode/1, encode/2, encode/3]).
+
+-export([decode/1, decode/2, decode/3, format_error/1,
+	 io_format_error/1]).
 
 -include("xmpp_codec.hrl").
 
 -include("groups_status.hrl").
 
--export_type([property/0, result/0, form/0]).
+-export_type([property/0, result/0, form/0,
+	      error_reason/0]).
+
+-define(T(S), <<S>>).
+
+-spec format_error(error_reason()) -> binary().
+
+-spec io_format_error(error_reason()) -> {binary(),
+					  [binary()]}.
+
+-spec decode([xdata_field()]) -> result().
+
+-spec decode([xdata_field()],
+	     [binary(), ...]) -> result().
+
+-spec decode([xdata_field()], [binary(), ...],
+	     [binary()]) -> result().
+
+-spec decode([xdata_field()], [binary(), ...],
+	     [binary()], result()) -> result().
+
+-spec do_decode([xdata_field()], binary(), [binary()],
+		result()) -> result().
+
+-spec encode(form()) -> [xdata_field()].
+
+-spec encode(form(), binary()) -> [xdata_field()].
+
+-spec encode(form(), binary(),
+	     [header1 | header2 | status | fiesta | discussion |
+	      regulated | limited | restricted |
+	      inactive]) -> [xdata_field()].
+
+dec_int(Val) -> dec_int(Val, infinity, infinity).
+
+dec_int(Val, Min, Max) ->
+    case erlang:binary_to_integer(Val) of
+      Int when Int =< Max, Min == infinity -> Int;
+      Int when Int =< Max, Int >= Min -> Int
+    end.
+
+enc_int(Int) -> integer_to_binary(Int).
+
+dec_enum(Val, Enums) ->
+    AtomVal = erlang:binary_to_existing_atom(Val, utf8),
+    case lists:member(AtomVal, Enums) of
+      true -> AtomVal
+    end.
+
+enc_enum(Atom) -> erlang:atom_to_binary(Atom, utf8).
+
+dec_enum_int(Val, Enums) ->
+    try dec_int(Val) catch _:_ -> dec_enum(Val, Enums) end.
+
+dec_enum_int(Val, Enums, Min, Max) ->
+    try dec_int(Val, Min, Max) catch
+      _:_ -> dec_enum(Val, Enums)
+    end.
+
+enc_enum_int(Int) when is_integer(Int) -> enc_int(Int);
+enc_enum_int(Atom) -> enc_enum(Atom).
+
+dec_bool(<<"1">>) -> true;
+dec_bool(<<"0">>) -> false;
+dec_bool(<<"true">>) -> true;
+dec_bool(<<"false">>) -> false.
+
+enc_bool(true) -> <<"1">>;
+enc_bool(false) -> <<"0">>.
+
+not_empty(<<_, _/binary>> = Val) -> Val.
+
+dec_ip(Val) ->
+    {ok, Addr} = inet_parse:address(binary_to_list(Val)),
+    Addr.
+
+enc_ip({0, 0, 0, 0, 0, 65535, A, B}) ->
+    enc_ip({(A bsr 8) band 255, A band 255,
+	    (B bsr 8) band 255, B band 255});
+enc_ip(Addr) -> list_to_binary(inet_parse:ntoa(Addr)).
 
 format_error({form_type_mismatch, Type}) ->
     <<"FORM_TYPE doesn't match '", Type/binary, "'">>;
@@ -52,46 +144,63 @@ io_format_error({missing_required_var, Var, Type}) ->
        "'~s'">>,
      [Var, Type]}.
 
-decode(Fs) -> decode(Fs, []).
+decode(Fs) ->
+    decode(Fs,
+	   [<<"https://xabber.com/protocol/groups#status">>], [],
+	   []).
 
-decode(Fs, Acc) ->
+decode(Fs, XMLNSList) -> decode(Fs, XMLNSList, [], []).
+
+decode(Fs, XMLNSList, Required) ->
+    decode(Fs, XMLNSList, Required, []).
+
+decode(Fs, [_ | _] = XMLNSList, Required, Acc) ->
     case lists:keyfind(<<"FORM_TYPE">>, #xdata_field.var,
 		       Fs)
 	of
-      false -> decode(Fs, Acc, []);
-      #xdata_field{values =
-		       [<<"https://xabber.com/protocol/groups#status">>]} ->
-	  decode(Fs, Acc, []);
-      _ ->
-	  erlang:error({?MODULE,
-			{form_type_mismatch,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+      false -> do_decode(Fs, hd(XMLNSList), Required, Acc);
+      #xdata_field{values = [XMLNS]} ->
+	  case lists:member(XMLNS, XMLNSList) of
+	    true -> do_decode(Fs, XMLNS, Required, Acc);
+	    false ->
+		erlang:error({?MODULE, {form_type_mismatch, XMLNS}})
+	  end
     end.
 
-encode(Cfg) -> encode(Cfg, <<"en">>).
+encode(Cfg) -> encode(Cfg, <<"en">>, []).
 
-encode(List, Lang) when is_list(List) ->
+encode(Cfg, Lang) -> encode(Cfg, Lang, []).
+
+encode(List, Lang, Required) ->
     Fs = [case Opt of
-	    {header1, Val} -> [encode_header1(Val, Lang)];
-	    {header1, _, _} -> erlang:error({badarg, Opt});
-	    {header2, Val} -> [encode_header2(Val, Lang)];
-	    {header2, _, _} -> erlang:error({badarg, Opt});
-	    {status, Val} -> [encode_status(Val, Lang)];
-	    {status, _, _} -> erlang:error({badarg, Opt});
-	    {fiesta, Val} -> [encode_fiesta(Val, Lang)];
-	    {fiesta, _, _} -> erlang:error({badarg, Opt});
-	    {discussion, Val} -> [encode_discussion(Val, Lang)];
-	    {discussion, _, _} -> erlang:error({badarg, Opt});
-	    {regulated, Val} -> [encode_regulated(Val, Lang)];
-	    {regulated, _, _} -> erlang:error({badarg, Opt});
-	    {limited, Val} -> [encode_limited(Val, Lang)];
-	    {limited, _, _} -> erlang:error({badarg, Opt});
-	    {restricted, Val} -> [encode_restricted(Val, Lang)];
-	    {restricted, _, _} -> erlang:error({badarg, Opt});
-	    {inactive, Val} -> [encode_inactive(Val, Lang)];
-	    {inactive, _, _} -> erlang:error({badarg, Opt});
-	    #xdata_field{} -> [Opt];
-	    _ -> []
+	    {header1, Val} ->
+		[encode_header1(Val, Lang,
+				lists:member(header1, Required))];
+	    {header2, Val} ->
+		[encode_header2(Val, Lang,
+				lists:member(header2, Required))];
+	    {status, Val} ->
+		[encode_status(Val, Lang,
+			       lists:member(status, Required))];
+	    {fiesta, Val} ->
+		[encode_fiesta(Val, Lang,
+			       lists:member(fiesta, Required))];
+	    {discussion, Val} ->
+		[encode_discussion(Val, Lang,
+				   lists:member(discussion, Required))];
+	    {regulated, Val} ->
+		[encode_regulated(Val, Lang,
+				  lists:member(regulated, Required))];
+	    {limited, Val} ->
+		[encode_limited(Val, Lang,
+				lists:member(limited, Required))];
+	    {restricted, Val} ->
+		[encode_restricted(Val, Lang,
+				   lists:member(restricted, Required))];
+	    {inactive, Val} ->
+		[encode_inactive(Val, Lang,
+				 lists:member(inactive, Required))];
+	    #xdata_field{} -> [Opt]
 	  end
 	  || Opt <- List],
     FormType = #xdata_field{var = <<"FORM_TYPE">>,
@@ -100,356 +209,397 @@ encode(List, Lang) when is_list(List) ->
 				[<<"https://xabber.com/protocol/groups#status">>]},
     [FormType | lists:flatten(Fs)].
 
-decode([#xdata_field{var = <<"header1">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+do_decode([#xdata_field{var = <<"header1">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{header1, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"header1">>, Required),
+		    [{header1, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"header1">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"header1">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"header1">>, values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"header1">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"header1">>} | _], _, _) ->
+do_decode([#xdata_field{var = <<"header1">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"header1">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"header1">>} | _],
+	  XMLNS, _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"header1">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"header2">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"header1">>, XMLNS}});
+do_decode([#xdata_field{var = <<"header2">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{header2, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"header2">>, Required),
+		    [{header2, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"header2">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"header2">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"header2">>, values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"header2">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"header2">>} | _], _, _) ->
+do_decode([#xdata_field{var = <<"header2">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"header2">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"header2">>} | _],
+	  XMLNS, _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"header2">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"status">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try Value of
-      Result -> decode(Fs, [{status, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value, <<"status">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
-    end;
-decode([#xdata_field{var = <<"status">>, values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"status">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"status">>} | _], _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values, <<"status">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"fiesta">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
-    try Value of
-      Result -> decode(Fs, [{fiesta, Result} | Acc], Required)
-    catch
-      _:_ ->
-	  erlang:error({?MODULE,
-			{bad_var_value, <<"fiesta">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
-    end;
-decode([#xdata_field{var = <<"fiesta">>, values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"fiesta">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"fiesta">>} | _], _, _) ->
-    erlang:error({?MODULE,
-		  {too_many_values, <<"fiesta">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"discussion">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"header2">>, XMLNS}});
+do_decode([#xdata_field{var = <<"status">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{discussion, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"status">>, Required),
+		    [{status, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"discussion">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"status">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"discussion">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"discussion">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"discussion">>} | _], _,
-       _) ->
+do_decode([#xdata_field{var = <<"status">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"status">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"status">>} | _], XMLNS,
+	  _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"discussion">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"regulated">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"status">>, XMLNS}});
+do_decode([#xdata_field{var = <<"fiesta">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{regulated, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"fiesta">>, Required),
+		    [{fiesta, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"regulated">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"fiesta">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"regulated">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"regulated">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"regulated">>} | _], _,
-       _) ->
+do_decode([#xdata_field{var = <<"fiesta">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"fiesta">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"fiesta">>} | _], XMLNS,
+	  _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"regulated">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"limited">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"fiesta">>, XMLNS}});
+do_decode([#xdata_field{var = <<"discussion">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{limited, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"discussion">>, Required),
+		    [{discussion, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"limited">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"discussion">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"limited">>, values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"limited">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"limited">>} | _], _, _) ->
+do_decode([#xdata_field{var = <<"discussion">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"discussion">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"discussion">>} | _],
+	  XMLNS, _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"limited">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"restricted">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"discussion">>, XMLNS}});
+do_decode([#xdata_field{var = <<"regulated">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{restricted, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"regulated">>, Required),
+		    [{regulated, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"restricted">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"regulated">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"restricted">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"restricted">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"restricted">>} | _], _,
-       _) ->
+do_decode([#xdata_field{var = <<"regulated">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"regulated">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"regulated">>} | _],
+	  XMLNS, _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"restricted">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = <<"inactive">>,
-		     values = [Value]}
-	| Fs],
-       Acc, Required) ->
+		  {too_many_values, <<"regulated">>, XMLNS}});
+do_decode([#xdata_field{var = <<"limited">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
     try Value of
       Result ->
-	  decode(Fs, [{inactive, Result} | Acc], Required)
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"limited">>, Required),
+		    [{limited, Result} | Acc])
     catch
       _:_ ->
 	  erlang:error({?MODULE,
-			{bad_var_value, <<"inactive">>,
-			 <<"https://xabber.com/protocol/groups#status">>}})
+			{bad_var_value, <<"limited">>, XMLNS}})
     end;
-decode([#xdata_field{var = <<"inactive">>,
-		     values = []} =
-	    F
-	| Fs],
-       Acc, Required) ->
-    decode([F#xdata_field{var = <<"inactive">>,
-			  values = [<<>>]}
-	    | Fs],
-	   Acc, Required);
-decode([#xdata_field{var = <<"inactive">>} | _], _,
-       _) ->
+do_decode([#xdata_field{var = <<"limited">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"limited">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"limited">>} | _],
+	  XMLNS, _, _) ->
     erlang:error({?MODULE,
-		  {too_many_values, <<"inactive">>,
-		   <<"https://xabber.com/protocol/groups#status">>}});
-decode([#xdata_field{var = Var} | Fs], Acc, Required) ->
+		  {too_many_values, <<"limited">>, XMLNS}});
+do_decode([#xdata_field{var = <<"restricted">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    try Value of
+      Result ->
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"restricted">>, Required),
+		    [{restricted, Result} | Acc])
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"restricted">>, XMLNS}})
+    end;
+do_decode([#xdata_field{var = <<"restricted">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"restricted">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"restricted">>} | _],
+	  XMLNS, _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"restricted">>, XMLNS}});
+do_decode([#xdata_field{var = <<"inactive">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    try Value of
+      Result ->
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"inactive">>, Required),
+		    [{inactive, Result} | Acc])
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"inactive">>, XMLNS}})
+    end;
+do_decode([#xdata_field{var = <<"inactive">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"inactive">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"inactive">>} | _],
+	  XMLNS, _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"inactive">>, XMLNS}});
+do_decode([#xdata_field{var = Var} | Fs], XMLNS,
+	  Required, Acc) ->
     if Var /= <<"FORM_TYPE">> ->
-	   erlang:error({?MODULE,
-			 {unknown_var, Var,
-			  <<"https://xabber.com/protocol/groups#status">>}});
-       true -> decode(Fs, Acc, Required)
+	   erlang:error({?MODULE, {unknown_var, Var, XMLNS}});
+       true -> do_decode(Fs, XMLNS, Required, Acc)
     end;
-decode([], Acc, []) -> Acc.
+do_decode([], XMLNS, [Var | _], _) ->
+    erlang:error({?MODULE,
+		  {missing_required_var, Var, XMLNS}});
+do_decode([], _, [], Acc) -> Acc.
 
-encode_header1(Value, Lang) ->
+-spec encode_header1(binary(), binary(),
+		     boolean()) -> xdata_field().
+
+encode_header1(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"header1">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc = <<>>, label = <<>>}.
 
-encode_header2(Value, Lang) ->
+-spec encode_header2(binary(), binary(),
+		     boolean()) -> xdata_field().
+
+encode_header2(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"header2">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc = <<>>, label = <<>>}.
 
-encode_status(Value, Lang) ->
+-spec encode_status(binary(), binary(),
+		    boolean()) -> xdata_field().
+
+encode_status(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"status">>, values = Values,
-		 required = false, type = 'text-single', options = Opts,
-		 desc = <<>>,
-		 label = xmpp_tr:tr(Lang, <<"Status of group">>)}.
+		 required = IsRequired, type = 'text-single',
+		 options = Opts, desc = <<>>,
+		 label = xmpp_tr:tr(Lang, ?T("Status of group"))}.
 
-encode_fiesta(Value, Lang) ->
+-spec encode_fiesta(binary(), binary(),
+		    boolean()) -> xdata_field().
+
+encode_fiesta(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"fiesta">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc =
 		     xmpp_tr:tr(Lang,
-				<<"Everything is allowed, no restrictions. "
-				  "Stickers, pictures, voice messages are "
-				  "allowed.">>),
+				?T("Everything is allowed, no restrictions. "
+				   "Stickers, pictures, voice messages are "
+				   "allowed.")),
 		 label = <<>>}.
 
-encode_discussion(Value, Lang) ->
+-spec encode_discussion(binary(), binary(),
+			boolean()) -> xdata_field().
+
+encode_discussion(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"discussion">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc =
 		     xmpp_tr:tr(Lang,
-				<<"Regular chat. There is no limit on the "
-				  "number of messages. Limited voice messages">>),
+				?T("Regular chat. There is no limit on the "
+				   "number of messages. Limited voice messages")),
 		 label = <<>>}.
 
-encode_regulated(Value, Lang) ->
+-spec encode_regulated(binary(), binary(),
+		       boolean()) -> xdata_field().
+
+encode_regulated(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"regulated">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc =
 		     xmpp_tr:tr(Lang,
-				<<"Regulated chat. Only text messages and "
-				  "images. Limit on the number of messages "
-				  "per minute.">>),
+				?T("Regulated chat. Only text messages and "
+				   "images. Limit on the number of messages "
+				   "per minute.")),
 		 label = <<>>}.
 
-encode_limited(Value, Lang) ->
+-spec encode_limited(binary(), binary(),
+		     boolean()) -> xdata_field().
+
+encode_limited(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"limited">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc =
 		     xmpp_tr:tr(Lang,
-				<<"Limited discussion. Text messages only. "
-				  "Limit on the number of messages per "
-				  "minute.">>),
+				?T("Limited discussion. Text messages only. "
+				   "Limit on the number of messages per "
+				   "minute.")),
 		 label = <<>>}.
 
-encode_restricted(Value, Lang) ->
+-spec encode_restricted(binary(), binary(),
+			boolean()) -> xdata_field().
+
+encode_restricted(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"restricted">>, values = Values,
-		 required = false, type = fixed, options = Opts,
+		 required = IsRequired, type = fixed, options = Opts,
 		 desc =
 		     xmpp_tr:tr(Lang,
-				<<"Chat is allowed only for administrators">>),
+				?T("Chat is allowed only for administrators")),
 		 label = <<>>}.
 
-encode_inactive(Value, Lang) ->
+-spec encode_inactive(binary(), binary(),
+		      boolean()) -> xdata_field().
+
+encode_inactive(Value, Lang, IsRequired) ->
     Values = case Value of
 	       <<>> -> [];
 	       Value -> [Value]
 	     end,
     Opts = [],
     #xdata_field{var = <<"inactive">>, values = Values,
-		 required = false, type = fixed, options = Opts,
-		 desc = xmpp_tr:tr(Lang, <<"Chat is off">>),
+		 required = IsRequired, type = fixed, options = Opts,
+		 desc = xmpp_tr:tr(Lang, ?T("Chat is off")),
 		 label = <<>>}.
