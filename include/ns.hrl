@@ -223,3 +223,6 @@
 -define(NS_CHANNELS_CREATE, <<"https://xabber.com/protocol/channels#create">>).
 -define(NS_CHANNELS_DELETE, <<"https://xabber.com/protocol/channels#delete">>).
 -define(NS_CHANNELS_SYSTEM_MESSAGE, <<"https://xabber.com/protocol/channels#system-message">>).
+-define(NS_XABBER_CHAT, <<"urn:xabber:chat">>).
+-define(NS_FAVORITES, <<"urn:xabber:favorites:0">>).
+-define(NS_XEN, <<"urn:xabber:xen:0">>).

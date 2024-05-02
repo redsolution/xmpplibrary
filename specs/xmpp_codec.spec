@@ -5597,6 +5597,55 @@
 	   result = {idle, '$since'},
 	   attrs = [#attr{name = <<"since">>}]}).
 
+-xml(xen_fallback,
+     #elem{name = <<"fallback">>,
+       xmlns = <<"urn:xabber:xen:0">>,
+       module = 'xep_xen',
+       result = {text, '$lang', '$data'},
+       cdata = #cdata{label = '$data'},
+       attrs = [#attr{name = <<"xml:lang">>, label = '$lang'}]}).
+
+-xml(xen_notification,
+     #elem{name = <<"notification">>,
+       xmlns = <<"urn:xabber:xen:0">>,
+       module = 'xep_xen',
+       ignore_els = true,
+       result = {xen_notification, '$category', '$_els'},
+       attrs = [#attr{name = <<"category">>}]}).
+
+-xml(xen_jid,
+     #elem{name = <<"jid">>,
+       xmlns = <<"urn:xabber:xen:0">>,
+       module = 'xep_xen',
+       result = {xen_jid, '$rule', '$jid'},
+       cdata = #cdata{required = true, label='$jid',
+                      dec = {jid, decode, []},
+                      enc = {jid, encode, []}},
+       attrs = [#attr{name = <<"rule">>, required = true,
+                      dec = {dec_enum, [[reject, allow, remove]]},
+                      enc = {enc_enum, []}}]}).
+
+-xml(notify,
+     #elem{name = <<"notify">>,
+       xmlns = <<"urn:xabber:xen:0">>,
+       module = 'xep_xen',
+       result = {notify, '$notification', '$fallback', '$addresses'},
+       refs = [#ref{name = xen_notification, label = '$notification',
+                    min = 1, max = 1},
+               #ref{name = addresses, label = '$addresses',
+                    min = 1, max = 1},
+               #ref{name = xen_fallback, label = '$fallback'}]}).
+
+-xml(xen_prefs,
+     #elem{name = <<"prefs">>,
+       xmlns = <<"urn:xabber:xen:0">>,
+       module = 'xep_xen',
+       result = {xen_prefs, '$default', '$jids'},
+       attrs = [#attr{name = <<"default">>,
+                      dec = {dec_enum, [[reject, allow, roster, remove]]},
+                      enc = {enc_enum, []}}],
+       refs = [#ref{name = xen_jid, label = '$jids'}]}).
+
 -xml(channel_query,
      #elem{name = <<"query">>,
      xmlns = [
