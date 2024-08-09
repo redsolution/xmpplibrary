@@ -4462,18 +4462,20 @@
          name = <<"device">>,
          xmlns = <<"https://xabber.com/protocol/devices">>,
          module = 'devices',
-         result = {devices_device, '$secret', '$id', '$expire', '$client',
-          '$info', '$public_label', '$ip', '$last_auth', '$omemo_id'},
+         result = {devices_device, '$id', '$secret', '$validation_key', '$expire', '$client',
+          '$info', '$public_label', '$ip', '$last_auth', '$omemo_id', '$device_type'},
          attrs = [#attr{name = <<"id">>, default = undefined}],
          refs = [
             #ref{name = device_secret, min = 0, max = 1, label = '$secret'},
+            #ref{name = device_validation_key, min = 0, max = 1, label = '$validation_key'},
             #ref{name = device_client, min = 0, max = 1, label = '$client'},
             #ref{name = device_info, min = 0, max = 1, label = '$info'},
             #ref{name = device_public_label, min = 0, max = 1, label = '$public_label'},
             #ref{name = device_ip, min = 0, max = 1, label = '$ip'},
             #ref{name = device_last_auth, min = 0, max = 1, label = '$last_auth'},
             #ref{name = device_expire, min = 0, max = 1, label = '$expire'},
-            #ref{name = device_omemo_id, min = 0, max = 1, label = '$omemo_id'}
+            #ref{name = device_omemo_id, min = 0, max = 1, label = '$omemo_id'},
+            #ref{name = device_type, min = 0, max = 1, label = '$device_type'}
          ]
      }
 ).
@@ -4509,6 +4511,16 @@
 -xml(device_secret,
     #elem{
         name = <<"secret">>,
+        xmlns = [<<"https://xabber.com/protocol/devices">>],
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{label = '$cdata', required = true}
+}
+).
+
+-xml(device_validation_key,
+    #elem{
+        name = <<"validation-key">>,
         xmlns = [<<"https://xabber.com/protocol/devices">>],
         module = 'devices',
         result = '$cdata',
@@ -4579,6 +4591,16 @@
 -xml(device_omemo_id,
     #elem{
         name = <<"omemo-id">>,
+        xmlns = <<"https://xabber.com/protocol/devices">>,
+        module = 'devices',
+        result = '$cdata',
+        cdata = #cdata{default = <<"">>, label = '$cdata'}
+    }
+).
+
+-xml(device_type,
+    #elem{
+        name = <<"type">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
         module = 'devices',
         result = '$cdata',

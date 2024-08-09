@@ -1159,6 +1159,9 @@ get_mod(<<"TEL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"prefs">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"captcha">>, <<"urn:xmpp:captcha">>) ->
     xep0158;
+get_mod(<<"validation-key">>,
+	<<"https://xabber.com/protocol/devices">>) ->
+    devices;
 get_mod(<<"x">>,
 	<<"https://xabber.com/protocol/groups#join">>) ->
     xabbergroupchat;
@@ -1279,6 +1282,9 @@ get_mod(<<"continue">>,
 	<<"http://jabber.org/protocol/muc#admin">>) ->
     xep0045;
 get_mod(<<"info">>,
+	<<"https://xabber.com/protocol/devices">>) ->
+    devices;
+get_mod(<<"type">>,
 	<<"https://xabber.com/protocol/devices">>) ->
     devices;
 get_mod(<<"membership">>,
@@ -1975,8 +1981,6 @@ get_mod({xabber_conversation_call, _}) ->
     xabbersynchronization;
 get_mod({message_markable}) -> xep0333;
 get_mod({last, _, _}) -> xep0012;
-get_mod({devices_device, _, _, _, _, _, _, _, _, _}) ->
-    devices;
 get_mod({xabbergroup_block, _, _, _}) ->
     xabbergroupchat;
 get_mod({message_displayed, _, _}) -> xep0333;
@@ -2088,6 +2092,9 @@ get_mod({disco_item, _, _, _}) -> xep0030;
 get_mod({register, _, _, _, _, _, _, _, _, _, _, _, _,
 	 _, _, _, _, _, _, _, _, _, _}) ->
     xep0077;
+get_mod({devices_device, _, _, _, _, _, _, _, _, _, _,
+	 _}) ->
+    devices;
 get_mod({version, _, _, _}) -> xep0092;
 get_mod({xabbertoken_issue, _, _, _, _}) -> xabbertoken;
 get_mod({xabbergroupchat_membership, _}) ->
