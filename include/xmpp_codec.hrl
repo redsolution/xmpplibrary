@@ -1529,6 +1529,7 @@
                         muc_decline() |
                         sm_enable() |
                         xabbergroupchat_restriction() |
+                        text() |
                         ps_event() |
                         sasl_mechanisms() |
                         ps_error() |
@@ -1545,7 +1546,6 @@
                         xabber_synchronization_query() |
                         body_x() |
                         xabber_synchronization() |
-                        text() |
                         xabber_retract_all() |
                         stat() |
                         xabber_conversation() |
@@ -1643,7 +1643,6 @@
                         block_id() |
                         ps_subscription() |
                         muc_item() |
-                        search() |
                         legacy_auth() |
                         xabber_metadata() |
                         mix_participant() |
@@ -1652,6 +1651,7 @@
                         xabbertoken_query() |
                         channel_x() |
                         xabber_file() |
+                        search() |
                         starttls_proceed() |
                         xabbergroupchat_pinned_message() |
                         csi() |

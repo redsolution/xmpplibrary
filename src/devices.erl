@@ -576,10 +576,16 @@ decode_device_validation_key_cdata(__TopXMLNS, <<>>) ->
 		  {missing_cdata, <<>>, <<"validation-key">>,
 		   __TopXMLNS}});
 decode_device_validation_key_cdata(__TopXMLNS, _val) ->
-    _val.
+    case catch base64:mime_decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_cdata_value, <<>>, <<"validation-key">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
 
 encode_device_validation_key_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
+    [{xmlcdata, base64:encode(_val)} | _acc].
 
 decode_device_secret(__TopXMLNS, __Opts,
 		     {xmlel, <<"secret">>, _attrs, _els}) ->
@@ -611,10 +617,16 @@ encode_device_secret(Cdata, __TopXMLNS) ->
 decode_device_secret_cdata(__TopXMLNS, <<>>) ->
     erlang:error({xmpp_codec,
 		  {missing_cdata, <<>>, <<"secret">>, __TopXMLNS}});
-decode_device_secret_cdata(__TopXMLNS, _val) -> _val.
+decode_device_secret_cdata(__TopXMLNS, _val) ->
+    case catch base64:mime_decode(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_cdata_value, <<>>, <<"secret">>, __TopXMLNS}});
+      _res -> _res
+    end.
 
 encode_device_secret_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
+    [{xmlcdata, base64:encode(_val)} | _acc].
 
 decode_devices_revoke_all(__TopXMLNS, __Opts,
 			  {xmlel, <<"revoke-all">>, _attrs, _els}) ->

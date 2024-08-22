@@ -4514,7 +4514,10 @@
         xmlns = [<<"https://xabber.com/protocol/devices">>],
         module = 'devices',
         result = '$cdata',
-        cdata = #cdata{label = '$cdata', required = true}
+        cdata = #cdata{label = '$cdata',
+                       dec = {base64, mime_decode, []},
+                       enc = {base64, encode, []},
+                       required = true}
 }
 ).
 
@@ -4524,7 +4527,10 @@
         xmlns = [<<"https://xabber.com/protocol/devices">>],
         module = 'devices',
         result = '$cdata',
-        cdata = #cdata{label = '$cdata', required = true}
+        cdata = #cdata{label = '$cdata',
+                               dec = {base64, mime_decode, []},
+                               enc = {base64, encode, []},
+                               required = true}
 }
 ).
 
