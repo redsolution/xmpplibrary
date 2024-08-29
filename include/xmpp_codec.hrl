@@ -1438,7 +1438,7 @@
 -record(devices_device, {id :: 'undefined' | binary(),
                          secret :: 'undefined' | binary(),
                          validation_key :: 'undefined' | binary(),
-                         expire :: 'undefined' | binary(),
+                         expire :: 'undefined' | non_neg_integer(),
                          client :: 'undefined' | binary(),
                          info :: 'undefined' | binary(),
                          public_label :: 'undefined' | binary(),
@@ -1529,7 +1529,6 @@
                         muc_decline() |
                         sm_enable() |
                         xabbergroupchat_restriction() |
-                        text() |
                         ps_event() |
                         sasl_mechanisms() |
                         ps_error() |
@@ -1538,11 +1537,13 @@
                         privacy_item() |
                         xabbertoken_query_items() |
                         carbons_received() |
+                        search() |
                         'see-other-host'() |
                         sic() |
                         previous_id() |
                         privilege() |
                         db_verify() |
+                        text() |
                         xabber_synchronization_query() |
                         body_x() |
                         xabber_synchronization() |
@@ -1651,7 +1652,6 @@
                         xabbertoken_query() |
                         channel_x() |
                         xabber_file() |
-                        search() |
                         starttls_proceed() |
                         xabbergroupchat_pinned_message() |
                         csi() |

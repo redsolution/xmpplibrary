@@ -174,6 +174,14 @@ records() ->
      {devices_revoke_all, 0}, {devices_query, 1},
      {devices_query_items, 1}].
 
+dec_int(Val, Min, Max) ->
+    case erlang:binary_to_integer(Val) of
+      Int when Int =< Max, Min == infinity -> Int;
+      Int when Int =< Max, Int >= Min -> Int
+    end.
+
+enc_int(Int) -> erlang:integer_to_binary(Int).
+
 decode_devices_query_items(__TopXMLNS, __Opts,
 			   {xmlel, <<"query">>, _attrs, _els}) ->
     Devices = decode_devices_query_items_els(__TopXMLNS,
@@ -435,12 +443,19 @@ encode_device_expire(Cdata, __TopXMLNS) ->
 					__TopXMLNS),
     {xmlel, <<"expire">>, _attrs, _els}.
 
-decode_device_expire_cdata(__TopXMLNS, <<>>) -> <<>>;
-decode_device_expire_cdata(__TopXMLNS, _val) -> _val.
+decode_device_expire_cdata(__TopXMLNS, <<>>) ->
+    undefined;
+decode_device_expire_cdata(__TopXMLNS, _val) ->
+    case catch dec_int(_val, 0, infinity) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_cdata_value, <<>>, <<"expire">>, __TopXMLNS}});
+      _res -> _res
+    end.
 
-encode_device_expire_cdata(<<>>, _acc) -> _acc;
+encode_device_expire_cdata(undefined, _acc) -> _acc;
 encode_device_expire_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
+    [{xmlcdata, enc_int(_val)} | _acc].
 
 decode_device_public_label(__TopXMLNS, __Opts,
 			   {xmlel, <<"public-label">>, _attrs, _els}) ->

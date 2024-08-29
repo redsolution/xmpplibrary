@@ -4570,7 +4570,9 @@
         xmlns = <<"https://xabber.com/protocol/devices">>,
         module = 'devices',
         result = '$cdata',
-        cdata = #cdata{default = <<"">>, label = '$cdata'}
+        cdata = #cdata{
+                dec = {dec_int, [0, infinity]},
+                enc = {enc_int, []}}
     }
 ).
 
