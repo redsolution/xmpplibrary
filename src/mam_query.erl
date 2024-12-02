@@ -55,8 +55,8 @@
 
 -spec encode(form(), binary(),
 	     [with | start | 'end' | withtext | 'before-id' |
-	      'after-id' | ids | 'with-tags' |
-	      'conversation-type']) -> [xdata_field()].
+	      'after-id' | ids | 'with-tags' | 'conversation-type' |
+	      'rsm-counter']) -> [xdata_field()].
 
 dec_int(Val) -> dec_int(Val, infinity, infinity).
 
@@ -196,6 +196,9 @@ encode(List, Lang, Required) ->
 		['encode_conversation-type'(Val, Lang,
 					    lists:member('conversation-type',
 							 Required))];
+	    {'rsm-counter', Val} ->
+		['encode_rsm-counter'(Val, Lang,
+				      lists:member('rsm-counter', Required))];
 	    #xdata_field{} -> [Opt]
 	  end
 	  || Opt <- List],
@@ -416,6 +419,33 @@ do_decode([#xdata_field{var = <<"conversation-type">>}
 	  XMLNS, _, _) ->
     erlang:error({?MODULE,
 		  {too_many_values, <<"conversation-type">>, XMLNS}});
+do_decode([#xdata_field{var = <<"rsm-counter">>,
+			values = [Value]}
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    try dec_bool(Value) of
+      Result ->
+	  do_decode(Fs, XMLNS,
+		    lists:delete(<<"rsm-counter">>, Required),
+		    [{'rsm-counter', Result} | Acc])
+    catch
+      _:_ ->
+	  erlang:error({?MODULE,
+			{bad_var_value, <<"rsm-counter">>, XMLNS}})
+    end;
+do_decode([#xdata_field{var = <<"rsm-counter">>,
+			values = []} =
+	       F
+	   | Fs],
+	  XMLNS, Required, Acc) ->
+    do_decode([F#xdata_field{var = <<"rsm-counter">>,
+			     values = [<<>>]}
+	       | Fs],
+	      XMLNS, Required, Acc);
+do_decode([#xdata_field{var = <<"rsm-counter">>} | _],
+	  XMLNS, _, _) ->
+    erlang:error({?MODULE,
+		  {too_many_values, <<"rsm-counter">>, XMLNS}});
 do_decode([#xdata_field{var = Var} | Fs], XMLNS,
 	  Required, Acc) ->
     if Var /= <<"FORM_TYPE">> ->
@@ -447,7 +477,7 @@ encode_with(Value, Lang, IsRequired) ->
 encode_start(Value, Lang, IsRequired) ->
     Values = case Value of
 	       undefined -> [];
-	       Value -> [Value]
+	       Value -> [xmpp_util:encode_timestamp(Value)]
 	     end,
     Opts = [],
     #xdata_field{var = <<"start">>, values = Values,
@@ -461,7 +491,7 @@ encode_start(Value, Lang, IsRequired) ->
 encode_end(Value, Lang, IsRequired) ->
     Values = case Value of
 	       undefined -> [];
-	       Value -> [Value]
+	       Value -> [xmpp_util:encode_timestamp(Value)]
 	     end,
     Opts = [],
     #xdata_field{var = <<"end">>, values = Values,
@@ -568,3 +598,20 @@ encode_ids(Value, Lang, IsRequired) ->
 		     xmpp_tr:tr(Lang,
 				?T("Fetch only messages related to the specified "
 				   "conversation type"))}.
+
+-spec 'encode_rsm-counter'(boolean() | undefined,
+			   binary(), boolean()) -> xdata_field().
+
+'encode_rsm-counter'(Value, Lang, IsRequired) ->
+    Values = case Value of
+	       undefined -> [];
+	       Value -> [enc_bool(Value)]
+	     end,
+    Opts = [],
+    #xdata_field{var = <<"rsm-counter">>, values = Values,
+		 required = IsRequired, type = boolean, options = Opts,
+		 desc = <<>>,
+		 label =
+		     xmpp_tr:tr(Lang,
+				?T("Disable item counting to speed up SQL "
+				   "queries"))}.

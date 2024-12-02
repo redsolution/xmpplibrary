@@ -12,7 +12,8 @@
                     {'after-id', binary()} |
                     {'ids', [binary()]} |
                     {'with-tags', [binary()]} |
-                    {'conversation-type', binary()}.
+                    {'conversation-type', binary()} |
+                    {'rsm-counter', boolean()}.
 -type result() :: [property()].
 
 -type form_property() ::
@@ -24,7 +25,8 @@
       {'after-id', binary()} |
       {'ids', [binary()]} |
       {'with-tags', [binary()]} |
-      {'conversation-type', binary()}.
+      {'conversation-type', binary()} |
+      {'rsm-counter', boolean() | undefined}.
 -type form() :: [form_property() | xdata_field()].
 
 -type error_reason() :: {form_type_mismatch, binary()} |

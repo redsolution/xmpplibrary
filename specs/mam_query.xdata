@@ -29,6 +29,9 @@
   <field var='conversation-type'
      type='text-single'
      label='Fetch only messages related to the specified conversation type'/>
+  <field var='rsm-counter'
+     type='boolean'
+     label='Disable item counting to speed up SQL queries'/>
 </form_type>
 
 <!--
