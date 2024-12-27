@@ -27,6 +27,10 @@ pp(_, _) -> no.
 
 records() -> [{idle, 1}].
 
+dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
+
+enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
+
 decode_idle(__TopXMLNS, __Opts,
 	    {xmlel, <<"idle">>, _attrs, _els}) ->
     Since = decode_idle_attrs(__TopXMLNS, _attrs,
@@ -51,9 +55,16 @@ encode_idle({idle, Since}, __TopXMLNS) ->
 							       __TopXMLNS)),
     {xmlel, <<"idle">>, _attrs, _els}.
 
-decode_idle_attr_since(__TopXMLNS, undefined) -> <<>>;
-decode_idle_attr_since(__TopXMLNS, _val) -> _val.
+decode_idle_attr_since(__TopXMLNS, undefined) ->
+    erlang:error({xmpp_codec,
+		  {missing_attr, <<"since">>, <<"idle">>, __TopXMLNS}});
+decode_idle_attr_since(__TopXMLNS, _val) ->
+    case catch dec_utc(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"since">>, <<"idle">>, __TopXMLNS}});
+      _res -> _res
+    end.
 
-encode_idle_attr_since(<<>>, _acc) -> _acc;
 encode_idle_attr_since(_val, _acc) ->
-    [{<<"since">>, _val} | _acc].
+    [{<<"since">>, enc_utc(_val)} | _acc].

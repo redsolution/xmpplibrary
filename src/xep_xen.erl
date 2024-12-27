@@ -10,7 +10,7 @@ do_decode(<<"prefs">>, <<"urn:xabber:xen:0">>, El,
     decode_xen_prefs(<<"urn:xabber:xen:0">>, Opts, El);
 do_decode(<<"notify">>, <<"urn:xabber:xen:0">>, El,
 	  Opts) ->
-    decode_notify(<<"urn:xabber:xen:0">>, Opts, El);
+    decode_xen_notify(<<"urn:xabber:xen:0">>, Opts, El);
 do_decode(<<"jid">>, <<"urn:xabber:xen:0">>, El,
 	  Opts) ->
     decode_xen_jid(<<"urn:xabber:xen:0">>, Opts, El);
@@ -40,22 +40,23 @@ do_encode({xen_notification, _, _} = Notification,
     encode_xen_notification(Notification, TopXMLNS);
 do_encode({xen_jid, _, _} = Jid, TopXMLNS) ->
     encode_xen_jid(Jid, TopXMLNS);
-do_encode({notify, _, _, _} = Notify, TopXMLNS) ->
-    encode_notify(Notify, TopXMLNS);
+do_encode({xen_notify, _, _, _} = Notify, TopXMLNS) ->
+    encode_xen_notify(Notify, TopXMLNS);
 do_encode({xen_prefs, _, _} = Prefs, TopXMLNS) ->
     encode_xen_prefs(Prefs, TopXMLNS).
 
-do_get_name({notify, _, _, _}) -> <<"notify">>;
 do_get_name({text, _, _}) -> <<"fallback">>;
 do_get_name({xen_jid, _, _}) -> <<"jid">>;
 do_get_name({xen_notification, _, _}) ->
     <<"notification">>;
+do_get_name({xen_notify, _, _, _}) -> <<"notify">>;
 do_get_name({xen_prefs, _, _}) -> <<"prefs">>.
 
-do_get_ns({notify, _, _, _}) -> <<"urn:xabber:xen:0">>;
 do_get_ns({text, _, _}) -> <<"urn:xabber:xen:0">>;
 do_get_ns({xen_jid, _, _}) -> <<"urn:xabber:xen:0">>;
 do_get_ns({xen_notification, _, _}) ->
+    <<"urn:xabber:xen:0">>;
+do_get_ns({xen_notify, _, _, _}) ->
     <<"urn:xabber:xen:0">>;
 do_get_ns({xen_prefs, _, _}) -> <<"urn:xabber:xen:0">>.
 
@@ -68,13 +69,14 @@ set_els({xen_notification, _category, _}, _sub_els) ->
 pp(text, 2) -> [lang, data];
 pp(xen_notification, 2) -> [category, sub_els];
 pp(xen_jid, 2) -> [rule, jid];
-pp(notify, 3) -> [notification, fallback, addresses];
+pp(xen_notify, 3) ->
+    [notification, fallback, addresses];
 pp(xen_prefs, 2) -> [default, jids];
 pp(_, _) -> no.
 
 records() ->
     [{text, 2}, {xen_notification, 2}, {xen_jid, 2},
-     {notify, 3}, {xen_prefs, 2}].
+     {xen_notify, 3}, {xen_prefs, 2}].
 
 dec_enum(Val, Enums) ->
     AtomVal = erlang:binary_to_existing_atom(Val, utf8),
@@ -155,15 +157,15 @@ encode_xen_prefs_attr_default(undefined, _acc) -> _acc;
 encode_xen_prefs_attr_default(_val, _acc) ->
     [{<<"default">>, enc_enum(_val)} | _acc].
 
-decode_notify(__TopXMLNS, __Opts,
-	      {xmlel, <<"notify">>, _attrs, _els}) ->
+decode_xen_notify(__TopXMLNS, __Opts,
+		  {xmlel, <<"notify">>, _attrs, _els}) ->
     {Addresses, Fallback, Notification} =
-	decode_notify_els(__TopXMLNS, __Opts, _els, error, [],
-			  error),
-    {notify, Notification, Fallback, Addresses}.
+	decode_xen_notify_els(__TopXMLNS, __Opts, _els, error,
+			      [], error),
+    {xen_notify, Notification, Fallback, Addresses}.
 
-decode_notify_els(__TopXMLNS, __Opts, [], Addresses,
-		  Fallback, Notification) ->
+decode_xen_notify_els(__TopXMLNS, __Opts, [], Addresses,
+		      Fallback, Notification) ->
     {case Addresses of
        error ->
 	   erlang:error({xmpp_codec,
@@ -177,91 +179,93 @@ decode_notify_els(__TopXMLNS, __Opts, [], Addresses,
 			 {missing_tag, <<"notification">>, __TopXMLNS}});
        {value, Notification1} -> Notification1
      end};
-decode_notify_els(__TopXMLNS, __Opts,
-		  [{xmlel, <<"notification">>, _attrs, _} = _el | _els],
-		  Addresses, Fallback, Notification) ->
+decode_xen_notify_els(__TopXMLNS, __Opts,
+		      [{xmlel, <<"notification">>, _attrs, _} = _el | _els],
+		      Addresses, Fallback, Notification) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"urn:xabber:xen:0">> ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-			    Fallback,
-			    {value,
-			     decode_xen_notification(<<"urn:xabber:xen:0">>,
-						     __Opts, _el)});
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				Addresses, Fallback,
+				{value,
+				 decode_xen_notification(<<"urn:xabber:xen:0">>,
+							 __Opts, _el)});
       _ ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-			    Fallback, Notification)
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				Addresses, Fallback, Notification)
     end;
-decode_notify_els(__TopXMLNS, __Opts,
-		  [{xmlel, <<"addresses">>, _attrs, _} = _el | _els],
-		  Addresses, Fallback, Notification) ->
+decode_xen_notify_els(__TopXMLNS, __Opts,
+		      [{xmlel, <<"addresses">>, _attrs, _} = _el | _els],
+		      Addresses, Fallback, Notification) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"http://jabber.org/protocol/address">> ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els,
-			    {value,
-			     xep0033:decode_addresses(<<"http://jabber.org/protocol/address">>,
-						      __Opts, _el)},
-			    Fallback, Notification);
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				{value,
+				 xep0033:decode_addresses(<<"http://jabber.org/protocol/address">>,
+							  __Opts, _el)},
+				Fallback, Notification);
       _ ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-			    Fallback, Notification)
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				Addresses, Fallback, Notification)
     end;
-decode_notify_els(__TopXMLNS, __Opts,
-		  [{xmlel, <<"fallback">>, _attrs, _} = _el | _els],
-		  Addresses, Fallback, Notification) ->
+decode_xen_notify_els(__TopXMLNS, __Opts,
+		      [{xmlel, <<"fallback">>, _attrs, _} = _el | _els],
+		      Addresses, Fallback, Notification) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"urn:xabber:xen:0">> ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-			    [decode_xen_fallback(<<"urn:xabber:xen:0">>, __Opts,
-						 _el)
-			     | Fallback],
-			    Notification);
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				Addresses,
+				[decode_xen_fallback(<<"urn:xabber:xen:0">>,
+						     __Opts, _el)
+				 | Fallback],
+				Notification);
       _ ->
-	  decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-			    Fallback, Notification)
+	  decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+				Addresses, Fallback, Notification)
     end;
-decode_notify_els(__TopXMLNS, __Opts, [_ | _els],
-		  Addresses, Fallback, Notification) ->
-    decode_notify_els(__TopXMLNS, __Opts, _els, Addresses,
-		      Fallback, Notification).
+decode_xen_notify_els(__TopXMLNS, __Opts, [_ | _els],
+		      Addresses, Fallback, Notification) ->
+    decode_xen_notify_els(__TopXMLNS, __Opts, _els,
+			  Addresses, Fallback, Notification).
 
-encode_notify({notify, Notification, Fallback,
-	       Addresses},
-	      __TopXMLNS) ->
+encode_xen_notify({xen_notify, Notification, Fallback,
+		   Addresses},
+		  __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"urn:xabber:xen:0">>, [],
 				    __TopXMLNS),
     _els =
-	lists:reverse('encode_notify_$addresses'(Addresses,
-						 __NewTopXMLNS,
-						 'encode_notify_$fallback'(Fallback,
-									   __NewTopXMLNS,
-									   'encode_notify_$notification'(Notification,
-													 __NewTopXMLNS,
-													 [])))),
+	lists:reverse('encode_xen_notify_$addresses'(Addresses,
+						     __NewTopXMLNS,
+						     'encode_xen_notify_$fallback'(Fallback,
+										   __NewTopXMLNS,
+										   'encode_xen_notify_$notification'(Notification,
+														     __NewTopXMLNS,
+														     [])))),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"notify">>, _attrs, _els}.
 
-'encode_notify_$addresses'(Addresses, __TopXMLNS,
-			   _acc) ->
+'encode_xen_notify_$addresses'(Addresses, __TopXMLNS,
+			       _acc) ->
     [xep0033:encode_addresses(Addresses, __TopXMLNS)
      | _acc].
 
-'encode_notify_$fallback'([], __TopXMLNS, _acc) -> _acc;
-'encode_notify_$fallback'([Fallback | _els], __TopXMLNS,
-			  _acc) ->
-    'encode_notify_$fallback'(_els, __TopXMLNS,
-			      [encode_xen_fallback(Fallback, __TopXMLNS)
-			       | _acc]).
+'encode_xen_notify_$fallback'([], __TopXMLNS, _acc) ->
+    _acc;
+'encode_xen_notify_$fallback'([Fallback | _els],
+			      __TopXMLNS, _acc) ->
+    'encode_xen_notify_$fallback'(_els, __TopXMLNS,
+				  [encode_xen_fallback(Fallback, __TopXMLNS)
+				   | _acc]).
 
-'encode_notify_$notification'(Notification, __TopXMLNS,
-			      _acc) ->
+'encode_xen_notify_$notification'(Notification,
+				  __TopXMLNS, _acc) ->
     [encode_xen_notification(Notification, __TopXMLNS)
      | _acc].
 

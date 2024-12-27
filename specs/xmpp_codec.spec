@@ -4239,72 +4239,48 @@
 		   #ref{name = avatar_pointer, label = '$pointer',
 			min = 0, max = 1}]}).
 
--xml(unique_time,
+-xml(delivery_time,
      #elem{name = <<"time">>,
-           xmlns = <<"https://xabber.com/protocol/delivery">>,
-	   module = 'unique',
-           result = {unique_time, '$stamp', '$by'},
-           attrs = [#attr{name = <<"stamp">>,
-                          required = true,
-                          dec = {dec_utc, []},
-                          enc = {enc_utc, []}},
-                    #attr{name = <<"by">>,
-                          required = true,
-                          dec = {jid, decode, []},
-                          enc = {jid, encode, []}}]}).
+       xmlns = <<"https://xabber.com/protocol/delivery">>,
+       module = 'xep_delivery',
+       result = {delivery_time, '$stamp', '$by'},
+       attrs = [#attr{name = <<"stamp">>,
+                      required = true,
+                      dec = {dec_utc, []},
+                      enc = {enc_utc, []}},
+                #attr{name = <<"by">>,
+                      required = true,
+                      dec = {jid, decode, []},
+                      enc = {jid, encode, []}}]}).
 
--xml(unique_received,
+-xml(delivery_received,
      #elem{name = <<"received">>,
-           xmlns = <<"https://xabber.com/protocol/delivery">>,
-           module = 'unique',
-           result = {unique_received, '$origin_id', '$stanza_id', '$previous_id', '$time', '$forwarded'},
-           refs = [#ref{name = origin_id,
-                        min = 0, max = 1, label = '$origin_id'},
-                   #ref{name = stanza_id,
-                        min = 0, max = 1, label = '$stanza_id'},
-                   #ref{name = previous_id,
-                        min = 0, max = 1, label = '$previous_id'},
-                   #ref{name = forwarded,
-                        min = 0, max = 1, label = '$forwarded'},
-                   #ref{name = unique_time,
-                        min = 0, max = 1, label = '$time'}]}).
-
--xml(unique_request,
-     #elem{name = <<"request">>,
-           xmlns = <<"https://xabber.com/protocol/delivery">>,
-           module = 'unique',
-           result = {unique_request, '$retry', '$to'},
-           attrs = [#attr{name = <<"retry">>},
-                    #attr{name = <<"to">>,
-                          dec = {jid, decode, []},
-                          enc = {jid, encode, []}}
-           ]
-           }).
+       xmlns = <<"https://xabber.com/protocol/delivery">>,
+       module = 'xep_delivery',
+       result = {delivery_received, '$origin_id', '$stanza_id', '$time', '$forwarded'},
+       refs = [#ref{name = origin_id,
+                    min = 0, max = 1, label = '$origin_id'},
+               #ref{name = stanza_id,
+                    min = 0, max = 1, label = '$stanza_id'},
+               #ref{name = forwarded,
+                    min = 0, max = 1, label = '$forwarded'},
+               #ref{name = delivery_time,
+                    min = 0, max = 1, label = '$time'}]}).
 
 -xml(delivery_retry,
      #elem{name = <<"retry">>,
-           xmlns = <<"https://xabber.com/protocol/delivery">>,
-           module = 'unique',
-           result = {delivery_retry, '$to'},
-           attrs = [#attr{name = <<"to">>,
-                                     dec = {jid, decode, []},
-                                     enc = {jid, encode, []}}
-                      ]
-           }).
+       xmlns = <<"https://xabber.com/protocol/delivery">>,
+       module = 'xep_delivery',
+       result = {delivery_retry, '$to'},
+       attrs = [#attr{name = <<"to">>,
+                      dec = {jid, decode, []},
+                      enc = {jid, encode, []}}]}).
 
 -xml(delivery_x,
          #elem{name = <<"x">>,
                xmlns = <<"https://xabber.com/protocol/delivery">>,
-               module = 'unique',
-               result = {delivery_x, '$_els'}
-               }).
-
--xml(previous_id,
-     #elem{name = <<"previous-id">>,
-	   xmlns = <<"https://xabber.com/protocol/previous">>,
-	   module = 'previous',
-	   result = {previous_id, '$id'},
-	   attrs = [#attr{name = <<"id">>}]}).
+               module = 'xep_delivery',
+               result = {delivery_x, '$_els'}}).
 
 -xml(xabbertoken_issue,
      #elem{
@@ -4449,7 +4425,7 @@
      #elem{
          name = <<"register">>,
          xmlns = <<"https://xabber.com/protocol/devices">>,
-         module = 'devices',
+         module = 'xep_devices',
          result = {device_register, '$device'},
          refs = [
             #ref{name = devices_device, min = 1, max = 1, label = '$device'}
@@ -4461,7 +4437,7 @@
      #elem{
          name = <<"device">>,
          xmlns = <<"https://xabber.com/protocol/devices">>,
-         module = 'devices',
+         module = 'xep_devices',
          result = {devices_device, '$id', '$secret', '$validation_key', '$expire', '$client',
           '$info', '$public_label', '$ip', '$last_auth', '$omemo_id', '$device_type'},
          attrs = [#attr{name = <<"id">>, default = undefined}],
@@ -4484,7 +4460,7 @@
      #elem{
         name = <<"revoke">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = {devices_revoke, '$devices'},
         refs = [#ref{name = devices_device, label = '$devices'}]
      }
@@ -4494,7 +4470,7 @@
      #elem{
         name = <<"devices">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = {devices_feature}
      }
 ).
@@ -4503,7 +4479,7 @@
      #elem{
         name = <<"revoke-all">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = {devices_revoke_all}
      }
 ).
@@ -4512,7 +4488,7 @@
     #elem{
         name = <<"secret">>,
         xmlns = [<<"https://xabber.com/protocol/devices">>],
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{label = '$cdata',
                        dec = {base64, mime_decode, []},
@@ -4525,7 +4501,7 @@
     #elem{
         name = <<"validation-key">>,
         xmlns = [<<"https://xabber.com/protocol/devices">>],
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{label = '$cdata',
                                dec = {base64, mime_decode, []},
@@ -4538,7 +4514,7 @@
     #elem{
         name = <<"client">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{default = <<"">>, label = '$cdata'}
     }
@@ -4548,7 +4524,7 @@
     #elem{
         name = <<"info">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{default = <<"">>, label = '$cdata'}
     }
@@ -4558,7 +4534,7 @@
     #elem{
         name = <<"public-label">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{default = <<"">>, label = '$cdata'}
     }
@@ -4568,7 +4544,7 @@
     #elem{
         name = <<"expire">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{
                 dec = {dec_int, [0, infinity]},
@@ -4580,7 +4556,7 @@
     #elem{
         name = <<"last-auth">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{label = '$cdata'}
     }
@@ -4590,7 +4566,7 @@
     #elem{
         name = <<"ip">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{label = '$cdata'}
     }
@@ -4600,7 +4576,7 @@
     #elem{
         name = <<"omemo-id">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{default = <<"">>, label = '$cdata'}
     }
@@ -4610,7 +4586,7 @@
     #elem{
         name = <<"type">>,
         xmlns = <<"https://xabber.com/protocol/devices">>,
-        module = 'devices',
+        module = 'xep_devices',
         result = '$cdata',
         cdata = #cdata{default = <<"">>, label = '$cdata'}
     }
@@ -4619,7 +4595,7 @@
 -xml(devices_query,
     #elem{name = <<"query">>,
     xmlns = <<"https://xabber.com/protocol/devices">>,
-    module = 'devices',
+    module = 'xep_devices',
     result = {devices_query, '$device'},
     refs = [#ref{name = devices_device, min = 1, max = 1,label = '$device'}]
     }
@@ -4628,754 +4604,566 @@
 -xml(devices_query_items,
     #elem{name = <<"query">>,
     xmlns = <<"https://xabber.com/protocol/devices#items">>,
-    module = 'devices',
+    module = 'xep_devices',
     result = {devices_query_items, '$devices'},
     refs = [#ref{name = devices_device, label = '$devices'}]
     }
 ).
 
--xml(xabbergroupchat_present,
-     #elem{name = <<"x">>,
-     xmlns = <<"https://xabber.com/protocol/groups#present">>,
-	   module = 'xabbergroupchat',
-     result = {x_present}
-              }
-              ).
+-xml(groups_echo,
+     #elem{name = <<"echo">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_echo, '$message'},
+       refs = [#ref{name = message, min = 1, max = 1, label = '$message'}]}).
 
--xml(xabbergroupchat_not_present,
-     #elem{name = <<"x">>,
-     xmlns = <<"https://xabber.com/protocol/groups#not-present">>,
-	   module = 'xabbergroupchat',
-     result = {x_not_present}
-              }
-              ).
-
--xml(xabbergroupchat_permission,
-     #elem{name = <<"permission">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_permission, '$name', '$expires'},
-	   attrs = [#attr{name = <<"name">>,
-			  required = true},
-              #attr{name = <<"expires">>,
-        required = true}
-              ]}
-).
-
--xml(xabbergroupchat_restriction,
-     #elem{name = <<"restriction">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_restriction, '$name', '$expires'},
-	   attrs = [#attr{name = <<"name">>,
-			  required = true},
-              #attr{name = <<"expires">>,
-        required = true}
-              ]}
-).
-
--xml(xabbergroupchat_permission_set,
-     #elem{name = <<"permission">>,
-     xmlns = <<"https://xabber.com/protocol/groups#rights">>,
-          module = 'xabbergroupchat',
-     result = {xabbergroupchat_permission, '$name', '$expires'},
-          attrs = [#attr{name = <<"name">>,
-                         required = true},
-              #attr{name = <<"expires">>,
-        required = true}
-              ]}
-).
-
--xml(xabbergroupchat_restriction_set,
-     #elem{name = <<"restriction">>,
-     xmlns = <<"https://xabber.com/protocol/groups#rights">>,
-          module = 'xabbergroupchat',
-     result = {xabbergroupchat_restriction, '$name', '$expires'},
-          attrs = [#attr{name = <<"name">>,
-                         required = true},
-              #attr{name = <<"expires">>,
-        required = true}
-              ]}
-).
-
--xml(xabbergroupchat_collect,
+-xml(groups_collect,
      #elem{name = <<"collect">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {collect, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_collect, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_owner,
-     #elem{name = <<"owner">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {'$cdata'},
-     cdata = #cdata{label = '$cdata', required = true}}
-).
-
--xml(xabbergroupchat_invite_query,
+-xml(groups_query_invites,
      #elem{name = <<"query">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_invite_query, '$user'},
-     refs = [#ref{name = xabbergroupchat_invite_user, label = '$user'}
-             ]
-              }).
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = {groups_query_invites, '$users'},
+       refs = [#ref{name = groups_invite_user, label = '$users'}]}).
 
--xml(xabbergroupchat_invite,
+-xml(groups_invite,
      #elem{name = <<"invite">>,
-     xmlns = [<<"https://xabber.com/protocol/groups#invite">>,<<"https://xabber.com/protocol/groups">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_invite, '$jid', '$invite_jid', '$send','$reason','$user'},
-     attrs = [#attr{name = <<"jid">>,
+       xmlns = [<<"https://xabber.com/protocol/groups#invite">>],
+       module = 'xep_groups',
+       result = {groups_invite, '$jid', '$invite_jid', '$send','$reason','$user'},
+       attrs = [#attr{name = <<"jid">>,
                          dec = {jid, decode, []},
                          enc = {jid, encode, []}}],
-     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$invite_jid'},
-     #ref{name = xabbergroupchat_invite_send, min = 0, max = 1, label = '$send'},
-     #ref{name = xabbergroupchat_invite_user, min = 0, max = 1, label = '$user'},
-     #ref{name = xabbergroupchat_invite_reason, min = 0, max = 1, label = '$reason'}
-             ]
-              }).
+       refs = [#ref{name = groups_invite_jid, min = 0, max = 1, label = '$invite_jid'},
+         #ref{name = groups_invite_send, min = 0, max = 1, label = '$send'},
+         #ref{name = groups_invite_user, min = 0, max = 1, label = '$user'},
+         #ref{name = groups_invite_reason, min = 0, max = 1, label = '$reason'}]}).
 
--xml(xabbergroupchat_revoke,
+-xml(groups_revoke,
      #elem{name = <<"revoke">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_revoke, '$jid'},
-     refs = [#ref{name = xabbergroupchat_invite_jid, min = 0, max = 1, label = '$jid'}
-             ]
-              }).
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = {groups_revoke, '$jid'},
+       refs = [#ref{name = groups_invite_jid, min = 1, max = 1, label = '$jid'}]}).
 
--xml(xabbergroup_decline,
+-xml(groups_decline,
      #elem{name = <<"decline">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_decline}
-     }).
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = {groups_decline}}).
 
--xml(xabbergroupchat_invite_reason,
+-xml(groups_invite_reason,
      #elem{name = <<"reason">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
-).
--xml(xabbergroupchat_invite_send,
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata', required = true}}).
+
+-xml(groups_invite_send,
      #elem{name = <<"send">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
-).
--xml(xabbergroupchat_invite_jid,
-     #elem{name = <<"jid">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
-).
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_invite_user,
+-xml(groups_invite_jid,
+     #elem{name = <<"jid">>,
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata', required = true}}).
+
+-xml(groups_invite_user,
      #elem{name = <<"user">>,
-     xmlns = <<"https://xabber.com/protocol/groups#invite">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_invite_user, '$jid', '$id'},
-     attrs = [#attr{name = <<"id">>, required = true},
-     #attr{name = <<"jid">>}]}
-).
+       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       module = 'xep_groups',
+       result = {groups_invite_user, '$jid', '$id'},
+       attrs = [#attr{name = <<"id">>, required = true},
+                #attr{name = <<"jid">>}]}).
 
--xml(xabbergroupchat_query_rights,
+-xml(groups_query_rights,
      #elem{name = <<"query">>,
-     xmlns = <<"https://xabber.com/protocol/groups#rights">>,
-	   module = 'xabbergroupchat',
-   result = {xabbergroupchat_query_rights, '$item', '$restriction', '$_els'},
-     refs = [#ref{name = xabbergroupchat_query_item, min = 0, max = 1, label = '$item'},
-            #ref{name = xabbergroupchat_restriction_set, label = '$restriction'}
-		]
-              }).
+       xmlns = <<"https://xabber.com/protocol/groups#rights">>,
+       module = 'xep_groups',
+     result = {groups_query_rights, '$_els'}}).
 
--xml(xabbergroupchat_query_item,
-     #elem{name = <<"item">>,
-     xmlns = <<"https://xabber.com/protocol/groups#rights">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_query_item, '$id'},
-	   attrs = [#attr{name = <<"id">>}]}
-).
-
--xml(xabbergroupchat_update,
+-xml(groups_update,
      #elem{name = <<"update">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_update, '$owner', '$pinned'},
-     refs = [
-             #ref{name = xabbergroupchat_owner, min = 0, max = 1, label = '$owner'},
-             #ref{name = xabbergroupchat_query_message, min = 0, max = 1, label = '$pinned'}
-             ]
-              }).
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_update, '$pinned'},
+       refs = [#ref{name = groups_pinned_message, min = 0, max = 1, label = '$pinned'}]}).
 
--xml(xabbergroupchat_x,
+-xml(groups_x,
      #elem{name = <<"x">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,
-     <<"https://xabber.com/protocol/groups#system-message">>,
-     <<"https://xabber.com/protocol/groups#create">>,
-     <<"https://xabber.com/protocol/groups#left">>,
-     <<"https://xabber.com/protocol/groups#join">>,
-     <<"https://xabber.com/protocol/groups#kick">>,
-     <<"https://xabber.com/protocol/groups#update">>,
-     <<"https://xabber.com/protocol/groups#user-updated">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_x, '$xmlns', '$type', '$version', '$no_permission', '$members', '$present', '$parent', '$jid', '$_els'},
-     attrs = [
-     #attr{name = <<"xmlns">>},
-     #attr{name = <<"type">>},
-     #attr{name = <<"version">>}
-     ],
-     refs = [
-             #ref{name = xabbergroupchat_no_permission, min = 0, max = 1, label = '$no_permission'},
-             #ref{name = xabbergroupchat_members, min = 0, max = 1, label = '$members'},
-             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'},
-             #ref{name = xabbergroupchat_parent_chat, min = 0, max = 1, label = '$parent'},
-             #ref{name = xabbergroupchat_jid, min = 0, max = 1, label = '$jid'}
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#system-message">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_x, '$xmlns', '$type', '$version', '$members',
+         '$present', '$parent', '$jid', '$_els'},
+       attrs = [#attr{name = <<"xmlns">>},
+                #attr{name = <<"type">>},
+                #attr{name = <<"version">>}],
+       refs = [
+             #ref{name = groups_x_members, min = 0, max = 1, label = '$members'},
+             #ref{name = groups_x_present, min = 0, max = 1, label = '$present'},
+             #ref{name = groups_x_parent_chat, min = 0, max = 1, label = '$parent'},
+             #ref{name = groups_jid, min = 0, max = 1, label = '$jid'}]}).
 
-             ]
-              }).
-
-
--xml(xabbergroupchat_parent_chat,
+-xml(groups_x_parent_chat,
      #elem{name = <<"parent-chat">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
        result = '$cdata',
-           cdata = #cdata{dec = {jid, decode, []},
-                          enc = {jid, encode, []}}}).
+       cdata = #cdata{dec = {jid, decode, []},
+                      enc = {jid, encode, []}}}).
 
--xml(xabbergroupchat_jid,
+-xml(groups_jid,
      #elem{name = <<"jid">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
        result = '$cdata',
-           cdata = #cdata{dec = {jid, decode, []},
-                          enc = {jid, encode, []}}}).
+       cdata = #cdata{dec = {jid, decode, []},
+                      enc = {jid, encode, []}}}).
 
--xml(xabbergroupchat_peer,
+-xml(groups_ptp,
      #elem{name = <<"peer-to-peer">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"jabber:client">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_peer, '$jid', '$id', '$cdata'},
-     attrs = [#attr{name = <<"jid">>,
-     dec = {jid, decode, []},
-     enc = {jid, encode, []}
-     },
-     #attr{name = <<"id">>}
-     ],
-     cdata = #cdata{label = '$cdata'}
-     }
-).
+       xmlns = <<"https://xabber.com/protocol/groups#create">>,
+       module = 'xep_groups',
+       result = {groups_ptp, '$jid', '$id', '$cdata'},
+       attrs = [#attr{name = <<"jid">>,
+                      dec = {jid, decode, []},
+                      enc = {jid, encode, []}},
+                #attr{name = <<"id">>}]}).
 
--xml(xabbergroupchat_x_body,
-     #elem{name = <<"body">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-           result = {body_x, '$lang', '$data'},
-           cdata = #cdata{label = '$data'},
-           attrs = [#attr{name = <<"xml:lang">>, label = '$lang'}]}).
-
--xml(xabbergroupchat_members,
+-xml(groups_x_members,
      #elem{name = <<"members">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat_online,
-     #elem{name = <<"present">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
-
-
--xml(xabbergroupchat_kick,
-     #elem{name = <<"kick">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_kick, '$id', '$jid'},
-     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
-      #ref{name = xabbergroupchat_block_jid, label = '$jid'}
-     ]}).
-).
-
--xml(xabbergroupchat_block,
-     #elem{name = <<"block">>,
-     xmlns = <<"https://xabber.com/protocol/groups#block">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_block, '$id', '$jid', '$domain'},
-     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
-      #ref{name = xabbergroupchat_block_jid, label = '$jid'},
-      #ref{name = xabbergroupchat_domain, label = '$domain'}
-     ]}).
-).
-
--xml(xabbergroupchat_unblock,
-     #elem{name = <<"unblock">>,
-     xmlns = <<"https://xabber.com/protocol/groups#block">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_unblock, '$id', '$jid', '$domain'},
-     refs = [#ref{name = xabbergroupchat_id, label = '$id'},
-      #ref{name = xabbergroupchat_block_jid, label = '$jid'},
-      #ref{name = xabbergroupchat_domain, label = '$domain'}
-     ]}).
-).
-
--xml(xabbergroupchat_id,
-     #elem{name = <<"id">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#block">>],
-	   module = 'xabbergroupchat',
-     result = {block_id,'$cdata'},
-     cdata = #cdata{label = '$cdata', required = true}}
-).
-
--xml(xabbergroupchat_block_jid,
-     #elem{name = <<"jid">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#block">>],
-	   module = 'xabbergroupchat',
-     result = {block_jid,'$cdata'},
-     cdata = #cdata{label = '$cdata', required = true}}
-).
-
--xml(xabbergroupchat_domain,
-     #elem{name = <<"domain">>,
-     xmlns = <<"https://xabber.com/protocol/groups#block">>,
-	   module = 'xabbergroupchat',
-     result = {block_domain,'$cdata'},
-     cdata = #cdata{label = '$cdata', required = true}}
-).
-
--xml(xabbergroupchat_search,
-     #elem{name = <<"search">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_search, '$name', '$description', '$model',
-     '$anonymous', '$rsm'},
-     refs = [#ref{name = xabbergroupchat_query_name, min = 0, max = 1, label = '$name'},
-             #ref{name = xabbergroupchat_query_description, min = 0, max = 1, label = '$description'},
-             #ref{name = xabbergroupchat_query_membership, min = 0, max = 1, label = '$model'},
-             #ref{name = xabbergroupchat_query_index, min = 0, max = 1, label = '$anonymous'},
-             #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}
-             ]
-              }).
-
--xml(xabbergroupchat_join,
-     #elem{name = <<"join">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
        result = '$cdata',
-          cdata = #cdata{label = '$cdata'}}
-).
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_left,
-     #elem{name = <<"left">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = '$cdata',
-               cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_x_present,
+     #elem{name = <<"present">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_no_permission,
-     #elem{name = <<"no-permission">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = '$cdata',
-               cdata = #cdata{label = '$cdata'}}
-).
 
--xml(xabbergroupchat_user_updated,
-    #elem{name = <<"user-updated">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_user_updated, '$user'},
-     refs = [
-             #ref{name = xabbergroupchat_user_card, min = 0, max = 1, label = '$user'}
-             ]
-              }
-).
+-xml(groups_kick,
+     #elem{name = <<"kick">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_kick, '$ids', '$jids'},
+       refs = [#ref{name = groups_user_id, label = '$ids'},
+         #ref{name = groups_jid, label = '$jids'}]}).
 
--xml(xabbergroupchat_kicked,
-    #elem{name = <<"kicked">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_kicked, '$users'},
-     refs = [
-             #ref{name = xabbergroupchat_user_card, label = '$users'}
-             ]
-              }
-).
+-xml(groups_user_id,
+     #elem{name = <<"id">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_user_id, '$cdata'},
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_user_card,
-    #elem{name = <<"user">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_user_card, '$id', '$jid', '$role', '$badge', '$nickname', '$avatar', '$present', '$subscription'},
-     attrs = [#attr{name = <<"id">>}],
-     refs = [#ref{name = xabbergroupchat_jid, min = 0, max = 1, label = '$jid'},
-             #ref{name = xabbergroupchat_user_role, min = 0, max = 1, label = '$role'},
-             #ref{name = xabbergroupchat_user_nickname, min = 0, max = 1, label = '$nickname'},
-             #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
-             #ref{name = xabbergroupchat_user_badge, min = 0, max = 1, label = '$badge'},
-             #ref{name = xabbergroupchat_online, min = 0, max = 1, label = '$present'},
-             #ref{name = xabbergroupchat_subscription, min = 0, max = 1, label = '$subscription'}
-             ]
-              }
-).
+-xml(groups_block,
+     #elem{name = <<"block">>,
+       xmlns = <<"https://xabber.com/protocol/groups#block">>,
+       module = 'xep_groups',
+       result = {groups_block, '$id', '$jid', '$domain'},
+       refs = [#ref{name = groups_block_id, label = '$id'},
+         #ref{name = groups_block_jid, label = '$jid'},
+         #ref{name = groups_block_domain, label = '$domain'}]}).
 
--xml(xabbergroupchat_user_role,
-     #elem{name = <<"role">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
-).
+-xml(groups_unblock,
+     #elem{name = <<"unblock">>,
+       xmlns = <<"https://xabber.com/protocol/groups#block">>,
+       module = 'xep_groups',
+       result = {groups_unblock, '$id', '$jid', '$domain'},
+       refs = [#ref{name = groups_block_id, label = '$id'},
+         #ref{name = groups_block_jid, label = '$jid'},
+         #ref{name = groups_block_domain, label = '$domain'}]}).
 
--xml(xabbergroupchat_subscription,
-     #elem{name = <<"subscription">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata', required = true}}
-).
+-xml(groups_block_id,
+     #elem{name = <<"id">>,
+       xmlns = <<"https://xabber.com/protocol/groups#block">>,
+       module = 'xep_groups',
+       result = {block_id,'$cdata'},
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_user_nickname,
-     #elem{name = <<"nickname">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_block_jid,
+     #elem{name = <<"jid">>,
+       xmlns = <<"https://xabber.com/protocol/groups#block">>,
+       module = 'xep_groups',
+       result = {block_jid,'$cdata'},
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_user_badge,
-     #elem{name = <<"badge">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat,
-     #elem{name = <<"query">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>,
-     <<"https://xabber.com/protocol/groups#default-rights">>,<<"https://xabber.com/protocol/groups#members">>,
-     <<"https://xabber.com/protocol/groups#delete">>,<<"https://xabber.com/protocol/groups#status">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat, '$xmlns', '$id', '$version', '$rsm', '$_els', '$cdata'},
-     attrs = [#attr{name = <<"xmlns">>},
-     #attr{name = <<"version">>,
-                  dec = {dec_int, [0, infinity]},
-                   enc = {enc_int, []}},
-     #attr{name = <<"id">>}],
-          refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}],
-          cdata = #cdata{label = '$cdata'}
-     }).
-
--xml(xabbergroupchat_query_contacts,
-     #elem{name = <<"contacts">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_contacts, '$contact'},
-     refs = [#ref{name = xabbergroupchat_query_contact, label = '$contact'}]}
-).
-
--xml(xabbergroupchat_query_contact,
-     #elem{name = <<"contact">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat_query_domains,
-     #elem{name = <<"domains">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroup_domains, '$domain'},
-     refs = [#ref{name = xabbergroupchat_query_domain, label = '$domain'}]}
-).
-
--xml(xabbergroupchat_query_domain,
+-xml(groups_block_domain,
      #elem{name = <<"domain">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = '$cdata',
-     cdata = #cdata{label = '$cdata'}}
-).
+       xmlns = <<"https://xabber.com/protocol/groups#block">>,
+       module = 'xep_groups',
+       result = {block_domain,'$cdata'},
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_query_message,
-     #elem{name = <<"pinned-message">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_pinned_message, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_search,
+     #elem{name = <<"search">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_search, '$name', '$description', '$model',
+         '$anonymous', '$rsm'},
+       refs = [#ref{name = groups_name, min = 0, max = 1, label = '$name'},
+         #ref{name = groups_description, min = 0, max = 1, label = '$description'},
+         #ref{name = groups_membership, min = 0, max = 1, label = '$model'},
+         #ref{name = groups_index, min = 0, max = 1, label = '$anonymous'},
+         #ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}]}).
 
--xml(xabbergroupchat_query_index,
-     #elem{name = <<"index">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_index ,'$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_user,
+    #elem{name = <<"user">>,
+      xmlns = <<"https://xabber.com/protocol/groups">>,
+      module = 'xep_groups',
+      result = {groups_user, '$id', '$jid', '$role', '$badge',
+        '$nickname', '$avatar', '$present', '$subscription'},
+       attrs = [#attr{name = <<"id">>}],
+       refs = [#ref{name = groups_jid, min = 0, max = 1, label = '$jid'},
+         #ref{name = groups_role, min = 0, max = 1, label = '$role'},
+         #ref{name = groups_nickname, min = 0, max = 1, label = '$nickname'},
+         #ref{name = avatar_meta, min = 0, max = 1, label = '$avatar'},
+         #ref{name = groups_badge, min = 0, max = 1, label = '$badge'},
+         #ref{name = groups_x_present, min = 0, max = 1, label = '$present'},
+         #ref{name = groups_subscription, min = 0, max = 1, label = '$subscription'}]}).
 
--xml(xabbergroupchat_query_name,
-     #elem{name = <<"name">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_name, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_role,
+     #elem{name = <<"role">>,
+      xmlns = <<"https://xabber.com/protocol/groups">>,
+      module = 'xep_groups',
+      result = '$cdata',
+      cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_query_status,
-     #elem{name = <<"status">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_status, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_subscription,
+     #elem{name = <<"subscription">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata', required = true}}).
 
--xml(xabbergroupchat_query_privacy,
-     #elem{name = <<"privacy">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_privacy, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_nickname,
+     #elem{name = <<"nickname">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_query_description,
-     #elem{name = <<"description">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_description, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
+-xml(groups_badge,
+     #elem{name = <<"badge">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabbergroupchat_query_membership,
-     #elem{name = <<"membership">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_membership, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat_query_localpart,
-     #elem{name = <<"localpart">>,
-     xmlns = [<<"https://xabber.com/protocol/groups">>,<<"https://xabber.com/protocol/groups#create">>],
-	   module = 'xabbergroupchat',
-     result = {xabbergroupchat_localpart, '$cdata'},
-     cdata = #cdata{label = '$cdata'}}
-).
-
--xml(xabbergroupchat_disclosed,
-     #elem{name = <<"disclosed">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = {disclosed, '$user_card', '$reason', '$type'},
-	   	 attrs = [#attr{name = <<"type">>}],
-     refs = [
-     #ref{name = xabbergroupchat_user_card, min = 0, max =1, label = '$user_card'},
-     #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}
-     ]
-     }).
-
--xml(xabbergroupchat_disclosure,
-     #elem{name = <<"disclosure">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = {disclosure, '$recipient', '$reason', '$type'},
-	   	 attrs = [#attr{name = <<"type">>}],
-     refs = [
-     #ref{name = xabbergroupchat_recipient, min = 0, max =1, label = '$recipient'},
-     #ref{name = xabbergroupchat_reason, min = 0, max =1, label = '$reason'}
-     ]
-     }).
-
--xml(xabbergroupchat_recipient,
-     #elem{name = <<"recipient">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = {recipient, '$id'},
-	   attrs = [#attr{name = <<"id">>}]
-	   }).
-
--xml(xabbergroupchat_reason,
-     #elem{name = <<"reason">>,
-     xmlns = <<"https://xabber.com/protocol/groups">>,
-	   module = 'xabbergroupchat',
-	   result = '$cdata',
-	   cdata = #cdata{label = '$cdata'}}).
-
--xml(xabber_groupchat_mention,
-     #elem{name = <<"mention">>,
-     xmlns = <<"https://xabber.com/protocol/markup">>,
-	   module = 'xabbermarkup',
-     result = {xabber_groupchat_mention,  '$node', '$cdata'},
-     attrs = [
-     #attr{name = <<"node">>}
-     ],
-     cdata = #cdata{label = '$cdata'}
-     }).
-
--xml(xabber_retract_message,
-     #elem{name = <<"retract-message">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-     result = {xabber_retract_message, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation', '$type'},
-     attrs = [#attr{name = <<"type">>},
-              #attr{name = <<"xmlns">>},
-              #attr{name = <<"id">>, default = undefined},
-              #attr{name = <<"version">>,
-              dec = {dec_int, [0, infinity]},
-              enc = {enc_int, []}},
-              #attr{name = <<"conversation">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}
-              },
-              #attr{name = <<"symmetric">>,
-              enc = {enc_bool, []},
-              dec = {dec_bool, []}
-              },
-              #attr{name = <<"by">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}}
-              ]
-     }).
-
--xml(xabber_retract_all,
-     #elem{name = <<"retract-all">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-     result = {xabber_retract_all, '$xmlns', '$symmetric', '$version', '$conversation', '$type'},
-     attrs = [
-              #attr{name = <<"xmlns">>},
-              #attr{name = <<"version">>,
-              dec = {dec_int, [0, infinity]},
-              enc = {enc_int, []}},
-              #attr{name = <<"conversation">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}
-              },
-              #attr{name = <<"symmetric">>,
-              enc = {enc_bool, []},
-              dec = {dec_bool, []}
-              },
-              #attr{name = <<"type">>}
-              ]
-     }).
-
--xml(xabber_retract_user,
-     #elem{name = <<"retract-user">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-     result = {xabber_retract_user, '$xmlns', '$id', '$by', '$symmetric', '$version', '$conversation', '$type'},
-     attrs = [#attr{name = <<"type">>},
-              #attr{name = <<"xmlns">>},
-              #attr{name = <<"id">>},
-              #attr{name = <<"version">>,
-              dec = {dec_int, [0, infinity]},
-              enc = {enc_int, []}},
-              #attr{name = <<"conversation">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}
-              },
-              #attr{name = <<"symmetric">>,
-              enc = {enc_bool, []},
-              dec = {dec_bool, []}
-              },
-              #attr{name = <<"by">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}}
-              ]
-     }).
-
--xml(xabber_replace,
-     #elem{name = <<"replace">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-     result = {xabber_replace, '$xmlns', '$id', '$by', '$version', '$conversation', '$type', '$xabber_replace_message', '$_els'},
-     attrs = [#attr{name = <<"type">>},
-              #attr{name = <<"xmlns">>},
-              #attr{name = <<"id">>, default = undefined},
-              #attr{name = <<"version">>,
-              dec = {dec_int, [0, infinity]},
-              enc = {enc_int, []}},
-              #attr{name = <<"conversation">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}
-              },
-              #attr{name = <<"by">>,
-              dec = {jid, decode, []},
-              enc = {jid, encode, []}}
-              ],
-     refs = [#ref{name = xabber_replace_message, min = 0, max = 1, label = '$xabber_replace_message'}]
-     }).
-
--xml(xabber_replace_message,
-     #elem{name = <<"message">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-     result = {xabber_replace_message, '$from', '$to', '$body', '$stanza_id', '$replaced', '$_els'},
-            attrs = [#attr{name = <<"from">>,
-                          dec = {jid, decode, []},
-                          enc = {jid, encode, []}},
-                        #attr{name = <<"to">>,
-                          dec = {jid, decode, []},
-                          enc = {jid, encode, []}
-                          }
-                        ],
-     refs = [#ref{name = xabber_replace_message_body, min = 0, max = 1, label = '$body'},
-             #ref{name = stanza_id, min = 0, max = 1, label = '$stanza_id'},
-             #ref{name = xabber_replaced, min = 0, max = 1, label = '$replaced'}
-     ]}).
-
--xml(xabber_replace_message_body,
-     #elem{name = <<"body">>,
-     xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
-	   module = 'xabberrewrite',
-	   result = '$cdata',
-	   cdata = #cdata{label = '$cdata'}}).
-
--xml(xabber_replaced,
-     #elem{name = <<"replaced">>,
-           xmlns = <<"https://xabber.com/protocol/rewrite">>,
-	   module = 'unique',
-           result = {replaced, '$stamp', '$body'},
-           attrs = [#attr{name = <<"stamp">>,
-                          required = true,
-                          dec = {dec_utc, []},
-                          enc = {enc_utc, []}},
-                    #attr{name = <<"body">>}
-                    ]}).
-
--xml(xabber_retract_query,
+-xml(groups_query,
      #elem{name = <<"query">>,
-     xmlns = <<"https://xabber.com/protocol/rewrite">>,
-	   module = 'xabberrewrite',
-     result = {xabber_retract_query, '$version', '$less-than', '$type'},
-     attrs = [#attr{name = <<"type">>},
-              #attr{name = <<"version">>,
-                dec = {dec_int, [0, infinity]},
-                enc = {enc_int, []}},
-              #attr{name = <<"less-than">>,
-                dec = {dec_int, [0, infinity]},
-                enc = {enc_int, []}}
-              ]
-     }).
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>,
+         <<"https://xabber.com/protocol/groups#default-rights">>,
+         <<"https://xabber.com/protocol/groups#members">>,
+         <<"https://xabber.com/protocol/groups#delete">>,
+         <<"https://xabber.com/protocol/groups#status">>,
+         <<"https://xabber.com/protocol/groups#info">>],
+       module = 'xep_groups',
+       result = {groups_query, '$xmlns', '$id', '$version', '$rsm',
+         '$_els', '$cdata'},
+       attrs = [#attr{name = <<"xmlns">>},
+                #attr{name = <<"version">>,
+                      dec = {dec_int, [0, infinity]},
+                      enc = {enc_int, []}},
+                #attr{name = <<"id">>}],
+       refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'}],
+       cdata = #cdata{label = '$cdata'}}).
 
--xml(xabber_retract_invalidate,
+-xml(groups_contacts,
+     #elem{name = <<"contacts">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_contacts, '$contacts'},
+       refs = [#ref{name = groups_contact, label = '$contacts'}]}).
+
+-xml(groups_contact,
+     #elem{name = <<"contact">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_domains,
+     #elem{name = <<"domains">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_domains, '$domains'},
+       refs = [#ref{name = groups_domain, label = '$domains'}]}).
+
+-xml(groups_domain,
+     #elem{name = <<"domain">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_pinned_message,
+     #elem{name = <<"pinned-message">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_pinned_message, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_index,
+     #elem{name = <<"index">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_index ,'$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_name,
+     #elem{name = <<"name">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_name, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_status,
+     #elem{name = <<"status">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_status, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_privacy,
+     #elem{name = <<"privacy">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_privacy, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_description,
+     #elem{name = <<"description">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_description, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_membership,
+     #elem{name = <<"membership">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_membership, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(groups_localpart,
+     #elem{name = <<"localpart">>,
+       xmlns = [<<"https://xabber.com/protocol/groups">>,
+         <<"https://xabber.com/protocol/groups#create">>],
+       module = 'xep_groups',
+       result = {groups_localpart, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(markup_mention,
+     #elem{name = <<"mention">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_mention,  '$node', '$cdata'},
+       attrs = [#attr{name = <<"node">>}],
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(markup_bold,
+     #elem{name = <<"bold">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {bmarkup_bold}}).
+
+-xml(markup_italic,
+     #elem{name = <<"italic">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_italic}}).
+
+-xml(markup_underline,
+     #elem{name = <<"underline">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_underline}}).
+
+-xml(markup_strike,
+     #elem{name = <<"strike">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_strike}}).
+
+-xml(markup_link,
+     #elem{name = <<"link">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_link}}).
+
+-xml(markup_quote,
+     #elem{name = <<"quote">>,
+       xmlns = <<"https://xabber.com/protocol/markup">>,
+       module = 'xep_markup',
+       result = {markup_quote}}).
+
+-xml(retract_message,
+     #elem{name = <<"retract-message">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,
+         <<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = {retract_message, '$xmlns', '$id', '$by', '$symmetric',
+         '$version', '$conversation', '$type'},
+       attrs = [#attr{name = <<"type">>},
+                #attr{name = <<"xmlns">>},
+                #attr{name = <<"id">>, default = undefined},
+                #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"conversation">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"symmetric">>,
+                  enc = {enc_bool, []},
+                  dec = {dec_bool, []}},
+                #attr{name = <<"by">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}}]}).
+
+-xml(retract_all,
+     #elem{name = <<"retract-all">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,
+         <<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = {retract_all, '$xmlns', '$symmetric', '$version',
+          '$conversation', '$type'},
+       attrs = [#attr{name = <<"xmlns">>},
+                #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"conversation">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"symmetric">>,
+                  enc = {enc_bool, []},
+                  dec = {dec_bool, []}},
+                #attr{name = <<"type">>}]}).
+
+-xml(retract_user,
+     #elem{name = <<"retract-user">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,
+         <<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = {retract_user, '$xmlns', '$id', '$by',
+         '$symmetric', '$version', '$conversation', '$type'},
+       attrs = [#attr{name = <<"type">>},
+                #attr{name = <<"xmlns">>},
+                #attr{name = <<"id">>},
+                #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"conversation">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"symmetric">>,
+                  enc = {enc_bool, []},
+                  dec = {dec_bool, []}},
+                #attr{name = <<"by">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}}]}).
+
+-xml(replace,
+     #elem{name = <<"replace">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,
+         <<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = {replace, '$xmlns', '$id', '$by', '$version',
+         '$conversation', '$type', '$replace_message', '$_els'},
+       attrs = [#attr{name = <<"type">>},
+                #attr{name = <<"xmlns">>},
+                #attr{name = <<"id">>, default = undefined},
+                #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"conversation">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"by">>,
+                 dec = {jid, decode, []},
+                  enc = {jid, encode, []}}],
+       refs = [#ref{name = replace_message, min = 0, max = 1, label = '$replace_message'}]}).
+
+-xml(replace_message,
+     #elem{name = <<"message">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,
+         <<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = {replace_message, '$from', '$to', '$body', '$stanza_id',
+         '$replaced', '$_els'},
+       attrs = [#attr{name = <<"from">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"to">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}}],
+       refs = [#ref{name = replace_message_body, min = 0, max = 1, label = '$body'},
+               #ref{name = stanza_id, min = 0, max = 1, label = '$stanza_id'},
+               #ref{name = replaced, min = 0, max = 1, label = '$replaced'}]}).
+
+-xml(replace_message_body,
+     #elem{name = <<"body">>,
+       xmlns = [<<"https://xabber.com/protocol/rewrite">>,<<"https://xabber.com/protocol/rewrite#notify">>],
+       module = 'xep_rewrite',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(replaced,
+     #elem{name = <<"replaced">>,
+       xmlns = <<"https://xabber.com/protocol/rewrite">>,
+       module = 'xep_rewrite',
+       result = {replaced, '$stamp', '$body'},
+       attrs = [#attr{name = <<"stamp">>, required = true,
+                  dec = {dec_utc, []},
+                  enc = {enc_utc, []}},
+                #attr{name = <<"body">>}]}).
+
+-xml(retract_query,
+     #elem{name = <<"query">>,
+       xmlns = <<"https://xabber.com/protocol/rewrite">>,
+       module = 'xep_rewrite',
+       result = {retract_query, '$version', '$less-than', '$type'},
+       attrs = [#attr{name = <<"type">>},
+                #attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"less-than">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}}]}).
+
+-xml(retract_invalidate,
      #elem{name = <<"invalidate">>,
      xmlns = <<"https://xabber.com/protocol/rewrite#notify">>,
-     module = 'xabberrewrite',
-     result = {xabber_retract_invalidate, '$version', '$conversation','$type'},
+     module = 'xep_rewrite',
+     result = {retract_invalidate, '$version', '$conversation','$type'},
      attrs = [
               #attr{name = <<"version">>,
                 dec = {dec_int, [0, infinity]},
@@ -5385,219 +5173,180 @@
                 dec = {jid, decode, []},
                 enc = {jid, encode, []}
               },
-              #attr{name = <<"type">>}
-     ]
-     }).
+              #attr{name = <<"type">>}]}).
 
 -record(xmppreference, {
-             type = <<>> :: binary(),
-             begin :: undefined | non_neg_integer(),
-             end :: undefined | non_neg_integer(),
-             sub_els = [] :: [xmpp_element() | fxml:xmlel()]
-	     }).
+    type = <<>> :: binary(),
+    begin :: undefined | non_neg_integer(),
+    end :: undefined | non_neg_integer(),
+    sub_els = [] :: [xmpp_element() | fxml:xmlel()]
+    }).
 
 -xml(xmppreference,
      #elem{name = <<"reference">>,
-           xmlns = <<"https://xabber.com/protocol/references">>,
-	   module = xep0372,
-           result = {xmppreference, '$type', '$begin', '$end', '$_els'},
-           attrs = [#attr{name = <<"type">>,
-                          required = true
-                          },
-                    #attr{name = <<"begin">>,
-                          dec = {dec_int, [0, infinity]},
-                          enc = {enc_int, []}},
-                    #attr{name = <<"end">>,
-                          dec = {dec_int, [0, infinity]},
-                          enc = {enc_int, []}}
-                    ]}).
+       xmlns = <<"https://xabber.com/protocol/references">>,
+       module = xep0372,
+       result = {xmppreference, '$type', '$begin', '$end', '$_els'},
+       attrs = [#attr{name = <<"type">>, required = true},
+         #attr{name = <<"begin">>,
+           dec = {dec_int, [0, infinity]},
+           enc = {enc_int, []}},
+         #attr{name = <<"end">>,
+           dec = {dec_int, [0, infinity]},
+           enc = {enc_int, []}}]}).
 
 -xml(geoloc,
      #elem{name = <<"geoloc">>,
-           xmlns = <<"http://jabber.org/protocol/geoloc">>,
-	       module = xep0080,
-           result = {geoloc, '$_els'}}).
+       xmlns = <<"http://jabber.org/protocol/geoloc">>,
+       module = xep0080,
+       result = {geoloc, '$_els'}}).
 
 -xml(voice_message,
      #elem{name = <<"voice-message">>,
-           xmlns = <<"https://xabber.com/protocol/voice-messages">>,
-	       module = xep_voice,
-           result = {voice_message, '$_els'}}).
+       xmlns = <<"https://xabber.com/protocol/voice-messages">>,
+       module = xep_voice,
+       result = {voice_message, '$_els'}}).
 
 -xml(sticker,
      #elem{name = <<"sticker">>,
-           xmlns = <<"https://xabber.com/protocol/stickers">>,
-	       module = xep_sticker,
-           result = {sticker, '$_els'}}).
+       xmlns = <<"https://xabber.com/protocol/stickers">>,
+       module = xep_sticker,
+       result = {sticker, '$_els'}}).
 
--xml(xabber_file_sharing,
+-xml(files_file_sharing,
      #elem{name = <<"file-sharing">>,
-           xmlns = <<"https://xabber.com/protocol/files">>,
-	   module = xep_otb,
-           result = {xabber_file_sharing, '$file', '$sources'},
-           refs = [#ref{name = xabber_file, min = 1, max = 1, label = '$file'},
-                   #ref{name = xabber_file_sources, min = 1, max = 1, label = '$sources'}
-                  ]}).
+       xmlns = <<"https://xabber.com/protocol/files">>,
+       module = xep_files,
+       result = {files_file_sharing, '$file', '$sources'},
+       refs = [#ref{name = files_file, min = 1, max = 1, label = '$file'},
+         #ref{name = files_sources, min = 1, max = 1, label = '$sources'}]}).
 
--xml(xabber_file_sources,
+-xml(files_sources,
      #elem{name = <<"sources">>,
-           xmlns = <<"https://xabber.com/protocol/files">>,
-	   module = xep_otb,
-           result = {xabber_sources, '$_els'}
-           }).
+       xmlns = <<"https://xabber.com/protocol/files">>,
+       module = xep_files,
+       result = {files_sources, '$_els'}}).
 
--xml(xabber_file,
+-xml(files_file,
      #elem{name = <<"file">>,
-           xmlns = <<"https://xabber.com/protocol/files">>,
-	   module = xep_otb,
-           result = {xabber_file, '$type', '$_els'},
-           refs = [#ref{name = xabber_media_type_otb, min = 0, max = 1, label = '$type'}]}).
+       xmlns = <<"https://xabber.com/protocol/files">>,
+       module = xep_files,
+       result = {files_file, '$type', '$_els'},
+       refs = [#ref{name = files_media_type, min = 0, max = 1, label = '$type'}]}).
 
--xml(xabber_media_type_otb,
+-xml(files_media_type,
      #elem{name = <<"media-type">>,
-	   xmlns = <<"https://xabber.com/protocol/files">>,
-	   module = 'xep_otb',
-	   result = '$cdata',
-	   cdata = #cdata{required = true}}).
+       xmlns = <<"https://xabber.com/protocol/files">>,
+       module = 'xep_files',
+       result = '$cdata',
+       cdata = #cdata{required = true}}).
 
--xml(xabber_synchronization,
+-xml(sync_synchronization,
      #elem{name = <<"synchronization">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_synchronization}
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_synchronization}}).
 
--xml(xabber_synchronization_query,
+-xml(sync_query,
      #elem{name = <<"query">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_synchronization_query, '$stamp', '$rsm', '$xdata', '$_els'},
-     attrs = [#attr{name = <<"stamp">>}],
-     refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'},
-              #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_query, '$stamp', '$rsm', '$xdata', '$_els'},
+       attrs = [#attr{name = <<"stamp">>}],
+       refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'},
+         #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]}).
 
--xml(xabber_conversation,
+-xml(sync_conversation,
      #elem{name = <<"conversation">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation, '$type', '$jid', '$status', '$stamp', '$thread','$mute', '$pinned', '$_els'},
-     attrs = [
-     #attr{name = <<"jid">>,
-           required = true,
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_conversation, '$type', '$jid', '$status', '$stamp',
+        '$thread','$mute', '$pinned', '$_els'},
+       attrs = [
+         #attr{name = <<"jid">>, required = true,
            dec = {jid, decode, []},
            enc = {jid, encode, []}},
-     #attr{name = <<"type">>,
-           required = true},
-     #attr{name = <<"status">>,
+         #attr{name = <<"type">>, required = true},
+         #attr{name = <<"status">>,
            dec = {dec_enum, [[active, deleted, archived]]},
            enc = {enc_enum, []}},
-     #attr{name = <<"stamp">>},
-     #attr{name = <<"thread">>},
-     #attr{name = <<"mute">>, default = undefined},
-     #attr{name = <<"pinned">>, default = undefined}
-     ]
-     }).
+         #attr{name = <<"stamp">>},
+         #attr{name = <<"thread">>},
+         #attr{name = <<"mute">>, default = undefined},
+         #attr{name = <<"pinned">>, default = undefined}]}).
 
--xml(xabber_metadata,
+-xml(sync_metadata,
      #elem{name = <<"metadata">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_metadata, '$node', '$_els'},
-     attrs = [
-     #attr{name = <<"node">>}
-     ]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_metadata, '$node', '$_els'},
+       attrs = [#attr{name = <<"node">>}]}).
 
--xml(xabber_conversation_retract,
+-xml(sync_retract,
      #elem{name = <<"retract">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_retract, '$version'},
-     attrs = [#attr{name = <<"version">>,
-                dec = {dec_int, [0, infinity]},
-                enc = {enc_int, []}}
-     ]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_retract, '$version'},
+       attrs = [#attr{name = <<"version">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}}]}).
 
--xml(xabber_conversation_unread,
+-xml(sync_unread,
      #elem{name = <<"unread">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_unread, '$count', '$after'},
-     attrs = [#attr{name = <<"count">>,
-                dec = {dec_int, [0, infinity]},
-                enc = {enc_int, []}},
-              #attr{name = <<"after">>,
-                    required = true}
-     ]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_unread, '$count', '$after'},
+       attrs = [#attr{name = <<"count">>,
+                  dec = {dec_int, [0, infinity]},
+                  enc = {enc_int, []}},
+                #attr{name = <<"after">>,
+                  required = true}]}).
 
--xml(xabber_conversation_displayed,
+-xml(sync_displayed,
      #elem{name = <<"displayed">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_displayed, '$id'},
-     attrs = [#attr{name = <<"id">>,
-                    required = true}
-     ]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_displayed, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
 
--xml(xabber_conversation_delivered,
+-xml(sync_delivered,
      #elem{name = <<"delivered">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_delivered, '$id'},
-     attrs = [
-              #attr{name = <<"id">>,
-                    required = true}
-     ]
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_delivered, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
 
--xml(xabber_conversation_unread_mention,
-     #elem{name = <<"unread-mention">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_unread_mention, '$id'},
-     attrs = [#attr{name = <<"id">>,
-                    required = true}
-     ]
-     }).
-
--xml(xabber_conversation_last,
+-xml(sync_last,
      #elem{name = <<"last-message">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_last, '$_els'}
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_last, '$_els'}}).
 
--xml(xabber_conversation_call,
+-xml(sync_call,
      #elem{name = <<"call">>,
-     xmlns = <<"https://xabber.com/protocol/synchronization">>,
-	   module = 'xabbersynchronization',
-     result = {xabber_conversation_call, '$_els'}
-     }).
+       xmlns = <<"https://xabber.com/protocol/synchronization">>,
+       module = 'xep_sync',
+       result = {sync_call, '$_els'}}).
 
--xml(message_markable,
+-xml(mark_markable,
      #elem{name = <<"markable">>,
 	   xmlns = <<"urn:xmpp:chat-markers:0">>,
 	   module = 'xep0333',
-	   result = {message_markable}
-	   }).
+	   result = {mark_markable}}).
 
--xml(message_received,
+-xml(mark_received,
      #elem{name = <<"received">>,
 	   xmlns = <<"urn:xmpp:chat-markers:0">>,
 	   module = 'xep0333',
-	   result = {message_received, '$id', '$_els'},
-	   attrs = [#attr{name = <<"id">>}]}).
+	   result = {mark_received, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>, required = true}]}).
 
--xml(message_displayed,
+-xml(mark_displayed,
      #elem{name = <<"displayed">>,
 	   xmlns = <<"urn:xmpp:chat-markers:0">>,
 	   module = 'xep0333',
-	   result = {message_displayed, '$id', '$_els'},
-	   attrs = [#attr{name = <<"id">>}]}).
+	   result = {mark_displayed, '$id', '$_els'},
+	   attrs = [#attr{name = <<"id">>, required = true}]}).
 
 -xml(jingle_propose,
      #elem{name = <<"propose">>,
@@ -5622,10 +5371,11 @@
 
 -xml(idle,
      #elem{name = <<"idle">>,
-	   xmlns = <<"urn:xmpp:idle:1">>,
-	   module = 'xep0319',
-	   result = {idle, '$since'},
-	   attrs = [#attr{name = <<"since">>}]}).
+       xmlns = <<"urn:xmpp:idle:1">>,
+       module = 'xep0319',
+       result = {idle, '$since'},
+       attrs = [#attr{name = <<"since">>, required = true,
+         enc = {enc_utc, []}, dec = {dec_utc, []}}]}).
 
 -xml(xen_fallback,
      #elem{name = <<"fallback">>,
@@ -5655,11 +5405,11 @@
                       dec = {dec_enum, [[reject, allow, remove]]},
                       enc = {enc_enum, []}}]}).
 
--xml(notify,
+-xml(xen_notify,
      #elem{name = <<"notify">>,
        xmlns = <<"urn:xabber:xen:0">>,
        module = 'xep_xen',
-       result = {notify, '$notification', '$fallback', '$addresses'},
+       result = {xen_notify, '$notification', '$fallback', '$addresses'},
        refs = [#ref{name = xen_notification, label = '$notification',
                     min = 1, max = 1},
                #ref{name = addresses, label = '$addresses',

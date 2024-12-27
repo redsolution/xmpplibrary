@@ -1,7 +1,7 @@
 %% Created automatically by XML generator (fxml_gen.erl)
 %% Source: xmpp_codec.spec
 
--module(devices).
+-module(xep_devices).
 
 -compile(export_all).
 
