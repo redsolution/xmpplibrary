@@ -196,12 +196,6 @@
 -record(ping, {}).
 -type ping() :: #ping{}.
 
--record(channel_x, {xmlns = <<>> :: binary(),
-                    type = <<>> :: binary(),
-                    version = <<>> :: binary(),
-                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type channel_x() :: #channel_x{}.
-
 -record(delay, {stamp :: erlang:timestamp(),
                 from :: undefined | jid:jid(),
                 desc = <<>> :: binary()}).
@@ -316,9 +310,6 @@
                     id = <<>> :: binary()}).
 -type stanza_id() :: #stanza_id{}.
 
--record(channel_localpart, {cdata = <<>> :: binary()}).
--type channel_localpart() :: #channel_localpart{}.
-
 -record(groups_x, {xmlns = <<>> :: binary(),
                    type = <<>> :: binary(),
                    version = <<>> :: binary(),
@@ -336,12 +327,6 @@
 -record(privilege, {perms = [] :: [#privilege_perm{}],
                     forwarded :: 'undefined' | #forwarded{}}).
 -type privilege() :: #privilege{}.
-
--record(channel_contact, {cdata = <<>> :: binary()}).
--type channel_contact() :: #channel_contact{}.
-
--record(channel_contacts, {contact = [] :: [#channel_contact{}]}).
--type channel_contacts() :: #channel_contacts{}.
 
 -record(xmppreference, {type = <<>> :: binary(),
                         'begin' :: 'undefined' | non_neg_integer(),
@@ -441,9 +426,6 @@
                      items = [] :: [#ps_item{}]}).
 -type ps_publish() :: #ps_publish{}.
 
--record(channel_description, {cdata = <<>> :: binary()}).
--type channel_description() :: #channel_description{}.
-
 -record(xen_notification, {category = <<>> :: binary(),
                            sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xen_notification() :: #xen_notification{}.
@@ -477,12 +459,6 @@
                error :: 'undefined' | #stat_error{}}).
 -type stat() :: #stat{}.
 
--record(groups_contacts, {contacts = [] :: [binary()]}).
--type groups_contacts() :: #groups_contacts{}.
-
--record(groups_domains, {domains = [] :: [binary()]}).
--type groups_domains() :: #groups_domains{}.
-
 -record(addresses, {list = [] :: [#address{}]}).
 -type addresses() :: #addresses{}.
 
@@ -490,6 +466,12 @@
                      fallback = [] :: [#text{}],
                      addresses :: #addresses{}}).
 -type xen_notify() :: #xen_notify{}.
+
+-record(groups_contacts, {contacts = [] :: [binary()]}).
+-type groups_contacts() :: #groups_contacts{}.
+
+-record(groups_domains, {domains = [] :: [binary()]}).
+-type groups_domains() :: #groups_domains{}.
 
 -record(groups_localpart, {cdata = <<>> :: binary()}).
 -type groups_localpart() :: #groups_localpart{}.
@@ -553,9 +535,6 @@
 -record(voice_message, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type voice_message() :: #voice_message{}.
 
--record(channel_query_delete, {cdata = <<>> :: binary()}).
--type channel_query_delete() :: #channel_query_delete{}.
-
 -record(idle, {since :: erlang:timestamp()}).
 -type idle() :: #idle{}.
 
@@ -588,9 +567,6 @@
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
-
--record(channel_index, {cdata = <<>> :: binary()}).
--type channel_index() :: #channel_index{}.
 
 -record(groups_privacy, {cdata = <<>> :: binary()}).
 -type groups_privacy() :: #groups_privacy{}.
@@ -638,6 +614,9 @@
 -record(compression, {methods = [] :: [binary()]}).
 -type compression() :: #compression{}.
 
+-record(muc_subscriptions, {list = [] :: [jid:jid()]}).
+-type muc_subscriptions() :: #muc_subscriptions{}.
+
 -record(xabbertoken_issue, {client :: 'undefined' | binary(),
                             device :: 'undefined' | binary(),
                             description :: 'undefined' | binary(),
@@ -655,15 +634,6 @@
 -record(markup_mention, {node = <<>> :: binary(),
                          cdata = <<>> :: binary()}).
 -type markup_mention() :: #markup_mention{}.
-
--record(channel_domain, {cdata = <<>> :: binary()}).
--type channel_domain() :: #channel_domain{}.
-
--record(channel_domains, {domain = [] :: [#channel_domain{}]}).
--type channel_domains() :: #channel_domains{}.
-
--record(muc_subscriptions, {list = [] :: [jid:jid()]}).
--type muc_subscriptions() :: #muc_subscriptions{}.
 
 -record(avatar_info, {bytes :: non_neg_integer(),
                       id = <<>> :: binary(),
@@ -692,9 +662,6 @@
 
 -record(groups_echo, {message :: #message{}}).
 -type groups_echo() :: #groups_echo{}.
-
--record(channel_membership, {cdata = <<>> :: binary()}).
--type channel_membership() :: #channel_membership{}.
 
 -record(groups_membership, {cdata = <<>> :: binary()}).
 -type groups_membership() :: #groups_membership{}.
@@ -924,9 +891,6 @@
                       sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xdata_field() :: #xdata_field{}.
 
--record(channel_name, {cdata = <<>> :: binary()}).
--type channel_name() :: #channel_name{}.
-
 -record(retract_message, {xmlns = <<>> :: binary(),
                           id :: 'undefined' | binary(),
                           by :: undefined | jid:jid(),
@@ -939,16 +903,6 @@
 -record(push_disable, {jid :: jid:jid(),
                        node = <<>> :: binary()}).
 -type push_disable() :: #push_disable{}.
-
--record(channel_user_card, {id = <<>> :: binary(),
-                            jid :: 'undefined' | binary(),
-                            role :: 'undefined' | binary(),
-                            nickname :: 'undefined' | binary(),
-                            badge :: 'undefined' | binary(),
-                            avatar :: 'undefined' | #avatar_meta{},
-                            present :: 'undefined' | binary(),
-                            subscription :: 'undefined' | binary()}).
--type channel_user_card() :: #channel_user_card{}.
 
 -record(groups_decline, {}).
 -type groups_decline() :: #groups_decline{}.
@@ -1033,13 +987,6 @@
                       items = [] :: [#disco_item{}],
                       rsm :: 'undefined' | #rsm_set{}}).
 -type disco_items() :: #disco_items{}.
-
--record(channel_query, {xmlns = <<>> :: binary(),
-                        id = <<>> :: binary(),
-                        version :: 'undefined' | non_neg_integer(),
-                        rsm :: 'undefined' | #rsm_set{},
-                        sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type channel_query() :: #channel_query{}.
 
 -record(vcard_name, {family :: 'undefined' | binary(),
                      given :: 'undefined' | binary(),
@@ -1475,291 +1422,278 @@
                      members :: 'undefined' | binary()}).
 -type vcard_temp() :: #vcard_temp{}.
 
--type xmpp_element() :: forwarded() |
-                        sic() |
-                        message() |
-                        roster_item() |
-                        carbons_sent() |
-                        disco_info() |
-                        feature_sm() |
-                        vcard_geo() |
-                        xabbertoken_query() |
-                        mam_result() |
-                        delegated() |
-                        jingle_propose() |
-                        xen_prefs() |
-                        adhoc_command() |
-                        text() |
-                        groups_kick() |
-                        register() |
-                        vcard_org() |
-                        sync_query() |
-                        sync_last() |
-                        starttls_proceed() |
-                        push_enable() |
-                        markup_underline() |
-                        groups_name() |
-                        ps_subscription() |
-                        devices_revoke_all() |
-                        stanza_id() |
-                        geoloc() |
-                        rsm_set() |
-                        rsm_first() |
-                        channel_domain() |
-                        sm_resume() |
-                        sasl_abort() |
-                        mix_participant() |
-                        xdata_option() |
-                        xen_notification() |
-                        channel_contact() |
-                        sm_enable() |
-                        upload_request_0() |
-                        version() |
-                        markup_mention() |
-                        sm_resumed() |
-                        search() |
-                        push_disable() |
-                        nick() |
-                        markup_italic() |
-                        bind() |
-                        xabber_push_disable() |
-                        devices_query_items() |
-                        starttls_failure() |
-                        voice_message() |
-                        muc_item() |
-                        bytestreams() |
-                        sasl_success() |
-                        address() |
-                        avatar_data() |
-                        markup_quote() |
-                        groups_user() |
-                        channel_query() |
-                        groups_search() |
-                        ps_unsubscribe() |
-                        sync_retract() |
-                        groups_update() |
-                        csi() |
-                        stream_features() |
-                        handshake() |
-                        sm_r() |
-                        adhoc_note() |
-                        upload_slot() |
-                        groups_membership() |
-                        groups_index() |
-                        presence() |
-                        db_verify() |
-                        offline_item() |
-                        stat() |
-                        vcard_tel() |
-                        feature_csi() |
-                        private() |
-                        carbons_received() |
-                        thumbnail() |
-                        channel_user_card() |
-                        media() |
-                        devices_feature() |
-                        mark_received() |
-                        block_domain() |
-                        delivery_time() |
-                        caps() |
-                        sasl_mechanisms() |
-                        compress_failure() |
-                        ping() |
-                        delivery_x() |
-                        shim() |
-                        sasl_response() |
-                        groups_query_rights() |
-                        ps_retract() |
-                        legacy_auth() |
-                        groups_contacts() |
-                        ps_affiliation() |
-                        mam_fin() |
-                        xdata_field() |
-                        channel_query_delete() |
-                        groups_query() |
-                        muc_unique() |
-                        muc_history() |
-                        ps_error() |
-                        muc_decline() |
-                        sync_metadata() |
-                        channel_domains() |
-                        xmpp_session() |
-                        encrypted_message_omemo() |
-                        sync_displayed() |
-                        media_uri() |
-                        ps_publish() |
-                        sync_synchronization() |
-                        delivery_retry() |
-                        ps_options() |
-                        privacy_list() |
-                        rosterver_feature() |
-                        delivery_received() |
-                        delegation_query() |
-                        stream_error() |
-                        xabber_push_security() |
-                        xevent() |
-                        groups_description() |
-                        retract_query() |
-                        ps_subscribe() |
-                        pubsub() |
-                        replace() |
-                        vcard_temp() |
-                        origin_id() |
-                        devices_device() |
-                        groups_echo() |
-                        groups_query_invites() |
-                        mix_leave() |
-                        adhoc_actions() |
-                        privacy_query() |
-                        mix_join() |
-                        xabbertoken_feature() |
-                        stream_start() |
-                        muc_invite() |
-                        delay() |
-                        groups_pinned_message() |
-                        receipt_request() |
-                        disco_item() |
-                        files_sources() |
-                        markup_link() |
-                        ps_items() |
-                        sasl_failure() |
-                        channel_name() |
-                        groups_localpart() |
-                        oob_x() |
-                        mark_markable() |
-                        carbons_private() |
-                        starttls() |
-                        groups_user_id() |
-                        xen_notify() |
-                        muc() |
-                        vcard_photo() |
-                        compressed() |
-                        sm_enabled() |
-                        groups_revoke() |
-                        xdata() |
-                        hint() |
-                        sm_failed() |
-                        mam_query() |
-                        last() |
-                        iq() |
-                        groups_ptp() |
-                        sync_delivered() |
-                        ps_event() |
-                        sm_a() |
-                        stats() |
-                        channel_contacts() |
-                        xabbertoken_issue() |
-                        muc_subscribe() |
-                        idle() |
-                        vcard_key() |
-                        block_list() |
-                        sync_unread() |
-                        muc_subscriptions() |
-                        retract_invalidate() |
-                        upload_request() |
-                        vcard_name() |
-                        sync_conversation() |
-                        receipt_response() |
-                        roster_query() |
-                        bookmark_storage() |
-                        pubsub_owner() |
-                        xabber_encryption_key() |
-                        privilege() |
-                        xen_jid() |
-                        compress() |
-                        groups_unblock() |
-                        privacy_item() |
-                        groups_domains() |
-                        'see-other-host'() |
-                        retract_all() |
-                        vcard_logo() |
-                        stanza_error() |
-                        offline() |
-                        streamhost() |
+-type xmpp_element() :: xabber_push_notification() |
                         replace_message() |
-                        encrypted() |
-                        vcard_xupdate() |
-                        stat_error() |
-                        avatar_pointer() |
-                        addresses() |
-                        avatar_info() |
-                        privilege_perm() |
-                        sasl_challenge() |
-                        xabbertoken_revoke() |
-                        expire() |
-                        sync_call() |
-                        db_result() |
-                        mam_archived() |
-                        unblock() |
-                        sticker() |
-                        channel_localpart() |
-                        gone() |
-                        xcaptcha() |
-                        groups_block() |
-                        bob_data() |
-                        bmarkup_bold() |
-                        bookmark_conference() |
-                        groups_decline() |
-                        carbons_enable() |
-                        carbons_disable() |
-                        vcard_label() |
-                        legacy_auth_feature() |
-                        channel_description() |
-                        identity() |
-                        xabbertoken_xtoken() |
-                        devices_revoke() |
-                        devices_query() |
-                        mark_displayed() |
-                        block() |
-                        time() |
-                        muc_destroy() |
-                        bookmark_url() |
-                        disco_items() |
-                        retract_message() |
-                        chatstate() |
-                        x_conference() |
-                        channel_index() |
-                        upload_slot_0() |
-                        channel_x() |
-                        groups_x() |
-                        muc_user() |
-                        retract_user() |
-                        mam_prefs() |
-                        groups_privacy() |
+                        groups_index() |
+                        bind() |
+                        xmpp_session() |
+                        stream_error() |
+                        sync_displayed() |
+                        ps_options() |
                         groups_collect() |
-                        muc_unsubscribe() |
-                        push_notification() |
-                        delegation() |
-                        files_file_sharing() |
-                        ps_item() |
-                        markup_strike() |
-                        xmppreference() |
-                        groups_invite() |
-                        redirect() |
-                        xabbertoken_revoke_all() |
-                        replaced() |
-                        jingle_accept() |
-                        vcard_email() |
-                        channel_membership() |
-                        muc_owner() |
-                        groups_status() |
-                        avatar_meta() |
-                        sasl_auth() |
-                        block_jid() |
-                        push_call() |
-                        groups_invite_user() |
-                        search_item() |
-                        vcard_sound() |
-                        muc_admin() |
-                        block_id() |
-                        db_feature() |
-                        xabber_push_enable() |
-                        device_register() |
-                        muc_actor() |
-                        files_file() |
-                        xabber_push_notification() |
-                        jingle_reject() |
+                        mam_fin() |
+                        devices_revoke_all() |
+                        sync_metadata() |
+                        register() |
+                        push_disable() |
+                        private() |
+                        mark_displayed() |
+                        vcard_label() |
+                        xabbertoken_xtoken() |
+                        sm_enabled() |
+                        upload_request() |
+                        bookmark_storage() |
+                        address() |
+                        muc_decline() |
+                        sm_enable() |
+                        ps_event() |
+                        sync_query() |
+                        groups_domains() |
+                        sasl_mechanisms() |
+                        ps_error() |
+                        encrypted() |
+                        privacy_item() |
+                        carbons_received() |
+                        'see-other-host'() |
+                        replace() |
+                        sic() |
+                        delivery_x() |
+                        privilege() |
+                        db_verify() |
                         xabbertoken_query_items() |
+                        mark_markable() |
+                        stat() |
+                        ps_affiliation() |
+                        devices_query_items() |
+                        ps_item() |
+                        oob_x() |
+                        muc_admin() |
+                        feature_csi() |
+                        xen_jid() |
+                        vcard_xupdate() |
+                        mam_query() |
+                        rsm_set() |
+                        handshake() |
+                        version() |
+                        muc_subscriptions() |
+                        mam_prefs() |
+                        sync_unread() |
+                        xen_notify() |
+                        xen_prefs() |
+                        sync_retract() |
+                        groups_ptp() |
+                        feature_sm() |
+                        xdata_field() |
+                        muc_unsubscribe() |
+                        rosterver_feature() |
+                        redirect() |
+                        muc_actor() |
+                        files_sources() |
+                        vcard_sound() |
+                        groups_invite() |
+                        rsm_first() |
+                        delay() |
+                        media_uri() |
+                        files_file_sharing() |
+                        roster_query() |
+                        push_enable() |
+                        unblock() |
+                        stanza_id() |
+                        groups_description() |
+                        privacy_list() |
+                        forwarded() |
+                        files_file() |
+                        sticker() |
+                        offline() |
+                        block() |
+                        streamhost() |
+                        groups_decline() |
+                        ps_unsubscribe() |
+                        mix_leave() |
+                        retract_message() |
+                        bookmark_url() |
+                        push_call() |
+                        adhoc_command() |
+                        compressed() |
+                        groups_membership() |
+                        addresses() |
+                        markup_quote() |
+                        text() |
+                        push_notification() |
+                        delivery_received() |
+                        ps_subscribe() |
+                        stream_start() |
+                        markup_strike() |
+                        groups_unblock() |
+                        xabber_push_security() |
+                        ps_items() |
+                        markup_link() |
+                        groups_query_rights() |
+                        xcaptcha() |
+                        device_register() |
+                        groups_name() |
+                        starttls_failure() |
+                        groups_invite_user() |
+                        vcard_org() |
+                        delegation_query() |
+                        origin_id() |
+                        sm_resumed() |
+                        groups_block() |
+                        search() |
+                        adhoc_note() |
+                        muc_owner() |
+                        carbons_sent() |
+                        mam_archived() |
+                        xevent() |
+                        sasl_auth() |
+                        groups_privacy() |
+                        ps_subscription() |
+                        muc_item() |
+                        legacy_auth() |
+                        mix_participant() |
+                        sasl_success() |
+                        xdata() |
+                        devices_device() |
+                        replaced() |
+                        delivery_retry() |
+                        starttls_proceed() |
+                        csi() |
+                        xabbertoken_revoke() |
+                        xabbertoken_issue() |
+                        sasl_failure() |
+                        stanza_error() |
+                        caps() |
+                        groups_update() |
+                        vcard_logo() |
+                        vcard_geo() |
+                        roster_item() |
+                        retract_query() |
+                        mix_join() |
+                        idle() |
+                        disco_item() |
+                        upload_slot_0() |
+                        stats() |
+                        vcard_photo() |
+                        groups_revoke() |
+                        sm_resume() |
+                        hint() |
+                        avatar_pointer() |
+                        retract_invalidate() |
+                        carbons_enable() |
+                        delegation() |
+                        groups_x() |
+                        carbons_private() |
+                        sync_delivered() |
+                        bob_data() |
+                        xabbertoken_revoke_all() |
+                        groups_pinned_message() |
+                        groups_user_id() |
+                        groups_user() |
+                        bmarkup_bold() |
+                        groups_contacts() |
+                        block_list() |
+                        groups_query() |
+                        x_conference() |
+                        groups_status() |
+                        vcard_key() |
+                        vcard_name() |
+                        groups_search() |
+                        gone() |
+                        muc_user() |
+                        sm_failed() |
+                        xabber_push_disable() |
                         vcard_adr() |
+                        media() |
+                        markup_underline() |
+                        bookmark_conference() |
                         compression() |
-                        feature_register().
+                        pubsub() |
+                        xabbertoken_feature() |
+                        retract_all() |
+                        compress() |
+                        block_id() |
+                        avatar_data() |
+                        groups_query_invites() |
+                        muc_destroy() |
+                        groups_echo() |
+                        ps_retract() |
+                        xen_notification() |
+                        groups_localpart() |
+                        bytestreams() |
+                        offline_item() |
+                        block_jid() |
+                        xabber_push_enable() |
+                        delegated() |
+                        stream_features() |
+                        sync_conversation() |
+                        upload_request_0() |
+                        vcard_tel() |
+                        shim() |
+                        receipt_request() |
+                        muc_invite() |
+                        muc_subscribe() |
+                        avatar_meta() |
+                        upload_slot() |
+                        disco_info() |
+                        privacy_query() |
+                        disco_items() |
+                        xdata_option() |
+                        xmppreference() |
+                        presence() |
+                        groups_kick() |
+                        sasl_abort() |
+                        db_result() |
+                        muc_history() |
+                        legacy_auth_feature() |
+                        receipt_response() |
+                        devices_revoke() |
+                        vcard_temp() |
+                        geoloc() |
+                        markup_mention() |
+                        avatar_info() |
+                        sasl_response() |
+                        markup_italic() |
+                        sm_r() |
+                        expire() |
+                        devices_query() |
+                        message() |
+                        sync_call() |
+                        voice_message() |
+                        muc_unique() |
+                        devices_feature() |
+                        ps_publish() |
+                        ping() |
+                        identity() |
+                        encrypted_message_omemo() |
+                        retract_user() |
+                        last() |
+                        xabbertoken_query() |
+                        starttls() |
+                        thumbnail() |
+                        jingle_accept() |
+                        sync_last() |
+                        vcard_email() |
+                        compress_failure() |
+                        time() |
+                        sasl_challenge() |
+                        privilege_perm() |
+                        mark_received() |
+                        adhoc_actions() |
+                        chatstate() |
+                        block_domain() |
+                        feature_register() |
+                        iq() |
+                        sm_a() |
+                        jingle_reject() |
+                        pubsub_owner() |
+                        jingle_propose() |
+                        db_feature() |
+                        nick() |
+                        carbons_disable() |
+                        delivery_time() |
+                        sync_synchronization() |
+                        stat_error() |
+                        muc() |
+                        xabber_encryption_key() |
+                        search_item() |
+                        mam_result().
