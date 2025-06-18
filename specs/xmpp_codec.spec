@@ -5018,7 +5018,8 @@
      #elem{name = <<"link">>,
        xmlns = <<"https://xabber.com/protocol/markup">>,
        module = 'xep_markup',
-       result = {markup_link}}).
+       result = {markup_link, '$cdata'},
+       cdata = #cdata{label = '$cdata'}}).
 
 -xml(markup_quote,
      #elem{name = <<"quote">>,

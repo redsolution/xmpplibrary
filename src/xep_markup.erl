@@ -62,14 +62,14 @@ do_encode({markup_underline} = Underline, TopXMLNS) ->
     encode_markup_underline(Underline, TopXMLNS);
 do_encode({markup_strike} = Strike, TopXMLNS) ->
     encode_markup_strike(Strike, TopXMLNS);
-do_encode({markup_link} = Link, TopXMLNS) ->
+do_encode({markup_link, _} = Link, TopXMLNS) ->
     encode_markup_link(Link, TopXMLNS);
 do_encode({markup_quote} = Quote, TopXMLNS) ->
     encode_markup_quote(Quote, TopXMLNS).
 
 do_get_name({bmarkup_bold}) -> <<"bold">>;
 do_get_name({markup_italic}) -> <<"italic">>;
-do_get_name({markup_link}) -> <<"link">>;
+do_get_name({markup_link, _}) -> <<"link">>;
 do_get_name({markup_mention, _, _}) -> <<"mention">>;
 do_get_name({markup_quote}) -> <<"quote">>;
 do_get_name({markup_strike}) -> <<"strike">>;
@@ -79,7 +79,7 @@ do_get_ns({bmarkup_bold}) ->
     <<"https://xabber.com/protocol/markup">>;
 do_get_ns({markup_italic}) ->
     <<"https://xabber.com/protocol/markup">>;
-do_get_ns({markup_link}) ->
+do_get_ns({markup_link, _}) ->
     <<"https://xabber.com/protocol/markup">>;
 do_get_ns({markup_mention, _, _}) ->
     <<"https://xabber.com/protocol/markup">>;
@@ -95,14 +95,14 @@ pp(bmarkup_bold, 0) -> [];
 pp(markup_italic, 0) -> [];
 pp(markup_underline, 0) -> [];
 pp(markup_strike, 0) -> [];
-pp(markup_link, 0) -> [];
+pp(markup_link, 1) -> [cdata];
 pp(markup_quote, 0) -> [];
 pp(_, _) -> no.
 
 records() ->
     [{markup_mention, 2}, {bmarkup_bold, 0},
      {markup_italic, 0}, {markup_underline, 0},
-     {markup_strike, 0}, {markup_link, 0},
+     {markup_strike, 0}, {markup_link, 1},
      {markup_quote, 0}].
 
 decode_markup_quote(__TopXMLNS, __Opts,
@@ -120,16 +120,35 @@ encode_markup_quote({markup_quote}, __TopXMLNS) ->
 
 decode_markup_link(__TopXMLNS, __Opts,
 		   {xmlel, <<"link">>, _attrs, _els}) ->
-    {markup_link}.
+    Cdata = decode_markup_link_els(__TopXMLNS, __Opts, _els,
+				   <<>>),
+    {markup_link, Cdata}.
 
-encode_markup_link({markup_link}, __TopXMLNS) ->
+decode_markup_link_els(__TopXMLNS, __Opts, [], Cdata) ->
+    decode_markup_link_cdata(__TopXMLNS, Cdata);
+decode_markup_link_els(__TopXMLNS, __Opts,
+		       [{xmlcdata, _data} | _els], Cdata) ->
+    decode_markup_link_els(__TopXMLNS, __Opts, _els,
+			   <<Cdata/binary, _data/binary>>);
+decode_markup_link_els(__TopXMLNS, __Opts, [_ | _els],
+		       Cdata) ->
+    decode_markup_link_els(__TopXMLNS, __Opts, _els, Cdata).
+
+encode_markup_link({markup_link, Cdata}, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/markup">>,
 				    [], __TopXMLNS),
-    _els = [],
+    _els = encode_markup_link_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"link">>, _attrs, _els}.
+
+decode_markup_link_cdata(__TopXMLNS, <<>>) -> <<>>;
+decode_markup_link_cdata(__TopXMLNS, _val) -> _val.
+
+encode_markup_link_cdata(<<>>, _acc) -> _acc;
+encode_markup_link_cdata(_val, _acc) ->
+    [{xmlcdata, _val} | _acc].
 
 decode_markup_strike(__TopXMLNS, __Opts,
 		     {xmlel, <<"strike">>, _attrs, _els}) ->

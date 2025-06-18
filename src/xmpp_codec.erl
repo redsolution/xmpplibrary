@@ -2012,6 +2012,7 @@ get_mod({compressed}) -> xep0138;
 get_mod({stream_error, _, _}) -> rfc6120;
 get_mod({receipt_request}) -> xep0184;
 get_mod({upload_request_0, _, _, _, _}) -> xep0363;
+get_mod({markup_link, _}) -> xep_markup;
 get_mod({retract_message, _, _, _, _, _, _, _}) ->
     xep_rewrite;
 get_mod({xen_notify, _, _, _}) -> xep_xen;
@@ -2126,7 +2127,6 @@ get_mod({sm_r, _}) -> xep0198;
 get_mod({upload_slot_0, _, _, _}) -> xep0363;
 get_mod({delegation_query, _, _}) -> xep0355;
 get_mod({groups_ptp, _, _, _}) -> xep_groups;
-get_mod({markup_link}) -> xep_markup;
 get_mod({replace_message, _, _, _, _, _, _}) ->
     xep_rewrite;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
