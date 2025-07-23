@@ -5391,8 +5391,12 @@
        xmlns = <<"urn:xabber:xen:0">>,
        module = 'xep_xen',
        ignore_els = true,
-       result = {xen_notification, '$category', '$_els'},
-       attrs = [#attr{name = <<"category">>}]}).
+       result = {xen_notification, '$alert','$category', '$_els'},
+       attrs = [#attr{name = <<"alert">>,
+                     default = false,
+                     dec = {dec_bool, []},
+                     enc = {enc_bool, []}},
+                #attr{name = <<"category">>}]}).
 
 -xml(xen_jid,
      #elem{name = <<"jid">>,

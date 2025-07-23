@@ -426,7 +426,8 @@
                      items = [] :: [#ps_item{}]}).
 -type ps_publish() :: #ps_publish{}.
 
--record(xen_notification, {category = <<>> :: binary(),
+-record(xen_notification, {alert = false :: boolean(),
+                           category = <<>> :: binary(),
                            sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xen_notification() :: #xen_notification{}.
 
@@ -1434,8 +1435,8 @@
                         mam_result() |
                         delegated() |
                         jingle_propose() |
-                        xen_prefs() |
                         adhoc_command() |
+                        text() |
                         groups_kick() |
                         register() |
                         vcard_org() |
@@ -1476,6 +1477,7 @@
                         avatar_data() |
                         markup_quote() |
                         groups_user() |
+                        xen_prefs() |
                         groups_search() |
                         ps_unsubscribe() |
                         sync_retract() |
@@ -1566,9 +1568,7 @@
                         mark_markable() |
                         carbons_private() |
                         starttls() |
-                        search() |
                         groups_user_id() |
-                        xen_notify() |
                         muc() |
                         vcard_photo() |
                         compressed() |
@@ -1602,7 +1602,6 @@
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
-                        xen_jid() |
                         compress() |
                         groups_unblock() |
                         privacy_item() |
@@ -1615,10 +1614,12 @@
                         streamhost() |
                         replace_message() |
                         encrypted() |
+                        search() |
                         vcard_xupdate() |
                         stat_error() |
                         avatar_pointer() |
                         addresses() |
+                        replace() |
                         avatar_info() |
                         privilege_perm() |
                         sasl_challenge() |
@@ -1630,9 +1631,9 @@
                         unblock() |
                         sticker() |
                         gone() |
+                        xen_notify() |
                         xcaptcha() |
                         groups_block() |
-                        replace() |
                         bob_data() |
                         bmarkup_bold() |
                         bookmark_conference() |
@@ -1674,7 +1675,7 @@
                         replaced() |
                         jingle_accept() |
                         vcard_email() |
-                        text() |
+                        xen_jid() |
                         muc_owner() |
                         groups_status() |
                         avatar_meta() |

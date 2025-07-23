@@ -1843,6 +1843,7 @@ get_mod({groups_echo, _}) -> xep_groups;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
 get_mod({groups_membership, _}) -> xep_groups;
 get_mod({xmppreference, _, _, _, _}) -> xep0372;
+get_mod({xen_notification, _, _, _}) -> xep_xen;
 get_mod({sasl_auth, _, _}) -> rfc6120;
 get_mod({vcard_logo, _, _, _}) -> xep0054;
 get_mod({ps_item, _, _, _, _, _}) -> xep0060;
@@ -1990,7 +1991,6 @@ get_mod({delegation, _, _}) -> xep0355;
 get_mod({groups_x, _, _, _, _, _, _, _, _}) ->
     xep_groups;
 get_mod({retract_invalidate, _, _, _}) -> xep_rewrite;
-get_mod({xen_notification, _, _}) -> xep_xen;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
 get_mod({retract_user, _, _, _, _, _, _, _}) ->
     xep_rewrite;
