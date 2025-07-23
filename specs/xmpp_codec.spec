@@ -4982,6 +4982,13 @@
        result = {groups_localpart, '$cdata'},
        cdata = #cdata{label = '$cdata'}}).
 
+-xml(groups_mentions,
+     #elem{name = <<"mentions">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_mentions,  '$members'},
+       refs = [#ref{name = groups_user, min = 0, label = '$members'}]}).
+
 -xml(markup_mention,
      #elem{name = <<"mention">>,
        xmlns = <<"https://xabber.com/protocol/markup">>,

@@ -5,6 +5,10 @@
 
 -compile(export_all).
 
+do_decode(<<"mentions">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_mentions(<<"https://xabber.com/protocol/groups">>,
+			   Opts, El);
 do_decode(<<"localpart">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_localpart(<<"https://xabber.com/protocol/groups">>,
@@ -306,7 +310,9 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"localpart">>,
+    [{<<"mentions">>,
+      <<"https://xabber.com/protocol/groups">>},
+     {<<"localpart">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"localpart">>,
       <<"https://xabber.com/protocol/groups#create">>},
@@ -500,7 +506,9 @@ do_encode({groups_membership, _} = Membership,
     encode_groups_membership(Membership, TopXMLNS);
 do_encode({groups_localpart, _} = Localpart,
 	  TopXMLNS) ->
-    encode_groups_localpart(Localpart, TopXMLNS).
+    encode_groups_localpart(Localpart, TopXMLNS);
+do_encode({groups_mentions, _} = Mentions, TopXMLNS) ->
+    encode_groups_mentions(Mentions, TopXMLNS).
 
 do_get_name({block_domain, _}) -> <<"domain">>;
 do_get_name({block_id, _}) -> <<"id">>;
@@ -520,6 +528,7 @@ do_get_name({groups_invite_user, _, _}) -> <<"user">>;
 do_get_name({groups_kick, _, _}) -> <<"kick">>;
 do_get_name({groups_localpart, _}) -> <<"localpart">>;
 do_get_name({groups_membership, _}) -> <<"membership">>;
+do_get_name({groups_mentions, _}) -> <<"mentions">>;
 do_get_name({groups_name, _}) -> <<"name">>;
 do_get_name({groups_pinned_message, _}) ->
     <<"pinned-message">>;
@@ -573,6 +582,8 @@ do_get_ns({groups_kick, _, _}) ->
 do_get_ns({groups_localpart, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_membership, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
+do_get_ns({groups_mentions, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_name, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -664,6 +675,7 @@ pp(groups_privacy, 1) -> [cdata];
 pp(groups_description, 1) -> [cdata];
 pp(groups_membership, 1) -> [cdata];
 pp(groups_localpart, 1) -> [cdata];
+pp(groups_mentions, 1) -> [members];
 pp(_, _) -> no.
 
 records() ->
@@ -680,7 +692,8 @@ records() ->
      {groups_pinned_message, 1}, {groups_index, 1},
      {groups_name, 1}, {groups_status, 1},
      {groups_privacy, 1}, {groups_description, 1},
-     {groups_membership, 1}, {groups_localpart, 1}].
+     {groups_membership, 1}, {groups_localpart, 1},
+     {groups_mentions, 1}].
 
 dec_int(Val, Min, Max) ->
     case erlang:binary_to_integer(Val) of
@@ -689,6 +702,56 @@ dec_int(Val, Min, Max) ->
     end.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
+
+decode_groups_mentions(__TopXMLNS, __Opts,
+		       {xmlel, <<"mentions">>, _attrs, _els}) ->
+    Members = decode_groups_mentions_els(__TopXMLNS, __Opts,
+					 _els, []),
+    {groups_mentions, Members}.
+
+decode_groups_mentions_els(__TopXMLNS, __Opts, [],
+			   Members) ->
+    lists:reverse(Members);
+decode_groups_mentions_els(__TopXMLNS, __Opts,
+			   [{xmlel, <<"user">>, _attrs, _} = _el | _els],
+			   Members) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_mentions_els(__TopXMLNS, __Opts, _els,
+				     [decode_groups_user(<<"https://xabber.com/protocol/groups">>,
+							 __Opts, _el)
+				      | Members]);
+      _ ->
+	  decode_groups_mentions_els(__TopXMLNS, __Opts, _els,
+				     Members)
+    end;
+decode_groups_mentions_els(__TopXMLNS, __Opts,
+			   [_ | _els], Members) ->
+    decode_groups_mentions_els(__TopXMLNS, __Opts, _els,
+			       Members).
+
+encode_groups_mentions({groups_mentions, Members},
+		       __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
+				    [], __TopXMLNS),
+    _els =
+	lists:reverse('encode_groups_mentions_$members'(Members,
+							__NewTopXMLNS, [])),
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"mentions">>, _attrs, _els}.
+
+'encode_groups_mentions_$members'([], __TopXMLNS,
+				  _acc) ->
+    _acc;
+'encode_groups_mentions_$members'([Members | _els],
+				  __TopXMLNS, _acc) ->
+    'encode_groups_mentions_$members'(_els, __TopXMLNS,
+				      [encode_groups_user(Members, __TopXMLNS)
+				       | _acc]).
 
 decode_groups_localpart(__TopXMLNS, __Opts,
 			{xmlel, <<"localpart">>, _attrs, _els}) ->
