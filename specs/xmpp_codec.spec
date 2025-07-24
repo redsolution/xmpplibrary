@@ -5001,7 +5001,7 @@
      #elem{name = <<"bold">>,
        xmlns = <<"https://xabber.com/protocol/markup">>,
        module = 'xep_markup',
-       result = {bmarkup_bold}}).
+       result = {markup_bold}}).
 
 -xml(markup_italic,
      #elem{name = <<"italic">>,

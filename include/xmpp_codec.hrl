@@ -148,8 +148,8 @@
 -record(sync_displayed, {id = <<>> :: binary()}).
 -type sync_displayed() :: #sync_displayed{}.
 
--record(bmarkup_bold, {}).
--type bmarkup_bold() :: #bmarkup_bold{}.
+-record(markup_bold, {}).
+-type markup_bold() :: #markup_bold{}.
 
 -record(jingle_reject, {id = <<>> :: binary(),
                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
@@ -1433,56 +1433,58 @@
                         carbons_sent() |
                         disco_info() |
                         feature_sm() |
+                        replace() |
                         vcard_geo() |
                         xabbertoken_query() |
                         mam_result() |
                         delegated() |
-                        mark_displayed() |
-                        xen_notify() |
+                        jingle_propose() |
                         adhoc_command() |
                         groups_kick() |
                         register() |
                         vcard_org() |
-                        sync_delivered() |
+                        sync_query() |
+                        sync_last() |
                         starttls_proceed() |
                         push_enable() |
-                        markup_italic() |
+                        markup_underline() |
                         groups_name() |
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
+                        geoloc() |
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
-                        retract_user() |
+                        search() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
-                        replace_message() |
+                        xen_notification() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
                         groups_mentions() |
                         sm_resumed() |
-                        voice_message() |
                         push_disable() |
                         nick() |
-                        bmarkup_bold() |
+                        markup_italic() |
                         bind() |
                         xabber_push_disable() |
                         devices_query_items() |
                         starttls_failure() |
+                        voice_message() |
                         muc_item() |
-                        retract_message() |
                         bytestreams() |
                         sasl_success() |
                         address() |
                         avatar_data() |
-                        markup_link() |
+                        markup_quote() |
                         groups_user() |
+                        xen_prefs() |
                         groups_search() |
                         ps_unsubscribe() |
-                        sync_metadata() |
+                        sync_retract() |
                         groups_update() |
                         csi() |
                         stream_features() |
@@ -1503,6 +1505,7 @@
                         thumbnail() |
                         media() |
                         devices_feature() |
+                        mark_received() |
                         block_domain() |
                         delivery_time() |
                         caps() |
@@ -1525,11 +1528,13 @@
                         ps_error() |
                         markup_mention() |
                         muc_decline() |
+                        sync_metadata() |
                         xmpp_session() |
                         encrypted_message_omemo() |
-                        sync_unread() |
+                        sync_displayed() |
                         media_uri() |
                         ps_publish() |
+                        sync_synchronization() |
                         delivery_retry() |
                         ps_options() |
                         privacy_list() |
@@ -1539,15 +1544,12 @@
                         stream_error() |
                         xabber_push_security() |
                         xevent() |
-                        xen_jid() |
-                        files_sources() |
-                        sync_conversation() |
+                        text() |
                         groups_description() |
-                        replaced() |
+                        retract_query() |
                         ps_subscribe() |
                         pubsub() |
                         vcard_temp() |
-                        retract_query() |
                         origin_id() |
                         devices_device() |
                         groups_echo() |
@@ -1563,14 +1565,13 @@
                         groups_pinned_message() |
                         receipt_request() |
                         disco_item() |
-                        mark_markable() |
-                        files_file() |
-                        markup_strike() |
+                        files_sources() |
+                        markup_link() |
                         ps_items() |
                         sasl_failure() |
                         groups_localpart() |
                         oob_x() |
-                        sync_call() |
+                        mark_markable() |
                         carbons_private() |
                         starttls() |
                         groups_user_id() |
@@ -1583,42 +1584,41 @@
                         hint() |
                         sm_failed() |
                         mam_query() |
-                        sync_synchronization() |
                         last() |
                         iq() |
                         groups_ptp() |
-                        sync_displayed() |
+                        sync_delivered() |
                         ps_event() |
                         sm_a() |
-                        sticker() |
                         stats() |
                         xabbertoken_issue() |
                         muc_subscribe() |
-                        jingle_accept() |
+                        idle() |
                         vcard_key() |
                         block_list() |
-                        sync_retract() |
+                        sync_unread() |
                         muc_subscriptions() |
+                        retract_invalidate() |
                         upload_request() |
                         vcard_name() |
-                        sync_query() |
+                        sync_conversation() |
                         receipt_response() |
                         roster_query() |
                         bookmark_storage() |
-                        text() |
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
-                        xen_notification() |
                         compress() |
                         groups_unblock() |
                         privacy_item() |
                         groups_domains() |
                         'see-other-host'() |
+                        retract_all() |
                         vcard_logo() |
                         stanza_error() |
                         offline() |
                         streamhost() |
+                        replace_message() |
                         encrypted() |
                         vcard_xupdate() |
                         stat_error() |
@@ -1629,75 +1629,75 @@
                         sasl_challenge() |
                         xabbertoken_revoke() |
                         expire() |
-                        sync_last() |
+                        sync_call() |
                         db_result() |
                         mam_archived() |
                         unblock() |
-                        xen_prefs() |
+                        sticker() |
                         gone() |
+                        xen_notify() |
                         xcaptcha() |
-                        geoloc() |
                         groups_block() |
                         bob_data() |
-                        idle() |
+                        markup_bold() |
                         bookmark_conference() |
                         groups_decline() |
                         carbons_enable() |
                         carbons_disable() |
-                        xmppreference() |
                         vcard_label() |
                         legacy_auth_feature() |
                         identity() |
                         xabbertoken_xtoken() |
                         devices_revoke() |
                         devices_query() |
-                        mark_received() |
+                        mark_displayed() |
                         block() |
                         time() |
                         muc_destroy() |
                         bookmark_url() |
                         disco_items() |
-                        markup_quote() |
+                        retract_message() |
                         chatstate() |
                         x_conference() |
                         upload_slot_0() |
                         groups_x() |
-                        files_file_sharing() |
                         muc_user() |
-                        retract_all() |
+                        retract_user() |
                         mam_prefs() |
                         groups_privacy() |
                         groups_collect() |
                         muc_unsubscribe() |
                         push_notification() |
                         delegation() |
+                        files_file_sharing() |
                         ps_item() |
-                        markup_underline() |
-                        retract_invalidate() |
+                        markup_strike() |
+                        xmppreference() |
                         groups_invite() |
                         redirect() |
                         xabbertoken_revoke_all() |
-                        jingle_reject() |
+                        replaced() |
+                        jingle_accept() |
                         vcard_email() |
+                        xen_jid() |
                         muc_owner() |
                         groups_status() |
-                        search() |
                         avatar_meta() |
                         sasl_auth() |
                         block_jid() |
                         push_call() |
                         groups_invite_user() |
-                        replace() |
                         search_item() |
                         vcard_sound() |
                         muc_admin() |
                         block_id() |
-                        jingle_propose() |
                         db_feature() |
                         xabber_push_enable() |
                         device_register() |
                         muc_actor() |
+                        files_file() |
                         xabber_push_notification() |
+                        jingle_reject() |
                         xabbertoken_query_items() |
                         vcard_adr() |
                         compression() |

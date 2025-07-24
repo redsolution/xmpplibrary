@@ -54,7 +54,7 @@ tags() ->
 
 do_encode({markup_mention, _, _} = Mention, TopXMLNS) ->
     encode_markup_mention(Mention, TopXMLNS);
-do_encode({bmarkup_bold} = Bold, TopXMLNS) ->
+do_encode({markup_bold} = Bold, TopXMLNS) ->
     encode_markup_bold(Bold, TopXMLNS);
 do_encode({markup_italic} = Italic, TopXMLNS) ->
     encode_markup_italic(Italic, TopXMLNS);
@@ -67,7 +67,7 @@ do_encode({markup_link, _} = Link, TopXMLNS) ->
 do_encode({markup_quote} = Quote, TopXMLNS) ->
     encode_markup_quote(Quote, TopXMLNS).
 
-do_get_name({bmarkup_bold}) -> <<"bold">>;
+do_get_name({markup_bold}) -> <<"bold">>;
 do_get_name({markup_italic}) -> <<"italic">>;
 do_get_name({markup_link, _}) -> <<"link">>;
 do_get_name({markup_mention, _, _}) -> <<"mention">>;
@@ -75,7 +75,7 @@ do_get_name({markup_quote}) -> <<"quote">>;
 do_get_name({markup_strike}) -> <<"strike">>;
 do_get_name({markup_underline}) -> <<"underline">>.
 
-do_get_ns({bmarkup_bold}) ->
+do_get_ns({markup_bold}) ->
     <<"https://xabber.com/protocol/markup">>;
 do_get_ns({markup_italic}) ->
     <<"https://xabber.com/protocol/markup">>;
@@ -91,7 +91,7 @@ do_get_ns({markup_underline}) ->
     <<"https://xabber.com/protocol/markup">>.
 
 pp(markup_mention, 2) -> [node, cdata];
-pp(bmarkup_bold, 0) -> [];
+pp(markup_bold, 0) -> [];
 pp(markup_italic, 0) -> [];
 pp(markup_underline, 0) -> [];
 pp(markup_strike, 0) -> [];
@@ -100,7 +100,7 @@ pp(markup_quote, 0) -> [];
 pp(_, _) -> no.
 
 records() ->
-    [{markup_mention, 2}, {bmarkup_bold, 0},
+    [{markup_mention, 2}, {markup_bold, 0},
      {markup_italic, 0}, {markup_underline, 0},
      {markup_strike, 0}, {markup_link, 1},
      {markup_quote, 0}].
@@ -192,9 +192,9 @@ encode_markup_italic({markup_italic}, __TopXMLNS) ->
 
 decode_markup_bold(__TopXMLNS, __Opts,
 		   {xmlel, <<"bold">>, _attrs, _els}) ->
-    {bmarkup_bold}.
+    {markup_bold}.
 
-encode_markup_bold({bmarkup_bold}, __TopXMLNS) ->
+encode_markup_bold({markup_bold}, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/markup">>,
 				    [], __TopXMLNS),

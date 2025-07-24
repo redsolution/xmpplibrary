@@ -1898,7 +1898,7 @@ get_mod({markup_italic}) -> xep_markup;
 get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->
     xep0054;
 get_mod({groups_invite_user, _, _}) -> xep_groups;
-get_mod({bmarkup_bold}) -> xep_markup;
+get_mod({markup_bold}) -> xep_markup;
 get_mod({stats, _, _}) -> xep0039;
 get_mod({muc, _, _}) -> xep0045;
 get_mod({carbons_enable}) -> xep0280;
