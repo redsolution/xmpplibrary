@@ -426,7 +426,7 @@
                      items = [] :: [#ps_item{}]}).
 -type ps_publish() :: #ps_publish{}.
 
--record(xen_notification, {alert = false :: boolean(),
+-record(xen_notification, {type = <<110,111,114,109,97,108>> :: binary(),
                            category = <<>> :: binary(),
                            sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xen_notification() :: #xen_notification{}.
@@ -1433,12 +1433,12 @@
                         carbons_sent() |
                         disco_info() |
                         feature_sm() |
-                        replace() |
                         vcard_geo() |
                         xabbertoken_query() |
                         mam_result() |
                         delegated() |
                         jingle_propose() |
+                        xen_prefs() |
                         adhoc_command() |
                         groups_kick() |
                         register() |
@@ -1446,6 +1446,7 @@
                         sync_query() |
                         sync_last() |
                         starttls_proceed() |
+                        text() |
                         push_enable() |
                         markup_underline() |
                         groups_name() |
@@ -1456,11 +1457,11 @@
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
-                        search() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
                         xen_notification() |
+                        search() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
@@ -1481,7 +1482,6 @@
                         avatar_data() |
                         markup_quote() |
                         groups_user() |
-                        xen_prefs() |
                         groups_search() |
                         ps_unsubscribe() |
                         sync_retract() |
@@ -1544,10 +1544,10 @@
                         stream_error() |
                         xabber_push_security() |
                         xevent() |
-                        text() |
                         groups_description() |
                         retract_query() |
                         ps_subscribe() |
+                        replace() |
                         pubsub() |
                         vcard_temp() |
                         origin_id() |
@@ -1575,6 +1575,7 @@
                         carbons_private() |
                         starttls() |
                         groups_user_id() |
+                        xen_notify() |
                         muc() |
                         vcard_photo() |
                         compressed() |
@@ -1608,6 +1609,7 @@
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
+                        xen_jid() |
                         compress() |
                         groups_unblock() |
                         privacy_item() |
@@ -1635,7 +1637,6 @@
                         unblock() |
                         sticker() |
                         gone() |
-                        xen_notify() |
                         xcaptcha() |
                         groups_block() |
                         bob_data() |
@@ -1679,7 +1680,6 @@
                         replaced() |
                         jingle_accept() |
                         vcard_email() |
-                        xen_jid() |
                         muc_owner() |
                         groups_status() |
                         avatar_meta() |

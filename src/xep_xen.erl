@@ -60,16 +60,16 @@ do_get_ns({xen_notify, _, _, _}) ->
     <<"urn:xabber:xen:0">>;
 do_get_ns({xen_prefs, _, _}) -> <<"urn:xabber:xen:0">>.
 
-get_els({xen_notification, _alert, _category,
+get_els({xen_notification, _type, _category,
 	 _sub_els}) ->
     _sub_els.
 
-set_els({xen_notification, _alert, _category, _},
+set_els({xen_notification, _type, _category, _},
 	_sub_els) ->
-    {xen_notification, _alert, _category, _sub_els}.
+    {xen_notification, _type, _category, _sub_els}.
 
 pp(text, 2) -> [lang, data];
-pp(xen_notification, 3) -> [alert, category, sub_els];
+pp(xen_notification, 3) -> [type, category, sub_els];
 pp(xen_jid, 2) -> [rule, jid];
 pp(xen_notify, 3) ->
     [notification, fallback, addresses];
@@ -80,19 +80,11 @@ records() ->
     [{text, 2}, {xen_notification, 3}, {xen_jid, 2},
      {xen_notify, 3}, {xen_prefs, 2}].
 
-dec_bool(<<"false">>) -> false;
-dec_bool(<<"0">>) -> false;
-dec_bool(<<"true">>) -> true;
-dec_bool(<<"1">>) -> true.
-
 dec_enum(Val, Enums) ->
     AtomVal = erlang:binary_to_existing_atom(Val, utf8),
     case lists:member(AtomVal, Enums) of
       true -> AtomVal
     end.
-
-enc_bool(false) -> <<"false">>;
-enc_bool(true) -> <<"true">>.
 
 enc_enum(Atom) -> erlang:atom_to_binary(Atom, utf8).
 
@@ -347,10 +339,10 @@ decode_xen_notification(__TopXMLNS, __Opts,
 			{xmlel, <<"notification">>, _attrs, _els}) ->
     __Els = decode_xen_notification_els(__TopXMLNS, __Opts,
 					_els, []),
-    {Alert, Category} =
+    {Type, Category} =
 	decode_xen_notification_attrs(__TopXMLNS, _attrs,
 				      undefined, undefined),
-    {xen_notification, Alert, Category, __Els}.
+    {xen_notification, Type, Category, __Els}.
 
 decode_xen_notification_els(__TopXMLNS, __Opts, [],
 			    __Els) ->
@@ -365,26 +357,25 @@ decode_xen_notification_els(__TopXMLNS, __Opts,
 				__Els).
 
 decode_xen_notification_attrs(__TopXMLNS,
-			      [{<<"alert">>, _val} | _attrs], _Alert,
-			      Category) ->
+			      [{<<"type">>, _val} | _attrs], _Type, Category) ->
     decode_xen_notification_attrs(__TopXMLNS, _attrs, _val,
 				  Category);
 decode_xen_notification_attrs(__TopXMLNS,
-			      [{<<"category">>, _val} | _attrs], Alert,
+			      [{<<"category">>, _val} | _attrs], Type,
 			      _Category) ->
-    decode_xen_notification_attrs(__TopXMLNS, _attrs, Alert,
+    decode_xen_notification_attrs(__TopXMLNS, _attrs, Type,
 				  _val);
 decode_xen_notification_attrs(__TopXMLNS, [_ | _attrs],
-			      Alert, Category) ->
-    decode_xen_notification_attrs(__TopXMLNS, _attrs, Alert,
+			      Type, Category) ->
+    decode_xen_notification_attrs(__TopXMLNS, _attrs, Type,
 				  Category);
-decode_xen_notification_attrs(__TopXMLNS, [], Alert,
+decode_xen_notification_attrs(__TopXMLNS, [], Type,
 			      Category) ->
-    {decode_xen_notification_attr_alert(__TopXMLNS, Alert),
+    {decode_xen_notification_attr_type(__TopXMLNS, Type),
      decode_xen_notification_attr_category(__TopXMLNS,
 					   Category)}.
 
-encode_xen_notification({xen_notification, Alert,
+encode_xen_notification({xen_notification, Type,
 			 Category, __Els},
 			__TopXMLNS) ->
     __NewTopXMLNS =
@@ -393,26 +384,21 @@ encode_xen_notification({xen_notification, Alert,
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
 	    || _el <- __Els],
     _attrs = encode_xen_notification_attr_category(Category,
-						   encode_xen_notification_attr_alert(Alert,
-										      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-														 __TopXMLNS))),
+						   encode_xen_notification_attr_type(Type,
+										     xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+														__TopXMLNS))),
     {xmlel, <<"notification">>, _attrs, _els}.
 
-decode_xen_notification_attr_alert(__TopXMLNS,
-				   undefined) ->
-    false;
-decode_xen_notification_attr_alert(__TopXMLNS, _val) ->
-    case catch dec_bool(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_attr_value, <<"alert">>, <<"notification">>,
-			 __TopXMLNS}});
-      _res -> _res
-    end.
+decode_xen_notification_attr_type(__TopXMLNS,
+				  undefined) ->
+    <<"normal">>;
+decode_xen_notification_attr_type(__TopXMLNS, _val) ->
+    _val.
 
-encode_xen_notification_attr_alert(false, _acc) -> _acc;
-encode_xen_notification_attr_alert(_val, _acc) ->
-    [{<<"alert">>, enc_bool(_val)} | _acc].
+encode_xen_notification_attr_type(<<"normal">>, _acc) ->
+    _acc;
+encode_xen_notification_attr_type(_val, _acc) ->
+    [{<<"type">>, _val} | _acc].
 
 decode_xen_notification_attr_category(__TopXMLNS,
 				      undefined) ->
