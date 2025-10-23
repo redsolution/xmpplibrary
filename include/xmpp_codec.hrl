@@ -546,9 +546,9 @@
 -record(voice_message, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type voice_message() :: #voice_message{}.
 
--record(groups_perms_query, {xmlns = <<>> :: binary(),
-                             id = <<>> :: binary()}).
--type groups_perms_query() :: #groups_perms_query{}.
+-record(groups_perms_delete, {xmlns = <<>> :: binary(),
+                              id = <<>> :: binary()}).
+-type groups_perms_delete() :: #groups_perms_delete{}.
 
 -record(idle, {since :: erlang:timestamp()}).
 -type idle() :: #idle{}.
@@ -753,6 +753,11 @@
                        actor = <<>> :: binary(),
                        perms = [] :: [#groups_perm{}]}).
 -type groups_perms() :: #groups_perms{}.
+
+-record(groups_perms_query, {xmlns = <<>> :: binary(),
+                             id = <<>> :: binary(),
+                             perms :: 'undefined' | #groups_perms{}}).
+-type groups_perms_query() :: #groups_perms_query{}.
 
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
@@ -1475,6 +1480,7 @@
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
+                        text() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
@@ -1507,6 +1513,7 @@
                         csi() |
                         stream_features() |
                         handshake() |
+                        replace() |
                         sm_r() |
                         adhoc_note() |
                         upload_slot() |
@@ -1555,6 +1562,7 @@
                         sync_synchronization() |
                         delivery_retry() |
                         ps_options() |
+                        search() |
                         privacy_list() |
                         rosterver_feature() |
                         delivery_received() |
@@ -1609,6 +1617,7 @@
                         ps_event() |
                         sm_a() |
                         stats() |
+                        groups_perms_delete() |
                         xabbertoken_issue() |
                         muc_subscribe() |
                         idle() |
@@ -1680,7 +1689,6 @@
                         x_conference() |
                         groups_perms_query() |
                         upload_slot_0() |
-                        replace() |
                         groups_x() |
                         muc_user() |
                         retract_user() |
@@ -1690,7 +1698,6 @@
                         muc_unsubscribe() |
                         push_notification() |
                         delegation() |
-                        search() |
                         files_file_sharing() |
                         ps_item() |
                         markup_strike() |
@@ -1718,7 +1725,6 @@
                         muc_actor() |
                         files_file() |
                         xabber_push_notification() |
-                        text() |
                         jingle_reject() |
                         xabbertoken_query_items() |
                         vcard_adr() |

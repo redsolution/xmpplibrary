@@ -90,7 +90,7 @@ do_encode({groups_perms, _, _, _} = Permissions,
 do_encode({groups_perms_query, _, _, _} = Query,
 	  TopXMLNS) ->
     encode_groups_perms_query(Query, TopXMLNS);
-do_encode({groups_perms_query, _, _} = Delete,
+do_encode({groups_perms_delete, _, _} = Delete,
 	  TopXMLNS) ->
     encode_groups_perms_delete(Delete, TopXMLNS).
 
@@ -98,7 +98,8 @@ do_get_name({groups_perm, _, _, _, _, _, _, _, _}) ->
     <<"permission">>;
 do_get_name({groups_perms, _, _, _}) ->
     <<"permissions">>;
-do_get_name({groups_perms_query, _, _}) -> <<"delete">>;
+do_get_name({groups_perms_delete, _, _}) ->
+    <<"delete">>;
 do_get_name({groups_perms_query, _, _, _}) ->
     <<"query">>.
 
@@ -106,19 +107,20 @@ do_get_ns({groups_perm, _, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups/permissions">>;
 do_get_ns({groups_perms, _, _, _}) ->
     <<"https://xabber.com/protocol/groups/permissions">>;
-do_get_ns({groups_perms_query, Xmlns, _}) -> Xmlns;
+do_get_ns({groups_perms_delete, Xmlns, _}) -> Xmlns;
 do_get_ns({groups_perms_query, Xmlns, _, _}) -> Xmlns.
 
 pp(groups_perm, 8) ->
     [name, role, status, seconds, expires, tag, fixed,
      display_name];
 pp(groups_perms, 3) -> [role, actor, perms];
-pp(groups_perms_query, 2) -> [xmlns, id];
+pp(groups_perms_query, 3) -> [xmlns, id, perms];
+pp(groups_perms_delete, 2) -> [xmlns, id];
 pp(_, _) -> no.
 
 records() ->
     [{groups_perm, 8}, {groups_perms, 3},
-     {groups_perms_query, 2}].
+     {groups_perms_query, 3}, {groups_perms_delete, 2}].
 
 dec_bool(<<"false">>) -> false;
 dec_bool(<<"0">>) -> false;
@@ -141,7 +143,7 @@ decode_groups_perms_delete(__TopXMLNS, __Opts,
     {Id, Xmlns} =
 	decode_groups_perms_delete_attrs(__TopXMLNS, _attrs,
 					 undefined, undefined),
-    {groups_perms_query, Xmlns, Id}.
+    {groups_perms_delete, Xmlns, Id}.
 
 decode_groups_perms_delete_attrs(__TopXMLNS,
 				 [{<<"id">>, _val} | _attrs], _Id, Xmlns) ->
@@ -161,7 +163,7 @@ decode_groups_perms_delete_attrs(__TopXMLNS, [], Id,
      decode_groups_perms_delete_attr_xmlns(__TopXMLNS,
 					   Xmlns)}.
 
-encode_groups_perms_delete({groups_perms_query, Xmlns,
+encode_groups_perms_delete({groups_perms_delete, Xmlns,
 			    Id},
 			   __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(Xmlns,
@@ -197,7 +199,7 @@ decode_groups_perms_delete_attr_xmlns(__TopXMLNS,
 decode_groups_perms_query(__TopXMLNS, __Opts,
 			  {xmlel, <<"query">>, _attrs, _els}) ->
     Perms = decode_groups_perms_query_els(__TopXMLNS,
-					  __Opts, _els, []),
+					  __Opts, _els, undefined),
     {Id, Xmlns} =
 	decode_groups_perms_query_attrs(__TopXMLNS, _attrs,
 					undefined, undefined),
@@ -205,7 +207,7 @@ decode_groups_perms_query(__TopXMLNS, __Opts,
 
 decode_groups_perms_query_els(__TopXMLNS, __Opts, [],
 			      Perms) ->
-    lists:reverse(Perms);
+    Perms;
 decode_groups_perms_query_els(__TopXMLNS, __Opts,
 			      [{xmlel, <<"permissions">>, _attrs, _} = _el
 			       | _els],
@@ -215,9 +217,8 @@ decode_groups_perms_query_els(__TopXMLNS, __Opts,
 	of
       <<"https://xabber.com/protocol/groups/permissions">> ->
 	  decode_groups_perms_query_els(__TopXMLNS, __Opts, _els,
-					[decode_groups_perms(<<"https://xabber.com/protocol/groups/permissions">>,
-							     __Opts, _el)
-					 | Perms]);
+					decode_groups_perms(<<"https://xabber.com/protocol/groups/permissions">>,
+							    __Opts, _el));
       _ ->
 	  decode_groups_perms_query_els(__TopXMLNS, __Opts, _els,
 					Perms)
@@ -263,14 +264,12 @@ encode_groups_perms_query({groups_perms_query, Xmlns,
 									  __TopXMLNS)),
     {xmlel, <<"query">>, _attrs, _els}.
 
-'encode_groups_perms_query_$perms'([], __TopXMLNS,
-				   _acc) ->
-    _acc;
-'encode_groups_perms_query_$perms'([Perms | _els],
+'encode_groups_perms_query_$perms'(undefined,
 				   __TopXMLNS, _acc) ->
-    'encode_groups_perms_query_$perms'(_els, __TopXMLNS,
-				       [encode_groups_perms(Perms, __TopXMLNS)
-					| _acc]).
+    _acc;
+'encode_groups_perms_query_$perms'(Perms, __TopXMLNS,
+				   _acc) ->
+    [encode_groups_perms(Perms, __TopXMLNS) | _acc].
 
 decode_groups_perms_query_attr_id(__TopXMLNS,
 				  undefined) ->

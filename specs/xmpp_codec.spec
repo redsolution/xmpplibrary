@@ -5477,7 +5477,7 @@
        module = 'xep_groups_perms',
        result = {groups_perms_query, '$xmlns', '$id','$perms'},
        attrs = [#attr{name = <<"id">>}, #attr{name = <<"xmlns">>}],
-       refs = [#ref{name = groups_perms, label = '$perms'}]}).
+       refs = [#ref{name = groups_perms, label = '$perms', min = 0, max = 1}]}).
 
 -xml(groups_perms_delete,
      #elem{name = <<"delete">>,
@@ -5485,7 +5485,7 @@
            <<"https://xabber.com/protocol/groups/permissions#default">>,
            <<"https://xabber.com/protocol/groups/permissions#new">>],
        module = 'xep_groups_perms',
-       result = {groups_perms_query, '$xmlns', '$id'},
+       result = {groups_perms_delete, '$xmlns', '$id'},
        attrs = [#attr{name = <<"id">>}, #attr{name = <<"xmlns">>}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.

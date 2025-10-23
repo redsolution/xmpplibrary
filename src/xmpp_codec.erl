@@ -1868,6 +1868,8 @@ get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
 get_mod({block_domain, _}) -> xep_groups;
 get_mod({jingle_propose, _, _}) -> xep0353;
+get_mod({groups_perms_delete, _, _}) ->
+    xep_groups_perms;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({encrypted_message_omemo, _}) -> xep0384;
 get_mod({groups_echo, _}) -> xep_groups;
@@ -1885,7 +1887,6 @@ get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_security, _, _}) -> xabberpush;
 get_mod({sticker, _}) -> xep_sticker;
-get_mod({groups_perms_query, _, _}) -> xep_groups_perms;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
