@@ -225,6 +225,16 @@
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
 -type privilege_perm() :: #privilege_perm{}.
 
+-record(groups_perm, {name = <<>> :: binary(),
+                      role = <<>> :: binary(),
+                      status :: boolean(),
+                      seconds :: 'undefined' | non_neg_integer(),
+                      expires :: 'undefined' | non_neg_integer(),
+                      tag = <<>> :: binary(),
+                      fixed = false :: boolean(),
+                      display_name = <<>> :: binary()}).
+-type groups_perm() :: #groups_perm{}.
+
 -record(sync_conversation, {type = <<>> :: binary(),
                             jid :: jid:jid(),
                             status :: 'active' | 'archived' | 'deleted' | 'undefined',
@@ -536,6 +546,10 @@
 -record(voice_message, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type voice_message() :: #voice_message{}.
 
+-record(groups_perms_query, {xmlns = <<>> :: binary(),
+                             id = <<>> :: binary()}).
+-type groups_perms_query() :: #groups_perms_query{}.
+
 -record(idle, {since :: erlang:timestamp()}).
 -type idle() :: #idle{}.
 
@@ -734,6 +748,11 @@
                    subid = <<>> :: binary(),
                    retract :: 'undefined' | binary()}).
 -type ps_items() :: #ps_items{}.
+
+-record(groups_perms, {role = <<>> :: binary(),
+                       actor = <<>> :: binary(),
+                       perms = [] :: [#groups_perm{}]}).
+-type groups_perms() :: #groups_perms{}.
 
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
@@ -1446,7 +1465,6 @@
                         sync_query() |
                         sync_last() |
                         starttls_proceed() |
-                        text() |
                         push_enable() |
                         markup_underline() |
                         groups_name() |
@@ -1461,7 +1479,6 @@
                         mix_participant() |
                         xdata_option() |
                         xen_notification() |
-                        search() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
@@ -1482,6 +1499,7 @@
                         avatar_data() |
                         markup_quote() |
                         groups_user() |
+                        groups_perm() |
                         groups_search() |
                         ps_unsubscribe() |
                         sync_retract() |
@@ -1547,7 +1565,6 @@
                         groups_description() |
                         retract_query() |
                         ps_subscribe() |
-                        replace() |
                         pubsub() |
                         vcard_temp() |
                         origin_id() |
@@ -1647,6 +1664,7 @@
                         carbons_disable() |
                         vcard_label() |
                         legacy_auth_feature() |
+                        groups_perms() |
                         identity() |
                         xabbertoken_xtoken() |
                         devices_revoke() |
@@ -1660,7 +1678,9 @@
                         retract_message() |
                         chatstate() |
                         x_conference() |
+                        groups_perms_query() |
                         upload_slot_0() |
+                        replace() |
                         groups_x() |
                         muc_user() |
                         retract_user() |
@@ -1670,6 +1690,7 @@
                         muc_unsubscribe() |
                         push_notification() |
                         delegation() |
+                        search() |
                         files_file_sharing() |
                         ps_item() |
                         markup_strike() |
@@ -1697,6 +1718,7 @@
                         muc_actor() |
                         files_file() |
                         xabber_push_notification() |
+                        text() |
                         jingle_reject() |
                         xabbertoken_query_items() |
                         vcard_adr() |
