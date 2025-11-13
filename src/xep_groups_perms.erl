@@ -5,6 +5,11 @@
 
 -compile(export_all).
 
+do_decode(<<"owner">>,
+	  <<"https://xabber.com/protocol/groups/permissions">>,
+	  El, Opts) ->
+    decode_groups_perms_owner(<<"https://xabber.com/protocol/groups/permissions">>,
+			      Opts, El);
 do_decode(<<"delete">>,
 	  <<"https://xabber.com/protocol/groups/permissions">>,
 	  El, Opts) ->
@@ -59,7 +64,9 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"delete">>,
+    [{<<"owner">>,
+      <<"https://xabber.com/protocol/groups/permissions">>},
+     {<<"delete">>,
       <<"https://xabber.com/protocol/groups/permissions">>},
      {<<"delete">>,
       <<"https://xabber.com/protocol/groups/permission"
@@ -92,8 +99,11 @@ do_encode({groups_perms_query, _, _, _} = Query,
     encode_groups_perms_query(Query, TopXMLNS);
 do_encode({groups_perms_delete, _, _} = Delete,
 	  TopXMLNS) ->
-    encode_groups_perms_delete(Delete, TopXMLNS).
+    encode_groups_perms_delete(Delete, TopXMLNS);
+do_encode({groups_owner, _} = Owner, TopXMLNS) ->
+    encode_groups_perms_owner(Owner, TopXMLNS).
 
+do_get_name({groups_owner, _}) -> <<"owner">>;
 do_get_name({groups_perm, _, _, _, _, _, _, _, _}) ->
     <<"permission">>;
 do_get_name({groups_perms, _, _, _}) ->
@@ -103,6 +113,8 @@ do_get_name({groups_perms_delete, _, _}) ->
 do_get_name({groups_perms_query, _, _, _}) ->
     <<"query">>.
 
+do_get_ns({groups_owner, _}) ->
+    <<"https://xabber.com/protocol/groups/permissions">>;
 do_get_ns({groups_perm, _, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups/permissions">>;
 do_get_ns({groups_perms, _, _, _}) ->
@@ -116,11 +128,13 @@ pp(groups_perm, 8) ->
 pp(groups_perms, 3) -> [role, actor, perms];
 pp(groups_perms_query, 3) -> [xmlns, id, perms];
 pp(groups_perms_delete, 2) -> [xmlns, id];
+pp(groups_owner, 1) -> [id];
 pp(_, _) -> no.
 
 records() ->
     [{groups_perm, 8}, {groups_perms, 3},
-     {groups_perms_query, 3}, {groups_perms_delete, 2}].
+     {groups_perms_query, 3}, {groups_perms_delete, 2},
+     {groups_owner, 1}].
 
 dec_bool(<<"false">>) -> false;
 dec_bool(<<"0">>) -> false;
@@ -137,6 +151,43 @@ enc_bool(false) -> <<"false">>;
 enc_bool(true) -> <<"true">>.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
+
+decode_groups_perms_owner(__TopXMLNS, __Opts,
+			  {xmlel, <<"owner">>, _attrs, _els}) ->
+    Id = decode_groups_perms_owner_attrs(__TopXMLNS, _attrs,
+					 undefined),
+    {groups_owner, Id}.
+
+decode_groups_perms_owner_attrs(__TopXMLNS,
+				[{<<"id">>, _val} | _attrs], _Id) ->
+    decode_groups_perms_owner_attrs(__TopXMLNS, _attrs,
+				    _val);
+decode_groups_perms_owner_attrs(__TopXMLNS,
+				[_ | _attrs], Id) ->
+    decode_groups_perms_owner_attrs(__TopXMLNS, _attrs, Id);
+decode_groups_perms_owner_attrs(__TopXMLNS, [], Id) ->
+    decode_groups_perms_owner_attr_id(__TopXMLNS, Id).
+
+encode_groups_perms_owner({groups_owner, Id},
+			  __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups/permissions">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = encode_groups_perms_owner_attr_id(Id,
+					       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+									  __TopXMLNS)),
+    {xmlel, <<"owner">>, _attrs, _els}.
+
+decode_groups_perms_owner_attr_id(__TopXMLNS,
+				  undefined) ->
+    erlang:error({xmpp_codec,
+		  {missing_attr, <<"id">>, <<"owner">>, __TopXMLNS}});
+decode_groups_perms_owner_attr_id(__TopXMLNS, _val) ->
+    _val.
+
+encode_groups_perms_owner_attr_id(_val, _acc) ->
+    [{<<"id">>, _val} | _acc].
 
 decode_groups_perms_delete(__TopXMLNS, __Opts,
 			   {xmlel, <<"delete">>, _attrs, _els}) ->
@@ -365,11 +416,11 @@ encode_groups_perms_attr_role(_val, _acc) ->
     [{<<"role">>, _val} | _acc].
 
 decode_groups_perms_attr_actor(__TopXMLNS, undefined) ->
-    <<>>;
+    undefined;
 decode_groups_perms_attr_actor(__TopXMLNS, _val) ->
     _val.
 
-encode_groups_perms_attr_actor(<<>>, _acc) -> _acc;
+encode_groups_perms_attr_actor(undefined, _acc) -> _acc;
 encode_groups_perms_attr_actor(_val, _acc) ->
     [{<<"actor">>, _val} | _acc].
 

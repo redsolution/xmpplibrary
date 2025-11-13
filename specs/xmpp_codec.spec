@@ -5466,7 +5466,7 @@
        result = {groups_perms, '$role', '$actor', '$perms'},
        attrs = [
            #attr{name = <<"role">>},
-           #attr{name = <<"actor">>}],
+           #attr{name = <<"actor">>, default = undefined}],
        refs = [#ref{name = groups_perm, label = '$perms'}]}).
 
 -xml(groups_perms_query,
@@ -5487,6 +5487,15 @@
        module = 'xep_groups_perms',
        result = {groups_perms_delete, '$xmlns', '$id'},
        attrs = [#attr{name = <<"id">>}, #attr{name = <<"xmlns">>}]}).
+
+-xml(groups_perms_owner,
+     #elem{name = <<"owner">>,
+       xmlns = <<"https://xabber.com/protocol/groups/permissions">>,
+       module = 'xep_groups_perms',
+       result = {groups_owner, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
+
+
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

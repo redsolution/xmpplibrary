@@ -709,6 +709,9 @@
                        type = <<>> :: binary()}).
 -type retract_user() :: #retract_user{}.
 
+-record(groups_owner, {id = <<>> :: binary()}).
+-type groups_owner() :: #groups_owner{}.
+
 -record(muc_item, {actor :: 'undefined' | #muc_actor{},
                    continue :: 'undefined' | binary(),
                    reason = <<>> :: binary(),
@@ -750,7 +753,7 @@
 -type ps_items() :: #ps_items{}.
 
 -record(groups_perms, {role = <<>> :: binary(),
-                       actor = <<>> :: binary(),
+                       actor :: 'undefined' | binary(),
                        perms = [] :: [#groups_perm{}]}).
 -type groups_perms() :: #groups_perms{}.
 
@@ -1476,15 +1479,16 @@
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
+                        search() |
                         geoloc() |
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
-                        text() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
                         xen_notification() |
+                        groups_owner() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
@@ -1513,7 +1517,6 @@
                         csi() |
                         stream_features() |
                         handshake() |
-                        replace() |
                         sm_r() |
                         adhoc_note() |
                         upload_slot() |
@@ -1562,7 +1565,6 @@
                         sync_synchronization() |
                         delivery_retry() |
                         ps_options() |
-                        search() |
                         privacy_list() |
                         rosterver_feature() |
                         delivery_received() |
@@ -1637,6 +1639,7 @@
                         privilege() |
                         xen_jid() |
                         compress() |
+                        text() |
                         groups_unblock() |
                         privacy_item() |
                         groups_domains() |
@@ -1664,6 +1667,7 @@
                         sticker() |
                         gone() |
                         xcaptcha() |
+                        replace() |
                         groups_block() |
                         bob_data() |
                         markup_bold() |

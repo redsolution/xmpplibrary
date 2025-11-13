@@ -1088,6 +1088,9 @@ get_mod(<<"enable">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"size">>,
 	<<"eu:siacs:conversations:http:upload">>) ->
     xep0363;
+get_mod(<<"owner">>,
+	<<"https://xabber.com/protocol/groups/permissions">>) ->
+    xep_groups_perms;
 get_mod(<<"registration-required">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1887,6 +1890,7 @@ get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_security, _, _}) -> xabberpush;
 get_mod({sticker, _}) -> xep_sticker;
+get_mod({groups_owner, _}) -> xep_groups_perms;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
@@ -1981,20 +1985,10 @@ get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbertoken_query_items, _}) -> xabbertoken;
 get_mod({files_sources, _}) -> xep_files;
-get_mod({identity, _, _, _, _}) -> xep0030;
-get_mod({redirect, _}) -> rfc6120;
-get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
-get_mod({groups_kick, _, _}) -> xep_groups;
-get_mod({block_id, _}) -> xep_groups;
 get_mod({block_jid, _}) -> xep_groups;
-get_mod({groups_localpart, _}) -> xep_groups;
-get_mod({replace, _, _, _, _, _, _, _, _}) ->
-    xep_rewrite;
 get_mod({sync_retract, _}) -> xep_sync;
 get_mod({sync_displayed, _}) -> xep_sync;
-get_mod({sync_delivered, _}) -> xep_sync;
-get_mod({sync_last, _}) -> xep_sync;
 get_mod({bookmark_url, _, _}) -> xep0048;
 get_mod({gone, _}) -> rfc6120;
 get_mod({sasl_response, _}) -> rfc6120;
@@ -2168,4 +2162,14 @@ get_mod({addresses, _}) -> xep0033;
 get_mod({push_call}) -> xabberpush;
 get_mod({groups_contacts, _}) -> xep_groups;
 get_mod({groups_domains, _}) -> xep_groups;
+get_mod({identity, _, _, _, _}) -> xep0030;
+get_mod({redirect, _}) -> rfc6120;
+get_mod({muc_history, _, _, _, _}) -> xep0045;
+get_mod({groups_kick, _, _}) -> xep_groups;
+get_mod({block_id, _}) -> xep_groups;
+get_mod({groups_localpart, _}) -> xep_groups;
+get_mod({replace, _, _, _, _, _, _, _, _}) ->
+    xep_rewrite;
+get_mod({sync_delivered, _}) -> xep_sync;
+get_mod({sync_last, _}) -> xep_sync;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
