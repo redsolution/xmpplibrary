@@ -226,7 +226,7 @@
 -type privilege_perm() :: #privilege_perm{}.
 
 -record(groups_perm, {name = <<>> :: binary(),
-                      role = <<>> :: binary(),
+                      level = <<>> :: binary(),
                       status :: boolean(),
                       seconds :: 'undefined' | non_neg_integer(),
                       expires :: 'undefined' | non_neg_integer(),
@@ -1479,7 +1479,6 @@
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
-                        search() |
                         geoloc() |
                         rsm_set() |
                         rsm_first() |
@@ -1488,7 +1487,6 @@
                         mix_participant() |
                         xdata_option() |
                         xen_notification() |
-                        groups_owner() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
@@ -1555,8 +1553,10 @@
                         muc_history() |
                         ps_error() |
                         markup_mention() |
+                        groups_perms_delete() |
                         muc_decline() |
                         sync_metadata() |
+                        groups_owner() |
                         xmpp_session() |
                         encrypted_message_omemo() |
                         sync_displayed() |
@@ -1619,7 +1619,7 @@
                         ps_event() |
                         sm_a() |
                         stats() |
-                        groups_perms_delete() |
+                        groups_perms_query() |
                         xabbertoken_issue() |
                         muc_subscribe() |
                         idle() |
@@ -1638,8 +1638,8 @@
                         xabber_encryption_key() |
                         privilege() |
                         xen_jid() |
+                        replace() |
                         compress() |
-                        text() |
                         groups_unblock() |
                         privacy_item() |
                         groups_domains() |
@@ -1667,9 +1667,9 @@
                         sticker() |
                         gone() |
                         xcaptcha() |
-                        replace() |
                         groups_block() |
                         bob_data() |
+                        search() |
                         markup_bold() |
                         bookmark_conference() |
                         groups_decline() |
@@ -1677,7 +1677,6 @@
                         carbons_disable() |
                         vcard_label() |
                         legacy_auth_feature() |
-                        groups_perms() |
                         identity() |
                         xabbertoken_xtoken() |
                         devices_revoke() |
@@ -1691,7 +1690,7 @@
                         retract_message() |
                         chatstate() |
                         x_conference() |
-                        groups_perms_query() |
+                        groups_perms() |
                         upload_slot_0() |
                         groups_x() |
                         muc_user() |
@@ -1704,6 +1703,7 @@
                         delegation() |
                         files_file_sharing() |
                         ps_item() |
+                        text() |
                         markup_strike() |
                         xmppreference() |
                         groups_invite() |

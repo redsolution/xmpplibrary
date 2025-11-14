@@ -5439,11 +5439,11 @@
      #elem{name = <<"permission">>,
        xmlns = <<"https://xabber.com/protocol/groups/permissions">>,
        module = 'xep_groups_perms',
-       result = {groups_perm, '$name', '$role', '$status', '$seconds', '$expires', '$tag', '$fixed', '$display_name'},
+       result = {groups_perm, '$name', '$level', '$status', '$seconds', '$expires', '$tag', '$fixed', '$display_name'},
        cdata = #cdata{label='$display_name'},
        attrs = [
            #attr{name = <<"name">>, required = true},
-           #attr{name = <<"role">>},
+           #attr{name = <<"level">>},
            #attr{name = <<"status">>, required = true,
                    enc = {enc_bool, []},
                    dec = {dec_bool, []}},

@@ -123,7 +123,7 @@ do_get_ns({groups_perms_delete, Xmlns, _}) -> Xmlns;
 do_get_ns({groups_perms_query, Xmlns, _, _}) -> Xmlns.
 
 pp(groups_perm, 8) ->
-    [name, role, status, seconds, expires, tag, fixed,
+    [name, level, status, seconds, expires, tag, fixed,
      display_name];
 pp(groups_perms, 3) -> [role, actor, perms];
 pp(groups_perms_query, 3) -> [xmlns, id, perms];
@@ -428,12 +428,12 @@ decode_groups_perm(__TopXMLNS, __Opts,
 		   {xmlel, <<"permission">>, _attrs, _els}) ->
     Display_name = decode_groups_perm_els(__TopXMLNS,
 					  __Opts, _els, <<>>),
-    {Name, Role, Status, Seconds, Expires, Tag, Fixed} =
+    {Name, Level, Status, Seconds, Expires, Tag, Fixed} =
 	decode_groups_perm_attrs(__TopXMLNS, _attrs, undefined,
 				 undefined, undefined, undefined, undefined,
 				 undefined, undefined),
-    {groups_perm, Name, Role, Status, Seconds, Expires, Tag,
-     Fixed, Display_name}.
+    {groups_perm, Name, Level, Status, Seconds, Expires,
+     Tag, Fixed, Display_name}.
 
 decode_groups_perm_els(__TopXMLNS, __Opts, [],
 		       Display_name) ->
@@ -448,55 +448,55 @@ decode_groups_perm_els(__TopXMLNS, __Opts, [_ | _els],
 			   Display_name).
 
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"name">>, _val} | _attrs], _Name, Role, Status,
+			 [{<<"name">>, _val} | _attrs], _Name, Level, Status,
 			 Seconds, Expires, Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, _val, Role,
-			     Status, Seconds, Expires, Tag, Fixed);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, _val,
+			     Level, Status, Seconds, Expires, Tag, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"role">>, _val} | _attrs], Name, _Role, Status,
+			 [{<<"level">>, _val} | _attrs], Name, _Level, Status,
 			 Seconds, Expires, Tag, Fixed) ->
     decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, _val,
 			     Status, Seconds, Expires, Tag, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"status">>, _val} | _attrs], Name, Role, _Status,
+			 [{<<"status">>, _val} | _attrs], Name, Level, _Status,
 			 Seconds, Expires, Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     _val, Seconds, Expires, Tag, Fixed);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, _val, Seconds, Expires, Tag, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"seconds">>, _val} | _attrs], Name, Role, Status,
+			 [{<<"seconds">>, _val} | _attrs], Name, Level, Status,
 			 _Seconds, Expires, Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     Status, _val, Expires, Tag, Fixed);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, Status, _val, Expires, Tag, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"expires">>, _val} | _attrs], Name, Role, Status,
+			 [{<<"expires">>, _val} | _attrs], Name, Level, Status,
 			 Seconds, _Expires, Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     Status, Seconds, _val, Tag, Fixed);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, Status, Seconds, _val, Tag, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"tag">>, _val} | _attrs], Name, Role, Status,
+			 [{<<"tag">>, _val} | _attrs], Name, Level, Status,
 			 Seconds, Expires, _Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     Status, Seconds, Expires, _val, Fixed);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, Status, Seconds, Expires, _val, Fixed);
 decode_groups_perm_attrs(__TopXMLNS,
-			 [{<<"fixed">>, _val} | _attrs], Name, Role, Status,
+			 [{<<"fixed">>, _val} | _attrs], Name, Level, Status,
 			 Seconds, Expires, Tag, _Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     Status, Seconds, Expires, Tag, _val);
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, Status, Seconds, Expires, Tag, _val);
 decode_groups_perm_attrs(__TopXMLNS, [_ | _attrs], Name,
-			 Role, Status, Seconds, Expires, Tag, Fixed) ->
-    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name, Role,
-			     Status, Seconds, Expires, Tag, Fixed);
-decode_groups_perm_attrs(__TopXMLNS, [], Name, Role,
+			 Level, Status, Seconds, Expires, Tag, Fixed) ->
+    decode_groups_perm_attrs(__TopXMLNS, _attrs, Name,
+			     Level, Status, Seconds, Expires, Tag, Fixed);
+decode_groups_perm_attrs(__TopXMLNS, [], Name, Level,
 			 Status, Seconds, Expires, Tag, Fixed) ->
     {decode_groups_perm_attr_name(__TopXMLNS, Name),
-     decode_groups_perm_attr_role(__TopXMLNS, Role),
+     decode_groups_perm_attr_level(__TopXMLNS, Level),
      decode_groups_perm_attr_status(__TopXMLNS, Status),
      decode_groups_perm_attr_seconds(__TopXMLNS, Seconds),
      decode_groups_perm_attr_expires(__TopXMLNS, Expires),
      decode_groups_perm_attr_tag(__TopXMLNS, Tag),
      decode_groups_perm_attr_fixed(__TopXMLNS, Fixed)}.
 
-encode_groups_perm({groups_perm, Name, Role, Status,
+encode_groups_perm({groups_perm, Name, Level, Status,
 		    Seconds, Expires, Tag, Fixed, Display_name},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
@@ -508,10 +508,10 @@ encode_groups_perm({groups_perm, Name, Role, Status,
 								       encode_groups_perm_attr_expires(Expires,
 												       encode_groups_perm_attr_seconds(Seconds,
 																       encode_groups_perm_attr_status(Status,
-																				      encode_groups_perm_attr_role(Role,
-																								   encode_groups_perm_attr_name(Name,
-																												xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																															   __TopXMLNS)))))))),
+																				      encode_groups_perm_attr_level(Level,
+																								    encode_groups_perm_attr_name(Name,
+																												 xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																															    __TopXMLNS)))))))),
     {xmlel, <<"permission">>, _attrs, _els}.
 
 decode_groups_perm_attr_name(__TopXMLNS, undefined) ->
@@ -523,13 +523,13 @@ decode_groups_perm_attr_name(__TopXMLNS, _val) -> _val.
 encode_groups_perm_attr_name(_val, _acc) ->
     [{<<"name">>, _val} | _acc].
 
-decode_groups_perm_attr_role(__TopXMLNS, undefined) ->
+decode_groups_perm_attr_level(__TopXMLNS, undefined) ->
     <<>>;
-decode_groups_perm_attr_role(__TopXMLNS, _val) -> _val.
+decode_groups_perm_attr_level(__TopXMLNS, _val) -> _val.
 
-encode_groups_perm_attr_role(<<>>, _acc) -> _acc;
-encode_groups_perm_attr_role(_val, _acc) ->
-    [{<<"role">>, _val} | _acc].
+encode_groups_perm_attr_level(<<>>, _acc) -> _acc;
+encode_groups_perm_attr_level(_val, _acc) ->
+    [{<<"level">>, _val} | _acc].
 
 decode_groups_perm_attr_status(__TopXMLNS, undefined) ->
     erlang:error({xmpp_codec,
