@@ -5489,14 +5489,16 @@
        xmlns = <<"https://xabber.com/protocol/permissions">>,
        module = 'xep_permissions',
        result = {perms_defaults, '$perms'},
-       refs = [#ref{name = perms_permissions, label = '$perms'}]}).
+       refs = [#ref{name = perms_permissions, label = '$perms',
+                    min = 0, max = 1}]}).
 
 -xml(perms_newbies,
      #elem{name = <<"newbies">>,
        xmlns = <<"https://xabber.com/protocol/permissions">>,
        module = 'xep_permissions',
        result = {perms_newbies, '$perms'},
-       refs = [#ref{name = perms_permissions, label = '$perms'}]}).
+       refs = [#ref{name = perms_permissions, label = '$perms',
+                    min = 0, max = 1}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

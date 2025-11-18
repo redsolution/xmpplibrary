@@ -120,12 +120,12 @@ enc_int(Int) -> erlang:integer_to_binary(Int).
 decode_perms_newbies(__TopXMLNS, __Opts,
 		     {xmlel, <<"newbies">>, _attrs, _els}) ->
     Perms = decode_perms_newbies_els(__TopXMLNS, __Opts,
-				     _els, []),
+				     _els, undefined),
     {perms_newbies, Perms}.
 
 decode_perms_newbies_els(__TopXMLNS, __Opts, [],
 			 Perms) ->
-    lists:reverse(Perms);
+    Perms;
 decode_perms_newbies_els(__TopXMLNS, __Opts,
 			 [{xmlel, <<"permissions">>, _attrs, _} = _el | _els],
 			 Perms) ->
@@ -134,9 +134,8 @@ decode_perms_newbies_els(__TopXMLNS, __Opts,
 	of
       <<"https://xabber.com/protocol/permissions">> ->
 	  decode_perms_newbies_els(__TopXMLNS, __Opts, _els,
-				   [decode_perms_permissions(<<"https://xabber.com/protocol/permissions">>,
-							     __Opts, _el)
-				    | Perms]);
+				   decode_perms_permissions(<<"https://xabber.com/protocol/permissions">>,
+							    __Opts, _el));
       _ ->
 	  decode_perms_newbies_els(__TopXMLNS, __Opts, _els,
 				   Perms)
@@ -158,23 +157,22 @@ encode_perms_newbies({perms_newbies, Perms},
 					__TopXMLNS),
     {xmlel, <<"newbies">>, _attrs, _els}.
 
-'encode_perms_newbies_$perms'([], __TopXMLNS, _acc) ->
+'encode_perms_newbies_$perms'(undefined, __TopXMLNS,
+			      _acc) ->
     _acc;
-'encode_perms_newbies_$perms'([Perms | _els],
-			      __TopXMLNS, _acc) ->
-    'encode_perms_newbies_$perms'(_els, __TopXMLNS,
-				  [encode_perms_permissions(Perms, __TopXMLNS)
-				   | _acc]).
+'encode_perms_newbies_$perms'(Perms, __TopXMLNS,
+			      _acc) ->
+    [encode_perms_permissions(Perms, __TopXMLNS) | _acc].
 
 decode_perms_defaults(__TopXMLNS, __Opts,
 		      {xmlel, <<"defaults">>, _attrs, _els}) ->
     Perms = decode_perms_defaults_els(__TopXMLNS, __Opts,
-				      _els, []),
+				      _els, undefined),
     {perms_defaults, Perms}.
 
 decode_perms_defaults_els(__TopXMLNS, __Opts, [],
 			  Perms) ->
-    lists:reverse(Perms);
+    Perms;
 decode_perms_defaults_els(__TopXMLNS, __Opts,
 			  [{xmlel, <<"permissions">>, _attrs, _} = _el | _els],
 			  Perms) ->
@@ -183,9 +181,8 @@ decode_perms_defaults_els(__TopXMLNS, __Opts,
 	of
       <<"https://xabber.com/protocol/permissions">> ->
 	  decode_perms_defaults_els(__TopXMLNS, __Opts, _els,
-				    [decode_perms_permissions(<<"https://xabber.com/protocol/permissions">>,
-							      __Opts, _el)
-				     | Perms]);
+				    decode_perms_permissions(<<"https://xabber.com/protocol/permissions">>,
+							     __Opts, _el));
       _ ->
 	  decode_perms_defaults_els(__TopXMLNS, __Opts, _els,
 				    Perms)
@@ -207,13 +204,12 @@ encode_perms_defaults({perms_defaults, Perms},
 					__TopXMLNS),
     {xmlel, <<"defaults">>, _attrs, _els}.
 
-'encode_perms_defaults_$perms'([], __TopXMLNS, _acc) ->
+'encode_perms_defaults_$perms'(undefined, __TopXMLNS,
+			       _acc) ->
     _acc;
-'encode_perms_defaults_$perms'([Perms | _els],
-			       __TopXMLNS, _acc) ->
-    'encode_perms_defaults_$perms'(_els, __TopXMLNS,
-				   [encode_perms_permissions(Perms, __TopXMLNS)
-				    | _acc]).
+'encode_perms_defaults_$perms'(Perms, __TopXMLNS,
+			       _acc) ->
+    [encode_perms_permissions(Perms, __TopXMLNS) | _acc].
 
 decode_perms_delete(__TopXMLNS, __Opts,
 		    {xmlel, <<"delete">>, _attrs, _els}) ->

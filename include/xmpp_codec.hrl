@@ -1283,10 +1283,10 @@
                             perms = [] :: [#perms_permission{}]}).
 -type perms_permissions() :: #perms_permissions{}.
 
--record(perms_newbies, {perms = [] :: [#perms_permissions{}]}).
+-record(perms_newbies, {perms :: 'undefined' | #perms_permissions{}}).
 -type perms_newbies() :: #perms_newbies{}.
 
--record(perms_defaults, {perms = [] :: [#perms_permissions{}]}).
+-record(perms_defaults, {perms :: 'undefined' | #perms_permissions{}}).
 -type perms_defaults() :: #perms_defaults{}.
 
 -record(delegation, {delegated = [] :: [#delegated{}],
@@ -1476,6 +1476,7 @@
                         markup_italic() |
                         groups_name() |
                         ps_subscription() |
+                        text() |
                         devices_revoke_all() |
                         stanza_id() |
                         rsm_set() |
@@ -1490,7 +1491,6 @@
                         replace_message() |
                         sm_enable() |
                         upload_request_0() |
-                        search() |
                         version() |
                         groups_mentions() |
                         sm_resumed() |
@@ -1598,7 +1598,6 @@
                         mark_markable() |
                         files_file() |
                         markup_strike() |
-                        text() |
                         ps_items() |
                         sasl_failure() |
                         groups_localpart() |
@@ -1642,7 +1641,6 @@
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
-                        replace() |
                         xen_notification() |
                         compress() |
                         groups_unblock() |
@@ -1654,6 +1652,7 @@
                         offline() |
                         streamhost() |
                         encrypted() |
+                        replace() |
                         vcard_xupdate() |
                         stat_error() |
                         avatar_pointer() |
@@ -1690,6 +1689,7 @@
                         block() |
                         time() |
                         muc_destroy() |
+                        search() |
                         bookmark_url() |
                         disco_items() |
                         markup_quote() |
