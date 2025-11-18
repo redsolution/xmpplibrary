@@ -5,6 +5,10 @@
 
 -compile(export_all).
 
+do_decode(<<"owner">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_owner(<<"https://xabber.com/protocol/groups">>,
+			Opts, El);
 do_decode(<<"mentions">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_mentions(<<"https://xabber.com/protocol/groups">>,
@@ -310,7 +314,9 @@ do_decode(Name, XMLNS, _, _) ->
     erlang:error({xmpp_codec, {unknown_tag, Name, XMLNS}}).
 
 tags() ->
-    [{<<"mentions">>,
+    [{<<"owner">>,
+      <<"https://xabber.com/protocol/groups">>},
+     {<<"mentions">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"localpart">>,
       <<"https://xabber.com/protocol/groups">>},
@@ -508,7 +514,9 @@ do_encode({groups_localpart, _} = Localpart,
 	  TopXMLNS) ->
     encode_groups_localpart(Localpart, TopXMLNS);
 do_encode({groups_mentions, _} = Mentions, TopXMLNS) ->
-    encode_groups_mentions(Mentions, TopXMLNS).
+    encode_groups_mentions(Mentions, TopXMLNS);
+do_encode({groups_owner, _} = Owner, TopXMLNS) ->
+    encode_groups_owner(Owner, TopXMLNS).
 
 do_get_name({block_domain, _}) -> <<"domain">>;
 do_get_name({block_id, _}) -> <<"id">>;
@@ -530,6 +538,7 @@ do_get_name({groups_localpart, _}) -> <<"localpart">>;
 do_get_name({groups_membership, _}) -> <<"membership">>;
 do_get_name({groups_mentions, _}) -> <<"mentions">>;
 do_get_name({groups_name, _}) -> <<"name">>;
+do_get_name({groups_owner, _}) -> <<"owner">>;
 do_get_name({groups_pinned_message, _}) ->
     <<"pinned-message">>;
 do_get_name({groups_privacy, _}) -> <<"privacy">>;
@@ -586,6 +595,8 @@ do_get_ns({groups_membership, _}) ->
 do_get_ns({groups_mentions, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_name, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
+do_get_ns({groups_owner, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_pinned_message, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -676,6 +687,7 @@ pp(groups_description, 1) -> [cdata];
 pp(groups_membership, 1) -> [cdata];
 pp(groups_localpart, 1) -> [cdata];
 pp(groups_mentions, 1) -> [members];
+pp(groups_owner, 1) -> [id];
 pp(_, _) -> no.
 
 records() ->
@@ -693,7 +705,7 @@ records() ->
      {groups_name, 1}, {groups_status, 1},
      {groups_privacy, 1}, {groups_description, 1},
      {groups_membership, 1}, {groups_localpart, 1},
-     {groups_mentions, 1}].
+     {groups_mentions, 1}, {groups_owner, 1}].
 
 dec_int(Val, Min, Max) ->
     case erlang:binary_to_integer(Val) of
@@ -702,6 +714,39 @@ dec_int(Val, Min, Max) ->
     end.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
+
+decode_groups_owner(__TopXMLNS, __Opts,
+		    {xmlel, <<"owner">>, _attrs, _els}) ->
+    Id = decode_groups_owner_attrs(__TopXMLNS, _attrs,
+				   undefined),
+    {groups_owner, Id}.
+
+decode_groups_owner_attrs(__TopXMLNS,
+			  [{<<"id">>, _val} | _attrs], _Id) ->
+    decode_groups_owner_attrs(__TopXMLNS, _attrs, _val);
+decode_groups_owner_attrs(__TopXMLNS, [_ | _attrs],
+			  Id) ->
+    decode_groups_owner_attrs(__TopXMLNS, _attrs, Id);
+decode_groups_owner_attrs(__TopXMLNS, [], Id) ->
+    decode_groups_owner_attr_id(__TopXMLNS, Id).
+
+encode_groups_owner({groups_owner, Id}, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = encode_groups_owner_attr_id(Id,
+					 xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+								    __TopXMLNS)),
+    {xmlel, <<"owner">>, _attrs, _els}.
+
+decode_groups_owner_attr_id(__TopXMLNS, undefined) ->
+    erlang:error({xmpp_codec,
+		  {missing_attr, <<"id">>, <<"owner">>, __TopXMLNS}});
+decode_groups_owner_attr_id(__TopXMLNS, _val) -> _val.
+
+encode_groups_owner_attr_id(_val, _acc) ->
+    [{<<"id">>, _val} | _acc].
 
 decode_groups_mentions(__TopXMLNS, __Opts,
 		       {xmlel, <<"mentions">>, _attrs, _els}) ->

@@ -4989,6 +4989,13 @@
        result = {groups_mentions,  '$members'},
        refs = [#ref{name = groups_user, min = 0, label = '$members'}]}).
 
+-xml(groups_owner,
+     #elem{name = <<"owner">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_owner, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
+
 -xml(markup_mention,
      #elem{name = <<"mention">>,
        xmlns = <<"https://xabber.com/protocol/markup">>,
@@ -5435,14 +5442,15 @@
                       enc = {enc_enum, []}}],
        refs = [#ref{name = xen_jid, label = '$jids'}]}).
 
--xml(groups_perm,
+-xml(perms_permission,
      #elem{name = <<"permission">>,
-       xmlns = <<"https://xabber.com/protocol/groups/permissions">>,
-       module = 'xep_groups_perms',
-       result = {groups_perm, '$name', '$level', '$status', '$seconds', '$expires', '$tag', '$fixed', '$display_name'},
-       cdata = #cdata{label='$display_name'},
+       xmlns = <<"https://xabber.com/protocol/permissions">>,
+       module = 'xep_permissions',
+       result = {perms_permission, '$name', '$level', '$status', '$seconds', '$expires',
+                    '$tag', '$fixed', '$display'},
        attrs = [
            #attr{name = <<"name">>, required = true},
+           #attr{name = <<"display">>},
            #attr{name = <<"level">>},
            #attr{name = <<"status">>, required = true,
                    enc = {enc_bool, []},
@@ -5459,43 +5467,35 @@
                    dec = {dec_bool, []}}
                ]}).
 
--xml(groups_perms,
+-xml(perms_permissions,
      #elem{name = <<"permissions">>,
-       xmlns = <<"https://xabber.com/protocol/groups/permissions">>,
-       module = 'xep_groups_perms',
-       result = {groups_perms, '$role', '$actor', '$perms'},
+       xmlns = <<"https://xabber.com/protocol/permissions">>,
+       module = 'xep_permissions',
+       result = {perms_permissions, '$label', '$actor', '$perms'},
        attrs = [
-           #attr{name = <<"role">>},
+           #attr{name = <<"label">>, default = undefined},
            #attr{name = <<"actor">>, default = undefined}],
-       refs = [#ref{name = groups_perm, label = '$perms'}]}).
+       refs = [#ref{name = perms_permission, label = '$perms'}]}).
 
--xml(groups_perms_query,
-     #elem{name = <<"query">>,
-       xmlns = [<<"https://xabber.com/protocol/groups/permissions">>,
-           <<"https://xabber.com/protocol/groups/permissions#default">>,
-           <<"https://xabber.com/protocol/groups/permissions#new">>],
-       module = 'xep_groups_perms',
-       result = {groups_perms_query, '$xmlns', '$id','$perms'},
-       attrs = [#attr{name = <<"id">>}, #attr{name = <<"xmlns">>}],
-       refs = [#ref{name = groups_perms, label = '$perms', min = 0, max = 1}]}).
-
--xml(groups_perms_delete,
+-xml(perms_delete,
      #elem{name = <<"delete">>,
-       xmlns = [<<"https://xabber.com/protocol/groups/permissions">>,
-           <<"https://xabber.com/protocol/groups/permissions#default">>,
-           <<"https://xabber.com/protocol/groups/permissions#new">>],
-       module = 'xep_groups_perms',
-       result = {groups_perms_delete, '$xmlns', '$id'},
-       attrs = [#attr{name = <<"id">>}, #attr{name = <<"xmlns">>}]}).
+       xmlns = <<"https://xabber.com/protocol/permissions">>,
+       module = 'xep_permissions',
+       result = {perms_delete, '$_els'}}).
 
--xml(groups_perms_owner,
-     #elem{name = <<"owner">>,
-       xmlns = <<"https://xabber.com/protocol/groups/permissions">>,
-       module = 'xep_groups_perms',
-       result = {groups_owner, '$id'},
-       attrs = [#attr{name = <<"id">>, required = true}]}).
+-xml(perms_defaults,
+     #elem{name = <<"defaults">>,
+       xmlns = <<"https://xabber.com/protocol/permissions">>,
+       module = 'xep_permissions',
+       result = {perms_defaults, '$perms'},
+       refs = [#ref{name = perms_permissions, label = '$perms'}]}).
 
-
+-xml(perms_newbies,
+     #elem{name = <<"newbies">>,
+       xmlns = <<"https://xabber.com/protocol/permissions">>,
+       module = 'xep_permissions',
+       result = {perms_newbies, '$perms'},
+       refs = [#ref{name = perms_permissions, label = '$perms'}]}).
 
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->

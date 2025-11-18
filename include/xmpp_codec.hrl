@@ -225,16 +225,6 @@
                          type :: 'both' | 'get' | 'managed_entity' | 'none' | 'outgoing' | 'roster' | 'set'}).
 -type privilege_perm() :: #privilege_perm{}.
 
--record(groups_perm, {name = <<>> :: binary(),
-                      level = <<>> :: binary(),
-                      status :: boolean(),
-                      seconds :: 'undefined' | non_neg_integer(),
-                      expires :: 'undefined' | non_neg_integer(),
-                      tag = <<>> :: binary(),
-                      fixed = false :: boolean(),
-                      display_name = <<>> :: binary()}).
--type groups_perm() :: #groups_perm{}.
-
 -record(sync_conversation, {type = <<>> :: binary(),
                             jid :: jid:jid(),
                             status :: 'active' | 'archived' | 'deleted' | 'undefined',
@@ -470,6 +460,12 @@
                error :: 'undefined' | #stat_error{}}).
 -type stat() :: #stat{}.
 
+-record(groups_contacts, {contacts = [] :: [binary()]}).
+-type groups_contacts() :: #groups_contacts{}.
+
+-record(groups_domains, {domains = [] :: [binary()]}).
+-type groups_domains() :: #groups_domains{}.
+
 -record(addresses, {list = [] :: [#address{}]}).
 -type addresses() :: #addresses{}.
 
@@ -477,12 +473,6 @@
                      fallback = [] :: [#text{}],
                      addresses :: #addresses{}}).
 -type xen_notify() :: #xen_notify{}.
-
--record(groups_contacts, {contacts = [] :: [binary()]}).
--type groups_contacts() :: #groups_contacts{}.
-
--record(groups_domains, {domains = [] :: [binary()]}).
--type groups_domains() :: #groups_domains{}.
 
 -record(groups_localpart, {cdata = <<>> :: binary()}).
 -type groups_localpart() :: #groups_localpart{}.
@@ -545,10 +535,6 @@
 
 -record(voice_message, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type voice_message() :: #voice_message{}.
-
--record(groups_perms_delete, {xmlns = <<>> :: binary(),
-                              id = <<>> :: binary()}).
--type groups_perms_delete() :: #groups_perms_delete{}.
 
 -record(idle, {since :: erlang:timestamp()}).
 -type idle() :: #idle{}.
@@ -687,6 +673,9 @@
                    data = <<>> :: binary()}).
 -type bob_data() :: #bob_data{}.
 
+-record(groups_owner, {id = <<>> :: binary()}).
+-type groups_owner() :: #groups_owner{}.
+
 -record(groups_invite_user, {jid = <<>> :: binary(),
                              id = <<>> :: binary()}).
 -type groups_invite_user() :: #groups_invite_user{}.
@@ -708,9 +697,6 @@
                        conversation :: undefined | jid:jid(),
                        type = <<>> :: binary()}).
 -type retract_user() :: #retract_user{}.
-
--record(groups_owner, {id = <<>> :: binary()}).
--type groups_owner() :: #groups_owner{}.
 
 -record(muc_item, {actor :: 'undefined' | #muc_actor{},
                    continue :: 'undefined' | binary(),
@@ -751,16 +737,6 @@
                    subid = <<>> :: binary(),
                    retract :: 'undefined' | binary()}).
 -type ps_items() :: #ps_items{}.
-
--record(groups_perms, {role = <<>> :: binary(),
-                       actor :: 'undefined' | binary(),
-                       perms = [] :: [#groups_perm{}]}).
--type groups_perms() :: #groups_perms{}.
-
--record(groups_perms_query, {xmlns = <<>> :: binary(),
-                             id = <<>> :: binary(),
-                             perms :: 'undefined' | #groups_perms{}}).
--type groups_perms_query() :: #groups_perms_query{}.
 
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
@@ -868,6 +844,9 @@
 
 -record(sasl_abort, {}).
 -type sasl_abort() :: #sasl_abort{}.
+
+-record(perms_delete, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type perms_delete() :: #perms_delete{}.
 
 -record(xabbertoken_feature, {}).
 -type xabbertoken_feature() :: #xabbertoken_feature{}.
@@ -1288,6 +1267,27 @@
                  xdata :: 'undefined' | #xdata{}}).
 -type search() :: #search{}.
 
+-record(perms_permission, {name = <<>> :: binary(),
+                           level = <<>> :: binary(),
+                           status :: boolean(),
+                           seconds :: 'undefined' | non_neg_integer(),
+                           expires :: 'undefined' | non_neg_integer(),
+                           tag = <<>> :: binary(),
+                           fixed = false :: boolean(),
+                           display = <<>> :: binary()}).
+-type perms_permission() :: #perms_permission{}.
+
+-record(perms_permissions, {label :: 'undefined' | binary(),
+                            actor :: 'undefined' | binary(),
+                            perms = [] :: [#perms_permission{}]}).
+-type perms_permissions() :: #perms_permissions{}.
+
+-record(perms_newbies, {perms = [] :: [#perms_permissions{}]}).
+-type perms_newbies() :: #perms_newbies{}.
+
+-record(perms_defaults, {perms = [] :: [#perms_permissions{}]}).
+-type perms_defaults() :: #perms_defaults{}.
+
 -record(delegation, {delegated = [] :: [#delegated{}],
                      forwarded :: 'undefined' | #forwarded{}}).
 -type delegation() :: #delegation{}.
@@ -1464,54 +1464,55 @@
                         xabbertoken_query() |
                         mam_result() |
                         delegated() |
-                        jingle_propose() |
-                        xen_prefs() |
+                        mark_displayed() |
                         adhoc_command() |
                         groups_kick() |
                         register() |
                         vcard_org() |
-                        sync_query() |
-                        sync_last() |
+                        sync_delivered() |
                         starttls_proceed() |
                         push_enable() |
-                        markup_underline() |
+                        markup_italic() |
                         groups_name() |
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
-                        geoloc() |
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
+                        retract_user() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
-                        xen_notification() |
+                        perms_defaults() |
+                        replace_message() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
                         groups_mentions() |
                         sm_resumed() |
+                        voice_message() |
                         push_disable() |
                         nick() |
-                        markup_italic() |
+                        markup_bold() |
                         bind() |
                         xabber_push_disable() |
                         devices_query_items() |
                         starttls_failure() |
-                        voice_message() |
                         muc_item() |
+                        retract_message() |
                         bytestreams() |
                         sasl_success() |
                         address() |
                         avatar_data() |
-                        markup_quote() |
+                        markup_link() |
                         groups_user() |
-                        groups_perm() |
+                        xen_prefs() |
                         groups_search() |
                         ps_unsubscribe() |
-                        sync_retract() |
+                        sync_metadata() |
                         groups_update() |
+                        search() |
                         csi() |
                         stream_features() |
                         handshake() |
@@ -1531,7 +1532,6 @@
                         thumbnail() |
                         media() |
                         devices_feature() |
-                        mark_received() |
                         block_domain() |
                         delivery_time() |
                         caps() |
@@ -1552,17 +1552,16 @@
                         muc_unique() |
                         muc_history() |
                         ps_error() |
-                        markup_mention() |
-                        groups_perms_delete() |
-                        muc_decline() |
-                        sync_metadata() |
                         groups_owner() |
+                        perms_delete() |
+                        muc_decline() |
+                        markup_mention() |
+                        perms_newbies() |
                         xmpp_session() |
                         encrypted_message_omemo() |
-                        sync_displayed() |
+                        sync_unread() |
                         media_uri() |
                         ps_publish() |
-                        sync_synchronization() |
                         delivery_retry() |
                         ps_options() |
                         privacy_list() |
@@ -1572,11 +1571,14 @@
                         stream_error() |
                         xabber_push_security() |
                         xevent() |
+                        files_sources() |
+                        sync_conversation() |
                         groups_description() |
-                        retract_query() |
+                        replaced() |
                         ps_subscribe() |
                         pubsub() |
                         vcard_temp() |
+                        retract_query() |
                         origin_id() |
                         devices_device() |
                         groups_echo() |
@@ -1592,17 +1594,17 @@
                         groups_pinned_message() |
                         receipt_request() |
                         disco_item() |
-                        files_sources() |
-                        markup_link() |
+                        mark_markable() |
+                        files_file() |
+                        markup_strike() |
                         ps_items() |
                         sasl_failure() |
                         groups_localpart() |
                         oob_x() |
-                        mark_markable() |
+                        sync_call() |
                         carbons_private() |
                         starttls() |
                         groups_user_id() |
-                        xen_notify() |
                         muc() |
                         vcard_photo() |
                         compressed() |
@@ -1612,44 +1614,42 @@
                         hint() |
                         sm_failed() |
                         mam_query() |
+                        sync_synchronization() |
                         last() |
                         iq() |
                         groups_ptp() |
-                        sync_delivered() |
+                        sync_displayed() |
                         ps_event() |
                         sm_a() |
+                        sticker() |
                         stats() |
-                        groups_perms_query() |
+                        perms_permissions() |
                         xabbertoken_issue() |
                         muc_subscribe() |
-                        idle() |
+                        jingle_accept() |
                         vcard_key() |
                         block_list() |
-                        sync_unread() |
+                        sync_retract() |
                         muc_subscriptions() |
-                        retract_invalidate() |
                         upload_request() |
                         vcard_name() |
-                        sync_conversation() |
+                        sync_query() |
                         receipt_response() |
                         roster_query() |
                         bookmark_storage() |
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
-                        xen_jid() |
-                        replace() |
+                        xen_notification() |
                         compress() |
                         groups_unblock() |
                         privacy_item() |
                         groups_domains() |
                         'see-other-host'() |
-                        retract_all() |
                         vcard_logo() |
                         stanza_error() |
                         offline() |
                         streamhost() |
-                        replace_message() |
                         encrypted() |
                         vcard_xupdate() |
                         stat_error() |
@@ -1660,58 +1660,59 @@
                         sasl_challenge() |
                         xabbertoken_revoke() |
                         expire() |
-                        sync_call() |
+                        sync_last() |
                         db_result() |
                         mam_archived() |
                         unblock() |
-                        sticker() |
+                        perms_permission() |
                         gone() |
+                        xen_notify() |
                         xcaptcha() |
+                        geoloc() |
                         groups_block() |
                         bob_data() |
-                        search() |
-                        markup_bold() |
+                        idle() |
                         bookmark_conference() |
                         groups_decline() |
                         carbons_enable() |
                         carbons_disable() |
+                        xmppreference() |
                         vcard_label() |
                         legacy_auth_feature() |
                         identity() |
                         xabbertoken_xtoken() |
                         devices_revoke() |
                         devices_query() |
-                        mark_displayed() |
+                        mark_received() |
                         block() |
                         time() |
                         muc_destroy() |
                         bookmark_url() |
                         disco_items() |
-                        retract_message() |
+                        markup_quote() |
                         chatstate() |
                         x_conference() |
-                        groups_perms() |
                         upload_slot_0() |
                         groups_x() |
+                        text() |
+                        files_file_sharing() |
                         muc_user() |
-                        retract_user() |
+                        retract_all() |
                         mam_prefs() |
                         groups_privacy() |
                         groups_collect() |
                         muc_unsubscribe() |
                         push_notification() |
                         delegation() |
-                        files_file_sharing() |
                         ps_item() |
-                        text() |
-                        markup_strike() |
-                        xmppreference() |
+                        markup_underline() |
+                        retract_invalidate() |
                         groups_invite() |
                         redirect() |
                         xabbertoken_revoke_all() |
-                        replaced() |
-                        jingle_accept() |
+                        jingle_reject() |
                         vcard_email() |
+                        xen_jid() |
                         muc_owner() |
                         groups_status() |
                         avatar_meta() |
@@ -1721,15 +1722,15 @@
                         groups_invite_user() |
                         search_item() |
                         vcard_sound() |
+                        replace() |
                         muc_admin() |
                         block_id() |
+                        jingle_propose() |
                         db_feature() |
                         xabber_push_enable() |
                         device_register() |
                         muc_actor() |
-                        files_file() |
                         xabber_push_notification() |
-                        jingle_reject() |
                         xabbertoken_query_items() |
                         vcard_adr() |
                         compression() |

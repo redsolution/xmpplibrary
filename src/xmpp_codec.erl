@@ -328,7 +328,14 @@ get_mod(<<"PRIVATE">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"pubsub">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
+get_mod(<<"unsupported-method">>,
+	<<"http://jabber.org/protocol/compress">>) ->
+    xep0138;
 get_mod(<<"tzo">>, <<"urn:xmpp:time">>) -> xep0202;
+get_mod(<<"POSTAL">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"payload-too-big">>,
+	<<"http://jabber.org/protocol/pubsub#errors">>) ->
+    xep0060;
 get_mod(<<"user">>,
 	<<"https://xabber.com/protocol/groups#invite">>) ->
     xep_groups;
@@ -426,10 +433,6 @@ get_mod(<<"invalid-options">>,
 get_mod(<<"strike">>,
 	<<"https://xabber.com/protocol/markup">>) ->
     xep_markup;
-get_mod(<<"delete">>,
-	<<"https://xabber.com/protocol/groups/permission"
-	  "s#default">>) ->
-    xep_groups_perms;
 get_mod(<<"event">>, <<"urn:xmpp:mucsub:0">>) ->
     p1_mucsub;
 get_mod(<<"query">>, <<"jabber:iq:search">>) -> xep0055;
@@ -545,6 +548,9 @@ get_mod(<<"x">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"pinned-message">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
+get_mod(<<"permission">>,
+	<<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(<<"CONFIDENTIAL">>, <<"vcard-temp">>) ->
     xep0054;
 get_mod(<<"subscribe">>,
@@ -735,6 +741,9 @@ get_mod(<<"password">>,
 get_mod(<<"query">>,
 	<<"https://xabber.com/protocol/groups#rights">>) ->
     xep_groups;
+get_mod(<<"owner">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"method">>,
 	<<"http://jabber.org/features/compress">>) ->
     xep0138;
@@ -792,10 +801,6 @@ get_mod(<<"affiliations">>,
 get_mod(<<"localpart">>,
 	<<"https://xabber.com/protocol/groups#create">>) ->
     xep_groups;
-get_mod(<<"query">>,
-	<<"https://xabber.com/protocol/groups/permission"
-	  "s#new">>) ->
-    xep_groups_perms;
 get_mod(<<"aborted">>,
 	<<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -852,6 +857,9 @@ get_mod(<<"slot">>, <<"urn:xmpp:http:upload:0">>) ->
 get_mod(<<"x">>,
 	<<"https://xabber.com/protocol/delivery">>) ->
     xep_delivery;
+get_mod(<<"defaults">>,
+	<<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(<<"stream:features">>, <<"jabber:server">>) ->
     rfc6120;
 get_mod(<<"request">>,
@@ -869,9 +877,6 @@ get_mod(<<"block">>,
 get_mod(<<"link">>,
 	<<"https://xabber.com/protocol/markup">>) ->
     xep_markup;
-get_mod(<<"delete">>,
-	<<"https://xabber.com/protocol/groups/permissions">>) ->
-    xep_groups_perms;
 get_mod(<<"query">>, <<"jabber:iq:auth">>) -> xep0078;
 get_mod(<<"CELL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"stream:stream">>,
@@ -960,10 +965,6 @@ get_mod(<<"client">>,
 get_mod(<<"index">>,
 	<<"https://xabber.com/protocol/groups#create">>) ->
     xep_groups;
-get_mod(<<"delete">>,
-	<<"https://xabber.com/protocol/groups/permission"
-	  "s#new">>) ->
-    xep_groups_perms;
 get_mod(<<"block">>, <<"urn:xmpp:blocking">>) ->
     xep0191;
 get_mod(<<"delete">>,
@@ -989,6 +990,9 @@ get_mod(<<"description">>,
 get_mod(<<"client">>,
 	<<"https://xabber.com/protocol/devices">>) ->
     xep_devices;
+get_mod(<<"newbies">>,
+	<<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(<<"DOM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub#owner">>) ->
@@ -1088,9 +1092,6 @@ get_mod(<<"enable">>, <<"urn:xmpp:sm:3">>) -> xep0198;
 get_mod(<<"size">>,
 	<<"eu:siacs:conversations:http:upload">>) ->
     xep0363;
-get_mod(<<"owner">>,
-	<<"https://xabber.com/protocol/groups/permissions">>) ->
-    xep_groups_perms;
 get_mod(<<"registration-required">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1103,10 +1104,6 @@ get_mod(<<"pending-subscription">>,
 get_mod(<<"query">>,
 	<<"https://xabber.com/protocol/devices#items">>) ->
     xep_devices;
-get_mod(<<"query">>,
-	<<"https://xabber.com/protocol/groups/permission"
-	  "s#default">>) ->
-    xep_groups_perms;
 get_mod(<<"misc">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"policy-violation">>,
@@ -1419,9 +1416,6 @@ get_mod(<<"item">>,
 	<<"http://jabber.org/protocol/pubsub#event">>) ->
     xep0060;
 get_mod(<<"resumed">>, <<"urn:xmpp:sm:3">>) -> xep0198;
-get_mod(<<"permissions">>,
-	<<"https://xabber.com/protocol/groups/permissions">>) ->
-    xep_groups_perms;
 get_mod(<<"conference">>, <<"storage:bookmarks">>) ->
     xep0048;
 get_mod(<<"registered">>, <<"jabber:iq:register">>) ->
@@ -1512,12 +1506,6 @@ get_mod(<<"mechanism">>,
 get_mod(<<"default">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
-get_mod(<<"permission">>,
-	<<"https://xabber.com/protocol/groups/permissions">>) ->
-    xep_groups_perms;
-get_mod(<<"query">>,
-	<<"https://xabber.com/protocol/groups/permissions">>) ->
-    xep_groups_perms;
 get_mod(<<"remote-server-timeout">>,
 	<<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1792,6 +1780,9 @@ get_mod(<<"item">>,
 get_mod(<<"jid">>,
 	<<"https://xabber.com/protocol/groups#block">>) ->
     xep_groups;
+get_mod(<<"delete">>,
+	<<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(<<"request">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
 get_mod(<<"iq">>, <<"jabber:component:accept">>) ->
@@ -1839,6 +1830,9 @@ get_mod(<<"internal-server-error">>,
 get_mod(<<"put">>,
 	<<"eu:siacs:conversations:http:upload">>) ->
     xep0363;
+get_mod(<<"permissions">>,
+	<<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(<<"options">>,
 	<<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
@@ -1847,13 +1841,6 @@ get_mod(<<"disable">>, <<"urn:xmpp:carbons:2">>) ->
 get_mod(<<"last-message">>,
 	<<"https://xabber.com/protocol/synchronization">>) ->
     xep_sync;
-get_mod(<<"unsupported-method">>,
-	<<"http://jabber.org/protocol/compress">>) ->
-    xep0138;
-get_mod(<<"POSTAL">>, <<"vcard-temp">>) -> xep0054;
-get_mod(<<"payload-too-big">>,
-	<<"http://jabber.org/protocol/pubsub#errors">>) ->
-    xep0060;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1871,8 +1858,6 @@ get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
 get_mod({block_domain, _}) -> xep_groups;
 get_mod({jingle_propose, _, _}) -> xep0353;
-get_mod({groups_perms_delete, _, _}) ->
-    xep_groups_perms;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({encrypted_message_omemo, _}) -> xep0384;
 get_mod({groups_echo, _}) -> xep_groups;
@@ -1889,14 +1874,16 @@ get_mod({vcard_temp, _, _, _, _, _, _, _, _, _, _, _, _,
     xep0054;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_security, _, _}) -> xabberpush;
+get_mod({groups_owner, _}) -> xep_groups;
 get_mod({sticker, _}) -> xep_sticker;
-get_mod({groups_owner, _}) -> xep_groups_perms;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
 get_mod({stream_features, _}) -> rfc6120;
 get_mod({muc_item, _, _, _, _, _, _, _}) -> xep0045;
 get_mod({devices_query_items, _}) -> xep_devices;
 get_mod({groups_status, _}) -> xep_groups;
 get_mod({groups_mentions, _}) -> xep_groups;
+get_mod({perms_defaults, _}) -> xep_permissions;
+get_mod({perms_newbies, _}) -> xep_permissions;
 get_mod({block_list, _}) -> xep0191;
 get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
@@ -1907,6 +1894,7 @@ get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
 get_mod({groups_name, _}) -> xep_groups;
 get_mod({sync_synchronization}) -> xep_sync;
+get_mod({perms_delete, _}) -> xep_permissions;
 get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
     rfc6120;
 get_mod({presence, _, _, _, _, _, _, _, _, _, _}) ->
@@ -1933,8 +1921,6 @@ get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->
     xep0054;
 get_mod({groups_invite_user, _, _}) -> xep_groups;
 get_mod({markup_bold}) -> xep_markup;
-get_mod({groups_perms_query, _, _, _}) ->
-    xep_groups_perms;
 get_mod({stats, _, _}) -> xep0039;
 get_mod({muc, _, _}) -> xep0045;
 get_mod({carbons_enable}) -> xep0280;
@@ -1950,6 +1936,8 @@ get_mod({xabbertoken_xtoken, _, _, _, _, _, _, _, _}) ->
 get_mod({groups_block, _, _, _}) -> xep_groups;
 get_mod({replaced, _, _}) -> xep_rewrite;
 get_mod({text, _, _}) -> xep_xen;
+get_mod({perms_permission, _, _, _, _, _, _, _, _}) ->
+    xep_permissions;
 get_mod({xmpp_session, _}) -> rfc3921;
 get_mod({ping}) -> xep0199;
 get_mod({time, _, _}) -> xep0202;
@@ -2001,7 +1989,8 @@ get_mod({groups_revoke, _}) -> xep_groups;
 get_mod({groups_pinned_message, _}) -> xep_groups;
 get_mod({voice_message, _}) -> xep_voice;
 get_mod({idle, _}) -> xep0319;
-get_mod({groups_perms, _, _, _}) -> xep_groups_perms;
+get_mod({perms_permissions, _, _, _}) ->
+    xep_permissions;
 get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
@@ -2049,8 +2038,6 @@ get_mod({bob_data, _, _, _, _}) -> xep0231;
 get_mod({devices_feature}) -> xep_devices;
 get_mod({groups_search, _, _, _, _, _}) -> xep_groups;
 get_mod({markup_underline}) -> xep_markup;
-get_mod({groups_perm, _, _, _, _, _, _, _, _}) ->
-    xep_groups_perms;
 get_mod({bind, _, _}) -> rfc6120;
 get_mod({rsm_first, _, _}) -> xep0059;
 get_mod({sync_conversation, _, _, _, _, _, _, _, _}) ->
