@@ -1858,6 +1858,8 @@ get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
 get_mod({block_domain, _}) -> xep_groups;
 get_mod({jingle_propose, _, _}) -> xep0353;
+get_mod({perms_permissions, _, _, _, _}) ->
+    xep_permissions;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({encrypted_message_omemo, _}) -> xep0384;
 get_mod({groups_echo, _}) -> xep_groups;
@@ -1989,8 +1991,6 @@ get_mod({groups_revoke, _}) -> xep_groups;
 get_mod({groups_pinned_message, _}) -> xep_groups;
 get_mod({voice_message, _}) -> xep_voice;
 get_mod({idle, _}) -> xep0319;
-get_mod({perms_permissions, _, _, _}) ->
-    xep_permissions;
 get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;

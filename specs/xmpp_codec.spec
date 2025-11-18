@@ -5471,8 +5471,9 @@
      #elem{name = <<"permissions">>,
        xmlns = <<"https://xabber.com/protocol/permissions">>,
        module = 'xep_permissions',
-       result = {perms_permissions, '$label', '$actor', '$perms'},
+       result = {perms_permissions, '$target', '$label', '$actor', '$perms'},
        attrs = [
+           #attr{name = <<"target">>, default = undefined},
            #attr{name = <<"label">>, default = undefined},
            #attr{name = <<"actor">>, default = undefined}],
        refs = [#ref{name = perms_permission, label = '$perms'}]}).

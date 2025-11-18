@@ -51,7 +51,7 @@ do_encode({perms_permission, _, _, _, _, _, _, _, _} =
 	      Permission,
 	  TopXMLNS) ->
     encode_perms_permission(Permission, TopXMLNS);
-do_encode({perms_permissions, _, _, _} = Permissions,
+do_encode({perms_permissions, _, _, _, _} = Permissions,
 	  TopXMLNS) ->
     encode_perms_permissions(Permissions, TopXMLNS);
 do_encode({perms_delete, _} = Delete, TopXMLNS) ->
@@ -67,7 +67,7 @@ do_get_name({perms_newbies, _}) -> <<"newbies">>;
 do_get_name({perms_permission, _, _, _, _, _, _, _,
 	     _}) ->
     <<"permission">>;
-do_get_name({perms_permissions, _, _, _}) ->
+do_get_name({perms_permissions, _, _, _, _}) ->
     <<"permissions">>.
 
 do_get_ns({perms_defaults, _}) ->
@@ -78,7 +78,7 @@ do_get_ns({perms_newbies, _}) ->
     <<"https://xabber.com/protocol/permissions">>;
 do_get_ns({perms_permission, _, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/permissions">>;
-do_get_ns({perms_permissions, _, _, _}) ->
+do_get_ns({perms_permissions, _, _, _, _}) ->
     <<"https://xabber.com/protocol/permissions">>.
 
 get_els({perms_delete, _sub_els}) -> _sub_els.
@@ -89,14 +89,15 @@ set_els({perms_delete, _}, _sub_els) ->
 pp(perms_permission, 8) ->
     [name, level, status, seconds, expires, tag, fixed,
      display];
-pp(perms_permissions, 3) -> [label, actor, perms];
+pp(perms_permissions, 4) ->
+    [target, label, actor, perms];
 pp(perms_delete, 1) -> [sub_els];
 pp(perms_defaults, 1) -> [perms];
 pp(perms_newbies, 1) -> [perms];
 pp(_, _) -> no.
 
 records() ->
-    [{perms_permission, 8}, {perms_permissions, 3},
+    [{perms_permission, 8}, {perms_permissions, 4},
      {perms_delete, 1}, {perms_defaults, 1},
      {perms_newbies, 1}].
 
@@ -263,10 +264,10 @@ decode_perms_permissions(__TopXMLNS, __Opts,
 			 {xmlel, <<"permissions">>, _attrs, _els}) ->
     Perms = decode_perms_permissions_els(__TopXMLNS, __Opts,
 					 _els, []),
-    {Label, Actor} =
+    {Target, Label, Actor} =
 	decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				       undefined, undefined),
-    {perms_permissions, Label, Actor, Perms}.
+				       undefined, undefined, undefined),
+    {perms_permissions, Target, Label, Actor, Perms}.
 
 decode_perms_permissions_els(__TopXMLNS, __Opts, [],
 			     Perms) ->
@@ -293,24 +294,33 @@ decode_perms_permissions_els(__TopXMLNS, __Opts,
 				 Perms).
 
 decode_perms_permissions_attrs(__TopXMLNS,
-			       [{<<"label">>, _val} | _attrs], _Label, Actor) ->
-    decode_perms_permissions_attrs(__TopXMLNS, _attrs, _val,
-				   Actor);
-decode_perms_permissions_attrs(__TopXMLNS,
-			       [{<<"actor">>, _val} | _attrs], Label, _Actor) ->
-    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				   Label, _val);
-decode_perms_permissions_attrs(__TopXMLNS, [_ | _attrs],
-			       Label, Actor) ->
-    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				   Label, Actor);
-decode_perms_permissions_attrs(__TopXMLNS, [], Label,
+			       [{<<"target">>, _val} | _attrs], _Target, Label,
 			       Actor) ->
-    {decode_perms_permissions_attr_label(__TopXMLNS, Label),
+    decode_perms_permissions_attrs(__TopXMLNS, _attrs, _val,
+				   Label, Actor);
+decode_perms_permissions_attrs(__TopXMLNS,
+			       [{<<"label">>, _val} | _attrs], Target, _Label,
+			       Actor) ->
+    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
+				   Target, _val, Actor);
+decode_perms_permissions_attrs(__TopXMLNS,
+			       [{<<"actor">>, _val} | _attrs], Target, Label,
+			       _Actor) ->
+    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
+				   Target, Label, _val);
+decode_perms_permissions_attrs(__TopXMLNS, [_ | _attrs],
+			       Target, Label, Actor) ->
+    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
+				   Target, Label, Actor);
+decode_perms_permissions_attrs(__TopXMLNS, [], Target,
+			       Label, Actor) ->
+    {decode_perms_permissions_attr_target(__TopXMLNS,
+					  Target),
+     decode_perms_permissions_attr_label(__TopXMLNS, Label),
      decode_perms_permissions_attr_actor(__TopXMLNS, Actor)}.
 
-encode_perms_permissions({perms_permissions, Label,
-			  Actor, Perms},
+encode_perms_permissions({perms_permissions, Target,
+			  Label, Actor, Perms},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/permissions">>,
@@ -320,8 +330,9 @@ encode_perms_permissions({perms_permissions, Label,
 							__NewTopXMLNS, [])),
     _attrs = encode_perms_permissions_attr_actor(Actor,
 						 encode_perms_permissions_attr_label(Label,
-										     xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-														__TopXMLNS))),
+										     encode_perms_permissions_attr_target(Target,
+															  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																		     __TopXMLNS)))),
     {xmlel, <<"permissions">>, _attrs, _els}.
 
 'encode_perms_permissions_$perms'([], __TopXMLNS,
@@ -333,6 +344,18 @@ encode_perms_permissions({perms_permissions, Label,
 				      [encode_perms_permission(Perms,
 							       __TopXMLNS)
 				       | _acc]).
+
+decode_perms_permissions_attr_target(__TopXMLNS,
+				     undefined) ->
+    undefined;
+decode_perms_permissions_attr_target(__TopXMLNS,
+				     _val) ->
+    _val.
+
+encode_perms_permissions_attr_target(undefined, _acc) ->
+    _acc;
+encode_perms_permissions_attr_target(_val, _acc) ->
+    [{<<"target">>, _val} | _acc].
 
 decode_perms_permissions_attr_label(__TopXMLNS,
 				    undefined) ->

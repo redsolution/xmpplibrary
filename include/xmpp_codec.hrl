@@ -1277,7 +1277,8 @@
                            display = <<>> :: binary()}).
 -type perms_permission() :: #perms_permission{}.
 
--record(perms_permissions, {label :: 'undefined' | binary(),
+-record(perms_permissions, {target :: 'undefined' | binary(),
+                            label :: 'undefined' | binary(),
                             actor :: 'undefined' | binary(),
                             perms = [] :: [#perms_permission{}]}).
 -type perms_permissions() :: #perms_permissions{}.
@@ -1479,12 +1480,14 @@
                         stanza_id() |
                         rsm_set() |
                         rsm_first() |
+                        perms_newbies() |
                         sm_resume() |
                         retract_user() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
-                        perms_defaults() |
+                        perms_delete() |
+                        replace() |
                         replace_message() |
                         sm_enable() |
                         upload_request_0() |
@@ -1512,7 +1515,6 @@
                         ps_unsubscribe() |
                         sync_metadata() |
                         groups_update() |
-                        search() |
                         csi() |
                         stream_features() |
                         handshake() |
@@ -1553,10 +1555,9 @@
                         muc_history() |
                         ps_error() |
                         groups_owner() |
-                        perms_delete() |
                         muc_decline() |
                         markup_mention() |
-                        perms_newbies() |
+                        perms_defaults() |
                         xmpp_session() |
                         encrypted_message_omemo() |
                         sync_unread() |
@@ -1667,6 +1668,7 @@
                         perms_permission() |
                         gone() |
                         xen_notify() |
+                        search() |
                         xcaptcha() |
                         geoloc() |
                         groups_block() |
@@ -1694,7 +1696,6 @@
                         x_conference() |
                         upload_slot_0() |
                         groups_x() |
-                        text() |
                         files_file_sharing() |
                         muc_user() |
                         retract_all() |
@@ -1715,6 +1716,7 @@
                         xen_jid() |
                         muc_owner() |
                         groups_status() |
+                        text() |
                         avatar_meta() |
                         sasl_auth() |
                         block_jid() |
@@ -1722,7 +1724,6 @@
                         groups_invite_user() |
                         search_item() |
                         vcard_sound() |
-                        replace() |
                         muc_admin() |
                         block_id() |
                         jingle_propose() |
