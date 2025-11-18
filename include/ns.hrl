@@ -214,4 +214,4 @@
 -define(NS_XABBER_CHAT, <<"urn:xabber:chat">>).
 -define(NS_FAVORITES, <<"urn:xabber:favorites:0">>).
 -define(NS_XEN, <<"urn:xabber:xen:0">>).
--define(NS_PERMS, <<"https://xabber.com/protocol/groups/permissions">>).
+-define(NS_PERMS, <<"https://xabber.com/protocol/permissions">>).

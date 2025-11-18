@@ -1487,10 +1487,10 @@
                         mix_participant() |
                         xdata_option() |
                         perms_delete() |
-                        replace() |
                         replace_message() |
                         sm_enable() |
                         upload_request_0() |
+                        search() |
                         version() |
                         groups_mentions() |
                         sm_resumed() |
@@ -1598,6 +1598,7 @@
                         mark_markable() |
                         files_file() |
                         markup_strike() |
+                        text() |
                         ps_items() |
                         sasl_failure() |
                         groups_localpart() |
@@ -1641,6 +1642,7 @@
                         pubsub_owner() |
                         xabber_encryption_key() |
                         privilege() |
+                        replace() |
                         xen_notification() |
                         compress() |
                         groups_unblock() |
@@ -1668,7 +1670,6 @@
                         perms_permission() |
                         gone() |
                         xen_notify() |
-                        search() |
                         xcaptcha() |
                         geoloc() |
                         groups_block() |
@@ -1716,7 +1717,6 @@
                         xen_jid() |
                         muc_owner() |
                         groups_status() |
-                        text() |
                         avatar_meta() |
                         sasl_auth() |
                         block_jid() |
