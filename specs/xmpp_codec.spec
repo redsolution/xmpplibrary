@@ -5471,11 +5471,14 @@
      #elem{name = <<"permissions">>,
        xmlns = <<"https://xabber.com/protocol/permissions">>,
        module = 'xep_permissions',
-       result = {perms_permissions, '$target', '$label', '$actor', '$perms'},
+       result = {perms_permissions, '$target', '$label', '$actor', '$stamp', '$perms'},
        attrs = [
            #attr{name = <<"target">>, default = undefined},
            #attr{name = <<"label">>, default = undefined},
-           #attr{name = <<"actor">>, default = undefined}],
+           #attr{name = <<"actor">>, default = undefined},
+           #attr{name = <<"stamp">>,
+                   dec = {dec_utc, []},
+                   enc = {enc_utc, []}}],
        refs = [#ref{name = perms_permission, label = '$perms'}]}).
 
 -xml(perms_delete,

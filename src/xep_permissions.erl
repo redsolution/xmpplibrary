@@ -51,7 +51,8 @@ do_encode({perms_permission, _, _, _, _, _, _, _, _} =
 	      Permission,
 	  TopXMLNS) ->
     encode_perms_permission(Permission, TopXMLNS);
-do_encode({perms_permissions, _, _, _, _} = Permissions,
+do_encode({perms_permissions, _, _, _, _, _} =
+	      Permissions,
 	  TopXMLNS) ->
     encode_perms_permissions(Permissions, TopXMLNS);
 do_encode({perms_delete, _} = Delete, TopXMLNS) ->
@@ -67,7 +68,7 @@ do_get_name({perms_newbies, _}) -> <<"newbies">>;
 do_get_name({perms_permission, _, _, _, _, _, _, _,
 	     _}) ->
     <<"permission">>;
-do_get_name({perms_permissions, _, _, _, _}) ->
+do_get_name({perms_permissions, _, _, _, _, _}) ->
     <<"permissions">>.
 
 do_get_ns({perms_defaults, _}) ->
@@ -78,7 +79,7 @@ do_get_ns({perms_newbies, _}) ->
     <<"https://xabber.com/protocol/permissions">>;
 do_get_ns({perms_permission, _, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/permissions">>;
-do_get_ns({perms_permissions, _, _, _, _}) ->
+do_get_ns({perms_permissions, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/permissions">>.
 
 get_els({perms_delete, _sub_els}) -> _sub_els.
@@ -89,15 +90,15 @@ set_els({perms_delete, _}, _sub_els) ->
 pp(perms_permission, 8) ->
     [name, level, status, seconds, expires, tag, fixed,
      display];
-pp(perms_permissions, 4) ->
-    [target, label, actor, perms];
+pp(perms_permissions, 5) ->
+    [target, label, actor, stamp, perms];
 pp(perms_delete, 1) -> [sub_els];
 pp(perms_defaults, 1) -> [perms];
 pp(perms_newbies, 1) -> [perms];
 pp(_, _) -> no.
 
 records() ->
-    [{perms_permission, 8}, {perms_permissions, 4},
+    [{perms_permission, 8}, {perms_permissions, 5},
      {perms_delete, 1}, {perms_defaults, 1},
      {perms_newbies, 1}].
 
@@ -112,10 +113,14 @@ dec_int(Val, Min, Max) ->
       Int when Int =< Max, Int >= Min -> Int
     end.
 
+dec_utc(Val) -> xmpp_util:decode_timestamp(Val).
+
 enc_bool(false) -> <<"false">>;
 enc_bool(true) -> <<"true">>.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
+
+enc_utc(Val) -> xmpp_util:encode_timestamp(Val).
 
 decode_perms_newbies(__TopXMLNS, __Opts,
 		     {xmlel, <<"newbies">>, _attrs, _els}) ->
@@ -260,10 +265,11 @@ decode_perms_permissions(__TopXMLNS, __Opts,
 			 {xmlel, <<"permissions">>, _attrs, _els}) ->
     Perms = decode_perms_permissions_els(__TopXMLNS, __Opts,
 					 _els, []),
-    {Target, Label, Actor} =
+    {Target, Label, Actor, Stamp} =
 	decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				       undefined, undefined, undefined),
-    {perms_permissions, Target, Label, Actor, Perms}.
+				       undefined, undefined, undefined,
+				       undefined),
+    {perms_permissions, Target, Label, Actor, Stamp, Perms}.
 
 decode_perms_permissions_els(__TopXMLNS, __Opts, [],
 			     Perms) ->
@@ -291,32 +297,38 @@ decode_perms_permissions_els(__TopXMLNS, __Opts,
 
 decode_perms_permissions_attrs(__TopXMLNS,
 			       [{<<"target">>, _val} | _attrs], _Target, Label,
-			       Actor) ->
+			       Actor, Stamp) ->
     decode_perms_permissions_attrs(__TopXMLNS, _attrs, _val,
-				   Label, Actor);
+				   Label, Actor, Stamp);
 decode_perms_permissions_attrs(__TopXMLNS,
 			       [{<<"label">>, _val} | _attrs], Target, _Label,
-			       Actor) ->
+			       Actor, Stamp) ->
     decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				   Target, _val, Actor);
+				   Target, _val, Actor, Stamp);
 decode_perms_permissions_attrs(__TopXMLNS,
 			       [{<<"actor">>, _val} | _attrs], Target, Label,
-			       _Actor) ->
+			       _Actor, Stamp) ->
     decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				   Target, Label, _val);
+				   Target, Label, _val, Stamp);
+decode_perms_permissions_attrs(__TopXMLNS,
+			       [{<<"stamp">>, _val} | _attrs], Target, Label,
+			       Actor, _Stamp) ->
+    decode_perms_permissions_attrs(__TopXMLNS, _attrs,
+				   Target, Label, Actor, _val);
 decode_perms_permissions_attrs(__TopXMLNS, [_ | _attrs],
-			       Target, Label, Actor) ->
+			       Target, Label, Actor, Stamp) ->
     decode_perms_permissions_attrs(__TopXMLNS, _attrs,
-				   Target, Label, Actor);
+				   Target, Label, Actor, Stamp);
 decode_perms_permissions_attrs(__TopXMLNS, [], Target,
-			       Label, Actor) ->
+			       Label, Actor, Stamp) ->
     {decode_perms_permissions_attr_target(__TopXMLNS,
 					  Target),
      decode_perms_permissions_attr_label(__TopXMLNS, Label),
-     decode_perms_permissions_attr_actor(__TopXMLNS, Actor)}.
+     decode_perms_permissions_attr_actor(__TopXMLNS, Actor),
+     decode_perms_permissions_attr_stamp(__TopXMLNS, Stamp)}.
 
 encode_perms_permissions({perms_permissions, Target,
-			  Label, Actor, Perms},
+			  Label, Actor, Stamp, Perms},
 			 __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/permissions">>,
@@ -324,11 +336,12 @@ encode_perms_permissions({perms_permissions, Target,
     _els =
 	lists:reverse('encode_perms_permissions_$perms'(Perms,
 							__NewTopXMLNS, [])),
-    _attrs = encode_perms_permissions_attr_actor(Actor,
-						 encode_perms_permissions_attr_label(Label,
-										     encode_perms_permissions_attr_target(Target,
-															  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-																		     __TopXMLNS)))),
+    _attrs = encode_perms_permissions_attr_stamp(Stamp,
+						 encode_perms_permissions_attr_actor(Actor,
+										     encode_perms_permissions_attr_label(Label,
+															 encode_perms_permissions_attr_target(Target,
+																			      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+																							 __TopXMLNS))))),
     {xmlel, <<"permissions">>, _attrs, _els}.
 
 'encode_perms_permissions_$perms'([], __TopXMLNS,
@@ -374,6 +387,23 @@ encode_perms_permissions_attr_actor(undefined, _acc) ->
     _acc;
 encode_perms_permissions_attr_actor(_val, _acc) ->
     [{<<"actor">>, _val} | _acc].
+
+decode_perms_permissions_attr_stamp(__TopXMLNS,
+				    undefined) ->
+    undefined;
+decode_perms_permissions_attr_stamp(__TopXMLNS, _val) ->
+    case catch dec_utc(_val) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"stamp">>, <<"permissions">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_perms_permissions_attr_stamp(undefined, _acc) ->
+    _acc;
+encode_perms_permissions_attr_stamp(_val, _acc) ->
+    [{<<"stamp">>, enc_utc(_val)} | _acc].
 
 decode_perms_permission(__TopXMLNS, __Opts,
 			{xmlel, <<"permission">>, _attrs, _els}) ->

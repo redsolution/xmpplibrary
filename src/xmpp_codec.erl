@@ -1858,8 +1858,6 @@ get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
 get_mod({block_domain, _}) -> xep_groups;
 get_mod({jingle_propose, _, _}) -> xep0353;
-get_mod({perms_permissions, _, _, _, _}) ->
-    xep_permissions;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({encrypted_message_omemo, _}) -> xep0384;
 get_mod({groups_echo, _}) -> xep_groups;
@@ -1905,6 +1903,8 @@ get_mod({streamhost, _, _, _}) -> xep0065;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({markup_mention, _, _}) -> xep_markup;
+get_mod({perms_permissions, _, _, _, _, _}) ->
+    xep_permissions;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({groups_index, _}) -> xep_groups;

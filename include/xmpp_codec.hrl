@@ -1280,6 +1280,7 @@
 -record(perms_permissions, {target :: 'undefined' | binary(),
                             label :: 'undefined' | binary(),
                             actor :: 'undefined' | binary(),
+                            stamp :: undefined | erlang:timestamp(),
                             perms = [] :: [#perms_permission{}]}).
 -type perms_permissions() :: #perms_permissions{}.
 
@@ -1476,7 +1477,6 @@
                         markup_italic() |
                         groups_name() |
                         ps_subscription() |
-                        text() |
                         devices_revoke_all() |
                         stanza_id() |
                         rsm_set() |
@@ -1540,6 +1540,7 @@
                         sasl_mechanisms() |
                         compress_failure() |
                         ping() |
+                        text() |
                         delivery_x() |
                         shim() |
                         sasl_response() |
@@ -1606,6 +1607,7 @@
                         carbons_private() |
                         starttls() |
                         groups_user_id() |
+                        replace() |
                         muc() |
                         vcard_photo() |
                         compressed() |
@@ -1652,7 +1654,6 @@
                         offline() |
                         streamhost() |
                         encrypted() |
-                        replace() |
                         vcard_xupdate() |
                         stat_error() |
                         avatar_pointer() |
@@ -1689,7 +1690,6 @@
                         block() |
                         time() |
                         muc_destroy() |
-                        search() |
                         bookmark_url() |
                         disco_items() |
                         markup_quote() |
@@ -1722,6 +1722,7 @@
                         block_jid() |
                         push_call() |
                         groups_invite_user() |
+                        search() |
                         search_item() |
                         vcard_sound() |
                         muc_admin() |
