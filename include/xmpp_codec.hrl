@@ -243,9 +243,8 @@
                       to :: undefined | jid:jid()}).
 -type muc_decline() :: #muc_decline{}.
 
--record(groups_ptp, {jid :: undefined | jid:jid(),
-                     id = <<>> :: binary(),
-                     cdata = <<>> :: binary()}).
+-record(groups_ptp, {parent :: jid:jid(),
+                     with = <<>> :: binary()}).
 -type groups_ptp() :: #groups_ptp{}.
 
 -record(upload_slot_0, {get :: binary(),
@@ -270,9 +269,6 @@
 -record(geoloc, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type geoloc() :: #geoloc{}.
 
--record(groups_query_rights, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type groups_query_rights() :: #groups_query_rights{}.
-
 -record(groups_collect, {cdata = <<>> :: binary()}).
 -type groups_collect() :: #groups_collect{}.
 
@@ -281,9 +277,6 @@
 
 -record(jingle_accept, {id = <<>> :: binary()}).
 -type jingle_accept() :: #jingle_accept{}.
-
--record(block_id, {cdata = <<>> :: binary()}).
--type block_id() :: #block_id{}.
 
 -record(sm_resumed, {h :: non_neg_integer(),
                      previd = <<>> :: binary(),
@@ -310,16 +303,6 @@
                     id = <<>> :: binary()}).
 -type stanza_id() :: #stanza_id{}.
 
--record(groups_x, {xmlns = <<>> :: binary(),
-                   type = <<>> :: binary(),
-                   version = <<>> :: binary(),
-                   members :: 'undefined' | binary(),
-                   present :: 'undefined' | binary(),
-                   parent :: undefined | jid:jid(),
-                   jid :: undefined | jid:jid(),
-                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type groups_x() :: #groups_x{}.
-
 -record(forwarded, {delay :: 'undefined' | #delay{},
                     sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type forwarded() :: #forwarded{}.
@@ -343,6 +326,9 @@
 
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
+
+-record(groups_state, {cdata :: 'active' | 'inactive' | 'undefined'}).
+-type groups_state() :: #groups_state{}.
 
 -record(db_feature, {errors = false :: boolean()}).
 -type db_feature() :: #db_feature{}.
@@ -370,6 +356,9 @@
                     xmlns = <<>> :: binary()}).
 -type sm_enable() :: #sm_enable{}.
 
+-record(groups_delete, {group :: undefined | jid:jid()}).
+-type groups_delete() :: #groups_delete{}.
+
 -record(starttls_failure, {}).
 -type starttls_failure() :: #starttls_failure{}.
 
@@ -394,8 +383,14 @@
                     sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type db_verify() :: #db_verify{}.
 
+-record(groups_kick, {jid :: undefined | jid:jid()}).
+-type groups_kick() :: #groups_kick{}.
+
 -record(nick, {name = <<>> :: binary()}).
 -type nick() :: #nick{}.
+
+-record(groups_unblock, {jid :: undefined | jid:jid()}).
+-type groups_unblock() :: #groups_unblock{}.
 
 -record(devices_revoke_all, {}).
 -type devices_revoke_all() :: #devices_revoke_all{}.
@@ -460,12 +455,6 @@
                error :: 'undefined' | #stat_error{}}).
 -type stat() :: #stat{}.
 
--record(groups_contacts, {contacts = [] :: [binary()]}).
--type groups_contacts() :: #groups_contacts{}.
-
--record(groups_domains, {domains = [] :: [binary()]}).
--type groups_domains() :: #groups_domains{}.
-
 -record(addresses, {list = [] :: [#address{}]}).
 -type addresses() :: #addresses{}.
 
@@ -474,11 +463,17 @@
                      addresses :: #addresses{}}).
 -type xen_notify() :: #xen_notify{}.
 
+-record(groups_contacts, {contacts = [] :: [jid:jid()]}).
+-type groups_contacts() :: #groups_contacts{}.
+
+-record(groups_domains, {domains = [] :: [jid:jid()]}).
+-type groups_domains() :: #groups_domains{}.
+
+-record(groups_last, {stamp :: erlang:timestamp()}).
+-type groups_last() :: #groups_last{}.
+
 -record(groups_localpart, {cdata = <<>> :: binary()}).
 -type groups_localpart() :: #groups_localpart{}.
-
--record(block_jid, {cdata = <<>> :: binary()}).
--type block_jid() :: #block_jid{}.
 
 -record(starttls, {required = false :: boolean()}).
 -type starttls() :: #starttls{}.
@@ -545,11 +540,11 @@
 -record(mark_markable, {}).
 -type mark_markable() :: #mark_markable{}.
 
--record(groups_pinned_message, {cdata = <<>> :: binary()}).
+-record(groups_pinned_message, {id = <<>> :: binary()}).
 -type groups_pinned_message() :: #groups_pinned_message{}.
 
--record(groups_update, {pinned :: 'undefined' | #groups_pinned_message{}}).
--type groups_update() :: #groups_update{}.
+-record(groups_pinned, {messages = [] :: [#groups_pinned_message{}]}).
+-type groups_pinned() :: #groups_pinned{}.
 
 -record(xabber_push_disable, {jid :: jid:jid(),
                               node = <<>> :: binary()}).
@@ -562,15 +557,12 @@
                      sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type files_file() :: #files_file{}.
 
--record(groups_revoke, {jid :: binary()}).
+-record(groups_revoke, {jid :: jid:jid()}).
 -type groups_revoke() :: #groups_revoke{}.
 
 -record(sasl_auth, {mechanism = <<>> :: binary(),
                     text = <<>> :: binary()}).
 -type sasl_auth() :: #sasl_auth{}.
-
--record(groups_privacy, {cdata = <<>> :: binary()}).
--type groups_privacy() :: #groups_privacy{}.
 
 -record(xabber_encryption_key, {data = <<>> :: binary()}).
 -type xabber_encryption_key() :: #xabber_encryption_key{}.
@@ -587,6 +579,9 @@
 
 -record(markup_link, {cdata = <<>> :: binary()}).
 -type markup_link() :: #markup_link{}.
+
+-record(groups_block, {jids = [] :: [jid:jid()]}).
+-type groups_block() :: #groups_block{}.
 
 -record(sync_call, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type sync_call() :: #sync_call{}.
@@ -648,23 +643,10 @@
                       pointer :: 'undefined' | #avatar_pointer{}}).
 -type avatar_meta() :: #avatar_meta{}.
 
--record(groups_user, {id = <<>> :: binary(),
-                      jid :: undefined | jid:jid(),
-                      role :: 'undefined' | binary(),
-                      badge :: 'undefined' | binary(),
-                      nickname :: 'undefined' | binary(),
-                      avatar :: 'undefined' | #avatar_meta{},
-                      present :: 'undefined' | binary(),
-                      subscription :: 'undefined' | binary()}).
--type groups_user() :: #groups_user{}.
-
 -record(encrypted_message_omemo, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type encrypted_message_omemo() :: #encrypted_message_omemo{}.
 
--record(groups_echo, {message :: #message{}}).
--type groups_echo() :: #groups_echo{}.
-
--record(groups_membership, {cdata = <<>> :: binary()}).
+-record(groups_membership, {cdata :: 'open' | 'private' | 'undefined'}).
 -type groups_membership() :: #groups_membership{}.
 
 -record(bob_data, {cid = <<>> :: binary(),
@@ -676,15 +658,30 @@
 -record(groups_owner, {id = <<>> :: binary()}).
 -type groups_owner() :: #groups_owner{}.
 
--record(groups_invite_user, {jid = <<>> :: binary(),
-                             id = <<>> :: binary()}).
--type groups_invite_user() :: #groups_invite_user{}.
-
--record(groups_query_invites, {users = [] :: [#groups_invite_user{}]}).
--type groups_query_invites() :: #groups_query_invites{}.
-
 -record(shim, {headers = [] :: [{binary(),binary()}]}).
 -type shim() :: #shim{}.
+
+-record(groups_avatar, {info :: 'undefined' | #avatar_info{},
+                        data :: 'undefined' | #avatar_data{}}).
+-type groups_avatar() :: #groups_avatar{}.
+
+-record(groups_user, {id = <<>> :: binary(),
+                      jid :: undefined | jid:jid(),
+                      role :: 'undefined' | binary(),
+                      badge :: 'undefined' | binary(),
+                      nickname :: 'undefined' | binary(),
+                      avatar :: 'undefined' | #groups_avatar{},
+                      last :: 'undefined' | #groups_last{}}).
+-type groups_user() :: #groups_user{}.
+
+-record(groups_sys_msg, {type = <<>> :: binary(),
+                         actor :: 'undefined' | #groups_user{}}).
+-type groups_sys_msg() :: #groups_sys_msg{}.
+
+-record(groups_x, {author :: #groups_user{},
+                   message :: #message{},
+                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type groups_x() :: #groups_x{}.
 
 -record(sticker, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type sticker() :: #sticker{}.
@@ -709,9 +706,6 @@
 
 -record(muc_admin, {items = [] :: [#muc_item{}]}).
 -type muc_admin() :: #muc_admin{}.
-
--record(groups_status, {cdata = <<>> :: binary()}).
--type groups_status() :: #groups_status{}.
 
 -record(caps, {node = <<>> :: binary(),
                version = <<>> :: binary(),
@@ -744,6 +738,9 @@
                     never :: undefined | [jid:jid()]}).
 -type mam_prefs() :: #mam_prefs{}.
 
+-record(groups_invites, {usernames = [] :: [jid:jid()]}).
+-type groups_invites() :: #groups_invites{}.
+
 -record(stream_features, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type stream_features() :: #stream_features{}.
 
@@ -751,13 +748,6 @@
               port :: 'undefined' | non_neg_integer(),
               xmlns = <<>> :: binary()}).
 -type sic() :: #sic{}.
-
--record(groups_user_id, {cdata = <<>> :: binary()}).
--type groups_user_id() :: #groups_user_id{}.
-
--record(groups_kick, {ids = [] :: [#groups_user_id{}],
-                      jids = [] :: [jid:jid()]}).
--type groups_kick() :: #groups_kick{}.
 
 -record(receipt_request, {}).
 -type receipt_request() :: #receipt_request{}.
@@ -816,6 +806,9 @@
                             forwarded :: 'undefined' | #forwarded{}}).
 -type delivery_received() :: #delivery_received{}.
 
+-record(groups_resend, {}).
+-type groups_resend() :: #groups_resend{}.
+
 -record(mix_participant, {jid :: jid:jid(),
                           nick = <<>> :: binary()}).
 -type mix_participant() :: #mix_participant{}.
@@ -872,6 +865,12 @@
 
 -record(groups_name, {cdata = <<>> :: binary()}).
 -type groups_name() :: #groups_name{}.
+
+-record(groups_info, {name :: 'undefined' | #groups_name{},
+                      description :: 'undefined' | #groups_description{},
+                      avatar :: 'undefined' | #groups_avatar{},
+                      status :: 'undefined' | #text{}}).
+-type groups_info() :: #groups_info{}.
 
 -record(bytestreams, {hosts = [] :: [#streamhost{}],
                       used :: undefined | jid:jid(),
@@ -943,8 +942,33 @@
                              sources :: #files_sources{}}).
 -type files_file_sharing() :: #files_file_sharing{}.
 
--record(groups_index, {cdata = <<>> :: binary()}).
+-record(groups_index, {cdata :: 'global' | 'local' | 'none' | 'undefined'}).
 -type groups_index() :: #groups_index{}.
+
+-record(groups_settings, {membership :: 'undefined' | #groups_membership{},
+                          contacts :: 'undefined' | #groups_contacts{},
+                          domains :: 'undefined' | #groups_domains{},
+                          index :: 'undefined' | #groups_index{},
+                          state :: 'undefined' | #groups_state{}}).
+-type groups_settings() :: #groups_settings{}.
+
+-record(groups_group, {privacy :: 'incognito' | 'public' | 'undefined',
+                       parent :: undefined | jid:jid(),
+                       jid :: undefined | jid:jid(),
+                       members :: 'undefined' | non_neg_integer(),
+                       localpart :: 'undefined' | #groups_localpart{},
+                       info :: 'undefined' | #groups_info{},
+                       settings :: 'undefined' | #groups_settings{},
+                       pinned :: 'undefined' | #groups_pinned{},
+                       present :: 'undefined' | binary()}).
+-type groups_group() :: #groups_group{}.
+
+-record(groups_details, {group :: 'undefined' | #groups_group{}}).
+-type groups_details() :: #groups_details{}.
+
+-record(groups_create, {group :: 'undefined' | #groups_group{},
+                        ptp :: 'undefined' | #groups_ptp{}}).
+-type groups_create() :: #groups_create{}.
 
 -record(vcard_tel, {home = false :: boolean(),
                     work = false :: boolean(),
@@ -970,14 +994,6 @@
                   last :: 'undefined' | binary(),
                   max :: 'undefined' | non_neg_integer()}).
 -type rsm_set() :: #rsm_set{}.
-
--record(groups_query, {xmlns = <<>> :: binary(),
-                       id = <<>> :: binary(),
-                       version :: 'undefined' | non_neg_integer(),
-                       rsm :: 'undefined' | #rsm_set{},
-                       sub_els = [] :: [xmpp_element() | fxml:xmlel()],
-                       cdata = <<>> :: binary()}).
--type groups_query() :: #groups_query{}.
 
 -record(groups_search, {name :: 'undefined' | #groups_name{},
                         description :: 'undefined' | #groups_description{},
@@ -1128,6 +1144,12 @@
                      xdata :: 'undefined' | #xdata{},
                      sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type sync_query() :: #sync_query{}.
+
+-record(groups_members, {members = [] :: [#groups_user{}],
+                         id = <<>> :: binary(),
+                         version = <<>> :: binary(),
+                         xdata :: 'undefined' | #xdata{}}).
+-type groups_members() :: #groups_members{}.
 
 -record(xabber_push_enable, {jid :: jid:jid(),
                              node = <<>> :: binary(),
@@ -1361,24 +1383,11 @@
 -type sync_synchronization() :: #sync_synchronization{}.
 
 -record(groups_invite, {jid :: undefined | jid:jid(),
-                        invite_jid :: 'undefined' | binary(),
-                        send :: 'undefined' | binary(),
+                        target :: undefined | jid:jid(),
+                        send :: 'false' | 'true' | 'undefined',
                         reason :: 'undefined' | binary(),
-                        user :: 'undefined' | #groups_invite_user{}}).
+                        user :: 'undefined' | #groups_user{}}).
 -type groups_invite() :: #groups_invite{}.
-
--record(block_domain, {cdata = <<>> :: binary()}).
--type block_domain() :: #block_domain{}.
-
--record(groups_unblock, {id = [] :: [#block_id{}],
-                         jid = [] :: [#block_jid{}],
-                         domain = [] :: [#block_domain{}]}).
--type groups_unblock() :: #groups_unblock{}.
-
--record(groups_block, {id = [] :: [#block_id{}],
-                       jid = [] :: [#block_jid{}],
-                       domain = [] :: [#block_domain{}]}).
--type groups_block() :: #groups_block{}.
 
 -record(stream_error, {reason :: atom() | #'see-other-host'{},
                        text = [] :: [#text{}]}).
@@ -1460,6 +1469,7 @@
                         message() |
                         roster_item() |
                         carbons_sent() |
+                        groups_resend() |
                         disco_info() |
                         feature_sm() |
                         vcard_geo() |
@@ -1468,32 +1478,33 @@
                         delegated() |
                         mark_displayed() |
                         adhoc_command() |
-                        groups_kick() |
                         register() |
                         vcard_org() |
                         sync_delivered() |
                         starttls_proceed() |
                         push_enable() |
                         markup_italic() |
-                        groups_name() |
+                        groups_unblock() |
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
                         rsm_set() |
                         rsm_first() |
-                        perms_newbies() |
+                        search() |
+                        groups_localpart() |
                         sm_resume() |
                         retract_user() |
                         sasl_abort() |
                         mix_participant() |
                         xdata_option() |
-                        perms_delete() |
+                        perms_defaults() |
                         replace_message() |
                         sm_enable() |
                         upload_request_0() |
                         version() |
-                        groups_mentions() |
                         sm_resumed() |
+                        groups_revoke() |
+                        groups_user() |
                         voice_message() |
                         push_disable() |
                         nick() |
@@ -1501,6 +1512,7 @@
                         bind() |
                         xabber_push_disable() |
                         devices_query_items() |
+                        groups_decline() |
                         starttls_failure() |
                         muc_item() |
                         retract_message() |
@@ -1509,56 +1521,55 @@
                         address() |
                         avatar_data() |
                         markup_link() |
-                        groups_user() |
+                        groups_owner() |
                         xen_prefs() |
-                        groups_search() |
+                        groups_delete() |
                         ps_unsubscribe() |
                         sync_metadata() |
-                        groups_update() |
+                        groups_contacts() |
                         csi() |
                         stream_features() |
                         handshake() |
                         sm_r() |
                         adhoc_note() |
                         upload_slot() |
-                        groups_membership() |
-                        groups_index() |
+                        groups_members() |
+                        groups_invites() |
+                        groups_collect() |
                         presence() |
                         db_verify() |
                         offline_item() |
                         stat() |
                         vcard_tel() |
                         feature_csi() |
+                        groups_pinned_message() |
                         private() |
                         carbons_received() |
                         thumbnail() |
                         media() |
                         devices_feature() |
-                        block_domain() |
                         delivery_time() |
                         caps() |
                         sasl_mechanisms() |
                         compress_failure() |
                         ping() |
-                        text() |
                         delivery_x() |
                         shim() |
                         sasl_response() |
-                        groups_query_rights() |
                         ps_retract() |
                         legacy_auth() |
-                        groups_contacts() |
                         ps_affiliation() |
                         mam_fin() |
                         xdata_field() |
-                        groups_query() |
                         muc_unique() |
                         muc_history() |
                         ps_error() |
-                        groups_owner() |
+                        groups_mentions() |
+                        perms_delete() |
                         muc_decline() |
+                        groups_block() |
                         markup_mention() |
-                        perms_defaults() |
+                        perms_newbies() |
                         xmpp_session() |
                         encrypted_message_omemo() |
                         sync_unread() |
@@ -1568,14 +1579,16 @@
                         ps_options() |
                         privacy_list() |
                         rosterver_feature() |
+                        groups_description() |
                         delivery_received() |
                         delegation_query() |
                         stream_error() |
                         xabber_push_security() |
                         xevent() |
                         files_sources() |
+                        replace() |
                         sync_conversation() |
-                        groups_description() |
+                        groups_kick() |
                         replaced() |
                         ps_subscribe() |
                         pubsub() |
@@ -1583,8 +1596,6 @@
                         retract_query() |
                         origin_id() |
                         devices_device() |
-                        groups_echo() |
-                        groups_query_invites() |
                         mix_leave() |
                         adhoc_actions() |
                         privacy_query() |
@@ -1593,7 +1604,6 @@
                         stream_start() |
                         muc_invite() |
                         delay() |
-                        groups_pinned_message() |
                         receipt_request() |
                         disco_item() |
                         mark_markable() |
@@ -1601,18 +1611,17 @@
                         markup_strike() |
                         ps_items() |
                         sasl_failure() |
-                        groups_localpart() |
                         oob_x() |
                         sync_call() |
                         carbons_private() |
                         starttls() |
-                        groups_user_id() |
-                        replace() |
+                        groups_group() |
+                        groups_details() |
                         muc() |
                         vcard_photo() |
                         compressed() |
                         sm_enabled() |
-                        groups_revoke() |
+                        groups_info() |
                         xdata() |
                         hint() |
                         sm_failed() |
@@ -1620,7 +1629,7 @@
                         sync_synchronization() |
                         last() |
                         iq() |
-                        groups_ptp() |
+                        groups_pinned() |
                         sync_displayed() |
                         ps_event() |
                         sm_a() |
@@ -1645,9 +1654,9 @@
                         privilege() |
                         xen_notification() |
                         compress() |
-                        groups_unblock() |
+                        groups_ptp() |
                         privacy_item() |
-                        groups_domains() |
+                        groups_x() |
                         'see-other-host'() |
                         vcard_logo() |
                         stanza_error() |
@@ -1655,6 +1664,7 @@
                         streamhost() |
                         encrypted() |
                         vcard_xupdate() |
+                        text() |
                         stat_error() |
                         avatar_pointer() |
                         addresses() |
@@ -1665,6 +1675,7 @@
                         expire() |
                         sync_last() |
                         db_result() |
+                        groups_invite() |
                         mam_archived() |
                         unblock() |
                         perms_permission() |
@@ -1672,11 +1683,11 @@
                         xen_notify() |
                         xcaptcha() |
                         geoloc() |
-                        groups_block() |
                         bob_data() |
+                        groups_settings() |
                         idle() |
                         bookmark_conference() |
-                        groups_decline() |
+                        groups_membership() |
                         carbons_enable() |
                         carbons_disable() |
                         xmppreference() |
@@ -1696,37 +1707,37 @@
                         chatstate() |
                         x_conference() |
                         upload_slot_0() |
-                        groups_x() |
+                        groups_domains() |
                         files_file_sharing() |
                         muc_user() |
                         retract_all() |
                         mam_prefs() |
-                        groups_privacy() |
-                        groups_collect() |
+                        groups_search() |
                         muc_unsubscribe() |
                         push_notification() |
                         delegation() |
                         ps_item() |
                         markup_underline() |
                         retract_invalidate() |
-                        groups_invite() |
+                        groups_state() |
+                        groups_avatar() |
                         redirect() |
                         xabbertoken_revoke_all() |
                         jingle_reject() |
                         vcard_email() |
                         xen_jid() |
                         muc_owner() |
-                        groups_status() |
+                        groups_sys_msg() |
                         avatar_meta() |
                         sasl_auth() |
-                        block_jid() |
                         push_call() |
-                        groups_invite_user() |
-                        search() |
+                        groups_name() |
+                        groups_last() |
+                        groups_index() |
                         search_item() |
                         vcard_sound() |
                         muc_admin() |
-                        block_id() |
+                        groups_create() |
                         jingle_propose() |
                         db_feature() |
                         xabber_push_enable() |
