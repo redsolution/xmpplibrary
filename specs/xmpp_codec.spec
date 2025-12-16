@@ -4675,7 +4675,7 @@
      #elem{name = <<"localpart">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_localpart, '$cdata'},
+       result = '$cdata',
        cdata = #cdata{label = '$cdata'}}).
 
 
@@ -4683,7 +4683,7 @@
      #elem{name = <<"name">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_name, '$cdata'},
+       result = '$cdata',
        cdata = #cdata{label = '$cdata'}}).
 
 
@@ -4691,7 +4691,7 @@
      #elem{name = <<"description">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_description, '$cdata'},
+       result = '$cdata',
        cdata = #cdata{label = '$cdata'}}).
 
 -xml(groups_info,
@@ -4708,7 +4708,7 @@
      #elem{name = <<"membership">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_membership, '$cdata'},
+       result = '$cdata',
        cdata = #cdata{enc = {enc_enum, []},
                       dec = {dec_enum, [[open, private]]}}}).
 
@@ -4749,7 +4749,7 @@
      #elem{name = <<"index">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_index ,'$cdata'},
+       result = '$cdata',
        cdata = #cdata{enc = {enc_enum, []},
                       dec = {dec_enum, [[none, local, global]]}}}).
 
@@ -4757,7 +4757,7 @@
      #elem{name = <<"state">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_state ,'$cdata'},
+       result = '$cdata',
        cdata = #cdata{enc = {enc_enum, []},
                       dec = {dec_enum, [[active, inactive]]}}}).
 
@@ -4850,8 +4850,7 @@
     #elem{name = <<"query">>,
       xmlns = <<"https://xabber.com/protocol/groups">>,
       module = 'xep_groups',
-      result = {groups_details, '$group'},
-      refs = [#ref{name = groups_group, min = 0, max = 1, label = '$group'}]}).
+      result = {groups_details}}).
 
 
 -xml(groups_block,

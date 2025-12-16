@@ -271,27 +271,12 @@ do_encode({groups_avatar, _, _} = Avatar, TopXMLNS) ->
 do_encode({groups_user, _, _, _, _, _, _, _} = User,
 	  TopXMLNS) ->
     encode_groups_user(User, TopXMLNS);
-do_encode({groups_localpart, _} = Localpart,
-	  TopXMLNS) ->
-    encode_groups_localpart(Localpart, TopXMLNS);
-do_encode({groups_name, _} = Name, TopXMLNS) ->
-    encode_groups_name(Name, TopXMLNS);
-do_encode({groups_description, _} = Description,
-	  TopXMLNS) ->
-    encode_groups_description(Description, TopXMLNS);
 do_encode({groups_info, _, _, _, _} = Info, TopXMLNS) ->
     encode_groups_info(Info, TopXMLNS);
-do_encode({groups_membership, _} = Membership,
-	  TopXMLNS) ->
-    encode_groups_membership(Membership, TopXMLNS);
 do_encode({groups_contacts, _} = Contacts, TopXMLNS) ->
     encode_groups_contacts(Contacts, TopXMLNS);
 do_encode({groups_domains, _} = Domains, TopXMLNS) ->
     encode_groups_domains(Domains, TopXMLNS);
-do_encode({groups_index, _} = Index, TopXMLNS) ->
-    encode_groups_index(Index, TopXMLNS);
-do_encode({groups_state, _} = State, TopXMLNS) ->
-    encode_groups_state(State, TopXMLNS);
 do_encode({groups_settings, _, _, _, _, _} = Settings,
 	  TopXMLNS) ->
     encode_groups_settings(Settings, TopXMLNS);
@@ -311,7 +296,7 @@ do_encode({groups_create, _, _} = Create, TopXMLNS) ->
     encode_groups_create(Create, TopXMLNS);
 do_encode({groups_delete, _} = Delete, TopXMLNS) ->
     encode_groups_delete(Delete, TopXMLNS);
-do_encode({groups_details, _} = Query, TopXMLNS) ->
+do_encode({groups_details} = Query, TopXMLNS) ->
     encode_groups_details(Query, TopXMLNS);
 do_encode({groups_block, _} = Block, TopXMLNS) ->
     encode_groups_block(Block, TopXMLNS);
@@ -355,26 +340,20 @@ do_get_name({groups_contacts, _}) -> <<"contacts">>;
 do_get_name({groups_create, _, _}) -> <<"create">>;
 do_get_name({groups_decline}) -> <<"decline">>;
 do_get_name({groups_delete, _}) -> <<"delete">>;
-do_get_name({groups_description, _}) ->
-    <<"description">>;
-do_get_name({groups_details, _}) -> <<"query">>;
+do_get_name({groups_details}) -> <<"query">>;
 do_get_name({groups_domains, _}) -> <<"domains">>;
 do_get_name({groups_group, _, _, _, _, _, _, _, _,
 	     _}) ->
     <<"group">>;
-do_get_name({groups_index, _}) -> <<"index">>;
 do_get_name({groups_info, _, _, _, _}) -> <<"info">>;
 do_get_name({groups_invite, _, _, _, _, _}) ->
     <<"invite">>;
 do_get_name({groups_invites, _}) -> <<"invites">>;
 do_get_name({groups_kick, _}) -> <<"kick">>;
 do_get_name({groups_last, _}) -> <<"last">>;
-do_get_name({groups_localpart, _}) -> <<"localpart">>;
 do_get_name({groups_members, _, _, _, _}) ->
     <<"members">>;
-do_get_name({groups_membership, _}) -> <<"membership">>;
 do_get_name({groups_mentions, _}) -> <<"mentions">>;
-do_get_name({groups_name, _}) -> <<"name">>;
 do_get_name({groups_owner, _}) -> <<"owner">>;
 do_get_name({groups_pinned, _}) -> <<"pinned">>;
 do_get_name({groups_pinned_message, _}) ->
@@ -386,7 +365,6 @@ do_get_name({groups_search, _, _, _, _, _}) ->
     <<"search">>;
 do_get_name({groups_settings, _, _, _, _, _}) ->
     <<"settings">>;
-do_get_name({groups_state, _}) -> <<"state">>;
 do_get_name({groups_sys_msg, _, _}) ->
     <<"system-message">>;
 do_get_name({groups_unblock, _}) -> <<"unblock">>;
@@ -408,15 +386,11 @@ do_get_ns({groups_decline}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_delete, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_description, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_details, _}) ->
+do_get_ns({groups_details}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_domains, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_group, _, _, _, _, _, _, _, _, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_index, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_info, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -428,15 +402,9 @@ do_get_ns({groups_kick, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_last, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_localpart, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_members, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_membership, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_mentions, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_name, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_owner, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -453,8 +421,6 @@ do_get_ns({groups_revoke, _}) ->
 do_get_ns({groups_search, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_settings, _, _, _, _, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_state, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_sys_msg, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -475,16 +441,10 @@ pp(groups_last, 1) -> [stamp];
 pp(groups_avatar, 2) -> [info, data];
 pp(groups_user, 7) ->
     [id, jid, role, badge, nickname, avatar, last];
-pp(groups_localpart, 1) -> [cdata];
-pp(groups_name, 1) -> [cdata];
-pp(groups_description, 1) -> [cdata];
 pp(groups_info, 4) ->
     [name, description, avatar, status];
-pp(groups_membership, 1) -> [cdata];
 pp(groups_contacts, 1) -> [contacts];
 pp(groups_domains, 1) -> [domains];
-pp(groups_index, 1) -> [cdata];
-pp(groups_state, 1) -> [cdata];
 pp(groups_settings, 5) ->
     [membership, contacts, domains, index, state];
 pp(groups_pinned_message, 1) -> [id];
@@ -495,7 +455,7 @@ pp(groups_group, 9) ->
 pp(groups_ptp, 2) -> [parent, with];
 pp(groups_create, 2) -> [group, ptp];
 pp(groups_delete, 1) -> [group];
-pp(groups_details, 1) -> [group];
+pp(groups_details, 0) -> [];
 pp(groups_block, 1) -> [jids];
 pp(groups_unblock, 1) -> [jid];
 pp(groups_kick, 1) -> [jid];
@@ -517,14 +477,11 @@ pp(_, _) -> no.
 
 records() ->
     [{groups_last, 1}, {groups_avatar, 2}, {groups_user, 7},
-     {groups_localpart, 1}, {groups_name, 1},
-     {groups_description, 1}, {groups_info, 4},
-     {groups_membership, 1}, {groups_contacts, 1},
-     {groups_domains, 1}, {groups_index, 1},
-     {groups_state, 1}, {groups_settings, 5},
+     {groups_info, 4}, {groups_contacts, 1},
+     {groups_domains, 1}, {groups_settings, 5},
      {groups_pinned_message, 1}, {groups_pinned, 1},
      {groups_group, 9}, {groups_ptp, 2}, {groups_create, 2},
-     {groups_delete, 1}, {groups_details, 1},
+     {groups_delete, 1}, {groups_details, 0},
      {groups_block, 1}, {groups_unblock, 1},
      {groups_kick, 1}, {groups_members, 4},
      {groups_collect, 1}, {groups_owner, 1},
@@ -1604,50 +1561,16 @@ encode_groups_block({groups_block, Jids}, __TopXMLNS) ->
 
 decode_groups_details(__TopXMLNS, __Opts,
 		      {xmlel, <<"query">>, _attrs, _els}) ->
-    Group = decode_groups_details_els(__TopXMLNS, __Opts,
-				      _els, undefined),
-    {groups_details, Group}.
+    {groups_details}.
 
-decode_groups_details_els(__TopXMLNS, __Opts, [],
-			  Group) ->
-    Group;
-decode_groups_details_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"group">>, _attrs, _} = _el | _els],
-			  Group) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_details_els(__TopXMLNS, __Opts, _els,
-				    decode_groups_group(<<"https://xabber.com/protocol/groups">>,
-							__Opts, _el));
-      _ ->
-	  decode_groups_details_els(__TopXMLNS, __Opts, _els,
-				    Group)
-    end;
-decode_groups_details_els(__TopXMLNS, __Opts,
-			  [_ | _els], Group) ->
-    decode_groups_details_els(__TopXMLNS, __Opts, _els,
-			      Group).
-
-encode_groups_details({groups_details, Group},
-		      __TopXMLNS) ->
+encode_groups_details({groups_details}, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_groups_details_$group'(Group,
-						     __NewTopXMLNS, [])),
+    _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"query">>, _attrs, _els}.
-
-'encode_groups_details_$group'(undefined, __TopXMLNS,
-			       _acc) ->
-    _acc;
-'encode_groups_details_$group'(Group, __TopXMLNS,
-			       _acc) ->
-    [encode_groups_group(Group, __TopXMLNS) | _acc].
 
 decode_groups_delete(__TopXMLNS, __Opts,
 		     {xmlel, <<"delete">>, _attrs, _els}) ->
@@ -2364,7 +2287,7 @@ decode_groups_state(__TopXMLNS, __Opts,
 		    {xmlel, <<"state">>, _attrs, _els}) ->
     Cdata = decode_groups_state_els(__TopXMLNS, __Opts,
 				    _els, <<>>),
-    {groups_state, Cdata}.
+    Cdata.
 
 decode_groups_state_els(__TopXMLNS, __Opts, [],
 			Cdata) ->
@@ -2378,8 +2301,7 @@ decode_groups_state_els(__TopXMLNS, __Opts, [_ | _els],
     decode_groups_state_els(__TopXMLNS, __Opts, _els,
 			    Cdata).
 
-encode_groups_state({groups_state, Cdata},
-		    __TopXMLNS) ->
+encode_groups_state(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
@@ -2406,7 +2328,7 @@ decode_groups_index(__TopXMLNS, __Opts,
 		    {xmlel, <<"index">>, _attrs, _els}) ->
     Cdata = decode_groups_index_els(__TopXMLNS, __Opts,
 				    _els, <<>>),
-    {groups_index, Cdata}.
+    Cdata.
 
 decode_groups_index_els(__TopXMLNS, __Opts, [],
 			Cdata) ->
@@ -2420,8 +2342,7 @@ decode_groups_index_els(__TopXMLNS, __Opts, [_ | _els],
     decode_groups_index_els(__TopXMLNS, __Opts, _els,
 			    Cdata).
 
-encode_groups_index({groups_index, Cdata},
-		    __TopXMLNS) ->
+encode_groups_index(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
@@ -2631,7 +2552,7 @@ decode_groups_membership(__TopXMLNS, __Opts,
 			 {xmlel, <<"membership">>, _attrs, _els}) ->
     Cdata = decode_groups_membership_els(__TopXMLNS, __Opts,
 					 _els, <<>>),
-    {groups_membership, Cdata}.
+    Cdata.
 
 decode_groups_membership_els(__TopXMLNS, __Opts, [],
 			     Cdata) ->
@@ -2645,8 +2566,7 @@ decode_groups_membership_els(__TopXMLNS, __Opts,
     decode_groups_membership_els(__TopXMLNS, __Opts, _els,
 				 Cdata).
 
-encode_groups_membership({groups_membership, Cdata},
-			 __TopXMLNS) ->
+encode_groups_membership(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
@@ -2808,7 +2728,7 @@ decode_groups_description(__TopXMLNS, __Opts,
 			  {xmlel, <<"description">>, _attrs, _els}) ->
     Cdata = decode_groups_description_els(__TopXMLNS,
 					  __Opts, _els, <<>>),
-    {groups_description, Cdata}.
+    Cdata.
 
 decode_groups_description_els(__TopXMLNS, __Opts, [],
 			      Cdata) ->
@@ -2822,8 +2742,7 @@ decode_groups_description_els(__TopXMLNS, __Opts,
     decode_groups_description_els(__TopXMLNS, __Opts, _els,
 				  Cdata).
 
-encode_groups_description({groups_description, Cdata},
-			  __TopXMLNS) ->
+encode_groups_description(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
@@ -2845,7 +2764,7 @@ decode_groups_name(__TopXMLNS, __Opts,
 		   {xmlel, <<"name">>, _attrs, _els}) ->
     Cdata = decode_groups_name_els(__TopXMLNS, __Opts, _els,
 				   <<>>),
-    {groups_name, Cdata}.
+    Cdata.
 
 decode_groups_name_els(__TopXMLNS, __Opts, [], Cdata) ->
     decode_groups_name_cdata(__TopXMLNS, Cdata);
@@ -2857,7 +2776,7 @@ decode_groups_name_els(__TopXMLNS, __Opts, [_ | _els],
 		       Cdata) ->
     decode_groups_name_els(__TopXMLNS, __Opts, _els, Cdata).
 
-encode_groups_name({groups_name, Cdata}, __TopXMLNS) ->
+encode_groups_name(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
@@ -2877,7 +2796,7 @@ decode_groups_localpart(__TopXMLNS, __Opts,
 			{xmlel, <<"localpart">>, _attrs, _els}) ->
     Cdata = decode_groups_localpart_els(__TopXMLNS, __Opts,
 					_els, <<>>),
-    {groups_localpart, Cdata}.
+    Cdata.
 
 decode_groups_localpart_els(__TopXMLNS, __Opts, [],
 			    Cdata) ->
@@ -2891,8 +2810,7 @@ decode_groups_localpart_els(__TopXMLNS, __Opts,
     decode_groups_localpart_els(__TopXMLNS, __Opts, _els,
 				Cdata).
 
-encode_groups_localpart({groups_localpart, Cdata},
-			__TopXMLNS) ->
+encode_groups_localpart(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),

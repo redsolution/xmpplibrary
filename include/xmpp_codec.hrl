@@ -119,6 +119,9 @@
 -record(sasl_success, {text = <<>> :: binary()}).
 -type sasl_success() :: #sasl_success{}.
 
+-record(groups_details, {}).
+-type groups_details() :: #groups_details{}.
+
 -record(adhoc_note, {type = info :: 'error' | 'info' | 'warn',
                      data = <<>> :: binary()}).
 -type adhoc_note() :: #adhoc_note{}.
@@ -235,9 +238,6 @@
                             sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type sync_conversation() :: #sync_conversation{}.
 
--record(groups_description, {cdata = <<>> :: binary()}).
--type groups_description() :: #groups_description{}.
-
 -record(muc_decline, {reason = <<>> :: binary(),
                       from :: undefined | jid:jid(),
                       to :: undefined | jid:jid()}).
@@ -326,9 +326,6 @@
 
 -record(handshake, {data = <<>> :: binary()}).
 -type handshake() :: #handshake{}.
-
--record(groups_state, {cdata :: 'active' | 'inactive' | 'undefined'}).
--type groups_state() :: #groups_state{}.
 
 -record(db_feature, {errors = false :: boolean()}).
 -type db_feature() :: #db_feature{}.
@@ -471,9 +468,6 @@
 
 -record(groups_last, {stamp :: erlang:timestamp()}).
 -type groups_last() :: #groups_last{}.
-
--record(groups_localpart, {cdata = <<>> :: binary()}).
--type groups_localpart() :: #groups_localpart{}.
 
 -record(starttls, {required = false :: boolean()}).
 -type starttls() :: #starttls{}.
@@ -645,9 +639,6 @@
 
 -record(encrypted_message_omemo, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type encrypted_message_omemo() :: #encrypted_message_omemo{}.
-
--record(groups_membership, {cdata :: 'open' | 'private' | 'undefined'}).
--type groups_membership() :: #groups_membership{}.
 
 -record(bob_data, {cid = <<>> :: binary(),
                    'max-age' :: 'undefined' | non_neg_integer(),
@@ -863,11 +854,8 @@
 -record(vcard_xupdate, {hash :: 'undefined' | binary()}).
 -type vcard_xupdate() :: #vcard_xupdate{}.
 
--record(groups_name, {cdata = <<>> :: binary()}).
--type groups_name() :: #groups_name{}.
-
--record(groups_info, {name :: 'undefined' | #groups_name{},
-                      description :: 'undefined' | #groups_description{},
+-record(groups_info, {name :: 'undefined' | binary(),
+                      description :: 'undefined' | binary(),
                       avatar :: 'undefined' | #groups_avatar{},
                       status :: 'undefined' | #text{}}).
 -type groups_info() :: #groups_info{}.
@@ -942,29 +930,23 @@
                              sources :: #files_sources{}}).
 -type files_file_sharing() :: #files_file_sharing{}.
 
--record(groups_index, {cdata :: 'global' | 'local' | 'none' | 'undefined'}).
--type groups_index() :: #groups_index{}.
-
--record(groups_settings, {membership :: 'undefined' | #groups_membership{},
+-record(groups_settings, {membership :: 'open' | 'private' | 'undefined',
                           contacts :: 'undefined' | #groups_contacts{},
                           domains :: 'undefined' | #groups_domains{},
-                          index :: 'undefined' | #groups_index{},
-                          state :: 'undefined' | #groups_state{}}).
+                          index :: 'global' | 'local' | 'none' | 'undefined',
+                          state :: 'active' | 'inactive' | 'undefined'}).
 -type groups_settings() :: #groups_settings{}.
 
 -record(groups_group, {privacy :: 'incognito' | 'public' | 'undefined',
                        parent :: undefined | jid:jid(),
                        jid :: undefined | jid:jid(),
                        members :: 'undefined' | non_neg_integer(),
-                       localpart :: 'undefined' | #groups_localpart{},
+                       localpart :: 'undefined' | binary(),
                        info :: 'undefined' | #groups_info{},
                        settings :: 'undefined' | #groups_settings{},
                        pinned :: 'undefined' | #groups_pinned{},
                        present :: 'undefined' | binary()}).
 -type groups_group() :: #groups_group{}.
-
--record(groups_details, {group :: 'undefined' | #groups_group{}}).
--type groups_details() :: #groups_details{}.
 
 -record(groups_create, {group :: 'undefined' | #groups_group{},
                         ptp :: 'undefined' | #groups_ptp{}}).
@@ -995,10 +977,10 @@
                   max :: 'undefined' | non_neg_integer()}).
 -type rsm_set() :: #rsm_set{}.
 
--record(groups_search, {name :: 'undefined' | #groups_name{},
-                        description :: 'undefined' | #groups_description{},
-                        model :: 'undefined' | #groups_membership{},
-                        anonymous :: 'undefined' | #groups_index{},
+-record(groups_search, {name :: 'undefined' | binary(),
+                        description :: 'undefined' | binary(),
+                        model :: 'open' | 'private' | 'undefined',
+                        anonymous :: 'global' | 'local' | 'none' | 'undefined',
                         rsm :: 'undefined' | #rsm_set{}}).
 -type groups_search() :: #groups_search{}.
 
@@ -1478,6 +1460,7 @@
                         delegated() |
                         mark_displayed() |
                         adhoc_command() |
+                        text() |
                         register() |
                         vcard_org() |
                         sync_delivered() |
@@ -1490,8 +1473,6 @@
                         stanza_id() |
                         rsm_set() |
                         rsm_first() |
-                        search() |
-                        groups_localpart() |
                         sm_resume() |
                         retract_user() |
                         sasl_abort() |
@@ -1553,6 +1534,7 @@
                         sasl_mechanisms() |
                         compress_failure() |
                         ping() |
+                        search() |
                         delivery_x() |
                         shim() |
                         sasl_response() |
@@ -1579,14 +1561,12 @@
                         ps_options() |
                         privacy_list() |
                         rosterver_feature() |
-                        groups_description() |
                         delivery_received() |
                         delegation_query() |
                         stream_error() |
                         xabber_push_security() |
                         xevent() |
                         files_sources() |
-                        replace() |
                         sync_conversation() |
                         groups_kick() |
                         replaced() |
@@ -1642,6 +1622,7 @@
                         vcard_key() |
                         block_list() |
                         sync_retract() |
+                        replace() |
                         muc_subscriptions() |
                         upload_request() |
                         vcard_name() |
@@ -1664,7 +1645,6 @@
                         streamhost() |
                         encrypted() |
                         vcard_xupdate() |
-                        text() |
                         stat_error() |
                         avatar_pointer() |
                         addresses() |
@@ -1687,7 +1667,6 @@
                         groups_settings() |
                         idle() |
                         bookmark_conference() |
-                        groups_membership() |
                         carbons_enable() |
                         carbons_disable() |
                         xmppreference() |
@@ -1719,7 +1698,6 @@
                         ps_item() |
                         markup_underline() |
                         retract_invalidate() |
-                        groups_state() |
                         groups_avatar() |
                         redirect() |
                         xabbertoken_revoke_all() |
@@ -1731,9 +1709,7 @@
                         avatar_meta() |
                         sasl_auth() |
                         push_call() |
-                        groups_name() |
                         groups_last() |
-                        groups_index() |
                         search_item() |
                         vcard_sound() |
                         muc_admin() |

@@ -1792,7 +1792,6 @@ get_mod({jingle_propose, _, _}) -> xep0353;
 get_mod({muc_user, _, _, _, _, _, _}) -> xep0045;
 get_mod({encrypted_message_omemo, _}) -> xep0384;
 get_mod({bytestreams, _, _, _, _, _, _}) -> xep0065;
-get_mod({groups_membership, _}) -> xep_groups;
 get_mod({xmppreference, _, _, _, _}) -> xep0372;
 get_mod({xen_notification, _, _, _}) -> xep_xen;
 get_mod({sasl_auth, _, _}) -> rfc6120;
@@ -1821,7 +1820,6 @@ get_mod({origin_id, _}) -> xep0359;
 get_mod({sync_query, _, _, _, _}) -> xep_sync;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
-get_mod({groups_name, _}) -> xep_groups;
 get_mod({sync_synchronization}) -> xep_sync;
 get_mod({perms_delete, _}) -> xep_permissions;
 get_mod({message, _, _, _, _, _, _, _, _, _, _}) ->
@@ -1838,7 +1836,6 @@ get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
 get_mod({groups_user, _, _, _, _, _, _, _}) ->
     xep_groups;
-get_mod({groups_index, _}) -> xep_groups;
 get_mod({groups_group, _, _, _, _, _, _, _, _, _}) ->
     xep_groups;
 get_mod({feature_register}) -> xep0077;
@@ -1851,6 +1848,7 @@ get_mod({devices_query, _}) -> xep_devices;
 get_mod({groups_invite, _, _, _, _, _}) -> xep_groups;
 get_mod({disco_info, _, _, _, _}) -> xep0030;
 get_mod({oob_x, _, _, _}) -> xep0066;
+get_mod({groups_details}) -> xep_groups;
 get_mod({markup_italic}) -> xep_markup;
 get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->
     xep0054;
@@ -1904,12 +1902,19 @@ get_mod({adhoc_command, _, _, _, _, _, _, _, _}) ->
 get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbertoken_query_items, _}) -> xabbertoken;
-get_mod({groups_details, _}) -> xep_groups;
 get_mod({files_sources, _}) -> xep_files;
+get_mod({identity, _, _, _, _}) -> xep0030;
+get_mod({redirect, _}) -> rfc6120;
+get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
+get_mod({groups_last, _}) -> xep_groups;
 get_mod({groups_pinned, _}) -> xep_groups;
+get_mod({replace, _, _, _, _, _, _, _, _}) ->
+    xep_rewrite;
 get_mod({sync_retract, _}) -> xep_sync;
 get_mod({sync_displayed, _}) -> xep_sync;
+get_mod({sync_delivered, _}) -> xep_sync;
+get_mod({sync_last, _}) -> xep_sync;
 get_mod({bookmark_url, _, _}) -> xep0048;
 get_mod({gone, _}) -> rfc6120;
 get_mod({sasl_response, _}) -> rfc6120;
@@ -1986,7 +1991,6 @@ get_mod({muc_unsubscribe, _, _}) -> p1_mucsub;
 get_mod({search, _, _, _, _, _, _, _}) -> xep0055;
 get_mod({expire, _, _}) -> xep0023;
 get_mod({privilege, _, _}) -> xep0356;
-get_mod({groups_description, _}) -> xep_groups;
 get_mod({files_file, _, _}) -> xep_files;
 get_mod({stanza_error, _, _, _, _, _, _}) -> rfc6120;
 get_mod({avatar_pointer, _, _, _, _, _, _}) -> xep0084;
@@ -2012,7 +2016,6 @@ get_mod({compress_failure, _}) -> xep0138;
 get_mod({db_feature, _}) -> xep0220;
 get_mod({handshake, _}) -> xep0114;
 get_mod({xabbertoken_revoke, _}) -> xabbertoken;
-get_mod({groups_state, _}) -> xep_groups;
 get_mod({groups_delete, _}) -> xep_groups;
 get_mod({vcard_sound, _, _, _}) -> xep0054;
 get_mod({ps_retract, _, _, _}) -> xep0060;
@@ -2084,13 +2087,4 @@ get_mod({addresses, _}) -> xep0033;
 get_mod({push_call}) -> xabberpush;
 get_mod({groups_contacts, _}) -> xep_groups;
 get_mod({groups_domains, _}) -> xep_groups;
-get_mod({identity, _, _, _, _}) -> xep0030;
-get_mod({redirect, _}) -> rfc6120;
-get_mod({muc_history, _, _, _, _}) -> xep0045;
-get_mod({groups_last, _}) -> xep_groups;
-get_mod({groups_localpart, _}) -> xep_groups;
-get_mod({replace, _, _, _, _, _, _, _, _}) ->
-    xep_rewrite;
-get_mod({sync_delivered, _}) -> xep_sync;
-get_mod({sync_last, _}) -> xep_sync;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
