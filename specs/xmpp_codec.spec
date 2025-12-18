@@ -4694,6 +4694,13 @@
        result = '$cdata',
        cdata = #cdata{label = '$cdata'}}).
 
+-xml(groups_status,
+     #elem{name = <<"status">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
+
 -xml(groups_info,
     #elem{name = <<"info">>,
       xmlns = <<"https://xabber.com/protocol/groups">>,
@@ -4702,7 +4709,7 @@
       refs = [#ref{name = groups_name, min = 0, max = 1, label = '$name'},
          #ref{name = groups_description, min = 0, max = 1, label = '$description'},
          #ref{name = groups_avatar, min = 0, max = 1, label = '$avatar'},
-         #ref{name = presence_status, min = 0, max = 1, label = '$status'}]}).
+         #ref{name = groups_status, min = 0, max = 1, label = '$status'}]}).
 
 -xml(groups_membership,
      #elem{name = <<"membership">>,

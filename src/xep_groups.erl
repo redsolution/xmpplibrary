@@ -144,6 +144,10 @@ do_decode(<<"info">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_info(<<"https://xabber.com/protocol/groups">>,
 		       Opts, El);
+do_decode(<<"status">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_status(<<"https://xabber.com/protocol/groups">>,
+			 Opts, El);
 do_decode(<<"description">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_description(<<"https://xabber.com/protocol/groups">>,
@@ -249,6 +253,8 @@ tags() ->
      {<<"membership">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"info">>, <<"https://xabber.com/protocol/groups">>},
+     {<<"status">>,
+      <<"https://xabber.com/protocol/groups">>},
      {<<"description">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"name">>, <<"https://xabber.com/protocol/groups">>},
@@ -2651,20 +2657,10 @@ decode_groups_info_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"jabber:client">> ->
+      <<"https://xabber.com/protocol/groups">> ->
 	  decode_groups_info_els(__TopXMLNS, __Opts, _els, Avatar,
-				 rfc6120:decode_presence_status(<<"jabber:client">>,
-								__Opts, _el),
-				 Name, Description);
-      <<"jabber:server">> ->
-	  decode_groups_info_els(__TopXMLNS, __Opts, _els, Avatar,
-				 rfc6120:decode_presence_status(<<"jabber:server">>,
-								__Opts, _el),
-				 Name, Description);
-      <<"jabber:component:accept">> ->
-	  decode_groups_info_els(__TopXMLNS, __Opts, _els, Avatar,
-				 rfc6120:decode_presence_status(<<"jabber:component:accept">>,
-								__Opts, _el),
+				 decode_groups_status(<<"https://xabber.com/protocol/groups">>,
+						      __Opts, _el),
 				 Name, Description);
       _ ->
 	  decode_groups_info_els(__TopXMLNS, __Opts, _els, Avatar,
@@ -2707,8 +2703,7 @@ encode_groups_info({groups_info, Name, Description,
     _acc;
 'encode_groups_info_$status'(Status, __TopXMLNS,
 			     _acc) ->
-    [rfc6120:encode_presence_status(Status, __TopXMLNS)
-     | _acc].
+    [encode_groups_status(Status, __TopXMLNS) | _acc].
 
 'encode_groups_info_$name'(undefined, __TopXMLNS,
 			   _acc) ->
@@ -2723,6 +2718,40 @@ encode_groups_info({groups_info, Name, Description,
 				  __TopXMLNS, _acc) ->
     [encode_groups_description(Description, __TopXMLNS)
      | _acc].
+
+decode_groups_status(__TopXMLNS, __Opts,
+		     {xmlel, <<"status">>, _attrs, _els}) ->
+    Cdata = decode_groups_status_els(__TopXMLNS, __Opts,
+				     _els, <<>>),
+    Cdata.
+
+decode_groups_status_els(__TopXMLNS, __Opts, [],
+			 Cdata) ->
+    decode_groups_status_cdata(__TopXMLNS, Cdata);
+decode_groups_status_els(__TopXMLNS, __Opts,
+			 [{xmlcdata, _data} | _els], Cdata) ->
+    decode_groups_status_els(__TopXMLNS, __Opts, _els,
+			     <<Cdata/binary, _data/binary>>);
+decode_groups_status_els(__TopXMLNS, __Opts, [_ | _els],
+			 Cdata) ->
+    decode_groups_status_els(__TopXMLNS, __Opts, _els,
+			     Cdata).
+
+encode_groups_status(Cdata, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
+				    [], __TopXMLNS),
+    _els = encode_groups_status_cdata(Cdata, []),
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"status">>, _attrs, _els}.
+
+decode_groups_status_cdata(__TopXMLNS, <<>>) -> <<>>;
+decode_groups_status_cdata(__TopXMLNS, _val) -> _val.
+
+encode_groups_status_cdata(<<>>, _acc) -> _acc;
+encode_groups_status_cdata(_val, _acc) ->
+    [{xmlcdata, _val} | _acc].
 
 decode_groups_description(__TopXMLNS, __Opts,
 			  {xmlel, <<"description">>, _attrs, _els}) ->

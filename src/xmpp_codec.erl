@@ -1601,6 +1601,9 @@ get_mod(<<"unsupported-feature">>,
     rfc6120;
 get_mod(<<"request">>, <<"urn:xmpp:receipts">>) ->
     xep0184;
+get_mod(<<"status">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"markable">>,
 	<<"urn:xmpp:chat-markers:0">>) ->
     xep0333;
