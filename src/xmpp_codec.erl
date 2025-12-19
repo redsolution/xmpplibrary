@@ -2002,6 +2002,7 @@ get_mod({delivery_received, _, _, _, _}) ->
 get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({retract_all, _, _, _, _, _}) -> xep_rewrite;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
+get_mod({groups_x, _, _}) -> xep_groups;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
@@ -2037,7 +2038,6 @@ get_mod({vcard_name, _, _, _, _, _}) -> xep0054;
 get_mod({csi, _}) -> xep0352;
 get_mod({groups_ptp, _, _}) -> xep_groups;
 get_mod({sm_a, _, _}) -> xep0198;
-get_mod({groups_x, _, _, _}) -> xep_groups;
 get_mod({privacy_query, _, _, _}) -> xep0016;
 get_mod({block, _}) -> xep0191;
 get_mod({ps_subscription, _, _, _, _, _, _}) -> xep0060;

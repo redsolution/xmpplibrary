@@ -4732,8 +4732,8 @@
      #elem{name = <<"contacts">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_contacts, '$contacts'},
-       refs = [#ref{name = groups_contact, label = '$contacts'}]}).
+       result = {groups_contacts, '$list'},
+       refs = [#ref{name = groups_contact, label = '$list'}]}).
 
 -xml(groups_domain,
      #elem{name = <<"domain">>,
@@ -4748,8 +4748,8 @@
      #elem{name = <<"domains">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_domains, '$domains'},
-       refs = [#ref{name = groups_domain, label = '$domains'}]}).
+       result = {groups_domains, '$list'},
+       refs = [#ref{name = groups_domain, label = '$list'}]}).
 
 
 -xml(groups_index,
@@ -4886,7 +4886,8 @@
       xmlns = <<"https://xabber.com/protocol/groups">>,
       module = 'xep_groups',
       result = {groups_members, '$members', '$id', '$version', '$xdata'},
-      attrs = [#attr{name = <<"version">>}, #attr{name = <<"id">>}],
+      attrs = [#attr{name = <<"version">>, default = undefined},
+         #attr{name = <<"id">>, default = undefined}],
       refs = [#ref{name = groups_user, label = '$members'},
          #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]}).
 
@@ -4908,8 +4909,8 @@
      #elem{name = <<"invites">>,
        xmlns = <<"https://xabber.com/protocol/groups#invite">>,
        module = 'xep_groups',
-       result = {groups_invites, '$usernames'},
-       refs = [#ref{name = groups_jid, label = '$usernames'}]}).
+       result = {groups_invites, '$list'},
+       refs = [#ref{name = groups_jid, label = '$list'}]}).
 
 -xml(groups_invite_reason,
      #elem{name = <<"reason">>,
@@ -4957,9 +4958,8 @@
      #elem{name = <<"x">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_x, '$author', '$message', '$_els'},
-       refs = [#ref{name = groups_user, min = 1, max = 1, label = '$author'},
-             #ref{name = message, min = 1, max = 1, label = '$message'}]}).
+       result = {groups_x, '$author', '$_els'},
+       refs = [#ref{name = groups_user, min = 0, max = 1, label = '$author'}]}).
 
 -xml(groups_resend,
      #elem{name = <<"re-send">>,

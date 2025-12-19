@@ -326,7 +326,7 @@ do_encode({groups_revoke, _} = Revoke, TopXMLNS) ->
     encode_groups_revoke(Revoke, TopXMLNS);
 do_encode({groups_decline} = Decline, TopXMLNS) ->
     encode_groups_decline(Decline, TopXMLNS);
-do_encode({groups_x, _, _, _} = X, TopXMLNS) ->
+do_encode({groups_x, _, _} = X, TopXMLNS) ->
     encode_groups_x(X, TopXMLNS);
 do_encode({groups_resend} = Re_send, TopXMLNS) ->
     encode_groups_resend(Re_send, TopXMLNS);
@@ -376,7 +376,7 @@ do_get_name({groups_sys_msg, _, _}) ->
 do_get_name({groups_unblock, _}) -> <<"unblock">>;
 do_get_name({groups_user, _, _, _, _, _, _, _}) ->
     <<"user">>;
-do_get_name({groups_x, _, _, _}) -> <<"x">>.
+do_get_name({groups_x, _, _}) -> <<"x">>.
 
 do_get_ns({groups_avatar, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -434,14 +434,13 @@ do_get_ns({groups_unblock, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_user, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_x, _, _, _}) ->
+do_get_ns({groups_x, _, _}) ->
     <<"https://xabber.com/protocol/groups">>.
 
-get_els({groups_x, _author, _message, _sub_els}) ->
-    _sub_els.
+get_els({groups_x, _author, _sub_els}) -> _sub_els.
 
-set_els({groups_x, _author, _message, _}, _sub_els) ->
-    {groups_x, _author, _message, _sub_els}.
+set_els({groups_x, _author, _}, _sub_els) ->
+    {groups_x, _author, _sub_els}.
 
 pp(groups_last, 1) -> [stamp];
 pp(groups_avatar, 2) -> [info, data];
@@ -449,8 +448,8 @@ pp(groups_user, 7) ->
     [id, jid, role, badge, nickname, avatar, last];
 pp(groups_info, 4) ->
     [name, description, avatar, status];
-pp(groups_contacts, 1) -> [contacts];
-pp(groups_domains, 1) -> [domains];
+pp(groups_contacts, 1) -> [list];
+pp(groups_domains, 1) -> [list];
 pp(groups_settings, 5) ->
     [membership, contacts, domains, index, state];
 pp(groups_pinned_message, 1) -> [id];
@@ -468,12 +467,12 @@ pp(groups_kick, 1) -> [jid];
 pp(groups_members, 4) -> [members, id, version, xdata];
 pp(groups_collect, 1) -> [cdata];
 pp(groups_owner, 1) -> [id];
-pp(groups_invites, 1) -> [usernames];
+pp(groups_invites, 1) -> [list];
 pp(groups_invite, 5) ->
     [jid, target, send, reason, user];
 pp(groups_revoke, 1) -> [jid];
 pp(groups_decline, 0) -> [];
-pp(groups_x, 3) -> [author, message, sub_els];
+pp(groups_x, 2) -> [author, sub_els];
 pp(groups_resend, 0) -> [];
 pp(groups_sys_msg, 2) -> [type, actor];
 pp(groups_search, 5) ->
@@ -492,7 +491,7 @@ records() ->
      {groups_kick, 1}, {groups_members, 4},
      {groups_collect, 1}, {groups_owner, 1},
      {groups_invites, 1}, {groups_invite, 5},
-     {groups_revoke, 1}, {groups_decline, 0}, {groups_x, 3},
+     {groups_revoke, 1}, {groups_decline, 0}, {groups_x, 2},
      {groups_resend, 0}, {groups_sys_msg, 2},
      {groups_search, 5}, {groups_mentions, 1}].
 
@@ -810,97 +809,54 @@ encode_groups_resend({groups_resend}, __TopXMLNS) ->
 
 decode_groups_x(__TopXMLNS, __Opts,
 		{xmlel, <<"x">>, _attrs, _els}) ->
-    {Author, Message, __Els} =
-	decode_groups_x_els(__TopXMLNS, __Opts, _els, error,
-			    error, []),
-    {groups_x, Author, Message, __Els}.
+    {Author, __Els} = decode_groups_x_els(__TopXMLNS,
+					  __Opts, _els, undefined, []),
+    {groups_x, Author, __Els}.
 
 decode_groups_x_els(__TopXMLNS, __Opts, [], Author,
-		    Message, __Els) ->
-    {case Author of
-       error ->
-	   erlang:error({xmpp_codec,
-			 {missing_tag, <<"user">>, __TopXMLNS}});
-       {value, Author1} -> Author1
-     end,
-     case Message of
-       error ->
-	   erlang:error({xmpp_codec,
-			 {missing_tag, <<"message">>, __TopXMLNS}});
-       {value, Message1} -> Message1
-     end,
-     lists:reverse(__Els)};
+		    __Els) ->
+    {Author, lists:reverse(__Els)};
 decode_groups_x_els(__TopXMLNS, __Opts,
 		    [{xmlel, <<"user">>, _attrs, _} = _el | _els], Author,
-		    Message, __Els) ->
+		    __Els) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_groups_x_els(__TopXMLNS, __Opts, _els,
-			      {value,
-			       decode_groups_user(<<"https://xabber.com/protocol/groups">>,
-						  __Opts, _el)},
-			      Message, __Els);
-      _ ->
-	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      Message, [_el | __Els])
-    end;
-decode_groups_x_els(__TopXMLNS, __Opts,
-		    [{xmlel, <<"message">>, _attrs, _} = _el | _els],
-		    Author, Message, __Els) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"jabber:client">> ->
-	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      {value,
-			       rfc6120:decode_message(<<"jabber:client">>,
-						      __Opts, _el)},
-			      __Els);
-      <<"jabber:server">> ->
-	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      {value,
-			       rfc6120:decode_message(<<"jabber:server">>,
-						      __Opts, _el)},
-			      __Els);
-      <<"jabber:component:accept">> ->
-	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      {value,
-			       rfc6120:decode_message(<<"jabber:component:accept">>,
-						      __Opts, _el)},
+			      decode_groups_user(<<"https://xabber.com/protocol/groups">>,
+						 __Opts, _el),
 			      __Els);
       _ ->
 	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      Message, [_el | __Els])
+			      [_el | __Els])
     end;
 decode_groups_x_els(__TopXMLNS, __Opts,
 		    [{xmlel, _name, _attrs, _} = _el | _els], Author,
-		    Message, __Els) ->
+		    __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
       true ->
 	  decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			      Message, [_el | __Els]);
+			      [_el | __Els]);
       false ->
 	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 					__TopXMLNS),
 	  case xmpp_codec:get_mod(_name, __XMLNS) of
 	    undefined ->
 		decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-				    Message, [_el | __Els]);
+				    [_el | __Els]);
 	    Mod ->
 		decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-				    Message,
 				    [Mod:do_decode(_name, __XMLNS, _el, __Opts)
 				     | __Els])
 	  end
     end;
 decode_groups_x_els(__TopXMLNS, __Opts, [_ | _els],
-		    Author, Message, __Els) ->
+		    Author, __Els) ->
     decode_groups_x_els(__TopXMLNS, __Opts, _els, Author,
-			Message, __Els).
+			__Els).
 
-encode_groups_x({groups_x, Author, Message, __Els},
+encode_groups_x({groups_x, Author, __Els},
 		__TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
@@ -909,19 +865,16 @@ encode_groups_x({groups_x, Author, Message, __Els},
 	    || _el <- __Els]
 	     ++
 	     lists:reverse('encode_groups_x_$author'(Author,
-						     __NewTopXMLNS,
-						     'encode_groups_x_$message'(Message,
-										__NewTopXMLNS,
-										[]))),
+						     __NewTopXMLNS, [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"x">>, _attrs, _els}.
 
+'encode_groups_x_$author'(undefined, __TopXMLNS,
+			  _acc) ->
+    _acc;
 'encode_groups_x_$author'(Author, __TopXMLNS, _acc) ->
     [encode_groups_user(Author, __TopXMLNS) | _acc].
-
-'encode_groups_x_$message'(Message, __TopXMLNS, _acc) ->
-    [rfc6120:encode_message(Message, __TopXMLNS) | _acc].
 
 decode_groups_decline(__TopXMLNS, __Opts,
 		      {xmlel, <<"decline">>, _attrs, _els}) ->
@@ -1207,16 +1160,15 @@ encode_groups_invite_reason_cdata(_val, _acc) ->
 
 decode_groups_invites(__TopXMLNS, __Opts,
 		      {xmlel, <<"invites">>, _attrs, _els}) ->
-    Usernames = decode_groups_invites_els(__TopXMLNS,
-					  __Opts, _els, []),
-    {groups_invites, Usernames}.
+    List = decode_groups_invites_els(__TopXMLNS, __Opts,
+				     _els, []),
+    {groups_invites, List}.
 
 decode_groups_invites_els(__TopXMLNS, __Opts, [],
-			  Usernames) ->
-    lists:reverse(Usernames);
+			  List) ->
+    lists:reverse(List);
 decode_groups_invites_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"jid">>, _attrs, _} = _el | _els],
-			  Usernames) ->
+			  [{xmlel, <<"jid">>, _attrs, _} = _el | _els], List) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -1224,36 +1176,33 @@ decode_groups_invites_els(__TopXMLNS, __Opts,
 	  decode_groups_invites_els(__TopXMLNS, __Opts, _els,
 				    [decode_groups_jid(<<"https://xabber.com/protocol/groups">>,
 						       __Opts, _el)
-				     | Usernames]);
+				     | List]);
       _ ->
 	  decode_groups_invites_els(__TopXMLNS, __Opts, _els,
-				    Usernames)
+				    List)
     end;
 decode_groups_invites_els(__TopXMLNS, __Opts,
-			  [_ | _els], Usernames) ->
+			  [_ | _els], List) ->
     decode_groups_invites_els(__TopXMLNS, __Opts, _els,
-			      Usernames).
+			      List).
 
-encode_groups_invites({groups_invites, Usernames},
+encode_groups_invites({groups_invites, List},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups#invite">>,
 				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_groups_invites_$usernames'(Usernames,
-							 __NewTopXMLNS, [])),
+    _els = lists:reverse('encode_groups_invites_$list'(List,
+						       __NewTopXMLNS, [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"invites">>, _attrs, _els}.
 
-'encode_groups_invites_$usernames'([], __TopXMLNS,
-				   _acc) ->
+'encode_groups_invites_$list'([], __TopXMLNS, _acc) ->
     _acc;
-'encode_groups_invites_$usernames'([Usernames | _els],
-				   __TopXMLNS, _acc) ->
-    'encode_groups_invites_$usernames'(_els, __TopXMLNS,
-				       [encode_groups_jid(Usernames, __TopXMLNS)
-					| _acc]).
+'encode_groups_invites_$list'([List | _els], __TopXMLNS,
+			      _acc) ->
+    'encode_groups_invites_$list'(_els, __TopXMLNS,
+				  [encode_groups_jid(List, __TopXMLNS) | _acc]).
 
 decode_groups_owner(__TopXMLNS, __Opts,
 		    {xmlel, <<"owner">>, _attrs, _els}) ->
@@ -1424,19 +1373,20 @@ encode_groups_members({groups_members, Members, Id,
 
 decode_groups_members_attr_version(__TopXMLNS,
 				   undefined) ->
-    <<>>;
+    undefined;
 decode_groups_members_attr_version(__TopXMLNS, _val) ->
     _val.
 
-encode_groups_members_attr_version(<<>>, _acc) -> _acc;
+encode_groups_members_attr_version(undefined, _acc) ->
+    _acc;
 encode_groups_members_attr_version(_val, _acc) ->
     [{<<"version">>, _val} | _acc].
 
 decode_groups_members_attr_id(__TopXMLNS, undefined) ->
-    <<>>;
+    undefined;
 decode_groups_members_attr_id(__TopXMLNS, _val) -> _val.
 
-encode_groups_members_attr_id(<<>>, _acc) -> _acc;
+encode_groups_members_attr_id(undefined, _acc) -> _acc;
 encode_groups_members_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
 
@@ -2373,16 +2323,16 @@ encode_groups_index_cdata(_val, _acc) ->
 
 decode_groups_domains(__TopXMLNS, __Opts,
 		      {xmlel, <<"domains">>, _attrs, _els}) ->
-    Domains = decode_groups_domains_els(__TopXMLNS, __Opts,
-					_els, []),
-    {groups_domains, Domains}.
+    List = decode_groups_domains_els(__TopXMLNS, __Opts,
+				     _els, []),
+    {groups_domains, List}.
 
 decode_groups_domains_els(__TopXMLNS, __Opts, [],
-			  Domains) ->
-    lists:reverse(Domains);
+			  List) ->
+    lists:reverse(List);
 decode_groups_domains_els(__TopXMLNS, __Opts,
 			  [{xmlel, <<"domain">>, _attrs, _} = _el | _els],
-			  Domains) ->
+			  List) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -2390,36 +2340,34 @@ decode_groups_domains_els(__TopXMLNS, __Opts,
 	  decode_groups_domains_els(__TopXMLNS, __Opts, _els,
 				    [decode_groups_domain(<<"https://xabber.com/protocol/groups">>,
 							  __Opts, _el)
-				     | Domains]);
+				     | List]);
       _ ->
 	  decode_groups_domains_els(__TopXMLNS, __Opts, _els,
-				    Domains)
+				    List)
     end;
 decode_groups_domains_els(__TopXMLNS, __Opts,
-			  [_ | _els], Domains) ->
+			  [_ | _els], List) ->
     decode_groups_domains_els(__TopXMLNS, __Opts, _els,
-			      Domains).
+			      List).
 
-encode_groups_domains({groups_domains, Domains},
+encode_groups_domains({groups_domains, List},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_groups_domains_$domains'(Domains,
+    _els = lists:reverse('encode_groups_domains_$list'(List,
 						       __NewTopXMLNS, [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"domains">>, _attrs, _els}.
 
-'encode_groups_domains_$domains'([], __TopXMLNS,
-				 _acc) ->
+'encode_groups_domains_$list'([], __TopXMLNS, _acc) ->
     _acc;
-'encode_groups_domains_$domains'([Domains | _els],
-				 __TopXMLNS, _acc) ->
-    'encode_groups_domains_$domains'(_els, __TopXMLNS,
-				     [encode_groups_domain(Domains, __TopXMLNS)
-				      | _acc]).
+'encode_groups_domains_$list'([List | _els], __TopXMLNS,
+			      _acc) ->
+    'encode_groups_domains_$list'(_els, __TopXMLNS,
+				  [encode_groups_domain(List, __TopXMLNS)
+				   | _acc]).
 
 decode_groups_domain(__TopXMLNS, __Opts,
 		     {xmlel, <<"domain">>, _attrs, _els}) ->
@@ -2464,16 +2412,16 @@ encode_groups_domain_cdata(_val, _acc) ->
 
 decode_groups_contacts(__TopXMLNS, __Opts,
 		       {xmlel, <<"contacts">>, _attrs, _els}) ->
-    Contacts = decode_groups_contacts_els(__TopXMLNS,
-					  __Opts, _els, []),
-    {groups_contacts, Contacts}.
+    List = decode_groups_contacts_els(__TopXMLNS, __Opts,
+				      _els, []),
+    {groups_contacts, List}.
 
 decode_groups_contacts_els(__TopXMLNS, __Opts, [],
-			   Contacts) ->
-    lists:reverse(Contacts);
+			   List) ->
+    lists:reverse(List);
 decode_groups_contacts_els(__TopXMLNS, __Opts,
 			   [{xmlel, <<"contact">>, _attrs, _} = _el | _els],
-			   Contacts) ->
+			   List) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
@@ -2481,37 +2429,35 @@ decode_groups_contacts_els(__TopXMLNS, __Opts,
 	  decode_groups_contacts_els(__TopXMLNS, __Opts, _els,
 				     [decode_groups_contact(<<"https://xabber.com/protocol/groups">>,
 							    __Opts, _el)
-				      | Contacts]);
+				      | List]);
       _ ->
 	  decode_groups_contacts_els(__TopXMLNS, __Opts, _els,
-				     Contacts)
+				     List)
     end;
 decode_groups_contacts_els(__TopXMLNS, __Opts,
-			   [_ | _els], Contacts) ->
+			   [_ | _els], List) ->
     decode_groups_contacts_els(__TopXMLNS, __Opts, _els,
-			       Contacts).
+			       List).
 
-encode_groups_contacts({groups_contacts, Contacts},
+encode_groups_contacts({groups_contacts, List},
 		       __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els =
-	lists:reverse('encode_groups_contacts_$contacts'(Contacts,
-							 __NewTopXMLNS, [])),
+	lists:reverse('encode_groups_contacts_$list'(List,
+						     __NewTopXMLNS, [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 					__TopXMLNS),
     {xmlel, <<"contacts">>, _attrs, _els}.
 
-'encode_groups_contacts_$contacts'([], __TopXMLNS,
-				   _acc) ->
+'encode_groups_contacts_$list'([], __TopXMLNS, _acc) ->
     _acc;
-'encode_groups_contacts_$contacts'([Contacts | _els],
-				   __TopXMLNS, _acc) ->
-    'encode_groups_contacts_$contacts'(_els, __TopXMLNS,
-				       [encode_groups_contact(Contacts,
-							      __TopXMLNS)
-					| _acc]).
+'encode_groups_contacts_$list'([List | _els],
+			       __TopXMLNS, _acc) ->
+    'encode_groups_contacts_$list'(_els, __TopXMLNS,
+				   [encode_groups_contact(List, __TopXMLNS)
+				    | _acc]).
 
 decode_groups_contact(__TopXMLNS, __Opts,
 		      {xmlel, <<"contact">>, _attrs, _els}) ->
