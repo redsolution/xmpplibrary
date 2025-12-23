@@ -4921,7 +4921,7 @@
 
 -xml(groups_invite_send,
      #elem{name = <<"send">>,
-       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
        result = '$cdata',
        cdata = #cdata{label = '$cdata', required = true,

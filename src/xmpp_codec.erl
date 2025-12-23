@@ -1126,9 +1126,6 @@ get_mod(<<"MSG">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"PHONETIC">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"jid">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"fin">>, <<"urn:xmpp:mam:2">>) -> xep0313;
-get_mod(<<"send">>,
-	<<"https://xabber.com/protocol/groups#invite">>) ->
-    xep_groups;
 get_mod(<<"replace">>,
 	<<"https://xabber.com/protocol/rewrite#notify">>) ->
     xep_rewrite;
@@ -1174,6 +1171,9 @@ get_mod(<<"subid-required">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
 get_mod(<<"members">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
+get_mod(<<"send">>,
 	<<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
 get_mod(<<"value">>, <<"jabber:x:data">>) -> xep0004;

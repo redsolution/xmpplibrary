@@ -1503,6 +1503,7 @@
                         address() |
                         avatar_data() |
                         markup_link() |
+                        search() |
                         groups_collect() |
                         xen_prefs() |
                         ps_unsubscribe() |
@@ -1550,6 +1551,7 @@
                         markup_mention() |
                         perms_newbies() |
                         xmpp_session() |
+                        text() |
                         encrypted_message_omemo() |
                         sync_unread() |
                         media_uri() |
@@ -1603,6 +1605,7 @@
                         mam_query() |
                         sync_synchronization() |
                         last() |
+                        replace() |
                         iq() |
                         groups_pinned_message() |
                         sync_displayed() |
@@ -1629,7 +1632,6 @@
                         privilege() |
                         xen_notification() |
                         compress() |
-                        text() |
                         privacy_item() |
                         groups_x() |
                         'see-other-host'() |
@@ -1655,7 +1657,6 @@
                         perms_permission() |
                         gone() |
                         xen_notify() |
-                        search() |
                         xcaptcha() |
                         geoloc() |
                         groups_group() |
@@ -1715,7 +1716,6 @@
                         jingle_propose() |
                         db_feature() |
                         xabber_push_enable() |
-                        replace() |
                         device_register() |
                         muc_actor() |
                         xabber_push_notification() |

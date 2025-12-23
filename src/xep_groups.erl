@@ -39,9 +39,8 @@ do_decode(<<"invite">>,
     decode_groups_invite(<<"https://xabber.com/protocol/groups">>,
 			 Opts, El);
 do_decode(<<"send">>,
-	  <<"https://xabber.com/protocol/groups#invite">>, El,
-	  Opts) ->
-    decode_groups_invite_send(<<"https://xabber.com/protocol/groups#invite">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_invite_send(<<"https://xabber.com/protocol/groups">>,
 			      Opts, El);
 do_decode(<<"reason">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
@@ -209,8 +208,7 @@ tags() ->
       <<"https://xabber.com/protocol/groups#invite">>},
      {<<"invite">>,
       <<"https://xabber.com/protocol/groups">>},
-     {<<"send">>,
-      <<"https://xabber.com/protocol/groups#invite">>},
+     {<<"send">>, <<"https://xabber.com/protocol/groups">>},
      {<<"reason">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"invites">>,
@@ -967,9 +965,9 @@ decode_groups_invite_els(__TopXMLNS, __Opts,
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
-      <<"https://xabber.com/protocol/groups#invite">> ->
+      <<"https://xabber.com/protocol/groups">> ->
 	  decode_groups_invite_els(__TopXMLNS, __Opts, _els, User,
-				   decode_groups_invite_send(<<"https://xabber.com/protocol/groups#invite">>,
+				   decode_groups_invite_send(<<"https://xabber.com/protocol/groups">>,
 							     __Opts, _el),
 				   Target, Reason);
       _ ->
@@ -1101,7 +1099,7 @@ decode_groups_invite_send_els(__TopXMLNS, __Opts,
 
 encode_groups_invite_send(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups#invite">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els = encode_groups_invite_send_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
