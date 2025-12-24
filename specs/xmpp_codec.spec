@@ -4907,7 +4907,7 @@
 
 -xml(groups_invites,
      #elem{name = <<"invites">>,
-       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
        result = {groups_invites, '$list'},
        refs = [#ref{name = groups_jid, label = '$list'}]}).
@@ -4943,7 +4943,7 @@
 
 -xml(groups_revoke,
      #elem{name = <<"revoke">>,
-       xmlns = <<"https://xabber.com/protocol/groups#invite">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
        result = {groups_revoke, '$jid'},
        refs = [#ref{name = groups_jid, min = 1, max = 1, label = '$jid'}]}).

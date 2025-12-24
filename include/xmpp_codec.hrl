@@ -1459,6 +1459,7 @@
                         delegated() |
                         mark_displayed() |
                         adhoc_command() |
+                        text() |
                         groups_pinned() |
                         register() |
                         vcard_org() |
@@ -1471,6 +1472,7 @@
                         ps_subscription() |
                         devices_revoke_all() |
                         stanza_id() |
+                        replace() |
                         rsm_set() |
                         rsm_first() |
                         sm_resume() |
@@ -1503,7 +1505,6 @@
                         address() |
                         avatar_data() |
                         markup_link() |
-                        search() |
                         groups_collect() |
                         xen_prefs() |
                         ps_unsubscribe() |
@@ -1551,7 +1552,6 @@
                         markup_mention() |
                         perms_newbies() |
                         xmpp_session() |
-                        text() |
                         encrypted_message_omemo() |
                         sync_unread() |
                         media_uri() |
@@ -1605,7 +1605,6 @@
                         mam_query() |
                         sync_synchronization() |
                         last() |
-                        replace() |
                         iq() |
                         groups_pinned_message() |
                         sync_displayed() |
@@ -1657,6 +1656,7 @@
                         perms_permission() |
                         gone() |
                         xen_notify() |
+                        search() |
                         xcaptcha() |
                         geoloc() |
                         groups_group() |

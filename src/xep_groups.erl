@@ -30,9 +30,8 @@ do_decode(<<"decline">>,
     decode_groups_decline(<<"https://xabber.com/protocol/groups">>,
 			  Opts, El);
 do_decode(<<"revoke">>,
-	  <<"https://xabber.com/protocol/groups#invite">>, El,
-	  Opts) ->
-    decode_groups_revoke(<<"https://xabber.com/protocol/groups#invite">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_revoke(<<"https://xabber.com/protocol/groups">>,
 			 Opts, El);
 do_decode(<<"invite">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
@@ -47,9 +46,8 @@ do_decode(<<"reason">>,
     decode_groups_invite_reason(<<"https://xabber.com/protocol/groups">>,
 				Opts, El);
 do_decode(<<"invites">>,
-	  <<"https://xabber.com/protocol/groups#invite">>, El,
-	  Opts) ->
-    decode_groups_invites(<<"https://xabber.com/protocol/groups#invite">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_invites(<<"https://xabber.com/protocol/groups">>,
 			  Opts, El);
 do_decode(<<"owner">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
@@ -205,14 +203,14 @@ tags() ->
      {<<"decline">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"revoke">>,
-      <<"https://xabber.com/protocol/groups#invite">>},
+      <<"https://xabber.com/protocol/groups">>},
      {<<"invite">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"send">>, <<"https://xabber.com/protocol/groups">>},
      {<<"reason">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"invites">>,
-      <<"https://xabber.com/protocol/groups#invite">>},
+      <<"https://xabber.com/protocol/groups">>},
      {<<"owner">>, <<"https://xabber.com/protocol/groups">>},
      {<<"collect">>,
       <<"https://xabber.com/protocol/groups">>},
@@ -401,7 +399,7 @@ do_get_ns({groups_info, _, _, _, _}) ->
 do_get_ns({groups_invite, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_invites, _}) ->
-    <<"https://xabber.com/protocol/groups#invite">>;
+    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_kick, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_last, _}) ->
@@ -421,7 +419,7 @@ do_get_ns({groups_ptp, _, _}) ->
 do_get_ns({groups_resend}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_revoke, _}) ->
-    <<"https://xabber.com/protocol/groups#invite">>;
+    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_search, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_settings, _, _, _, _, _}) ->
@@ -920,7 +918,7 @@ decode_groups_revoke_els(__TopXMLNS, __Opts, [_ | _els],
 encode_groups_revoke({groups_revoke, Jid},
 		     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups#invite">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els = lists:reverse('encode_groups_revoke_$jid'(Jid,
 						     __NewTopXMLNS, [])),
@@ -1187,7 +1185,7 @@ decode_groups_invites_els(__TopXMLNS, __Opts,
 encode_groups_invites({groups_invites, List},
 		      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups#invite">>,
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els = lists:reverse('encode_groups_invites_$list'(List,
 						       __NewTopXMLNS, [])),

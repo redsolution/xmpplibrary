@@ -651,9 +651,6 @@ get_mod(<<"filename">>,
     xep0363;
 get_mod(<<"put">>, <<"urn:xmpp:http:upload:0">>) ->
     xep0363;
-get_mod(<<"revoke">>,
-	<<"https://xabber.com/protocol/groups#invite">>) ->
-    xep_groups;
 get_mod(<<"JABBERID">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"subscription">>,
 	<<"http://jabber.org/protocol/pubsub#event">>) ->
@@ -962,6 +959,9 @@ get_mod(<<"description">>,
 get_mod(<<"client">>,
 	<<"https://xabber.com/protocol/devices">>) ->
     xep_devices;
+get_mod(<<"invites">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"newbies">>,
 	<<"https://xabber.com/protocol/permissions">>) ->
     xep_permissions;
@@ -1267,6 +1267,9 @@ get_mod(<<"invalid-payload">>,
 	<<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
 get_mod(<<"last">>, <<"jabber:iq:search">>) -> xep0055;
+get_mod(<<"revoke">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"query">>, <<"jabber:iq:last">>) -> xep0012;
 get_mod(<<"show">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"configure">>,
@@ -1576,9 +1579,6 @@ get_mod(<<"gone">>,
 get_mod(<<"query">>,
 	<<"http://jabber.org/protocol/muc#owner">>) ->
     xep0045;
-get_mod(<<"invites">>,
-	<<"https://xabber.com/protocol/groups#invite">>) ->
-    xep_groups;
 get_mod(<<"os">>, <<"jabber:iq:version">>) -> xep0092;
 get_mod(<<"feature">>,
 	<<"http://jabber.org/protocol/disco#info">>) ->
