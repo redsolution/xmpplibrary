@@ -282,7 +282,8 @@ do_encode({groups_domains, _} = Domains, TopXMLNS) ->
 do_encode({groups_settings, _, _, _, _, _} = Settings,
 	  TopXMLNS) ->
     encode_groups_settings(Settings, TopXMLNS);
-do_encode({groups_pinned_message, _} = Pinned_message,
+do_encode({groups_pinned_message, _, _} =
+	      Pinned_message,
 	  TopXMLNS) ->
     encode_groups_pinned_message(Pinned_message, TopXMLNS);
 do_encode({groups_pinned, _} = Pinned, TopXMLNS) ->
@@ -358,7 +359,7 @@ do_get_name({groups_members, _, _, _, _}) ->
 do_get_name({groups_mentions, _}) -> <<"mentions">>;
 do_get_name({groups_owner, _}) -> <<"owner">>;
 do_get_name({groups_pinned, _}) -> <<"pinned">>;
-do_get_name({groups_pinned_message, _}) ->
+do_get_name({groups_pinned_message, _, _}) ->
     <<"pinned-message">>;
 do_get_name({groups_ptp, _, _}) -> <<"peer-to-peer">>;
 do_get_name({groups_resend}) -> <<"re-send">>;
@@ -412,7 +413,7 @@ do_get_ns({groups_owner, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_pinned, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_pinned_message, _}) ->
+do_get_ns({groups_pinned_message, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_ptp, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -448,7 +449,7 @@ pp(groups_contacts, 1) -> [list];
 pp(groups_domains, 1) -> [list];
 pp(groups_settings, 5) ->
     [membership, contacts, domains, index, state];
-pp(groups_pinned_message, 1) -> [id];
+pp(groups_pinned_message, 2) -> [id, status];
 pp(groups_pinned, 1) -> [messages];
 pp(groups_group, 9) ->
     [privacy, parent, jid, members, localpart, info,
@@ -480,7 +481,7 @@ records() ->
     [{groups_last, 1}, {groups_avatar, 2}, {groups_user, 7},
      {groups_info, 4}, {groups_contacts, 1},
      {groups_domains, 1}, {groups_settings, 5},
-     {groups_pinned_message, 1}, {groups_pinned, 1},
+     {groups_pinned_message, 2}, {groups_pinned, 1},
      {groups_group, 9}, {groups_ptp, 2}, {groups_create, 2},
      {groups_delete, 1}, {groups_details, 0},
      {groups_block, 1}, {groups_unblock, 1},
@@ -2036,32 +2037,42 @@ encode_groups_pinned({groups_pinned, Messages},
 
 decode_groups_pinned_message(__TopXMLNS, __Opts,
 			     {xmlel, <<"pinned-message">>, _attrs, _els}) ->
-    Id = decode_groups_pinned_message_attrs(__TopXMLNS,
-					    _attrs, undefined),
-    {groups_pinned_message, Id}.
+    {Id, Status} =
+	decode_groups_pinned_message_attrs(__TopXMLNS, _attrs,
+					   undefined, undefined),
+    {groups_pinned_message, Id, Status}.
 
 decode_groups_pinned_message_attrs(__TopXMLNS,
-				   [{<<"id">>, _val} | _attrs], _Id) ->
+				   [{<<"id">>, _val} | _attrs], _Id, Status) ->
     decode_groups_pinned_message_attrs(__TopXMLNS, _attrs,
-				       _val);
+				       _val, Status);
 decode_groups_pinned_message_attrs(__TopXMLNS,
-				   [_ | _attrs], Id) ->
+				   [{<<"status">>, _val} | _attrs], Id,
+				   _Status) ->
     decode_groups_pinned_message_attrs(__TopXMLNS, _attrs,
-				       Id);
-decode_groups_pinned_message_attrs(__TopXMLNS, [],
-				   Id) ->
-    decode_groups_pinned_message_attr_id(__TopXMLNS, Id).
+				       Id, _val);
+decode_groups_pinned_message_attrs(__TopXMLNS,
+				   [_ | _attrs], Id, Status) ->
+    decode_groups_pinned_message_attrs(__TopXMLNS, _attrs,
+				       Id, Status);
+decode_groups_pinned_message_attrs(__TopXMLNS, [], Id,
+				   Status) ->
+    {decode_groups_pinned_message_attr_id(__TopXMLNS, Id),
+     decode_groups_pinned_message_attr_status(__TopXMLNS,
+					      Status)}.
 
-encode_groups_pinned_message({groups_pinned_message,
-			      Id},
+encode_groups_pinned_message({groups_pinned_message, Id,
+			      Status},
 			     __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els = [],
-    _attrs = encode_groups_pinned_message_attr_id(Id,
-						  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-									     __TopXMLNS)),
+    _attrs =
+	encode_groups_pinned_message_attr_status(Status,
+						 encode_groups_pinned_message_attr_id(Id,
+										      xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+														 __TopXMLNS))),
     {xmlel, <<"pinned-message">>, _attrs, _els}.
 
 decode_groups_pinned_message_attr_id(__TopXMLNS,
@@ -2075,6 +2086,25 @@ decode_groups_pinned_message_attr_id(__TopXMLNS,
 
 encode_groups_pinned_message_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
+
+decode_groups_pinned_message_attr_status(__TopXMLNS,
+					 undefined) ->
+    pinned;
+decode_groups_pinned_message_attr_status(__TopXMLNS,
+					 _val) ->
+    case catch dec_enum(_val, [pinned, remove]) of
+      {'EXIT', _} ->
+	  erlang:error({xmpp_codec,
+			{bad_attr_value, <<"status">>, <<"pinned-message">>,
+			 __TopXMLNS}});
+      _res -> _res
+    end.
+
+encode_groups_pinned_message_attr_status(pinned,
+					 _acc) ->
+    _acc;
+encode_groups_pinned_message_attr_status(_val, _acc) ->
+    [{<<"status">>, enc_enum(_val)} | _acc].
 
 decode_groups_settings(__TopXMLNS, __Opts,
 		       {xmlel, <<"settings">>, _attrs, _els}) ->

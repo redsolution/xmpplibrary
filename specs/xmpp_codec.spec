@@ -4783,8 +4783,12 @@
      #elem{name = <<"pinned-message">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_pinned_message, '$id'},
-       attrs = [#attr{name = <<"id">>, required = true}]}).
+       result = {groups_pinned_message, '$id', '$status'},
+       attrs = [#attr{name = <<"id">>, required = true},
+           #attr{name = <<"status">>,
+                 default = pinned,
+                 enc = {enc_enum, []},
+                 dec = {dec_enum, [[pinned, remove]]}}]}).
 
 -xml(groups_pinned,
     #elem{name = <<"pinned">>,
