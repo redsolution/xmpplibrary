@@ -4656,20 +4656,33 @@
        refs = [#ref{name = avatar_info, min = 0, max = 1, label = '$info'},
                #ref{name = avatar_data, min = 0, max = 1, label = '$data'}]}).
 
+-xml(groups_allow_p2p,
+      #elem{name = <<"allow-p2p">>,
+        xmlns = <<"https://xabber.com/protocol/groups">>,
+        module = 'xep_groups',
+        result = true}).
+
+-xml(groups_deny_user_avatar,
+     #elem{name = <<"deny-user-avatar">>,
+       xmlns = <<"https://xabber.com/protocol/groups">>,
+       module = 'xep_groups',
+       result = {groups_deny_user_avatar}}).
 
 -xml(groups_user,
     #elem{name = <<"user">>,
       xmlns = <<"https://xabber.com/protocol/groups">>,
       module = 'xep_groups',
       result = {groups_user, '$id', '$jid', '$role', '$badge',
-        '$nickname', '$avatar', '$last'},
+        '$nickname', '$avatar', '$last', '$p2p'},
        attrs = [#attr{name = <<"id">>}],
        refs = [#ref{name = groups_jid, min = 0, max = 1, label = '$jid'},
          #ref{name = groups_role, min = 0, max = 1, label = '$role'},
          #ref{name = groups_nickname, min = 0, max = 1, label = '$nickname'},
          #ref{name = groups_avatar, min = 0, max = 1, label = '$avatar'},
          #ref{name = groups_badge, min = 0, max = 1, label = '$badge'},
-         #ref{name = groups_last, min = 0, max = 1, label = '$last'}]}).
+         #ref{name = groups_last, min = 0, max = 1, label = '$last'},
+         #ref{name = groups_allow_p2p, min = 0, max = 1,
+              default = false, label = '$p2p'}]}).
 
 -xml(groups_localpart,
      #elem{name = <<"localpart">>,
@@ -4830,11 +4843,11 @@
          #ref{name = groups_pinned, min = 0, max = 1, label = '$pinned'},
          #ref{name = groups_present, min = 0, max = 1, label = '$present'}]}).
 
--xml(groups_ptp,
+-xml(groups_p2p,
      #elem{name = <<"peer-to-peer">>,
        xmlns = <<"https://xabber.com/protocol/groups">>,
        module = 'xep_groups',
-       result = {groups_ptp, '$parent', '$with'},
+       result = {groups_p2p, '$parent', '$with'},
        attrs = [#attr{name = <<"parent">>, required = true,
                       dec = {jid, decode, []},
                       enc = {jid, encode, []}},
@@ -4844,9 +4857,9 @@
     #elem{name = <<"create">>,
       xmlns = <<"https://xabber.com/protocol/groups">>,
       module = 'xep_groups',
-      result = {groups_create, '$group', '$ptp'},
+      result = {groups_create, '$group', '$p2p'},
       refs = [#ref{name = groups_group, min = 0, max = 1, label = '$group'},
-         #ref{name = groups_ptp, min = 0, max = 1, label = '$ptp'}]}).
+         #ref{name = groups_p2p, min = 0, max = 1, label = '$p2p'}]}).
 
 -xml(groups_delete,
      #elem{name = <<"delete">>,
@@ -4894,13 +4907,6 @@
          #attr{name = <<"id">>, default = undefined}],
       refs = [#ref{name = groups_user, label = '$members'},
          #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]}).
-
--xml(groups_collect,
-     #elem{name = <<"collect">>,
-       xmlns = <<"https://xabber.com/protocol/groups">>,
-       module = 'xep_groups',
-       result = {groups_collect, '$cdata'},
-       cdata = #cdata{label = '$cdata'}}).
 
 -xml(groups_owner,
      #elem{name = <<"owner">>,

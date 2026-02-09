@@ -668,9 +668,6 @@ get_mod(<<"unsupported-access-model">>,
 get_mod(<<"ip">>, <<"urn:xmpp:sic:1">>) -> xep0279;
 get_mod(<<"attribute">>, <<"urn:xmpp:delegation:1">>) ->
     xep0355;
-get_mod(<<"collect">>,
-	<<"https://xabber.com/protocol/groups">>) ->
-    xep_groups;
 get_mod(<<"retract-all">>,
 	<<"https://xabber.com/protocol/rewrite">>) ->
     xep_rewrite;
@@ -696,6 +693,9 @@ get_mod(<<"content-type">>,
     xep0363;
 get_mod(<<"perm">>, <<"urn:xmpp:privilege:1">>) ->
     xep0356;
+get_mod(<<"deny-user-avatar">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"file">>,
 	<<"https://xabber.com/protocol/files">>) ->
     xep_files;
@@ -734,6 +734,9 @@ get_mod(<<"invalid-jid">>,
 get_mod(<<"notification">>,
 	<<"https://xabber.com/protocol/push">>) ->
     xabberpush;
+get_mod(<<"allow-p2p">>,
+	<<"https://xabber.com/protocol/groups">>) ->
+    xep_groups;
 get_mod(<<"retract-message">>,
 	<<"https://xabber.com/protocol/rewrite">>) ->
     xep_rewrite;
@@ -1838,8 +1841,6 @@ get_mod({perms_permissions, _, _, _, _, _}) ->
     xep_permissions;
 get_mod({vcard_geo, _, _}) -> xep0054;
 get_mod({xevent, _, _, _, _, _}) -> xep0022;
-get_mod({groups_user, _, _, _, _, _, _, _}) ->
-    xep_groups;
 get_mod({groups_group, _, _, _, _, _, _, _, _, _}) ->
     xep_groups;
 get_mod({feature_register}) -> xep0077;
@@ -1849,6 +1850,7 @@ get_mod({pubsub, _, _, _, _, _, _, _, _, _, _, _, _, _,
 get_mod({x_conference, _, _, _, _, _}) -> xep0249;
 get_mod({xabber_encryption_key, _}) -> xabberpush;
 get_mod({devices_query, _}) -> xep_devices;
+get_mod({groups_p2p, _, _}) -> xep_groups;
 get_mod({groups_invite, _, _, _, _, _}) -> xep_groups;
 get_mod({disco_info, _, _, _, _}) -> xep0030;
 get_mod({oob_x, _, _, _}) -> xep0066;
@@ -1895,6 +1897,8 @@ get_mod({vcard_photo, _, _, _}) -> xep0054;
 get_mod({ps_publish, _, _}) -> xep0060;
 get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
+get_mod({groups_user, _, _, _, _, _, _, _, _}) ->
+    xep_groups;
 get_mod({media_uri, _, _}) -> xep0221;
 get_mod({device_register, _}) -> xep_devices;
 get_mod({sasl_success, _}) -> rfc6120;
@@ -1952,6 +1956,7 @@ get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
 get_mod({delivery_retry, _}) -> xep_delivery;
 get_mod({xabbertoken_query, _}) -> xabbertoken;
+get_mod({groups_deny_user_avatar}) -> xep_groups;
 get_mod({roster_item, _, _, _, _, _, _}) -> rfc6121;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
@@ -2012,7 +2017,6 @@ get_mod({geoloc, _}) -> xep0080;
 get_mod({'see-other-host', _}) -> rfc6120;
 get_mod({muc_destroy, _, _, _, _}) -> xep0045;
 get_mod({hint, _}) -> xep0334;
-get_mod({groups_collect, _}) -> xep_groups;
 get_mod({jingle_accept, _}) -> xep0353;
 get_mod({private, _}) -> xep0049;
 get_mod({sasl_challenge, _}) -> rfc6120;
@@ -2036,7 +2040,6 @@ get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({vcard_name, _, _, _, _, _}) -> xep0054;
 get_mod({csi, _}) -> xep0352;
-get_mod({groups_ptp, _, _}) -> xep_groups;
 get_mod({sm_a, _, _}) -> xep0198;
 get_mod({privacy_query, _, _, _}) -> xep0016;
 get_mod({block, _}) -> xep0191;

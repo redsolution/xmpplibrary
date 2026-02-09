@@ -53,10 +53,6 @@ do_decode(<<"owner">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_owner(<<"https://xabber.com/protocol/groups">>,
 			Opts, El);
-do_decode(<<"collect">>,
-	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_groups_collect(<<"https://xabber.com/protocol/groups">>,
-			  Opts, El);
 do_decode(<<"members">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_members(<<"https://xabber.com/protocol/groups">>,
@@ -87,7 +83,7 @@ do_decode(<<"create">>,
 			 Opts, El);
 do_decode(<<"peer-to-peer">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
-    decode_groups_ptp(<<"https://xabber.com/protocol/groups">>,
+    decode_groups_p2p(<<"https://xabber.com/protocol/groups">>,
 		      Opts, El);
 do_decode(<<"group">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
@@ -161,6 +157,14 @@ do_decode(<<"user">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_user(<<"https://xabber.com/protocol/groups">>,
 		       Opts, El);
+do_decode(<<"deny-user-avatar">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_deny_user_avatar(<<"https://xabber.com/protocol/groups">>,
+				   Opts, El);
+do_decode(<<"allow-p2p">>,
+	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
+    decode_groups_allow_p2p(<<"https://xabber.com/protocol/groups">>,
+			    Opts, El);
 do_decode(<<"avatar">>,
 	  <<"https://xabber.com/protocol/groups">>, El, Opts) ->
     decode_groups_avatar(<<"https://xabber.com/protocol/groups">>,
@@ -212,8 +216,6 @@ tags() ->
      {<<"invites">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"owner">>, <<"https://xabber.com/protocol/groups">>},
-     {<<"collect">>,
-      <<"https://xabber.com/protocol/groups">>},
      {<<"members">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"kick">>, <<"https://xabber.com/protocol/groups">>},
@@ -257,6 +259,10 @@ tags() ->
      {<<"localpart">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"user">>, <<"https://xabber.com/protocol/groups">>},
+     {<<"deny-user-avatar">>,
+      <<"https://xabber.com/protocol/groups">>},
+     {<<"allow-p2p">>,
+      <<"https://xabber.com/protocol/groups">>},
      {<<"avatar">>,
       <<"https://xabber.com/protocol/groups">>},
      {<<"last">>, <<"https://xabber.com/protocol/groups">>},
@@ -270,7 +276,11 @@ do_encode({groups_last, _} = Last, TopXMLNS) ->
     encode_groups_last(Last, TopXMLNS);
 do_encode({groups_avatar, _, _} = Avatar, TopXMLNS) ->
     encode_groups_avatar(Avatar, TopXMLNS);
-do_encode({groups_user, _, _, _, _, _, _, _} = User,
+do_encode({groups_deny_user_avatar} = Deny_user_avatar,
+	  TopXMLNS) ->
+    encode_groups_deny_user_avatar(Deny_user_avatar,
+				   TopXMLNS);
+do_encode({groups_user, _, _, _, _, _, _, _, _} = User,
 	  TopXMLNS) ->
     encode_groups_user(User, TopXMLNS);
 do_encode({groups_info, _, _, _, _} = Info, TopXMLNS) ->
@@ -292,9 +302,9 @@ do_encode({groups_group, _, _, _, _, _, _, _, _, _} =
 	      Group,
 	  TopXMLNS) ->
     encode_groups_group(Group, TopXMLNS);
-do_encode({groups_ptp, _, _} = Peer_to_peer,
+do_encode({groups_p2p, _, _} = Peer_to_peer,
 	  TopXMLNS) ->
-    encode_groups_ptp(Peer_to_peer, TopXMLNS);
+    encode_groups_p2p(Peer_to_peer, TopXMLNS);
 do_encode({groups_create, _, _} = Create, TopXMLNS) ->
     encode_groups_create(Create, TopXMLNS);
 do_encode({groups_delete, _} = Delete, TopXMLNS) ->
@@ -310,8 +320,6 @@ do_encode({groups_kick, _} = Kick, TopXMLNS) ->
 do_encode({groups_members, _, _, _, _} = Members,
 	  TopXMLNS) ->
     encode_groups_members(Members, TopXMLNS);
-do_encode({groups_collect, _} = Collect, TopXMLNS) ->
-    encode_groups_collect(Collect, TopXMLNS);
 do_encode({groups_owner, _} = Owner, TopXMLNS) ->
     encode_groups_owner(Owner, TopXMLNS);
 do_encode({groups_invites, _} = Invites, TopXMLNS) ->
@@ -338,11 +346,12 @@ do_encode({groups_mentions, _} = Mentions, TopXMLNS) ->
 
 do_get_name({groups_avatar, _, _}) -> <<"avatar">>;
 do_get_name({groups_block, _}) -> <<"block">>;
-do_get_name({groups_collect, _}) -> <<"collect">>;
 do_get_name({groups_contacts, _}) -> <<"contacts">>;
 do_get_name({groups_create, _, _}) -> <<"create">>;
 do_get_name({groups_decline}) -> <<"decline">>;
 do_get_name({groups_delete, _}) -> <<"delete">>;
+do_get_name({groups_deny_user_avatar}) ->
+    <<"deny-user-avatar">>;
 do_get_name({groups_details}) -> <<"query">>;
 do_get_name({groups_domains, _}) -> <<"domains">>;
 do_get_name({groups_group, _, _, _, _, _, _, _, _,
@@ -358,10 +367,10 @@ do_get_name({groups_members, _, _, _, _}) ->
     <<"members">>;
 do_get_name({groups_mentions, _}) -> <<"mentions">>;
 do_get_name({groups_owner, _}) -> <<"owner">>;
+do_get_name({groups_p2p, _, _}) -> <<"peer-to-peer">>;
 do_get_name({groups_pinned, _}) -> <<"pinned">>;
 do_get_name({groups_pinned_message, _, _}) ->
     <<"pinned-message">>;
-do_get_name({groups_ptp, _, _}) -> <<"peer-to-peer">>;
 do_get_name({groups_resend}) -> <<"re-send">>;
 do_get_name({groups_revoke, _}) -> <<"revoke">>;
 do_get_name({groups_search, _, _, _, _, _}) ->
@@ -371,15 +380,13 @@ do_get_name({groups_settings, _, _, _, _, _}) ->
 do_get_name({groups_sys_msg, _, _}) ->
     <<"system-message">>;
 do_get_name({groups_unblock, _}) -> <<"unblock">>;
-do_get_name({groups_user, _, _, _, _, _, _, _}) ->
+do_get_name({groups_user, _, _, _, _, _, _, _, _}) ->
     <<"user">>;
 do_get_name({groups_x, _, _}) -> <<"x">>.
 
 do_get_ns({groups_avatar, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_block, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_collect, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_contacts, _}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -388,6 +395,8 @@ do_get_ns({groups_create, _, _}) ->
 do_get_ns({groups_decline}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_delete, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
+do_get_ns({groups_deny_user_avatar}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_details}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -411,11 +420,11 @@ do_get_ns({groups_mentions, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_owner, _}) ->
     <<"https://xabber.com/protocol/groups">>;
+do_get_ns({groups_p2p, _, _}) ->
+    <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_pinned, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_pinned_message, _, _}) ->
-    <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_ptp, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_resend}) ->
     <<"https://xabber.com/protocol/groups">>;
@@ -429,7 +438,7 @@ do_get_ns({groups_sys_msg, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_unblock, _}) ->
     <<"https://xabber.com/protocol/groups">>;
-do_get_ns({groups_user, _, _, _, _, _, _, _}) ->
+do_get_ns({groups_user, _, _, _, _, _, _, _, _}) ->
     <<"https://xabber.com/protocol/groups">>;
 do_get_ns({groups_x, _, _}) ->
     <<"https://xabber.com/protocol/groups">>.
@@ -441,8 +450,9 @@ set_els({groups_x, _author, _}, _sub_els) ->
 
 pp(groups_last, 1) -> [stamp];
 pp(groups_avatar, 2) -> [info, data];
-pp(groups_user, 7) ->
-    [id, jid, role, badge, nickname, avatar, last];
+pp(groups_deny_user_avatar, 0) -> [];
+pp(groups_user, 8) ->
+    [id, jid, role, badge, nickname, avatar, last, p2p];
 pp(groups_info, 4) ->
     [name, description, avatar, status];
 pp(groups_contacts, 1) -> [list];
@@ -454,15 +464,14 @@ pp(groups_pinned, 1) -> [messages];
 pp(groups_group, 9) ->
     [privacy, parent, jid, members, localpart, info,
      settings, pinned, present];
-pp(groups_ptp, 2) -> [parent, with];
-pp(groups_create, 2) -> [group, ptp];
+pp(groups_p2p, 2) -> [parent, with];
+pp(groups_create, 2) -> [group, p2p];
 pp(groups_delete, 1) -> [group];
 pp(groups_details, 0) -> [];
 pp(groups_block, 1) -> [jids];
 pp(groups_unblock, 1) -> [jid];
 pp(groups_kick, 1) -> [jid];
 pp(groups_members, 4) -> [members, id, version, xdata];
-pp(groups_collect, 1) -> [cdata];
 pp(groups_owner, 1) -> [id];
 pp(groups_invites, 1) -> [list];
 pp(groups_invite, 5) ->
@@ -478,19 +487,20 @@ pp(groups_mentions, 1) -> [members];
 pp(_, _) -> no.
 
 records() ->
-    [{groups_last, 1}, {groups_avatar, 2}, {groups_user, 7},
+    [{groups_last, 1}, {groups_avatar, 2},
+     {groups_deny_user_avatar, 0}, {groups_user, 8},
      {groups_info, 4}, {groups_contacts, 1},
      {groups_domains, 1}, {groups_settings, 5},
      {groups_pinned_message, 2}, {groups_pinned, 1},
-     {groups_group, 9}, {groups_ptp, 2}, {groups_create, 2},
+     {groups_group, 9}, {groups_p2p, 2}, {groups_create, 2},
      {groups_delete, 1}, {groups_details, 0},
      {groups_block, 1}, {groups_unblock, 1},
      {groups_kick, 1}, {groups_members, 4},
-     {groups_collect, 1}, {groups_owner, 1},
-     {groups_invites, 1}, {groups_invite, 5},
-     {groups_revoke, 1}, {groups_decline, 0}, {groups_x, 2},
-     {groups_resend, 0}, {groups_sys_msg, 2},
-     {groups_search, 5}, {groups_mentions, 1}].
+     {groups_owner, 1}, {groups_invites, 1},
+     {groups_invite, 5}, {groups_revoke, 1},
+     {groups_decline, 0}, {groups_x, 2}, {groups_resend, 0},
+     {groups_sys_msg, 2}, {groups_search, 5},
+     {groups_mentions, 1}].
 
 dec_bool(<<"false">>) -> false;
 dec_bool(<<"0">>) -> false;
@@ -1234,41 +1244,6 @@ decode_groups_owner_attr_id(__TopXMLNS, _val) -> _val.
 encode_groups_owner_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
 
-decode_groups_collect(__TopXMLNS, __Opts,
-		      {xmlel, <<"collect">>, _attrs, _els}) ->
-    Cdata = decode_groups_collect_els(__TopXMLNS, __Opts,
-				      _els, <<>>),
-    {groups_collect, Cdata}.
-
-decode_groups_collect_els(__TopXMLNS, __Opts, [],
-			  Cdata) ->
-    decode_groups_collect_cdata(__TopXMLNS, Cdata);
-decode_groups_collect_els(__TopXMLNS, __Opts,
-			  [{xmlcdata, _data} | _els], Cdata) ->
-    decode_groups_collect_els(__TopXMLNS, __Opts, _els,
-			      <<Cdata/binary, _data/binary>>);
-decode_groups_collect_els(__TopXMLNS, __Opts,
-			  [_ | _els], Cdata) ->
-    decode_groups_collect_els(__TopXMLNS, __Opts, _els,
-			      Cdata).
-
-encode_groups_collect({groups_collect, Cdata},
-		      __TopXMLNS) ->
-    __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
-				    [], __TopXMLNS),
-    _els = encode_groups_collect_cdata(Cdata, []),
-    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
-    {xmlel, <<"collect">>, _attrs, _els}.
-
-decode_groups_collect_cdata(__TopXMLNS, <<>>) -> <<>>;
-decode_groups_collect_cdata(__TopXMLNS, _val) -> _val.
-
-encode_groups_collect_cdata(<<>>, _acc) -> _acc;
-encode_groups_collect_cdata(_val, _acc) ->
-    [{xmlcdata, _val} | _acc].
-
 decode_groups_members(__TopXMLNS, __Opts,
 		      {xmlel, <<"members">>, _attrs, _els}) ->
     {Xdata, Members} = decode_groups_members_els(__TopXMLNS,
@@ -1569,53 +1544,53 @@ encode_groups_delete_cdata(_val, _acc) ->
 
 decode_groups_create(__TopXMLNS, __Opts,
 		     {xmlel, <<"create">>, _attrs, _els}) ->
-    {Ptp, Group} = decode_groups_create_els(__TopXMLNS,
+    {P2p, Group} = decode_groups_create_els(__TopXMLNS,
 					    __Opts, _els, undefined, undefined),
-    {groups_create, Group, Ptp}.
+    {groups_create, Group, P2p}.
 
-decode_groups_create_els(__TopXMLNS, __Opts, [], Ptp,
+decode_groups_create_els(__TopXMLNS, __Opts, [], P2p,
 			 Group) ->
-    {Ptp, Group};
+    {P2p, Group};
 decode_groups_create_els(__TopXMLNS, __Opts,
-			 [{xmlel, <<"group">>, _attrs, _} = _el | _els], Ptp,
+			 [{xmlel, <<"group">>, _attrs, _} = _el | _els], P2p,
 			 Group) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_create_els(__TopXMLNS, __Opts, _els, Ptp,
+	  decode_groups_create_els(__TopXMLNS, __Opts, _els, P2p,
 				   decode_groups_group(<<"https://xabber.com/protocol/groups">>,
 						       __Opts, _el));
       _ ->
-	  decode_groups_create_els(__TopXMLNS, __Opts, _els, Ptp,
+	  decode_groups_create_els(__TopXMLNS, __Opts, _els, P2p,
 				   Group)
     end;
 decode_groups_create_els(__TopXMLNS, __Opts,
 			 [{xmlel, <<"peer-to-peer">>, _attrs, _} = _el | _els],
-			 Ptp, Group) ->
+			 P2p, Group) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_groups_create_els(__TopXMLNS, __Opts, _els,
-				   decode_groups_ptp(<<"https://xabber.com/protocol/groups">>,
+				   decode_groups_p2p(<<"https://xabber.com/protocol/groups">>,
 						     __Opts, _el),
 				   Group);
       _ ->
-	  decode_groups_create_els(__TopXMLNS, __Opts, _els, Ptp,
+	  decode_groups_create_els(__TopXMLNS, __Opts, _els, P2p,
 				   Group)
     end;
 decode_groups_create_els(__TopXMLNS, __Opts, [_ | _els],
-			 Ptp, Group) ->
-    decode_groups_create_els(__TopXMLNS, __Opts, _els, Ptp,
+			 P2p, Group) ->
+    decode_groups_create_els(__TopXMLNS, __Opts, _els, P2p,
 			     Group).
 
-encode_groups_create({groups_create, Group, Ptp},
+encode_groups_create({groups_create, Group, P2p},
 		     __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
-    _els = lists:reverse('encode_groups_create_$ptp'(Ptp,
+    _els = lists:reverse('encode_groups_create_$p2p'(P2p,
 						     __NewTopXMLNS,
 						     'encode_groups_create_$group'(Group,
 										   __NewTopXMLNS,
@@ -1624,11 +1599,11 @@ encode_groups_create({groups_create, Group, Ptp},
 					__TopXMLNS),
     {xmlel, <<"create">>, _attrs, _els}.
 
-'encode_groups_create_$ptp'(undefined, __TopXMLNS,
+'encode_groups_create_$p2p'(undefined, __TopXMLNS,
 			    _acc) ->
     _acc;
-'encode_groups_create_$ptp'(Ptp, __TopXMLNS, _acc) ->
-    [encode_groups_ptp(Ptp, __TopXMLNS) | _acc].
+'encode_groups_create_$p2p'(P2p, __TopXMLNS, _acc) ->
+    [encode_groups_p2p(P2p, __TopXMLNS) | _acc].
 
 'encode_groups_create_$group'(undefined, __TopXMLNS,
 			      _acc) ->
@@ -1637,44 +1612,44 @@ encode_groups_create({groups_create, Group, Ptp},
 			      _acc) ->
     [encode_groups_group(Group, __TopXMLNS) | _acc].
 
-decode_groups_ptp(__TopXMLNS, __Opts,
+decode_groups_p2p(__TopXMLNS, __Opts,
 		  {xmlel, <<"peer-to-peer">>, _attrs, _els}) ->
-    {Parent, With} = decode_groups_ptp_attrs(__TopXMLNS,
+    {Parent, With} = decode_groups_p2p_attrs(__TopXMLNS,
 					     _attrs, undefined, undefined),
-    {groups_ptp, Parent, With}.
+    {groups_p2p, Parent, With}.
 
-decode_groups_ptp_attrs(__TopXMLNS,
+decode_groups_p2p_attrs(__TopXMLNS,
 			[{<<"parent">>, _val} | _attrs], _Parent, With) ->
-    decode_groups_ptp_attrs(__TopXMLNS, _attrs, _val, With);
-decode_groups_ptp_attrs(__TopXMLNS,
+    decode_groups_p2p_attrs(__TopXMLNS, _attrs, _val, With);
+decode_groups_p2p_attrs(__TopXMLNS,
 			[{<<"with">>, _val} | _attrs], Parent, _With) ->
-    decode_groups_ptp_attrs(__TopXMLNS, _attrs, Parent,
+    decode_groups_p2p_attrs(__TopXMLNS, _attrs, Parent,
 			    _val);
-decode_groups_ptp_attrs(__TopXMLNS, [_ | _attrs],
+decode_groups_p2p_attrs(__TopXMLNS, [_ | _attrs],
 			Parent, With) ->
-    decode_groups_ptp_attrs(__TopXMLNS, _attrs, Parent,
+    decode_groups_p2p_attrs(__TopXMLNS, _attrs, Parent,
 			    With);
-decode_groups_ptp_attrs(__TopXMLNS, [], Parent, With) ->
-    {decode_groups_ptp_attr_parent(__TopXMLNS, Parent),
-     decode_groups_ptp_attr_with(__TopXMLNS, With)}.
+decode_groups_p2p_attrs(__TopXMLNS, [], Parent, With) ->
+    {decode_groups_p2p_attr_parent(__TopXMLNS, Parent),
+     decode_groups_p2p_attr_with(__TopXMLNS, With)}.
 
-encode_groups_ptp({groups_ptp, Parent, With},
+encode_groups_p2p({groups_p2p, Parent, With},
 		  __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
     _els = [],
-    _attrs = encode_groups_ptp_attr_with(With,
-					 encode_groups_ptp_attr_parent(Parent,
+    _attrs = encode_groups_p2p_attr_with(With,
+					 encode_groups_p2p_attr_parent(Parent,
 								       xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 												  __TopXMLNS))),
     {xmlel, <<"peer-to-peer">>, _attrs, _els}.
 
-decode_groups_ptp_attr_parent(__TopXMLNS, undefined) ->
+decode_groups_p2p_attr_parent(__TopXMLNS, undefined) ->
     erlang:error({xmpp_codec,
 		  {missing_attr, <<"parent">>, <<"peer-to-peer">>,
 		   __TopXMLNS}});
-decode_groups_ptp_attr_parent(__TopXMLNS, _val) ->
+decode_groups_p2p_attr_parent(__TopXMLNS, _val) ->
     case catch jid:decode(_val) of
       {'EXIT', _} ->
 	  erlang:error({xmpp_codec,
@@ -1683,16 +1658,16 @@ decode_groups_ptp_attr_parent(__TopXMLNS, _val) ->
       _res -> _res
     end.
 
-encode_groups_ptp_attr_parent(_val, _acc) ->
+encode_groups_p2p_attr_parent(_val, _acc) ->
     [{<<"parent">>, jid:encode(_val)} | _acc].
 
-decode_groups_ptp_attr_with(__TopXMLNS, undefined) ->
+decode_groups_p2p_attr_with(__TopXMLNS, undefined) ->
     erlang:error({xmpp_codec,
 		  {missing_attr, <<"with">>, <<"peer-to-peer">>,
 		   __TopXMLNS}});
-decode_groups_ptp_attr_with(__TopXMLNS, _val) -> _val.
+decode_groups_p2p_attr_with(__TopXMLNS, _val) -> _val.
 
-encode_groups_ptp_attr_with(_val, _acc) ->
+encode_groups_p2p_attr_with(_val, _acc) ->
     [{<<"with">>, _val} | _acc].
 
 decode_groups_group(__TopXMLNS, __Opts,
@@ -2829,115 +2804,131 @@ encode_groups_localpart_cdata(_val, _acc) ->
 
 decode_groups_user(__TopXMLNS, __Opts,
 		   {xmlel, <<"user">>, _attrs, _els}) ->
-    {Avatar, Last, Jid, Badge, Nickname, Role} =
-	decode_groups_user_els(__TopXMLNS, __Opts, _els,
+    {P2p, Avatar, Last, Jid, Badge, Nickname, Role} =
+	decode_groups_user_els(__TopXMLNS, __Opts, _els, false,
 			       undefined, undefined, undefined, undefined,
 			       undefined, undefined),
     Id = decode_groups_user_attrs(__TopXMLNS, _attrs,
 				  undefined),
     {groups_user, Id, Jid, Role, Badge, Nickname, Avatar,
-     Last}.
+     Last, P2p}.
 
-decode_groups_user_els(__TopXMLNS, __Opts, [], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
-    {Avatar, Last, Jid, Badge, Nickname, Role};
+decode_groups_user_els(__TopXMLNS, __Opts, [], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    {P2p, Avatar, Last, Jid, Badge, Nickname, Role};
 decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"jid">>, _attrs, _} = _el | _els], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last,
-				 decode_groups_jid(<<"https://xabber.com/protocol/groups">>,
-						   __Opts, _el),
-				 Badge, Nickname, Role);
-      _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
-    end;
-decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"role">>, _attrs, _} = _el | _els], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname,
-				 decode_groups_role(<<"https://xabber.com/protocol/groups">>,
-						    __Opts, _el));
-      _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
-    end;
-decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"nickname">>, _attrs, _} = _el | _els],
+		       [{xmlel, <<"jid">>, _attrs, _} = _el | _els], P2p,
 		       Avatar, Last, Jid, Badge, Nickname, Role) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge,
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last,
+				 decode_groups_jid(<<"https://xabber.com/protocol/groups">>,
+						   __Opts, _el),
+				 Badge, Nickname, Role);
+      _ ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
+    end;
+decode_groups_user_els(__TopXMLNS, __Opts,
+		       [{xmlel, <<"role">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname,
+				 decode_groups_role(<<"https://xabber.com/protocol/groups">>,
+						    __Opts, _el));
+      _ ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
+    end;
+decode_groups_user_els(__TopXMLNS, __Opts,
+		       [{xmlel, <<"nickname">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge,
 				 decode_groups_nickname(<<"https://xabber.com/protocol/groups">>,
 							__Opts, _el),
 				 Role);
       _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
     end;
 decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"avatar">>, _attrs, _} = _el | _els], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
+		       [{xmlel, <<"avatar">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 decode_groups_avatar(<<"https://xabber.com/protocol/groups">>,
+						      __Opts, _el),
+				 Last, Jid, Badge, Nickname, Role);
+      _ ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
+    end;
+decode_groups_user_els(__TopXMLNS, __Opts,
+		       [{xmlel, <<"badge">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid,
+				 decode_groups_badge(<<"https://xabber.com/protocol/groups">>,
+						     __Opts, _el),
+				 Nickname, Role);
+      _ ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
+    end;
+decode_groups_user_els(__TopXMLNS, __Opts,
+		       [{xmlel, <<"last">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
+    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
+			     __TopXMLNS)
+	of
+      <<"https://xabber.com/protocol/groups">> ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar,
+				 decode_groups_last(<<"https://xabber.com/protocol/groups">>,
+						    __Opts, _el),
+				 Jid, Badge, Nickname, Role);
+      _ ->
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
+    end;
+decode_groups_user_els(__TopXMLNS, __Opts,
+		       [{xmlel, <<"allow-p2p">>, _attrs, _} = _el | _els], P2p,
+		       Avatar, Last, Jid, Badge, Nickname, Role) ->
     case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
 			     __TopXMLNS)
 	of
       <<"https://xabber.com/protocol/groups">> ->
 	  decode_groups_user_els(__TopXMLNS, __Opts, _els,
-				 decode_groups_avatar(<<"https://xabber.com/protocol/groups">>,
-						      __Opts, _el),
-				 Last, Jid, Badge, Nickname, Role);
+				 decode_groups_allow_p2p(<<"https://xabber.com/protocol/groups">>,
+							 __Opts, _el),
+				 Avatar, Last, Jid, Badge, Nickname, Role);
       _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
-    end;
-decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"badge">>, _attrs, _} = _el | _els], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid,
-				 decode_groups_badge(<<"https://xabber.com/protocol/groups">>,
-						     __Opts, _el),
-				 Nickname, Role);
-      _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
-    end;
-decode_groups_user_els(__TopXMLNS, __Opts,
-		       [{xmlel, <<"last">>, _attrs, _} = _el | _els], Avatar,
-		       Last, Jid, Badge, Nickname, Role) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/groups">> ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 decode_groups_last(<<"https://xabber.com/protocol/groups">>,
-						    __Opts, _el),
-				 Jid, Badge, Nickname, Role);
-      _ ->
-	  decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-				 Last, Jid, Badge, Nickname, Role)
+	  decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+				 Avatar, Last, Jid, Badge, Nickname, Role)
     end;
 decode_groups_user_els(__TopXMLNS, __Opts, [_ | _els],
-		       Avatar, Last, Jid, Badge, Nickname, Role) ->
-    decode_groups_user_els(__TopXMLNS, __Opts, _els, Avatar,
-			   Last, Jid, Badge, Nickname, Role).
+		       P2p, Avatar, Last, Jid, Badge, Nickname, Role) ->
+    decode_groups_user_els(__TopXMLNS, __Opts, _els, P2p,
+			   Avatar, Last, Jid, Badge, Nickname, Role).
 
 decode_groups_user_attrs(__TopXMLNS,
 			 [{<<"id">>, _val} | _attrs], _Id) ->
@@ -2949,29 +2940,35 @@ decode_groups_user_attrs(__TopXMLNS, [], Id) ->
     decode_groups_user_attr_id(__TopXMLNS, Id).
 
 encode_groups_user({groups_user, Id, Jid, Role, Badge,
-		    Nickname, Avatar, Last},
+		    Nickname, Avatar, Last, P2p},
 		   __TopXMLNS) ->
     __NewTopXMLNS =
 	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
 				    [], __TopXMLNS),
-    _els =
-	lists:reverse('encode_groups_user_$avatar'(Avatar,
+    _els = lists:reverse('encode_groups_user_$p2p'(P2p,
 						   __NewTopXMLNS,
-						   'encode_groups_user_$last'(Last,
-									      __NewTopXMLNS,
-									      'encode_groups_user_$jid'(Jid,
-													__NewTopXMLNS,
-													'encode_groups_user_$badge'(Badge,
-																    __NewTopXMLNS,
-																    'encode_groups_user_$nickname'(Nickname,
-																				   __NewTopXMLNS,
-																				   'encode_groups_user_$role'(Role,
-																							      __NewTopXMLNS,
-																							      []))))))),
+						   'encode_groups_user_$avatar'(Avatar,
+										__NewTopXMLNS,
+										'encode_groups_user_$last'(Last,
+													   __NewTopXMLNS,
+													   'encode_groups_user_$jid'(Jid,
+																     __NewTopXMLNS,
+																     'encode_groups_user_$badge'(Badge,
+																				 __NewTopXMLNS,
+																				 'encode_groups_user_$nickname'(Nickname,
+																								__NewTopXMLNS,
+																								'encode_groups_user_$role'(Role,
+																											   __NewTopXMLNS,
+																											   [])))))))),
     _attrs = encode_groups_user_attr_id(Id,
 					xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
 								   __TopXMLNS)),
     {xmlel, <<"user">>, _attrs, _els}.
+
+'encode_groups_user_$p2p'(false, __TopXMLNS, _acc) ->
+    _acc;
+'encode_groups_user_$p2p'(P2p, __TopXMLNS, _acc) ->
+    [encode_groups_allow_p2p(P2p, __TopXMLNS) | _acc].
 
 'encode_groups_user_$avatar'(undefined, __TopXMLNS,
 			     _acc) ->
@@ -3018,6 +3015,33 @@ decode_groups_user_attr_id(__TopXMLNS, _val) -> _val.
 encode_groups_user_attr_id(<<>>, _acc) -> _acc;
 encode_groups_user_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
+
+decode_groups_deny_user_avatar(__TopXMLNS, __Opts,
+			       {xmlel, <<"deny-user-avatar">>, _attrs, _els}) ->
+    {groups_deny_user_avatar}.
+
+encode_groups_deny_user_avatar({groups_deny_user_avatar},
+			       __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"deny-user-avatar">>, _attrs, _els}.
+
+decode_groups_allow_p2p(__TopXMLNS, __Opts,
+			{xmlel, <<"allow-p2p">>, _attrs, _els}) ->
+    true.
+
+encode_groups_allow_p2p(true, __TopXMLNS) ->
+    __NewTopXMLNS =
+	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/groups">>,
+				    [], __TopXMLNS),
+    _els = [],
+    _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+					__TopXMLNS),
+    {xmlel, <<"allow-p2p">>, _attrs, _els}.
 
 decode_groups_avatar(__TopXMLNS, __Opts,
 		     {xmlel, <<"avatar">>, _attrs, _els}) ->
