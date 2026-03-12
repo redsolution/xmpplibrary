@@ -3,13 +3,14 @@
 %% Form type: http://jabber.org/protocol/muc#roomconfig
 %% Document: XEP-0045
 
+-type 'allowpm'() :: anyone | participants | moderators | none.
 -type 'allow_private_messages_from_visitors'() :: nobody | moderators | anyone.
 -type 'maxusers'() :: none | non_neg_integer().
 -type 'presencebroadcast'() :: moderator | participant | visitor.
 -type 'whois'() :: moderators | anyone.
 
 -type property() :: {'maxhistoryfetch', binary()} |
-                    {'allowpm', binary()} |
+                    {'allowpm', 'allowpm'()} |
                     {'allow_private_messages', boolean()} |
                     {'allow_private_messages_from_visitors', 'allow_private_messages_from_visitors'()} |
                     {'allow_visitor_status', boolean()} |
@@ -41,14 +42,15 @@
                     {'roomowners', [jid:jid()]} |
                     {'roomsecret', binary()} |
                     {'whois', 'whois'()} |
-                    {'mam', boolean()}.
+                    {'mam', boolean()} |
+                    {'enable_hats', boolean()}.
 -type result() :: [property()].
 
 -type options(T) :: [{binary(), T}].
 -type form_property() ::
       {'maxhistoryfetch', binary()} |
-      {'allowpm', binary()} |
-      {'allowpm', binary(), options(binary())} |
+      {'allowpm', 'allowpm'() | undefined} |
+      {'allowpm', 'allowpm'() | undefined, options('allowpm'())} |
       {'allow_private_messages', boolean() | undefined} |
       {'allow_private_messages_from_visitors', 'allow_private_messages_from_visitors'() | undefined} |
       {'allow_private_messages_from_visitors', 'allow_private_messages_from_visitors'() | undefined, options('allow_private_messages_from_visitors'())} |
@@ -65,7 +67,7 @@
       {'enablelogging', boolean() | undefined} |
       {'getmemberlist', [binary()]} |
       {'getmemberlist', [binary()], options(binary())} |
-      {'lang', binary()} |
+      {'lang', binary() | undefined} |
       {'pubsub', binary() | undefined} |
       {'maxusers', 'maxusers'() | undefined} |
       {'maxusers', 'maxusers'() | undefined, options('maxusers'())} |
@@ -85,7 +87,8 @@
       {'roomsecret', binary()} |
       {'whois', 'whois'() | undefined} |
       {'whois', 'whois'() | undefined, options('whois'())} |
-      {'mam', boolean() | undefined}.
+      {'mam', boolean() | undefined} |
+      {'enable_hats', boolean() | undefined}.
 -type form() :: [form_property() | xdata_field()].
 
 -type error_reason() :: {form_type_mismatch, binary()} |

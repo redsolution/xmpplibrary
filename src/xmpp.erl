@@ -6,7 +6,7 @@
 %%% Created :  9 Dec 2015 by Evgeny Khramtsov <ekhramtsov@process-one.net>
 %%%
 %%%
-%%% Copyright (C) 2002-2018 ProcessOne, SARL. All Rights Reserved.
+%%% Copyright (C) 2002-2026 ProcessOne, SARL. All Rights Reserved.
 %%%
 %%% Licensed under the Apache License, Version 2.0 (the "License");
 %%% you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
 
 -module(xmpp).
 -behaviour(application).
+-dialyzer({nowarn_function, get_els/1}).
 
 %% API
 %% Application callbacks
@@ -41,14 +42,17 @@
 	 decode_els/1, decode_els/3, pp/1, get_name/1, get_text/1,
 	 get_text/2, mk_text/1, mk_text/2, is_known_tag/1, is_known_tag/2,
 	 append_subtags/2, prep_lang/1, register_codec/1, unregister_codec/1,
-	 set_tr_callback/1]).
+	 set_tr_callback/1, format_stanza_error/1, format_stanza_error/2,
+	 format_stream_error/1, format_stream_error/2, format_sasl_error/1,
+	 format_sasl_error/2, set_config/1, get_config/0, get_subtags/2,
+	 try_subtags/2]).
 
 %% XMPP errors
 -export([err_bad_request/0, err_bad_request/2,
          err_conflict/0, err_conflict/2,
          err_feature_not_implemented/0, err_feature_not_implemented/2,
          err_forbidden/0, err_forbidden/2,
-         err_gone/0, err_gone/2,
+         err_gone/1, err_gone/3,
          err_internal_server_error/0, err_internal_server_error/2,
          err_item_not_found/0, err_item_not_found/2,
          err_jid_malformed/0, err_jid_malformed/2,
@@ -58,7 +62,7 @@
 	 err_payment_required/0, err_payment_required/2,
          err_policy_violation/0, err_policy_violation/2,
          err_recipient_unavailable/0, err_recipient_unavailable/2,
-         err_redirect/0, err_redirect/2,
+         err_redirect/1, err_redirect/3,
          err_registration_required/0, err_registration_required/2,
          err_remote_server_not_found/0, err_remote_server_not_found/2,
          err_remote_server_timeout/0, err_remote_server_timeout/2,
@@ -88,7 +92,7 @@
          serr_reset/0, serr_reset/2,
          serr_resource_constraint/0, serr_resource_constraint/2,
          serr_restricted_xml/0, serr_restricted_xml/2,
-         serr_see_other_host/0, serr_see_other_host/2,
+         serr_see_other_host/1, serr_see_other_host/3,
          serr_system_shutdown/0, serr_system_shutdown/2,
          serr_undefined_condition/0, serr_undefined_condition/2,
          serr_unsupported_encoding/0, serr_unsupported_encoding/2,
@@ -100,16 +104,21 @@
 -type reason_text() :: binary() | {io:format(), list()}.
 -type lang() :: binary().
 -type decode_option() :: ignore_els.
+-type config_option() :: {debug, boolean()} | {fqdn, [binary()]}.
+
+-export_type([decode_option/0, config_option/0]).
 
 %%%===================================================================
 %%% Application callbacks
 %%%===================================================================
 start(_StartType, _StartArgs) ->
     try
-	{ok, _} = application:ensure_all_started(fast_xml),
-	{ok, _} = application:ensure_all_started(stringprep),
 	ok = jid:start(),
 	ok = xmpp_uri:start(),
+	ok = xmpp_lang:start(),
+	p1_options:start_link(xmpp_config),
+	p1_options:insert(xmpp_config, debug, global, false),
+	p1_options:insert(xmpp_config, fqdn, global, []),
 	xmpp_sup:start_link()
     catch _:{badmatch, Err} ->
 	    Err
@@ -377,6 +386,30 @@ format_error(Reason) ->
 io_format_error(Reason) ->
     xmpp_codec:io_format_error(Reason).
 
+-spec format_stanza_error(stanza_error()) -> binary().
+format_stanza_error(Err) ->
+    format_stanza_error(Err, <<"en">>).
+
+-spec format_stanza_error(stanza_error(), binary()) -> binary().
+format_stanza_error(#stanza_error{reason = Reason, text = Text}, Lang) ->
+    format_s_error(Reason, Text, Lang).
+
+-spec format_stream_error(stream_error()) -> binary().
+format_stream_error(Err) ->
+    format_stream_error(Err, <<"en">>).
+
+-spec format_stream_error(stream_error(), binary()) -> binary().
+format_stream_error(#stream_error{reason = Reason, text = Text}, Lang) ->
+    format_s_error(Reason, Text, Lang).
+
+-spec format_sasl_error(sasl_failure()) -> binary().
+format_sasl_error(Err) ->
+    format_sasl_error(Err, <<"en">>).
+
+-spec format_sasl_error(sasl_failure(), binary()) -> binary().
+format_sasl_error(#sasl_failure{reason = Reason, text = Text}, Lang) ->
+    format_s_error(Reason, Text, Lang).
+
 -spec is_stanza(any()) -> boolean().
 is_stanza(#message{}) -> true;
 is_stanza(#iq{}) -> true;
@@ -426,6 +459,28 @@ get_subtag([El|Els], TagName, XMLNS, TopXMLNS) ->
 get_subtag([], _, _, _) ->
     false.
 
+-spec get_subtags(xmpp_element(), xmpp_element()) -> [xmpp_element()].
+get_subtags(Pkt, Tag) ->
+    Els = get_els(Pkt),
+    TopXMLNS = xmpp_codec:get_ns(Pkt),
+    TagName = xmpp_codec:get_name(Tag),
+    XMLNS = xmpp_codec:get_ns(Tag),
+    get_subtags(Els, TagName, XMLNS, TopXMLNS, []).
+
+get_subtags([El|Els], TagName, XMLNS, TopXMLNS, Acc) ->
+    case match_tag(El, TagName, XMLNS, TopXMLNS) of
+	true ->
+	    try
+		get_subtags(Els, TagName, XMLNS, TopXMLNS, [decode(El) | Acc])
+	    catch _:{xmpp_codec, _Why} ->
+		get_subtags(Els, TagName, XMLNS, TopXMLNS, Acc)
+	    end;
+	false ->
+	    get_subtags(Els, TagName, XMLNS, TopXMLNS, Acc)
+    end;
+get_subtags([], _, _, _, Acc) ->
+    lists:reverse(Acc).
+
 -spec try_subtag(xmpp_element(), xmpp_element()) -> xmpp_element() | false.
 try_subtag(Pkt, Tag) ->
     Els = get_els(Pkt),
@@ -443,6 +498,24 @@ try_subtag([El|Els], TagName, XMLNS, TopXMLNS) ->
     end;
 try_subtag([], _, _, _) ->
     false.
+
+-spec try_subtags(xmpp_element(), xmpp_element()) -> [xmpp_element()].
+try_subtags(Pkt, Tag) ->
+    Els = get_els(Pkt),
+    TopXMLNS = xmpp_codec:get_ns(Pkt),
+    TagName = xmpp_codec:get_name(Tag),
+    XMLNS = xmpp_codec:get_ns(Tag),
+    try_subtags(Els, TagName, XMLNS, TopXMLNS, []).
+
+try_subtags([El|Els], TagName, XMLNS, TopXMLNS, Acc) ->
+    case match_tag(El, TagName, XMLNS, TopXMLNS) of
+	true ->
+	    try_subtags(Els, TagName, XMLNS, TopXMLNS, [decode(El) | Acc]);
+	false ->
+	    try_subtags(Els, TagName, XMLNS, TopXMLNS, Acc)
+    end;
+try_subtags([], _, _, _, Acc) ->
+    lists:reverse(Acc).
 
 -spec remove_subtag(xmpp_element(), xmpp_element()) -> xmpp_element().
 remove_subtag(Pkt, Tag) ->
@@ -544,204 +617,227 @@ set_tr_callback(Callback) ->
     {module, xmpp_tr} = code:load_binary(xmpp_tr, "nofile", Code),
     ok.
 
+-spec set_config([config_option()]) -> ok.
+set_config(Options) ->
+    lists:foreach(
+      fun({debug, Bool}) when is_boolean(Bool) ->
+	      p1_options:insert(xmpp_config, debug, global, Bool);
+	 ({fqdn, Domains}) ->
+	      case lists:all(fun erlang:is_binary/1, Domains) of
+		  true ->
+		      p1_options:insert(xmpp_config, fqdn, global, Domains);
+		  false ->
+		      erlang:error(badarg)
+	      end;
+	 (_) ->
+	      erlang:error(badarg)
+      end, Options),
+    p1_options:compile(xmpp_config).
+
+-spec get_config() -> [config_option()].
+get_config() ->
+    {ok, Debug} = xmpp_config:debug(global),
+    {ok, Domains} = xmpp_config:fqdn(global),
+    [{debug, Debug}, {fqdn, Domains}].
+
 %%%===================================================================
 %%% Functions to construct general XMPP errors
 %%%===================================================================
 -spec err_bad_request() -> stanza_error().
 err_bad_request() ->
-    err(modify, 'bad-request', 400).
+    err(modify, 'bad-request').
 
 -spec err_bad_request(reason_text(), lang()) -> stanza_error().
 err_bad_request(Text, Lang) ->
-    err(modify, 'bad-request', 400, Text, Lang).
+    err(modify, 'bad-request', Text, Lang).
 
 -spec err_conflict() -> stanza_error().
 err_conflict() ->
-    err(cancel, 'conflict', 409).
+    err(cancel, 'conflict').
 
 -spec err_conflict(reason_text(), lang()) -> stanza_error().
 err_conflict(Text, Lang) ->
-    err(cancel, 'conflict', 409, Text, Lang).
+    err(cancel, 'conflict', Text, Lang).
 
 -spec err_feature_not_implemented() -> stanza_error().
 err_feature_not_implemented() ->
-    err(cancel, 'feature-not-implemented', 501).
+    err(cancel, 'feature-not-implemented').
 
 -spec err_feature_not_implemented(reason_text(), lang()) -> stanza_error().
 err_feature_not_implemented(Text, Lang) ->
-    err(cancel, 'feature-not-implemented', 501, Text, Lang).
+    err(cancel, 'feature-not-implemented', Text, Lang).
 
 -spec err_forbidden() -> stanza_error().
 err_forbidden() ->
-    err(auth, 'forbidden', 403).
+    err(auth, 'forbidden').
 
 -spec err_forbidden(reason_text(), lang()) -> stanza_error().
 err_forbidden(Text, Lang) ->
-    err(auth, 'forbidden', 403, Text, Lang).
+    err(auth, 'forbidden', Text, Lang).
 
 %% RFC 6120 says error type SHOULD be "cancel".
 %% RFC 3920 and XEP-0082 says it SHOULD be "modify".
--spec err_gone() -> stanza_error().
-err_gone() ->
-    err(modify, 'gone', 302).
+-spec err_gone(binary()) -> stanza_error().
+err_gone(URI) ->
+    err(modify, #gone{uri = URI}).
 
--spec err_gone(reason_text(), lang()) -> stanza_error().
-err_gone(Text, Lang) ->
-    err(modify, 'gone', 302, Text, Lang).
+-spec err_gone(binary(), reason_text(), lang()) -> stanza_error().
+err_gone(URI, Text, Lang) ->
+    err(modify, #gone{uri = URI}, Text, Lang).
 
 %% RFC 6120 says error type SHOULD be "cancel".
 %% RFC 3920 and XEP-0082 says it SHOULD be "wait".
 -spec err_internal_server_error() -> stanza_error().
 err_internal_server_error() ->
-    err(wait, 'internal-server-error', 500).
+    err(wait, 'internal-server-error').
 
 -spec err_internal_server_error(reason_text(), lang()) -> stanza_error().
 err_internal_server_error(Text, Lang) ->
-    err(wait, 'internal-server-error', 500, Text, Lang).
+    err(wait, 'internal-server-error', Text, Lang).
 
 -spec err_item_not_found() -> stanza_error().
 err_item_not_found() ->
-    err(cancel, 'item-not-found', 404).
+    err(cancel, 'item-not-found').
 
 -spec err_item_not_found(reason_text(), lang()) -> stanza_error().
 err_item_not_found(Text, Lang) ->
-    err(cancel, 'item-not-found', 404, Text, Lang).
+    err(cancel, 'item-not-found', Text, Lang).
 
 -spec err_jid_malformed() -> stanza_error().
 err_jid_malformed() ->
-    err(modify, 'jid-malformed', 400).
+    err(modify, 'jid-malformed').
 
 -spec err_jid_malformed(reason_text(), lang()) -> stanza_error().
 err_jid_malformed(Text, Lang) ->
-    err(modify, 'jid-malformed', 400, Text, Lang).
+    err(modify, 'jid-malformed', Text, Lang).
 
 -spec err_not_acceptable() -> stanza_error().
 err_not_acceptable() ->
-    err(modify, 'not-acceptable', 406).
+    err(modify, 'not-acceptable').
 
 -spec err_not_acceptable(reason_text(), lang()) -> stanza_error().
 err_not_acceptable(Text, Lang) ->
-    err(modify, 'not-acceptable', 406, Text, Lang).
+    err(modify, 'not-acceptable', Text, Lang).
 
 -spec err_not_allowed() -> stanza_error().
 err_not_allowed() ->
-    err(cancel, 'not-allowed', 405).
+    err(cancel, 'not-allowed').
 
 -spec err_not_allowed(reason_text(), lang()) -> stanza_error().
 err_not_allowed(Text, Lang) ->
-    err(cancel, 'not-allowed', 405, Text, Lang).
+    err(cancel, 'not-allowed', Text, Lang).
 
 -spec err_not_authorized() -> stanza_error().
 err_not_authorized() ->
-    err(auth, 'not-authorized', 401).
+    err(auth, 'not-authorized').
 
 -spec err_not_authorized(reason_text(), lang()) -> stanza_error().
 err_not_authorized(Text, Lang) ->
-    err(auth, 'not-authorized', 401, Text, Lang).
+    err(auth, 'not-authorized', Text, Lang).
 
 -spec err_payment_required() -> stanza_error().
 err_payment_required() ->
-    err(auth, 'not-authorized', 402).
+    err(auth, 'not-authorized').
 
 -spec err_payment_required(reason_text(), lang()) -> stanza_error().
 err_payment_required(Text, Lang) ->
-    err(auth, 'not-authorized', 402, Text, Lang).
+    err(auth, 'not-authorized', Text, Lang).
 
 %% <policy-violation/> is defined in neither RFC 3920 nor XEP-0086.
 %% We choose '403' error code (as in <forbidden/>).
 -spec err_policy_violation() -> stanza_error().
 err_policy_violation() ->
-    err(modify, 'policy-violation', 403).
+    err(modify, 'policy-violation').
 
 -spec err_policy_violation(reason_text(), lang()) -> stanza_error().
 err_policy_violation(Text, Lang) ->
-    err(modify, 'policy-violation', 403, Text, Lang).
+    err(modify, 'policy-violation', Text, Lang).
 
 -spec err_recipient_unavailable() -> stanza_error().
 err_recipient_unavailable() ->
-    err(wait, 'recipient-unavailable', 404).
+    err(wait, 'recipient-unavailable').
 
 -spec err_recipient_unavailable(reason_text(), lang()) -> stanza_error().
 err_recipient_unavailable(Text, Lang) ->
-    err(wait, 'recipient-unavailable', 404, Text, Lang).
+    err(wait, 'recipient-unavailable', Text, Lang).
 
--spec err_redirect() -> stanza_error().
-err_redirect() ->
-    err(modify, 'redirect', 302).
+-spec err_redirect(binary()) -> stanza_error().
+err_redirect(URI) ->
+    err(modify, #redirect{uri = URI}).
 
--spec err_redirect(reason_text(), lang()) -> stanza_error().
-err_redirect(Text, Lang) ->
-    err(modify, 'redirect', 302, Text, Lang).
+-spec err_redirect(binary(), reason_text(), lang()) -> stanza_error().
+err_redirect(URI, Text, Lang) ->
+    err(modify, #redirect{uri = URI}, Text, Lang).
 
 -spec err_registration_required() -> stanza_error().
 err_registration_required() ->
-    err(auth, 'registration-required', 407).
+    err(auth, 'registration-required').
 
 -spec err_registration_required(reason_text(), lang()) -> stanza_error().
 err_registration_required(Text, Lang) ->
-    err(auth, 'registration-required', 407, Text, Lang).
+    err(auth, 'registration-required', Text, Lang).
 
 -spec err_remote_server_not_found() -> stanza_error().
 err_remote_server_not_found() ->
-    err(cancel, 'remote-server-not-found', 404).
+    err(cancel, 'remote-server-not-found').
 
 -spec err_remote_server_not_found(reason_text(), lang()) -> stanza_error().
 err_remote_server_not_found(Text, Lang) ->
-    err(cancel, 'remote-server-not-found', 404, Text, Lang).
+    err(cancel, 'remote-server-not-found', Text, Lang).
 
 -spec err_remote_server_timeout() -> stanza_error().
 err_remote_server_timeout() ->
-    err(wait, 'remote-server-timeout', 504).
+    err(wait, 'remote-server-timeout').
 
 -spec err_remote_server_timeout(reason_text(), lang()) -> stanza_error().
 err_remote_server_timeout(Text, Lang) ->
-    err(wait, 'remote-server-timeout', 504, Text, Lang).
+    err(wait, 'remote-server-timeout', Text, Lang).
 
 -spec err_resource_constraint() -> stanza_error().
 err_resource_constraint() ->
-    err(wait, 'resource-constraint', 500).
+    err(wait, 'resource-constraint').
 
 -spec err_resource_constraint(reason_text(), lang()) -> stanza_error().
 err_resource_constraint(Text, Lang) ->
-    err(wait, 'resource-constraint', 500, Text, Lang).
+    err(wait, 'resource-constraint', Text, Lang).
 
 -spec err_service_unavailable() -> stanza_error().
 err_service_unavailable() ->
-    err(cancel, 'service-unavailable', 503).
+    err(cancel, 'service-unavailable').
 
 -spec err_service_unavailable(reason_text(), lang()) -> stanza_error().
 err_service_unavailable(Text, Lang) ->
-    err(cancel, 'service-unavailable', 503, Text, Lang).
+    err(cancel, 'service-unavailable', Text, Lang).
 
 -spec err_subscription_required() -> stanza_error().
 err_subscription_required() ->
-    err(auth, 'subscription-required', 407).
+    err(auth, 'subscription-required').
 
 -spec err_subscription_required(reason_text(), lang()) -> stanza_error().
 err_subscription_required(Text, Lang) ->
-    err(auth, 'subscription-required', 407, Text, Lang).
+    err(auth, 'subscription-required', Text, Lang).
 
 %% No error type is defined for <undefined-confition/>.
 %% Let user provide the type.
 -spec err_undefined_condition('auth' | 'cancel' | 'continue' |
 			      'modify' | 'wait') -> stanza_error().
 err_undefined_condition(Type) ->
-    err(Type, 'undefined-condition', 500).
+    err(Type, 'undefined-condition').
 
 -spec err_undefined_condition('auth' | 'cancel' | 'continue' | 'modify' | 'wait',
 			      reason_text(), lang()) -> stanza_error().
 err_undefined_condition(Type, Text, Lang) ->
-    err(Type, 'undefined-condition', 500, Text, Lang).
+    err(Type, 'undefined-condition', Text, Lang).
 
 %% RFC 6120 says error type SHOULD be "wait" or "modify".
 %% RFC 3920 and XEP-0082 says it SHOULD be "wait".
 -spec err_unexpected_request() -> stanza_error().
 err_unexpected_request() ->
-    err(wait, 'unexpected-request', 400).
+    err(wait, 'unexpected-request').
 
 -spec err_unexpected_request(reason_text(), lang()) -> stanza_error().
 err_unexpected_request(Text, Lang) ->
-    err(wait, 'unexpected-request', 400, Text, Lang).
+    err(wait, 'unexpected-request', Text, Lang).
 
 %%%===================================================================
 %%% Functions to construct stream errors
@@ -898,13 +994,13 @@ serr_restricted_xml() ->
 serr_restricted_xml(Text, Lang) ->
     serr('restricted-xml', Text, Lang).
 
--spec serr_see_other_host() -> stream_error().
-serr_see_other_host() ->
-    serr('see-other-host').
+-spec serr_see_other_host(xmpp_host()) -> stream_error().
+serr_see_other_host(HostPort) ->
+    serr(#'see-other-host'{host = HostPort}).
 
--spec serr_see_other_host(reason_text(), lang()) -> stream_error().
-serr_see_other_host(Text, Lang) ->
-    serr('see-other-host', Text, Lang).
+-spec serr_see_other_host(xmpp_host(), reason_text(), lang()) -> stream_error().
+serr_see_other_host(HostPort, Text, Lang) ->
+    serr(#'see-other-host'{host = HostPort}, Text, Lang).
 
 -spec serr_system_shutdown() -> stream_error().
 serr_system_shutdown() ->
@@ -958,16 +1054,15 @@ serr_unsupported_version(Text, Lang) ->
 %%% Internal functions
 %%%===================================================================
 -spec err('auth' | 'cancel' | 'continue' | 'modify' | 'wait',
-	  atom() | gone() | redirect(), non_neg_integer()) -> stanza_error().
-err(Type, Reason, Code) ->
-    #stanza_error{type = Type, reason = Reason, code = Code}.
+	  atom() | gone() | redirect()) -> stanza_error().
+err(Type, Reason) ->
+    #stanza_error{type = Type, reason = Reason}.
 
 -spec err('auth' | 'cancel' | 'continue' | 'modify' | 'wait',
-	  atom() | gone() | redirect(), non_neg_integer(),
-	  reason_text(), lang()) -> stanza_error().
-err(Type, Reason, Code, Text, Lang) ->
-    #stanza_error{type = Type, reason = Reason, code = Code,
-		  text = mk_text(Text, Lang)}.
+	  atom() | gone() | redirect(), reason_text(),
+	  lang()) -> stanza_error().
+err(Type, Reason, Text, Lang) ->
+    #stanza_error{type = Type, reason = Reason, text = mk_text(Text, Lang)}.
 
 -spec serr(atom() | 'see-other-host'()) -> stream_error().
 serr(Reason) ->
@@ -1032,6 +1127,23 @@ get_tr_forms(Callback) ->
 	      {ok, Form} = erl_parse:parse_form(Tokens),
 	      Form
       end, [Module, Export, Tr]).
+
+-spec format_s_error(atom() | gone() | redirect() | 'see-other-host'(),
+		     [text()], binary()) -> binary().
+format_s_error(Reason, Text, Lang) ->
+    Slogan = if Reason == undefined ->
+		     <<"no reason">>;
+		is_atom(Reason) ->
+		     atom_to_binary(Reason, latin1);
+		is_tuple(Reason) ->
+		     atom_to_binary(element(1, Reason), latin1)
+	     end,
+    case xmpp:get_text(Text, Lang) of
+	<<"">> ->
+	    Slogan;
+	Data ->
+	    <<Data/binary, " (", Slogan/binary, ")">>
+    end.
 
 pp(jid, 6) ->
     record_info(fields, jid);

@@ -10,6 +10,31 @@
       type='text-single'
       label='Maximum Number of History Messages Returned by Room'/>
   <field
+      var='muc#roomconfig_allowinvites'
+      type='boolean'
+      label='Members are allowed to invite others'/>
+  <field
+      var='muc#roomconfig_allow_query_users'
+      type='boolean'
+      label='Occupants are allowed to query others'/>
+  <field
+      var='muc#roomconfig_allowpm'
+      type='list-single'
+      label='Roles that May Send Private Messages'>
+    <option label='Anyone'>
+      <value>anyone</value>
+    </option>
+    <option label='Anyone with Voice'>
+      <value>participants</value>
+    </option>
+    <option label='Moderators Only'>
+      <value>moderators</value>
+    </option>
+    <option label='Nobody'>
+      <value>none</value>
+    </option>
+  </field>
+  <field
       var='muc#roominfo_contactjid'
       type='jid-multi'
       label='Contact Addresses (normally, room owner or owners)'/>
@@ -24,16 +49,20 @@
   <field
       var='muc#roominfo_ldapgroup'
       type='text-single'
-      label='An associated LDAP group that defines 
-             room membership; this should be an LDAP 
-             Distinguished Name according to an 
-             implementation-specific or 
-             deployment-specific definition of a 
+      label='An associated LDAP group that defines
+             room membership; this should be an LDAP
+             Distinguished Name according to an
+             implementation-specific or
+             deployment-specific definition of a
              group.'/>
   <field
       var='muc#roominfo_logs'
       type='text-single'
       label='URL for Archived Discussion Logs'/>
+  <field
+      var='muc#roomconfig_roomname'
+      type='text-single'
+      label='Natural-Language Room Name'/>
   <field
       var='muc#roominfo_occupants'
       type='text-single'
@@ -47,9 +76,25 @@
       type='boolean'
       label='The room subject can be modified by participants'/>
   <field
+      var='muc#roominfo_webchat_url'
+      type='text-single'
+      label='Web client which allows to join the room anonymously'/>
+  <field
       var='muc#roominfo_pubsub'
       type='text-single'
       label='XMPP URI of Associated Publish-Subscribe Node'/>
+  <field
+      var='muc#roomconfig_changesubject'
+      type='boolean'
+      label='Occupants May Change the Subject'/>
+  <field
+      var='muc#roominfo_avatarhash'
+      type='text-multi'
+      label='Hash of the vCard-temp avatar of this room'/>
+  <field
+      var='hats#hash'
+      type='text-single'
+      label='Hash computed from the list of hats available in a room'/>
 </form_type>
 
 <!--

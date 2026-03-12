@@ -12,7 +12,20 @@
   <field
       var='muc#roomconfig_allowpm'
       type='list-single'
-      label='Roles that May Send Private Messages'/>
+      label='Roles that May Send Private Messages'>
+    <option label='Anyone'>
+      <value>anyone</value>
+    </option>
+    <option label='Anyone with Voice'>
+      <value>participants</value>
+    </option>
+    <option label='Moderators Only'>
+      <value>moderators</value>
+    </option>
+    <option label='Nobody'>
+      <value>none</value>
+    </option>
+  </field>
   <field
       var='allow_private_messages'
       type='boolean'
@@ -21,13 +34,13 @@
       var='allow_private_messages_from_visitors'
       type='list-single'
       label='Allow visitors to send private messages to'>
-    <option label='nobody'>
+    <option label='Nobody'>
       <value>nobody</value>
     </option>
-    <option label='moderators only'>
+    <option label='Moderators Only'>
       <value>moderators</value>
     </option>
-    <option label='anyone'>
+    <option label='Anyone'>
       <value>anyone</value>
     </option>
   </field>
@@ -172,10 +185,10 @@
       var='muc#roomconfig_whois'
       type='list-single'
       label='Present real Jabber IDs to'>
-    <option label='moderators only'>
+    <option label='Moderators Only'>
       <value>moderators</value>
     </option>
-    <option label='anyone'>
+    <option label='Anyone'>
       <value>anyone</value>
     </option>
   </field>
@@ -183,6 +196,10 @@
       var='mam'
       type='boolean'
       label='Enable message archiving'/>
+  <field
+      var='enable_hats'
+      type='boolean'
+      label='Enable hats'/>
 </form_type>
 
 <!--

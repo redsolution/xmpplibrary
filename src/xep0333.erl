@@ -6,17 +6,20 @@
 -compile(export_all).
 
 do_decode(<<"displayed">>,
-	  <<"urn:xmpp:chat-markers:0">>, El, Opts) ->
+          <<"urn:xmpp:chat-markers:0">>, El, Opts) ->
     decode_mark_displayed(<<"urn:xmpp:chat-markers:0">>,
-			  Opts, El);
+                          Opts,
+                          El);
 do_decode(<<"received">>, <<"urn:xmpp:chat-markers:0">>,
-	  El, Opts) ->
+          El, Opts) ->
     decode_mark_received(<<"urn:xmpp:chat-markers:0">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(<<"markable">>, <<"urn:xmpp:chat-markers:0">>,
-	  El, Opts) ->
+          El, Opts) ->
     decode_mark_markable(<<"urn:xmpp:chat-markers:0">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
 do_decode(Name, XMLNS, _, _) ->
@@ -32,7 +35,7 @@ do_encode({mark_markable} = Markable, TopXMLNS) ->
 do_encode({mark_received, _, _} = Received, TopXMLNS) ->
     encode_mark_received(Received, TopXMLNS);
 do_encode({mark_displayed, _, _} = Displayed,
-	  TopXMLNS) ->
+          TopXMLNS) ->
     encode_mark_displayed(Displayed, TopXMLNS).
 
 do_get_name({mark_displayed, _, _}) -> <<"displayed">>;
@@ -60,148 +63,180 @@ pp(mark_displayed, 2) -> [id, sub_els];
 pp(_, _) -> no.
 
 records() ->
-    [{mark_markable, 0}, {mark_received, 2},
+    [{mark_markable, 0},
+     {mark_received, 2},
      {mark_displayed, 2}].
 
 decode_mark_displayed(__TopXMLNS, __Opts,
-		      {xmlel, <<"displayed">>, _attrs, _els}) ->
-    __Els = decode_mark_displayed_els(__TopXMLNS, __Opts,
-				      _els, []),
-    Id = decode_mark_displayed_attrs(__TopXMLNS, _attrs,
-				     undefined),
+                      {xmlel, <<"displayed">>, _attrs, _els}) ->
+    __Els = decode_mark_displayed_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      []),
+    Id = decode_mark_displayed_attrs(__TopXMLNS,
+                                     _attrs,
+                                     undefined),
     {mark_displayed, Id, __Els}.
 
 decode_mark_displayed_els(__TopXMLNS, __Opts, [],
-			  __Els) ->
+                          __Els) ->
     lists:reverse(__Els);
 decode_mark_displayed_els(__TopXMLNS, __Opts,
-			  [{xmlel, _name, _attrs, _} = _el | _els], __Els) ->
+                          [{xmlel, _name, _attrs, _} = _el | _els], __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
-      true ->
-	  decode_mark_displayed_els(__TopXMLNS, __Opts, _els,
-				    [_el | __Els]);
-      false ->
-	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-					__TopXMLNS),
-	  case xmpp_codec:get_mod(_name, __XMLNS) of
-	    undefined ->
-		decode_mark_displayed_els(__TopXMLNS, __Opts, _els,
-					  [_el | __Els]);
-	    Mod ->
-		decode_mark_displayed_els(__TopXMLNS, __Opts, _els,
-					  [Mod:do_decode(_name, __XMLNS, _el,
-							 __Opts)
-					   | __Els])
-	  end
+        true ->
+            decode_mark_displayed_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      [_el | __Els]);
+        false ->
+            __XMLNS = xmpp_codec:get_attr(<<"xmlns">>,
+                                          _attrs,
+                                          __TopXMLNS),
+            case xmpp_codec:get_mod(_name, __XMLNS) of
+                undefined ->
+                    decode_mark_displayed_els(__TopXMLNS,
+                                              __Opts,
+                                              _els,
+                                              [_el | __Els]);
+                Mod ->
+                    decode_mark_displayed_els(__TopXMLNS,
+                                              __Opts,
+                                              _els,
+                                              [Mod:do_decode(_name,
+                                                             __XMLNS,
+                                                             _el,
+                                                             __Opts)
+                                               | __Els])
+            end
     end;
 decode_mark_displayed_els(__TopXMLNS, __Opts,
-			  [_ | _els], __Els) ->
-    decode_mark_displayed_els(__TopXMLNS, __Opts, _els,
-			      __Els).
+                          [_ | _els], __Els) ->
+    decode_mark_displayed_els(__TopXMLNS,
+                              __Opts,
+                              _els,
+                              __Els).
 
 decode_mark_displayed_attrs(__TopXMLNS,
-			    [{<<"id">>, _val} | _attrs], _Id) ->
+                            [{<<"id">>, _val} | _attrs], _Id) ->
     decode_mark_displayed_attrs(__TopXMLNS, _attrs, _val);
 decode_mark_displayed_attrs(__TopXMLNS, [_ | _attrs],
-			    Id) ->
+                            Id) ->
     decode_mark_displayed_attrs(__TopXMLNS, _attrs, Id);
 decode_mark_displayed_attrs(__TopXMLNS, [], Id) ->
     decode_mark_displayed_attr_id(__TopXMLNS, Id).
 
 encode_mark_displayed({mark_displayed, Id, __Els},
-		      __TopXMLNS) ->
+                      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
+                                    [],
+                                    __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
-	    || _el <- __Els],
+            || _el <- __Els],
     _attrs = encode_mark_displayed_attr_id(Id,
-					   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-								      __TopXMLNS)),
+                                           xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                      __TopXMLNS)),
     {xmlel, <<"displayed">>, _attrs, _els}.
 
 decode_mark_displayed_attr_id(__TopXMLNS, undefined) ->
     erlang:error({xmpp_codec,
-		  {missing_attr, <<"id">>, <<"displayed">>, __TopXMLNS}});
+                  {missing_attr, <<"id">>, <<"displayed">>, __TopXMLNS}});
 decode_mark_displayed_attr_id(__TopXMLNS, _val) -> _val.
 
 encode_mark_displayed_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
 
 decode_mark_received(__TopXMLNS, __Opts,
-		     {xmlel, <<"received">>, _attrs, _els}) ->
-    __Els = decode_mark_received_els(__TopXMLNS, __Opts,
-				     _els, []),
-    Id = decode_mark_received_attrs(__TopXMLNS, _attrs,
-				    undefined),
+                     {xmlel, <<"received">>, _attrs, _els}) ->
+    __Els = decode_mark_received_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     []),
+    Id = decode_mark_received_attrs(__TopXMLNS,
+                                    _attrs,
+                                    undefined),
     {mark_received, Id, __Els}.
 
 decode_mark_received_els(__TopXMLNS, __Opts, [],
-			 __Els) ->
+                         __Els) ->
     lists:reverse(__Els);
 decode_mark_received_els(__TopXMLNS, __Opts,
-			 [{xmlel, _name, _attrs, _} = _el | _els], __Els) ->
+                         [{xmlel, _name, _attrs, _} = _el | _els], __Els) ->
     case proplists:get_bool(ignore_els, __Opts) of
-      true ->
-	  decode_mark_received_els(__TopXMLNS, __Opts, _els,
-				   [_el | __Els]);
-      false ->
-	  __XMLNS = xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-					__TopXMLNS),
-	  case xmpp_codec:get_mod(_name, __XMLNS) of
-	    undefined ->
-		decode_mark_received_els(__TopXMLNS, __Opts, _els,
-					 [_el | __Els]);
-	    Mod ->
-		decode_mark_received_els(__TopXMLNS, __Opts, _els,
-					 [Mod:do_decode(_name, __XMLNS, _el,
-							__Opts)
-					  | __Els])
-	  end
+        true ->
+            decode_mark_received_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     [_el | __Els]);
+        false ->
+            __XMLNS = xmpp_codec:get_attr(<<"xmlns">>,
+                                          _attrs,
+                                          __TopXMLNS),
+            case xmpp_codec:get_mod(_name, __XMLNS) of
+                undefined ->
+                    decode_mark_received_els(__TopXMLNS,
+                                             __Opts,
+                                             _els,
+                                             [_el | __Els]);
+                Mod ->
+                    decode_mark_received_els(__TopXMLNS,
+                                             __Opts,
+                                             _els,
+                                             [Mod:do_decode(_name,
+                                                            __XMLNS,
+                                                            _el,
+                                                            __Opts)
+                                              | __Els])
+            end
     end;
 decode_mark_received_els(__TopXMLNS, __Opts, [_ | _els],
-			 __Els) ->
-    decode_mark_received_els(__TopXMLNS, __Opts, _els,
-			     __Els).
+                         __Els) ->
+    decode_mark_received_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             __Els).
 
 decode_mark_received_attrs(__TopXMLNS,
-			   [{<<"id">>, _val} | _attrs], _Id) ->
+                           [{<<"id">>, _val} | _attrs], _Id) ->
     decode_mark_received_attrs(__TopXMLNS, _attrs, _val);
 decode_mark_received_attrs(__TopXMLNS, [_ | _attrs],
-			   Id) ->
+                           Id) ->
     decode_mark_received_attrs(__TopXMLNS, _attrs, Id);
 decode_mark_received_attrs(__TopXMLNS, [], Id) ->
     decode_mark_received_attr_id(__TopXMLNS, Id).
 
 encode_mark_received({mark_received, Id, __Els},
-		     __TopXMLNS) ->
+                     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
+                                    [],
+                                    __TopXMLNS),
     _els = [xmpp_codec:encode(_el, __NewTopXMLNS)
-	    || _el <- __Els],
+            || _el <- __Els],
     _attrs = encode_mark_received_attr_id(Id,
-					  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-								     __TopXMLNS)),
+                                          xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                     __TopXMLNS)),
     {xmlel, <<"received">>, _attrs, _els}.
 
 decode_mark_received_attr_id(__TopXMLNS, undefined) ->
     erlang:error({xmpp_codec,
-		  {missing_attr, <<"id">>, <<"received">>, __TopXMLNS}});
+                  {missing_attr, <<"id">>, <<"received">>, __TopXMLNS}});
 decode_mark_received_attr_id(__TopXMLNS, _val) -> _val.
 
 encode_mark_received_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
 
 decode_mark_markable(__TopXMLNS, __Opts,
-		     {xmlel, <<"markable">>, _attrs, _els}) ->
+                     {xmlel, <<"markable">>, _attrs, _els}) ->
     {mark_markable}.
 
 encode_mark_markable({mark_markable}, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"urn:xmpp:chat-markers:0">>,
+                                    [],
+                                    __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"markable">>, _attrs, _els}.

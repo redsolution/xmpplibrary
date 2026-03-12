@@ -6,7 +6,7 @@
 %%% Created : 12 Jul 2016 by Evgeny Khramtsov <ekhramtsov@process-one.net>
 %%%
 %%%
-%%% Copyright (C) 2002-2018 ProcessOne, SARL. All Rights Reserved.
+%%% Copyright (C) 2002-2026 ProcessOne, SARL. All Rights Reserved.
 %%%
 %%% Licensed under the Apache License, Version 2.0 (the "License");
 %%% you may not use this file except in compliance with the License.
@@ -25,69 +25,20 @@
 -module(xmpp_util).
 
 %% API
--export([add_delay_info/3, add_delay_info/4, unwrap_carbon/1,
-	 is_standalone_chat_state/1, get_xdata_values/2,
-	 set_xdata_field/2, has_xdata_var/2,
-	 make_adhoc_response/1, make_adhoc_response/2,
-	 decode_timestamp/1, encode_timestamp/1]).
+-export([get_xdata_values/2, set_xdata_field/2, has_xdata_var/2,
+	 make_adhoc_response/1, make_adhoc_response/2, decode_limit/1,
+	 encode_limit/1, decode_timestamp/1, encode_timestamp/1]).
+-export([hex/1]).
 
 -include("xmpp.hrl").
+
+-type limit() :: non_neg_integer() | max.
+
+-export_type([limit/0]).
 
 %%%===================================================================
 %%% API
 %%%===================================================================
--spec add_delay_info(stanza(), jid(), erlang:timestamp()) -> stanza().
-add_delay_info(Stz, From, Time) ->
-    add_delay_info(Stz, From, Time, <<"">>).
-
--spec add_delay_info(stanza(), jid(),
-		     erlang:timestamp(), binary()) -> stanza().
-
-add_delay_info(Stz, From, Time, Desc) ->
-    NewDelay = #delay{stamp = Time, from = From, desc = Desc},
-    case xmpp:get_subtag(Stz, #delay{stamp = {0,0,0}}) of
-	#delay{from = OldFrom} when is_record(OldFrom, jid) ->
-	    case jid:tolower(From) == jid:tolower(OldFrom) of
-		true ->
-		    Stz;
-		false ->
-		    xmpp:append_subtags(Stz, [NewDelay])
-	    end;
-	_ ->
-	    xmpp:append_subtags(Stz, [NewDelay])
-    end.
-
--spec unwrap_carbon(stanza()) -> xmpp_element().
-unwrap_carbon(#message{} = Msg) ->
-    try
-	case xmpp:get_subtag(Msg, #carbons_sent{forwarded = #forwarded{}}) of
-	    #carbons_sent{forwarded = #forwarded{sub_els = [El]}} ->
-		xmpp:decode(El, ?NS_CLIENT, [ignore_els]);
-	    _ ->
-		case xmpp:get_subtag(Msg, #carbons_received{forwarded = #forwarded{}}) of
-		    #carbons_received{forwarded = #forwarded{sub_els = [El]}} ->
-			xmpp:decode(El, ?NS_CLIENT, [ignore_els]);
-		    _ ->
-			Msg
-		end
-	end
-    catch _:{xmpp_codec, _} ->
-	    Msg
-    end;
-unwrap_carbon(Stanza) -> Stanza.
-
--spec is_standalone_chat_state(stanza()) -> boolean().
-is_standalone_chat_state(Stanza) ->
-    case unwrap_carbon(Stanza) of
-	#message{body = [], subject = [], sub_els = Els} ->
-	    IgnoreNS = [?NS_CHATSTATES, ?NS_DELAY, ?NS_EVENT],
-	    Stripped = [El || El <- Els,
-			      not lists:member(xmpp:get_ns(El), IgnoreNS)],
-	    Stripped == [];
-	_ ->
-	    false
-    end.
-
 -spec get_xdata_values(binary(), xdata()) -> [binary()].
 get_xdata_values(Var, #xdata{fields = Fields}) ->
     case lists:keyfind(Var, #xdata_field.var, Fields) of
@@ -125,6 +76,18 @@ make_adhoc_response(#adhoc_command{sid = <<"">>,
 make_adhoc_response(Command) ->
     Command.
 
+-spec decode_limit(binary()) -> limit().
+decode_limit(S) ->
+    try try_decode_limit(S)
+    catch _:_ -> erlang:error({bad_limit, S})
+    end.
+
+-spec encode_limit(limit()) -> binary().
+encode_limit(I) when is_integer(I), I >= 0 ->
+    integer_to_binary(I);
+encode_limit(max) ->
+    <<"max">>.
+
 -spec decode_timestamp(binary()) -> erlang:timestamp().
 decode_timestamp(S) ->
     try try_decode_timestamp(S)
@@ -145,9 +108,21 @@ encode_timestamp({MegaSecs, Secs, MicroSecs}) ->
 				 [Year, Month, Day, Hour, Minute, Second,
 				  Fraction])).
 
+-spec hex(binary()) -> binary().
+hex(Bin) ->
+    << <<(to_xchar(N div 16)), (to_xchar(N rem 16))>> || <<N>> <= Bin >>.
+
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+try_decode_limit(<<"max">>) ->
+    max;
+try_decode_limit(S) ->
+    case binary_to_integer(S) of
+	I when I >= 0 ->
+	    I
+    end.
+
 try_decode_timestamp(<<Y:4/binary, $-, Mo:2/binary, $-, D:2/binary, $T,
 		       H:2/binary, $:, Mi:2/binary, $:, S:2/binary, T/binary>>) ->
     Date = {to_integer(Y, 1970, 9999), to_integer(Mo, 1, 12), to_integer(D, 1, 31)},
@@ -183,3 +158,6 @@ to_integer(S, Min, Max) ->
 	I when I >= Min, I =< Max ->
 	    I
     end.
+
+to_xchar(D) when (D >= 0) and (D < 10) -> D + $0;
+to_xchar(D) -> D + $a - 10.

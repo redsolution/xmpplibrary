@@ -6,74 +6,91 @@
 -compile(export_all).
 
 do_decode(<<"query">>,
-	  <<"https://xabber.com/protocol/devices#items">>, El,
-	  Opts) ->
+          <<"https://xabber.com/protocol/devices#items">>, El,
+          Opts) ->
     decode_devices_query_items(<<"https://xabber.com/protocol/devices#items">>,
-			       Opts, El);
+                               Opts,
+                               El);
 do_decode(<<"query">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_devices_query(<<"https://xabber.com/protocol/devices">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(<<"type">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_type(<<"https://xabber.com/protocol/devices">>,
-		       Opts, El);
+                       Opts,
+                       El);
 do_decode(<<"omemo-id">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_omemo_id(<<"https://xabber.com/protocol/devices">>,
-			   Opts, El);
+                           Opts,
+                           El);
 do_decode(<<"ip">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_ip(<<"https://xabber.com/protocol/devices">>,
-		     Opts, El);
+                     Opts,
+                     El);
 do_decode(<<"last-auth">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_last_auth(<<"https://xabber.com/protocol/devices">>,
-			    Opts, El);
+                            Opts,
+                            El);
 do_decode(<<"expire">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_expire(<<"https://xabber.com/protocol/devices">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(<<"public-label">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_public_label(<<"https://xabber.com/protocol/devices">>,
-			       Opts, El);
+                               Opts,
+                               El);
 do_decode(<<"info">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_info(<<"https://xabber.com/protocol/devices">>,
-		       Opts, El);
+                       Opts,
+                       El);
 do_decode(<<"client">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_client(<<"https://xabber.com/protocol/devices">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(<<"validation-key">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_validation_key(<<"https://xabber.com/protocol/devices">>,
-				 Opts, El);
+                                 Opts,
+                                 El);
 do_decode(<<"secret">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_secret(<<"https://xabber.com/protocol/devices">>,
-			 Opts, El);
+                         Opts,
+                         El);
 do_decode(<<"revoke-all">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_devices_revoke_all(<<"https://xabber.com/protocol/devices">>,
-			      Opts, El);
+                              Opts,
+                              El);
 do_decode(<<"devices">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_devices_feature(<<"https://xabber.com/protocol/devices">>,
-			   Opts, El);
+                           Opts,
+                           El);
 do_decode(<<"revoke">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_devices_revoke(<<"https://xabber.com/protocol/devices">>,
-			  Opts, El);
+                          Opts,
+                          El);
 do_decode(<<"device">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_devices_device(<<"https://xabber.com/protocol/devices">>,
-			  Opts, El);
+                          Opts,
+                          El);
 do_decode(<<"register">>,
-	  <<"https://xabber.com/protocol/devices">>, El, Opts) ->
+          <<"https://xabber.com/protocol/devices">>, El, Opts) ->
     decode_device_register(<<"https://xabber.com/protocol/devices">>,
-			   Opts, El);
+                           Opts,
+                           El);
 do_decode(Name, <<>>, _, _) ->
     erlang:error({xmpp_codec, {missing_tag_xmlns, Name}});
 do_decode(Name, XMLNS, _, _) ->
@@ -114,17 +131,27 @@ tags() ->
 
 do_encode({device_register, _} = Register, TopXMLNS) ->
     encode_device_register(Register, TopXMLNS);
-do_encode({devices_device, _, _, _, _, _, _, _, _, _, _,
-	   _} =
-	      Device,
-	  TopXMLNS) ->
+do_encode({devices_device,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _} =
+              Device,
+          TopXMLNS) ->
     encode_devices_device(Device, TopXMLNS);
 do_encode({devices_revoke, _} = Revoke, TopXMLNS) ->
     encode_devices_revoke(Revoke, TopXMLNS);
 do_encode({devices_feature} = Devices, TopXMLNS) ->
     encode_devices_feature(Devices, TopXMLNS);
 do_encode({devices_revoke_all} = Revoke_all,
-	  TopXMLNS) ->
+          TopXMLNS) ->
     encode_devices_revoke_all(Revoke_all, TopXMLNS);
 do_encode({devices_query, _} = Query, TopXMLNS) ->
     encode_devices_query(Query, TopXMLNS);
@@ -132,8 +159,18 @@ do_encode({devices_query_items, _} = Query, TopXMLNS) ->
     encode_devices_query_items(Query, TopXMLNS).
 
 do_get_name({device_register, _}) -> <<"register">>;
-do_get_name({devices_device, _, _, _, _, _, _, _, _, _,
-	     _, _}) ->
+do_get_name({devices_device,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _,
+             _}) ->
     <<"device">>;
 do_get_name({devices_feature}) -> <<"devices">>;
 do_get_name({devices_query, _}) -> <<"query">>;
@@ -143,8 +180,18 @@ do_get_name({devices_revoke_all}) -> <<"revoke-all">>.
 
 do_get_ns({device_register, _}) ->
     <<"https://xabber.com/protocol/devices">>;
-do_get_ns({devices_device, _, _, _, _, _, _, _, _, _, _,
-	   _}) ->
+do_get_ns({devices_device,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _,
+           _}) ->
     <<"https://xabber.com/protocol/devices">>;
 do_get_ns({devices_feature}) ->
     <<"https://xabber.com/protocol/devices">>;
@@ -159,8 +206,17 @@ do_get_ns({devices_revoke_all}) ->
 
 pp(device_register, 1) -> [device];
 pp(devices_device, 11) ->
-    [id, secret, validation_key, expire, client, info,
-     public_label, ip, last_auth, omemo_id, device_type];
+    [id,
+     secret,
+     validation_key,
+     expire,
+     client,
+     info,
+     public_label,
+     ip,
+     last_auth,
+     omemo_id,
+     device_type];
 pp(devices_revoke, 1) -> [devices];
 pp(devices_feature, 0) -> [];
 pp(devices_revoke_all, 0) -> [];
@@ -169,144 +225,177 @@ pp(devices_query_items, 1) -> [devices];
 pp(_, _) -> no.
 
 records() ->
-    [{device_register, 1}, {devices_device, 11},
-     {devices_revoke, 1}, {devices_feature, 0},
-     {devices_revoke_all, 0}, {devices_query, 1},
+    [{device_register, 1},
+     {devices_device, 11},
+     {devices_revoke, 1},
+     {devices_feature, 0},
+     {devices_revoke_all, 0},
+     {devices_query, 1},
      {devices_query_items, 1}].
 
 dec_int(Val, Min, Max) ->
     case erlang:binary_to_integer(Val) of
-      Int when Int =< Max, Min == infinity -> Int;
-      Int when Int =< Max, Int >= Min -> Int
+        Int when Int =< Max, Min == infinity -> Int;
+        Int when Int =< Max, Int >= Min -> Int
     end.
 
 enc_int(Int) -> erlang:integer_to_binary(Int).
 
 decode_devices_query_items(__TopXMLNS, __Opts,
-			   {xmlel, <<"query">>, _attrs, _els}) ->
+                           {xmlel, <<"query">>, _attrs, _els}) ->
     Devices = decode_devices_query_items_els(__TopXMLNS,
-					     __Opts, _els, []),
+                                             __Opts,
+                                             _els,
+                                             []),
     {devices_query_items, Devices}.
 
 decode_devices_query_items_els(__TopXMLNS, __Opts, [],
-			       Devices) ->
+                               Devices) ->
     lists:reverse(Devices);
 decode_devices_query_items_els(__TopXMLNS, __Opts,
-			       [{xmlel, <<"device">>, _attrs, _} = _el | _els],
-			       Devices) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_query_items_els(__TopXMLNS, __Opts, _els,
-					 [decode_devices_device(<<"https://xabber.com/protocol/devices">>,
-								__Opts, _el)
-					  | Devices]);
-      _ ->
-	  decode_devices_query_items_els(__TopXMLNS, __Opts, _els,
-					 Devices)
+                               [{xmlel, <<"device">>, _attrs, _} = _el | _els],
+                               Devices) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_query_items_els(__TopXMLNS,
+                                           __Opts,
+                                           _els,
+                                           [decode_devices_device(<<"https://xabber.com/protocol/devices">>,
+                                                                  __Opts,
+                                                                  _el)
+                                            | Devices]);
+        _ ->
+            decode_devices_query_items_els(__TopXMLNS,
+                                           __Opts,
+                                           _els,
+                                           Devices)
     end;
 decode_devices_query_items_els(__TopXMLNS, __Opts,
-			       [_ | _els], Devices) ->
-    decode_devices_query_items_els(__TopXMLNS, __Opts, _els,
-				   Devices).
+                               [_ | _els], Devices) ->
+    decode_devices_query_items_els(__TopXMLNS,
+                                   __Opts,
+                                   _els,
+                                   Devices).
 
 encode_devices_query_items({devices_query_items,
-			    Devices},
-			   __TopXMLNS) ->
+                            Devices},
+                           __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices#items">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices#items">>,
+                                    [],
+                                    __TopXMLNS),
     _els =
-	lists:reverse('encode_devices_query_items_$devices'(Devices,
-							    __NewTopXMLNS, [])),
+        lists:reverse('encode_devices_query_items_$devices'(Devices,
+                                                            __NewTopXMLNS,
+                                                            [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"query">>, _attrs, _els}.
 
 'encode_devices_query_items_$devices'([], __TopXMLNS,
-				      _acc) ->
+                                      _acc) ->
     _acc;
 'encode_devices_query_items_$devices'([Devices | _els],
-				      __TopXMLNS, _acc) ->
-    'encode_devices_query_items_$devices'(_els, __TopXMLNS,
-					  [encode_devices_device(Devices,
-								 __TopXMLNS)
-					   | _acc]).
+                                      __TopXMLNS, _acc) ->
+    'encode_devices_query_items_$devices'(_els,
+                                          __TopXMLNS,
+                                          [encode_devices_device(Devices,
+                                                                 __TopXMLNS)
+                                           | _acc]).
 
 decode_devices_query(__TopXMLNS, __Opts,
-		     {xmlel, <<"query">>, _attrs, _els}) ->
-    Device = decode_devices_query_els(__TopXMLNS, __Opts,
-				      _els, error),
+                     {xmlel, <<"query">>, _attrs, _els}) ->
+    Device = decode_devices_query_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      error),
     {devices_query, Device}.
 
 decode_devices_query_els(__TopXMLNS, __Opts, [],
-			 Device) ->
+                         Device) ->
     case Device of
-      error ->
-	  erlang:error({xmpp_codec,
-			{missing_tag, <<"device">>, __TopXMLNS}});
-      {value, Device1} -> Device1
+        error ->
+            erlang:error({xmpp_codec,
+                          {missing_tag, <<"device">>, __TopXMLNS}});
+        {value, Device1} -> Device1
     end;
 decode_devices_query_els(__TopXMLNS, __Opts,
-			 [{xmlel, <<"device">>, _attrs, _} = _el | _els],
-			 Device) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_query_els(__TopXMLNS, __Opts, _els,
-				   {value,
-				    decode_devices_device(<<"https://xabber.com/protocol/devices">>,
-							  __Opts, _el)});
-      _ ->
-	  decode_devices_query_els(__TopXMLNS, __Opts, _els,
-				   Device)
+                         [{xmlel, <<"device">>, _attrs, _} = _el | _els],
+                         Device) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_query_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     {value,
+                                      decode_devices_device(<<"https://xabber.com/protocol/devices">>,
+                                                            __Opts,
+                                                            _el)});
+        _ ->
+            decode_devices_query_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     Device)
     end;
 decode_devices_query_els(__TopXMLNS, __Opts, [_ | _els],
-			 Device) ->
-    decode_devices_query_els(__TopXMLNS, __Opts, _els,
-			     Device).
+                         Device) ->
+    decode_devices_query_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             Device).
 
 encode_devices_query({devices_query, Device},
-		     __TopXMLNS) ->
+                     __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els =
-	lists:reverse('encode_devices_query_$device'(Device,
-						     __NewTopXMLNS, [])),
+        lists:reverse('encode_devices_query_$device'(Device,
+                                                     __NewTopXMLNS,
+                                                     [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"query">>, _attrs, _els}.
 
 'encode_devices_query_$device'(Device, __TopXMLNS,
-			       _acc) ->
+                               _acc) ->
     [encode_devices_device(Device, __TopXMLNS) | _acc].
 
 decode_device_type(__TopXMLNS, __Opts,
-		   {xmlel, <<"type">>, _attrs, _els}) ->
-    Cdata = decode_device_type_els(__TopXMLNS, __Opts, _els,
-				   <<>>),
+                   {xmlel, <<"type">>, _attrs, _els}) ->
+    Cdata = decode_device_type_els(__TopXMLNS,
+                                   __Opts,
+                                   _els,
+                                   <<>>),
     Cdata.
 
 decode_device_type_els(__TopXMLNS, __Opts, [], Cdata) ->
     decode_device_type_cdata(__TopXMLNS, Cdata);
 decode_device_type_els(__TopXMLNS, __Opts,
-		       [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_type_els(__TopXMLNS, __Opts, _els,
-			   <<Cdata/binary, _data/binary>>);
+                       [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_type_els(__TopXMLNS,
+                           __Opts,
+                           _els,
+                           <<Cdata/binary, _data/binary>>);
 decode_device_type_els(__TopXMLNS, __Opts, [_ | _els],
-		       Cdata) ->
+                       Cdata) ->
     decode_device_type_els(__TopXMLNS, __Opts, _els, Cdata).
 
 encode_device_type(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_type_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"type">>, _attrs, _els}.
 
 decode_device_type_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -317,30 +406,37 @@ encode_device_type_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_omemo_id(__TopXMLNS, __Opts,
-		       {xmlel, <<"omemo-id">>, _attrs, _els}) ->
-    Cdata = decode_device_omemo_id_els(__TopXMLNS, __Opts,
-				       _els, <<>>),
+                       {xmlel, <<"omemo-id">>, _attrs, _els}) ->
+    Cdata = decode_device_omemo_id_els(__TopXMLNS,
+                                       __Opts,
+                                       _els,
+                                       <<>>),
     Cdata.
 
 decode_device_omemo_id_els(__TopXMLNS, __Opts, [],
-			   Cdata) ->
+                           Cdata) ->
     decode_device_omemo_id_cdata(__TopXMLNS, Cdata);
 decode_device_omemo_id_els(__TopXMLNS, __Opts,
-			   [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_omemo_id_els(__TopXMLNS, __Opts, _els,
-			       <<Cdata/binary, _data/binary>>);
+                           [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_omemo_id_els(__TopXMLNS,
+                               __Opts,
+                               _els,
+                               <<Cdata/binary, _data/binary>>);
 decode_device_omemo_id_els(__TopXMLNS, __Opts,
-			   [_ | _els], Cdata) ->
-    decode_device_omemo_id_els(__TopXMLNS, __Opts, _els,
-			       Cdata).
+                           [_ | _els], Cdata) ->
+    decode_device_omemo_id_els(__TopXMLNS,
+                               __Opts,
+                               _els,
+                               Cdata).
 
 encode_device_omemo_id(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_omemo_id_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"omemo-id">>, _attrs, _els}.
 
 decode_device_omemo_id_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -351,28 +447,33 @@ encode_device_omemo_id_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_ip(__TopXMLNS, __Opts,
-		 {xmlel, <<"ip">>, _attrs, _els}) ->
-    Cdata = decode_device_ip_els(__TopXMLNS, __Opts, _els,
-				 <<>>),
+                 {xmlel, <<"ip">>, _attrs, _els}) ->
+    Cdata = decode_device_ip_els(__TopXMLNS,
+                                 __Opts,
+                                 _els,
+                                 <<>>),
     Cdata.
 
 decode_device_ip_els(__TopXMLNS, __Opts, [], Cdata) ->
     decode_device_ip_cdata(__TopXMLNS, Cdata);
 decode_device_ip_els(__TopXMLNS, __Opts,
-		     [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_ip_els(__TopXMLNS, __Opts, _els,
-			 <<Cdata/binary, _data/binary>>);
+                     [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_ip_els(__TopXMLNS,
+                         __Opts,
+                         _els,
+                         <<Cdata/binary, _data/binary>>);
 decode_device_ip_els(__TopXMLNS, __Opts, [_ | _els],
-		     Cdata) ->
+                     Cdata) ->
     decode_device_ip_els(__TopXMLNS, __Opts, _els, Cdata).
 
 encode_device_ip(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_ip_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"ip">>, _attrs, _els}.
 
 decode_device_ip_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -383,30 +484,37 @@ encode_device_ip_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_last_auth(__TopXMLNS, __Opts,
-			{xmlel, <<"last-auth">>, _attrs, _els}) ->
-    Cdata = decode_device_last_auth_els(__TopXMLNS, __Opts,
-					_els, <<>>),
+                        {xmlel, <<"last-auth">>, _attrs, _els}) ->
+    Cdata = decode_device_last_auth_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        <<>>),
     Cdata.
 
 decode_device_last_auth_els(__TopXMLNS, __Opts, [],
-			    Cdata) ->
+                            Cdata) ->
     decode_device_last_auth_cdata(__TopXMLNS, Cdata);
 decode_device_last_auth_els(__TopXMLNS, __Opts,
-			    [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_last_auth_els(__TopXMLNS, __Opts, _els,
-				<<Cdata/binary, _data/binary>>);
+                            [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_last_auth_els(__TopXMLNS,
+                                __Opts,
+                                _els,
+                                <<Cdata/binary, _data/binary>>);
 decode_device_last_auth_els(__TopXMLNS, __Opts,
-			    [_ | _els], Cdata) ->
-    decode_device_last_auth_els(__TopXMLNS, __Opts, _els,
-				Cdata).
+                            [_ | _els], Cdata) ->
+    decode_device_last_auth_els(__TopXMLNS,
+                                __Opts,
+                                _els,
+                                Cdata).
 
 encode_device_last_auth(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_last_auth_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"last-auth">>, _attrs, _els}.
 
 decode_device_last_auth_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -417,40 +525,47 @@ encode_device_last_auth_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_expire(__TopXMLNS, __Opts,
-		     {xmlel, <<"expire">>, _attrs, _els}) ->
-    Cdata = decode_device_expire_els(__TopXMLNS, __Opts,
-				     _els, <<>>),
+                     {xmlel, <<"expire">>, _attrs, _els}) ->
+    Cdata = decode_device_expire_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     <<>>),
     Cdata.
 
 decode_device_expire_els(__TopXMLNS, __Opts, [],
-			 Cdata) ->
+                         Cdata) ->
     decode_device_expire_cdata(__TopXMLNS, Cdata);
 decode_device_expire_els(__TopXMLNS, __Opts,
-			 [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_expire_els(__TopXMLNS, __Opts, _els,
-			     <<Cdata/binary, _data/binary>>);
+                         [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_expire_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             <<Cdata/binary, _data/binary>>);
 decode_device_expire_els(__TopXMLNS, __Opts, [_ | _els],
-			 Cdata) ->
-    decode_device_expire_els(__TopXMLNS, __Opts, _els,
-			     Cdata).
+                         Cdata) ->
+    decode_device_expire_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             Cdata).
 
 encode_device_expire(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_expire_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"expire">>, _attrs, _els}.
 
 decode_device_expire_cdata(__TopXMLNS, <<>>) ->
     undefined;
 decode_device_expire_cdata(__TopXMLNS, _val) ->
     case catch dec_int(_val, 0, infinity) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_cdata_value, <<>>, <<"expire">>, __TopXMLNS}});
-      _res -> _res
+        {'EXIT', _} ->
+            erlang:error({xmpp_codec,
+                          {bad_cdata_value, <<>>, <<"expire">>, __TopXMLNS}});
+        _res -> _res
     end.
 
 encode_device_expire_cdata(undefined, _acc) -> _acc;
@@ -458,30 +573,37 @@ encode_device_expire_cdata(_val, _acc) ->
     [{xmlcdata, enc_int(_val)} | _acc].
 
 decode_device_public_label(__TopXMLNS, __Opts,
-			   {xmlel, <<"public-label">>, _attrs, _els}) ->
+                           {xmlel, <<"public-label">>, _attrs, _els}) ->
     Cdata = decode_device_public_label_els(__TopXMLNS,
-					   __Opts, _els, <<>>),
+                                           __Opts,
+                                           _els,
+                                           <<>>),
     Cdata.
 
 decode_device_public_label_els(__TopXMLNS, __Opts, [],
-			       Cdata) ->
+                               Cdata) ->
     decode_device_public_label_cdata(__TopXMLNS, Cdata);
 decode_device_public_label_els(__TopXMLNS, __Opts,
-			       [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_public_label_els(__TopXMLNS, __Opts, _els,
-				   <<Cdata/binary, _data/binary>>);
+                               [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_public_label_els(__TopXMLNS,
+                                   __Opts,
+                                   _els,
+                                   <<Cdata/binary, _data/binary>>);
 decode_device_public_label_els(__TopXMLNS, __Opts,
-			       [_ | _els], Cdata) ->
-    decode_device_public_label_els(__TopXMLNS, __Opts, _els,
-				   Cdata).
+                               [_ | _els], Cdata) ->
+    decode_device_public_label_els(__TopXMLNS,
+                                   __Opts,
+                                   _els,
+                                   Cdata).
 
 encode_device_public_label(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_public_label_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"public-label">>, _attrs, _els}.
 
 decode_device_public_label_cdata(__TopXMLNS, <<>>) ->
@@ -494,28 +616,33 @@ encode_device_public_label_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_info(__TopXMLNS, __Opts,
-		   {xmlel, <<"info">>, _attrs, _els}) ->
-    Cdata = decode_device_info_els(__TopXMLNS, __Opts, _els,
-				   <<>>),
+                   {xmlel, <<"info">>, _attrs, _els}) ->
+    Cdata = decode_device_info_els(__TopXMLNS,
+                                   __Opts,
+                                   _els,
+                                   <<>>),
     Cdata.
 
 decode_device_info_els(__TopXMLNS, __Opts, [], Cdata) ->
     decode_device_info_cdata(__TopXMLNS, Cdata);
 decode_device_info_els(__TopXMLNS, __Opts,
-		       [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_info_els(__TopXMLNS, __Opts, _els,
-			   <<Cdata/binary, _data/binary>>);
+                       [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_info_els(__TopXMLNS,
+                           __Opts,
+                           _els,
+                           <<Cdata/binary, _data/binary>>);
 decode_device_info_els(__TopXMLNS, __Opts, [_ | _els],
-		       Cdata) ->
+                       Cdata) ->
     decode_device_info_els(__TopXMLNS, __Opts, _els, Cdata).
 
 encode_device_info(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_info_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"info">>, _attrs, _els}.
 
 decode_device_info_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -526,30 +653,37 @@ encode_device_info_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_client(__TopXMLNS, __Opts,
-		     {xmlel, <<"client">>, _attrs, _els}) ->
-    Cdata = decode_device_client_els(__TopXMLNS, __Opts,
-				     _els, <<>>),
+                     {xmlel, <<"client">>, _attrs, _els}) ->
+    Cdata = decode_device_client_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     <<>>),
     Cdata.
 
 decode_device_client_els(__TopXMLNS, __Opts, [],
-			 Cdata) ->
+                         Cdata) ->
     decode_device_client_cdata(__TopXMLNS, Cdata);
 decode_device_client_els(__TopXMLNS, __Opts,
-			 [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_client_els(__TopXMLNS, __Opts, _els,
-			     <<Cdata/binary, _data/binary>>);
+                         [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_client_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             <<Cdata/binary, _data/binary>>);
 decode_device_client_els(__TopXMLNS, __Opts, [_ | _els],
-			 Cdata) ->
-    decode_device_client_els(__TopXMLNS, __Opts, _els,
-			     Cdata).
+                         Cdata) ->
+    decode_device_client_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             Cdata).
 
 encode_device_client(Cdata, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = encode_device_client_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"client">>, _attrs, _els}.
 
 decode_device_client_cdata(__TopXMLNS, <<>>) -> <<>>;
@@ -560,503 +694,779 @@ encode_device_client_cdata(_val, _acc) ->
     [{xmlcdata, _val} | _acc].
 
 decode_device_validation_key(__TopXMLNS, __Opts,
-			     {xmlel, <<"validation-key">>, _attrs, _els}) ->
+                             {xmlel, <<"validation-key">>, _attrs, _els}) ->
     Cdata = decode_device_validation_key_els(__TopXMLNS,
-					     __Opts, _els, <<>>),
+                                             __Opts,
+                                             _els,
+                                             <<>>),
     Cdata.
 
 decode_device_validation_key_els(__TopXMLNS, __Opts, [],
-				 Cdata) ->
+                                 Cdata) ->
     decode_device_validation_key_cdata(__TopXMLNS, Cdata);
 decode_device_validation_key_els(__TopXMLNS, __Opts,
-				 [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_validation_key_els(__TopXMLNS, __Opts,
-				     _els, <<Cdata/binary, _data/binary>>);
+                                 [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_validation_key_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     <<Cdata/binary, _data/binary>>);
 decode_device_validation_key_els(__TopXMLNS, __Opts,
-				 [_ | _els], Cdata) ->
-    decode_device_validation_key_els(__TopXMLNS, __Opts,
-				     _els, Cdata).
+                                 [_ | _els], Cdata) ->
+    decode_device_validation_key_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     Cdata).
 
 encode_device_validation_key(Cdata, __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
-						[<<"https://xabber.com/protocol/devices">>],
-						__TopXMLNS),
+                                                [<<"https://xabber.com/protocol/devices">>],
+                                                __TopXMLNS),
     _els = encode_device_validation_key_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"validation-key">>, _attrs, _els}.
 
 decode_device_validation_key_cdata(__TopXMLNS, <<>>) ->
     erlang:error({xmpp_codec,
-		  {missing_cdata, <<>>, <<"validation-key">>,
-		   __TopXMLNS}});
+                  {missing_cdata,
+                   <<>>,
+                   <<"validation-key">>,
+                   __TopXMLNS}});
 decode_device_validation_key_cdata(__TopXMLNS, _val) ->
     case catch base64:mime_decode(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_cdata_value, <<>>, <<"validation-key">>,
-			 __TopXMLNS}});
-      _res -> _res
+        {'EXIT', _} ->
+            erlang:error({xmpp_codec,
+                          {bad_cdata_value,
+                           <<>>,
+                           <<"validation-key">>,
+                           __TopXMLNS}});
+        _res -> _res
     end.
 
 encode_device_validation_key_cdata(_val, _acc) ->
     [{xmlcdata, base64:encode(_val)} | _acc].
 
 decode_device_secret(__TopXMLNS, __Opts,
-		     {xmlel, <<"secret">>, _attrs, _els}) ->
-    Cdata = decode_device_secret_els(__TopXMLNS, __Opts,
-				     _els, <<>>),
+                     {xmlel, <<"secret">>, _attrs, _els}) ->
+    Cdata = decode_device_secret_els(__TopXMLNS,
+                                     __Opts,
+                                     _els,
+                                     <<>>),
     Cdata.
 
 decode_device_secret_els(__TopXMLNS, __Opts, [],
-			 Cdata) ->
+                         Cdata) ->
     decode_device_secret_cdata(__TopXMLNS, Cdata);
 decode_device_secret_els(__TopXMLNS, __Opts,
-			 [{xmlcdata, _data} | _els], Cdata) ->
-    decode_device_secret_els(__TopXMLNS, __Opts, _els,
-			     <<Cdata/binary, _data/binary>>);
+                         [{xmlcdata, _data} | _els], Cdata) ->
+    decode_device_secret_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             <<Cdata/binary, _data/binary>>);
 decode_device_secret_els(__TopXMLNS, __Opts, [_ | _els],
-			 Cdata) ->
-    decode_device_secret_els(__TopXMLNS, __Opts, _els,
-			     Cdata).
+                         Cdata) ->
+    decode_device_secret_els(__TopXMLNS,
+                             __Opts,
+                             _els,
+                             Cdata).
 
 encode_device_secret(Cdata, __TopXMLNS) ->
     __NewTopXMLNS = xmpp_codec:choose_top_xmlns(<<>>,
-						[<<"https://xabber.com/protocol/devices">>],
-						__TopXMLNS),
+                                                [<<"https://xabber.com/protocol/devices">>],
+                                                __TopXMLNS),
     _els = encode_device_secret_cdata(Cdata, []),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"secret">>, _attrs, _els}.
 
 decode_device_secret_cdata(__TopXMLNS, <<>>) ->
     erlang:error({xmpp_codec,
-		  {missing_cdata, <<>>, <<"secret">>, __TopXMLNS}});
+                  {missing_cdata, <<>>, <<"secret">>, __TopXMLNS}});
 decode_device_secret_cdata(__TopXMLNS, _val) ->
     case catch base64:mime_decode(_val) of
-      {'EXIT', _} ->
-	  erlang:error({xmpp_codec,
-			{bad_cdata_value, <<>>, <<"secret">>, __TopXMLNS}});
-      _res -> _res
+        {'EXIT', _} ->
+            erlang:error({xmpp_codec,
+                          {bad_cdata_value, <<>>, <<"secret">>, __TopXMLNS}});
+        _res -> _res
     end.
 
 encode_device_secret_cdata(_val, _acc) ->
     [{xmlcdata, base64:encode(_val)} | _acc].
 
 decode_devices_revoke_all(__TopXMLNS, __Opts,
-			  {xmlel, <<"revoke-all">>, _attrs, _els}) ->
+                          {xmlel, <<"revoke-all">>, _attrs, _els}) ->
     {devices_revoke_all}.
 
 encode_devices_revoke_all({devices_revoke_all},
-			  __TopXMLNS) ->
+                          __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"revoke-all">>, _attrs, _els}.
 
 decode_devices_feature(__TopXMLNS, __Opts,
-		       {xmlel, <<"devices">>, _attrs, _els}) ->
+                       {xmlel, <<"devices">>, _attrs, _els}) ->
     {devices_feature}.
 
 encode_devices_feature({devices_feature}, __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = [],
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"devices">>, _attrs, _els}.
 
 decode_devices_revoke(__TopXMLNS, __Opts,
-		      {xmlel, <<"revoke">>, _attrs, _els}) ->
-    Devices = decode_devices_revoke_els(__TopXMLNS, __Opts,
-					_els, []),
+                      {xmlel, <<"revoke">>, _attrs, _els}) ->
+    Devices = decode_devices_revoke_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        []),
     {devices_revoke, Devices}.
 
 decode_devices_revoke_els(__TopXMLNS, __Opts, [],
-			  Devices) ->
+                          Devices) ->
     lists:reverse(Devices);
 decode_devices_revoke_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"device">>, _attrs, _} = _el | _els],
-			  Devices) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_revoke_els(__TopXMLNS, __Opts, _els,
-				    [decode_devices_device(<<"https://xabber.com/protocol/devices">>,
-							   __Opts, _el)
-				     | Devices]);
-      _ ->
-	  decode_devices_revoke_els(__TopXMLNS, __Opts, _els,
-				    Devices)
+                          [{xmlel, <<"device">>, _attrs, _} = _el | _els],
+                          Devices) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_revoke_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      [decode_devices_device(<<"https://xabber.com/protocol/devices">>,
+                                                             __Opts,
+                                                             _el)
+                                       | Devices]);
+        _ ->
+            decode_devices_revoke_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Devices)
     end;
 decode_devices_revoke_els(__TopXMLNS, __Opts,
-			  [_ | _els], Devices) ->
-    decode_devices_revoke_els(__TopXMLNS, __Opts, _els,
-			      Devices).
+                          [_ | _els], Devices) ->
+    decode_devices_revoke_els(__TopXMLNS,
+                              __Opts,
+                              _els,
+                              Devices).
 
 encode_devices_revoke({devices_revoke, Devices},
-		      __TopXMLNS) ->
+                      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els =
-	lists:reverse('encode_devices_revoke_$devices'(Devices,
-						       __NewTopXMLNS, [])),
+        lists:reverse('encode_devices_revoke_$devices'(Devices,
+                                                       __NewTopXMLNS,
+                                                       [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"revoke">>, _attrs, _els}.
 
 'encode_devices_revoke_$devices'([], __TopXMLNS,
-				 _acc) ->
+                                 _acc) ->
     _acc;
 'encode_devices_revoke_$devices'([Devices | _els],
-				 __TopXMLNS, _acc) ->
-    'encode_devices_revoke_$devices'(_els, __TopXMLNS,
-				     [encode_devices_device(Devices, __TopXMLNS)
-				      | _acc]).
+                                 __TopXMLNS, _acc) ->
+    'encode_devices_revoke_$devices'(_els,
+                                     __TopXMLNS,
+                                     [encode_devices_device(Devices, __TopXMLNS)
+                                      | _acc]).
 
 decode_devices_device(__TopXMLNS, __Opts,
-		      {xmlel, <<"device">>, _attrs, _els}) ->
-    {Ip, Omemo_id, Client, Secret, Device_type, Expire,
-     Last_auth, Validation_key, Public_label, Info} =
-	decode_devices_device_els(__TopXMLNS, __Opts, _els,
-				  undefined, undefined, undefined, undefined,
-				  undefined, undefined, undefined, undefined,
-				  undefined, undefined),
-    Id = decode_devices_device_attrs(__TopXMLNS, _attrs,
-				     undefined),
-    {devices_device, Id, Secret, Validation_key, Expire,
-     Client, Info, Public_label, Ip, Last_auth, Omemo_id,
+                      {xmlel, <<"device">>, _attrs, _els}) ->
+    {Ip,
+     Omemo_id,
+     Client,
+     Secret,
+     Device_type,
+     Expire,
+     Last_auth,
+     Validation_key,
+     Public_label,
+     Info} =
+        decode_devices_device_els(__TopXMLNS,
+                                  __Opts,
+                                  _els,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined),
+    Id = decode_devices_device_attrs(__TopXMLNS,
+                                     _attrs,
+                                     undefined),
+    {devices_device,
+     Id,
+     Secret,
+     Validation_key,
+     Expire,
+     Client,
+     Info,
+     Public_label,
+     Ip,
+     Last_auth,
+     Omemo_id,
      Device_type}.
 
 decode_devices_device_els(__TopXMLNS, __Opts, [], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    {Ip, Omemo_id, Client, Secret, Device_type, Expire,
-     Last_auth, Validation_key, Public_label, Info};
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    {Ip,
+     Omemo_id,
+     Client,
+     Secret,
+     Device_type,
+     Expire,
+     Last_auth,
+     Validation_key,
+     Public_label,
+     Info};
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"secret">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client,
-				    decode_device_secret(<<"https://xabber.com/protocol/devices">>,
-							 __Opts, _el),
-				    Device_type, Expire, Last_auth,
-				    Validation_key, Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"secret">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      decode_device_secret(<<"https://xabber.com/protocol/devices">>,
+                                                           __Opts,
+                                                           _el),
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"validation-key">>, _attrs, _} = _el
-			   | _els],
-			  Ip, Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth,
-				    decode_device_validation_key(<<"https://xabber.com/protocol/devices">>,
-								 __Opts, _el),
-				    Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"validation-key">>, _attrs, _} = _el
+                           | _els],
+                          Ip, Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      decode_device_validation_key(<<"https://xabber.com/protocol/devices">>,
+                                                                   __Opts,
+                                                                   _el),
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"client">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id,
-				    decode_device_client(<<"https://xabber.com/protocol/devices">>,
-							 __Opts, _el),
-				    Secret, Device_type, Expire, Last_auth,
-				    Validation_key, Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"client">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      decode_device_client(<<"https://xabber.com/protocol/devices">>,
+                                                           __Opts,
+                                                           _el),
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"info">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label,
-				    decode_device_info(<<"https://xabber.com/protocol/devices">>,
-						       __Opts, _el));
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"info">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      decode_device_info(<<"https://xabber.com/protocol/devices">>,
+                                                         __Opts,
+                                                         _el));
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"public-label">>, _attrs, _} = _el | _els],
-			  Ip, Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    decode_device_public_label(<<"https://xabber.com/protocol/devices">>,
-							       __Opts, _el),
-				    Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"public-label">>, _attrs, _} = _el | _els],
+                          Ip, Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      decode_device_public_label(<<"https://xabber.com/protocol/devices">>,
+                                                                 __Opts,
+                                                                 _el),
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"ip">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els,
-				    decode_device_ip(<<"https://xabber.com/protocol/devices">>,
-						     __Opts, _el),
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"ip">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      decode_device_ip(<<"https://xabber.com/protocol/devices">>,
+                                                       __Opts,
+                                                       _el),
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"last-auth">>, _attrs, _} = _el | _els],
-			  Ip, Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire,
-				    decode_device_last_auth(<<"https://xabber.com/protocol/devices">>,
-							    __Opts, _el),
-				    Validation_key, Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"last-auth">>, _attrs, _} = _el | _els],
+                          Ip, Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      decode_device_last_auth(<<"https://xabber.com/protocol/devices">>,
+                                                              __Opts,
+                                                              _el),
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"expire">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    decode_device_expire(<<"https://xabber.com/protocol/devices">>,
-							 __Opts, _el),
-				    Last_auth, Validation_key, Public_label,
-				    Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"expire">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      decode_device_expire(<<"https://xabber.com/protocol/devices">>,
+                                                           __Opts,
+                                                           _el),
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"omemo-id">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    decode_device_omemo_id(<<"https://xabber.com/protocol/devices">>,
-							   __Opts, _el),
-				    Client, Secret, Device_type, Expire,
-				    Last_auth, Validation_key, Public_label,
-				    Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"omemo-id">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      decode_device_omemo_id(<<"https://xabber.com/protocol/devices">>,
+                                                             __Opts,
+                                                             _el),
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [{xmlel, <<"type">>, _attrs, _} = _el | _els], Ip,
-			  Omemo_id, Client, Secret, Device_type, Expire,
-			  Last_auth, Validation_key, Public_label, Info) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret,
-				    decode_device_type(<<"https://xabber.com/protocol/devices">>,
-						       __Opts, _el),
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info);
-      _ ->
-	  decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-				    Omemo_id, Client, Secret, Device_type,
-				    Expire, Last_auth, Validation_key,
-				    Public_label, Info)
+                          [{xmlel, <<"type">>, _attrs, _} = _el | _els], Ip,
+                          Omemo_id, Client, Secret, Device_type, Expire,
+                          Last_auth, Validation_key, Public_label, Info) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      decode_device_type(<<"https://xabber.com/protocol/devices">>,
+                                                         __Opts,
+                                                         _el),
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info);
+        _ ->
+            decode_devices_device_els(__TopXMLNS,
+                                      __Opts,
+                                      _els,
+                                      Ip,
+                                      Omemo_id,
+                                      Client,
+                                      Secret,
+                                      Device_type,
+                                      Expire,
+                                      Last_auth,
+                                      Validation_key,
+                                      Public_label,
+                                      Info)
     end;
 decode_devices_device_els(__TopXMLNS, __Opts,
-			  [_ | _els], Ip, Omemo_id, Client, Secret, Device_type,
-			  Expire, Last_auth, Validation_key, Public_label,
-			  Info) ->
-    decode_devices_device_els(__TopXMLNS, __Opts, _els, Ip,
-			      Omemo_id, Client, Secret, Device_type, Expire,
-			      Last_auth, Validation_key, Public_label, Info).
+                          [_ | _els], Ip, Omemo_id, Client, Secret, Device_type,
+                          Expire, Last_auth, Validation_key, Public_label,
+                          Info) ->
+    decode_devices_device_els(__TopXMLNS,
+                              __Opts,
+                              _els,
+                              Ip,
+                              Omemo_id,
+                              Client,
+                              Secret,
+                              Device_type,
+                              Expire,
+                              Last_auth,
+                              Validation_key,
+                              Public_label,
+                              Info).
 
 decode_devices_device_attrs(__TopXMLNS,
-			    [{<<"id">>, _val} | _attrs], _Id) ->
+                            [{<<"id">>, _val} | _attrs], _Id) ->
     decode_devices_device_attrs(__TopXMLNS, _attrs, _val);
 decode_devices_device_attrs(__TopXMLNS, [_ | _attrs],
-			    Id) ->
+                            Id) ->
     decode_devices_device_attrs(__TopXMLNS, _attrs, Id);
 decode_devices_device_attrs(__TopXMLNS, [], Id) ->
     decode_devices_device_attr_id(__TopXMLNS, Id).
 
-encode_devices_device({devices_device, Id, Secret,
-		       Validation_key, Expire, Client, Info, Public_label, Ip,
-		       Last_auth, Omemo_id, Device_type},
-		      __TopXMLNS) ->
+encode_devices_device({devices_device,
+                       Id,
+                       Secret,
+                       Validation_key,
+                       Expire,
+                       Client,
+                       Info,
+                       Public_label,
+                       Ip,
+                       Last_auth,
+                       Omemo_id,
+                       Device_type},
+                      __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els = lists:reverse('encode_devices_device_$ip'(Ip,
-						     __NewTopXMLNS,
-						     'encode_devices_device_$omemo_id'(Omemo_id,
-										       __NewTopXMLNS,
-										       'encode_devices_device_$client'(Client,
-														       __NewTopXMLNS,
-														       'encode_devices_device_$secret'(Secret,
-																		       __NewTopXMLNS,
-																		       'encode_devices_device_$device_type'(Device_type,
-																							    __NewTopXMLNS,
-																							    'encode_devices_device_$expire'(Expire,
-																											    __NewTopXMLNS,
-																											    'encode_devices_device_$last_auth'(Last_auth,
-																															       __NewTopXMLNS,
-																															       'encode_devices_device_$validation_key'(Validation_key,
-																																				       __NewTopXMLNS,
-																																				       'encode_devices_device_$public_label'(Public_label,
-																																									     __NewTopXMLNS,
-																																									     'encode_devices_device_$info'(Info,
-																																													   __NewTopXMLNS,
-																																													   []))))))))))),
+                                                     __NewTopXMLNS,
+                                                     'encode_devices_device_$omemo_id'(Omemo_id,
+                                                                                       __NewTopXMLNS,
+                                                                                       'encode_devices_device_$client'(Client,
+                                                                                                                       __NewTopXMLNS,
+                                                                                                                       'encode_devices_device_$secret'(Secret,
+                                                                                                                                                       __NewTopXMLNS,
+                                                                                                                                                       'encode_devices_device_$device_type'(Device_type,
+                                                                                                                                                                                            __NewTopXMLNS,
+                                                                                                                                                                                            'encode_devices_device_$expire'(Expire,
+                                                                                                                                                                                                                            __NewTopXMLNS,
+                                                                                                                                                                                                                            'encode_devices_device_$last_auth'(Last_auth,
+                                                                                                                                                                                                                                                               __NewTopXMLNS,
+                                                                                                                                                                                                                                                               'encode_devices_device_$validation_key'(Validation_key,
+                                                                                                                                                                                                                                                                                                       __NewTopXMLNS,
+                                                                                                                                                                                                                                                                                                       'encode_devices_device_$public_label'(Public_label,
+                                                                                                                                                                                                                                                                                                                                             __NewTopXMLNS,
+                                                                                                                                                                                                                                                                                                                                             'encode_devices_device_$info'(Info,
+                                                                                                                                                                                                                                                                                                                                                                           __NewTopXMLNS,
+                                                                                                                                                                                                                                                                                                                                                                           []))))))))))),
     _attrs = encode_devices_device_attr_id(Id,
-					   xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-								      __TopXMLNS)),
+                                           xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                      __TopXMLNS)),
     {xmlel, <<"device">>, _attrs, _els}.
 
 'encode_devices_device_$ip'(undefined, __TopXMLNS,
-			    _acc) ->
+                            _acc) ->
     _acc;
 'encode_devices_device_$ip'(Ip, __TopXMLNS, _acc) ->
     [encode_device_ip(Ip, __TopXMLNS) | _acc].
 
 'encode_devices_device_$omemo_id'(undefined, __TopXMLNS,
-				  _acc) ->
+                                  _acc) ->
     _acc;
 'encode_devices_device_$omemo_id'(Omemo_id, __TopXMLNS,
-				  _acc) ->
+                                  _acc) ->
     [encode_device_omemo_id(Omemo_id, __TopXMLNS) | _acc].
 
 'encode_devices_device_$client'(undefined, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     _acc;
 'encode_devices_device_$client'(Client, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     [encode_device_client(Client, __TopXMLNS) | _acc].
 
 'encode_devices_device_$secret'(undefined, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     _acc;
 'encode_devices_device_$secret'(Secret, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     [encode_device_secret(Secret, __TopXMLNS) | _acc].
 
 'encode_devices_device_$device_type'(undefined,
-				     __TopXMLNS, _acc) ->
+                                     __TopXMLNS, _acc) ->
     _acc;
 'encode_devices_device_$device_type'(Device_type,
-				     __TopXMLNS, _acc) ->
+                                     __TopXMLNS, _acc) ->
     [encode_device_type(Device_type, __TopXMLNS) | _acc].
 
 'encode_devices_device_$expire'(undefined, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     _acc;
 'encode_devices_device_$expire'(Expire, __TopXMLNS,
-				_acc) ->
+                                _acc) ->
     [encode_device_expire(Expire, __TopXMLNS) | _acc].
 
 'encode_devices_device_$last_auth'(undefined,
-				   __TopXMLNS, _acc) ->
+                                   __TopXMLNS, _acc) ->
     _acc;
 'encode_devices_device_$last_auth'(Last_auth,
-				   __TopXMLNS, _acc) ->
+                                   __TopXMLNS, _acc) ->
     [encode_device_last_auth(Last_auth, __TopXMLNS) | _acc].
 
 'encode_devices_device_$validation_key'(undefined,
-					__TopXMLNS, _acc) ->
+                                        __TopXMLNS, _acc) ->
     _acc;
 'encode_devices_device_$validation_key'(Validation_key,
-					__TopXMLNS, _acc) ->
+                                        __TopXMLNS, _acc) ->
     [encode_device_validation_key(Validation_key,
-				  __TopXMLNS)
+                                  __TopXMLNS)
      | _acc].
 
 'encode_devices_device_$public_label'(undefined,
-				      __TopXMLNS, _acc) ->
+                                      __TopXMLNS, _acc) ->
     _acc;
 'encode_devices_device_$public_label'(Public_label,
-				      __TopXMLNS, _acc) ->
+                                      __TopXMLNS, _acc) ->
     [encode_device_public_label(Public_label, __TopXMLNS)
      | _acc].
 
 'encode_devices_device_$info'(undefined, __TopXMLNS,
-			      _acc) ->
+                              _acc) ->
     _acc;
 'encode_devices_device_$info'(Info, __TopXMLNS, _acc) ->
     [encode_device_info(Info, __TopXMLNS) | _acc].
@@ -1070,51 +1480,63 @@ encode_devices_device_attr_id(_val, _acc) ->
     [{<<"id">>, _val} | _acc].
 
 decode_device_register(__TopXMLNS, __Opts,
-		       {xmlel, <<"register">>, _attrs, _els}) ->
-    Device = decode_device_register_els(__TopXMLNS, __Opts,
-					_els, error),
+                       {xmlel, <<"register">>, _attrs, _els}) ->
+    Device = decode_device_register_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        error),
     {device_register, Device}.
 
 decode_device_register_els(__TopXMLNS, __Opts, [],
-			   Device) ->
+                           Device) ->
     case Device of
-      error ->
-	  erlang:error({xmpp_codec,
-			{missing_tag, <<"device">>, __TopXMLNS}});
-      {value, Device1} -> Device1
+        error ->
+            erlang:error({xmpp_codec,
+                          {missing_tag, <<"device">>, __TopXMLNS}});
+        {value, Device1} -> Device1
     end;
 decode_device_register_els(__TopXMLNS, __Opts,
-			   [{xmlel, <<"device">>, _attrs, _} = _el | _els],
-			   Device) ->
-    case xmpp_codec:get_attr(<<"xmlns">>, _attrs,
-			     __TopXMLNS)
-	of
-      <<"https://xabber.com/protocol/devices">> ->
-	  decode_device_register_els(__TopXMLNS, __Opts, _els,
-				     {value,
-				      decode_devices_device(<<"https://xabber.com/protocol/devices">>,
-							    __Opts, _el)});
-      _ ->
-	  decode_device_register_els(__TopXMLNS, __Opts, _els,
-				     Device)
+                           [{xmlel, <<"device">>, _attrs, _} = _el | _els],
+                           Device) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"https://xabber.com/protocol/devices">> ->
+            decode_device_register_els(__TopXMLNS,
+                                       __Opts,
+                                       _els,
+                                       {value,
+                                        decode_devices_device(<<"https://xabber.com/protocol/devices">>,
+                                                              __Opts,
+                                                              _el)});
+        _ ->
+            decode_device_register_els(__TopXMLNS,
+                                       __Opts,
+                                       _els,
+                                       Device)
     end;
 decode_device_register_els(__TopXMLNS, __Opts,
-			   [_ | _els], Device) ->
-    decode_device_register_els(__TopXMLNS, __Opts, _els,
-			       Device).
+                           [_ | _els], Device) ->
+    decode_device_register_els(__TopXMLNS,
+                               __Opts,
+                               _els,
+                               Device).
 
 encode_device_register({device_register, Device},
-		       __TopXMLNS) ->
+                       __TopXMLNS) ->
     __NewTopXMLNS =
-	xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
-				    [], __TopXMLNS),
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/devices">>,
+                                    [],
+                                    __TopXMLNS),
     _els =
-	lists:reverse('encode_device_register_$device'(Device,
-						       __NewTopXMLNS, [])),
+        lists:reverse('encode_device_register_$device'(Device,
+                                                       __NewTopXMLNS,
+                                                       [])),
     _attrs = xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-					__TopXMLNS),
+                                        __TopXMLNS),
     {xmlel, <<"register">>, _attrs, _els}.
 
 'encode_device_register_$device'(Device, __TopXMLNS,
-				 _acc) ->
+                                 _acc) ->
     [encode_devices_device(Device, __TopXMLNS) | _acc].
