@@ -130,6 +130,8 @@ Rules = [
 			    ]}]), []},
 	 {[deps], os:getenv("TRAVIS") == "true",
 	  AppendList([{coveralls, ".*", {git, "https://github.com/markusn/coveralls-erl.git", "master"}}]), []},
+	 {[deps], os:getenv("ERLTIDY") == "true",
+	  AppendList([{erl_tidy, ".*", {git, "https://github.com/richcarl/erl_tidy.git", {branch, "master"}}}]), []},
 	 {[post_hooks], os:getenv("TRAVIS") == "true",
 	  AppendList([{eunit, "echo '\n%%! -pa .eunit/ deps/coveralls/ebin\nmain(_)->{ok,F}=file:open(\"erlang.json\",[write]),io:fwrite(F,\"~s\",[coveralls:convert_file(\".eunit/cover.coverdata\", \""++JobId++"\", \"travis-ci\",\"\")]).' > getcover.erl"},
 		      {eunit, "escript ./getcover.erl"}]), []},
