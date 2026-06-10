@@ -302,11 +302,6 @@ get_mod(<<"offline">>,
 get_mod(<<"actions">>,
         <<"http://jabber.org/protocol/commands">>) ->
     xep0050;
-get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
-    rfc6120;
-get_mod(<<"bad-protocol">>,
-        <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
-    rfc6120;
 get_mod(<<"mechanisms">>,
         <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -319,9 +314,6 @@ get_mod(<<"security">>,
         <<"https://xabber.com/protocol/push">>) ->
     xabberpush;
 get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
-get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
-    xep0280;
-get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(<<"avatar">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
@@ -596,6 +588,9 @@ get_mod(<<"always">>, <<"urn:xmpp:mam:1">>) -> xep0313;
 get_mod(<<"errors">>,
         <<"urn:xmpp:features:dialback">>) ->
     xep0220;
+get_mod(<<"cancel">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"host-gone">>,
         <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -798,6 +793,9 @@ get_mod(<<"enable">>, <<"urn:xmpp:push:0">>) -> xep0357;
 get_mod(<<"revoke-all">>,
         <<"https://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"schedule">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"time">>, <<"urn:xmpp:time">>) -> xep0202;
 get_mod(<<"invalid-namespace">>,
         <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
@@ -857,6 +855,9 @@ get_mod(<<"x">>,
 get_mod(<<"defaults">>,
         <<"https://xabber.com/protocol/permissions">>) ->
     xep_permissions;
+get_mod(<<"cancelled">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"stream:features">>, <<"jabber:server">>) ->
     rfc6120;
 get_mod(<<"request">>,
@@ -994,6 +995,12 @@ get_mod(<<"default">>,
 get_mod(<<"unread">>,
         <<"https://xabber.com/protocol/synchronization">>) ->
     xep_sync;
+get_mod(<<"failed">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
+get_mod(<<"deferred">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"show">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"FAX">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"subscribe">>, <<"urn:xmpp:mucsub:0">>) ->
@@ -1166,6 +1173,9 @@ get_mod(<<"present">>,
 get_mod(<<"search">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
+get_mod(<<"query">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"reset">>,
         <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
     rfc6120;
@@ -1346,6 +1356,9 @@ get_mod(<<"note">>,
 get_mod(<<"body">>,
         <<"https://xabber.com/protocol/rewrite">>) ->
     xep_rewrite;
+get_mod(<<"scheduled">>,
+        <<"https://xabber.com/protocol/schedule">>) ->
+    xep_schedule;
 get_mod(<<"message">>, <<"jabber:server">>) -> rfc6120;
 get_mod(<<"MIDDLE">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"activate">>,
@@ -1798,6 +1811,14 @@ get_mod(<<"slot">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
 get_mod(<<"digest">>, <<"jabber:iq:auth">>) -> xep0078;
 get_mod(<<"REGION">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
+    rfc6120;
+get_mod(<<"bad-protocol">>,
+        <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
+    rfc6120;
+get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
+    xep0280;
+get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -1809,6 +1830,7 @@ get_mod({groups_decline}) -> xep_groups;
 get_mod({sync_call, _}) -> xep_sync;
 get_mod({last, _, _}) -> xep0012;
 get_mod({sync_unread, _, _}) -> xep_sync;
+get_mod({schedule_deferred, _, _}) -> xep_schedule;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
 get_mod({xabber_push_disable, _, _}) -> xabberpush;
@@ -1877,6 +1899,7 @@ get_mod({carbons_received, _}) -> xep0280;
 get_mod({carbons_sent, _}) -> xep0280;
 get_mod({origin_id, _}) -> xep0359;
 get_mod({sync_query, _, _, _, _}) -> xep_sync;
+get_mod({schedule_failed, _}) -> xep_schedule;
 get_mod({disco_items, _, _, _}) -> xep0030;
 get_mod({vcard_xupdate, _}) -> xep0153;
 get_mod({sync_synchronization}) -> xep_sync;
@@ -1927,11 +1950,13 @@ get_mod({vcard_label, _, _, _, _, _, _, _, _}) ->
     xep0054;
 get_mod({groups_avatar, _, _}) -> xep_groups;
 get_mod({markup_bold}) -> xep_markup;
+get_mod({schedule_query, _, _, _}) -> xep_schedule;
 get_mod({stats, _, _}) -> xep0039;
 get_mod({muc, _, _}) -> xep0045;
 get_mod({carbons_enable}) -> xep0280;
 get_mod({carbons_private}) -> xep0280;
 get_mod({mix_leave}) -> xep0369;
+get_mod({schedule_cancel, _}) -> xep_schedule;
 get_mod({shim, _}) -> xep0131;
 get_mod({mam_archived, _, _}) -> xep0313;
 get_mod({mix_participant, _, _}) -> xep0369;
@@ -1997,6 +2022,8 @@ get_mod({xcaptcha, _}) -> xep0158;
 get_mod({avatar_data, _}) -> xep0084;
 get_mod({groups_user, _, _, _, _, _, _, _, _}) ->
     xep_groups;
+get_mod({schedule_scheduled, _, _, _, _, _, _}) ->
+    xep_schedule;
 get_mod({media_uri, _, _}) -> xep0221;
 get_mod({device_register, _}) -> xep_devices;
 get_mod({sasl_success, _}) -> rfc6120;
@@ -2009,18 +2036,10 @@ get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbertoken_query_items, _}) -> xabbertoken;
 get_mod({files_sources, _}) -> xep_files;
-get_mod({identity, _, _, _, _}) -> xep0030;
-get_mod({redirect, _}) -> rfc6120;
-get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({muc_owner, _, _, _}) -> xep0045;
-get_mod({groups_last, _}) -> xep_groups;
 get_mod({groups_pinned, _}) -> xep_groups;
-get_mod({replace, _, _, _, _, _, _, _, _}) ->
-    xep_rewrite;
 get_mod({sync_retract, _}) -> xep_sync;
 get_mod({sync_displayed, _}) -> xep_sync;
-get_mod({sync_delivered, _}) -> xep_sync;
-get_mod({sync_last, _}) -> xep_sync;
 get_mod({bookmark_url, _, _}) -> xep0048;
 get_mod({gone, _}) -> rfc6120;
 get_mod({sasl_response, _}) -> rfc6120;
@@ -2186,6 +2205,8 @@ get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
 get_mod({xabber_push_enable, _, _, _, _}) -> xabberpush;
 get_mod({groups_sys_msg, _, _}) -> xep_groups;
+get_mod({schedule_schedule, _, _, _, _}) ->
+    xep_schedule;
 get_mod({vcard_tel,
          _,
          _,
@@ -2217,4 +2238,13 @@ get_mod({addresses, _}) -> xep0033;
 get_mod({push_call}) -> xabberpush;
 get_mod({groups_contacts, _}) -> xep_groups;
 get_mod({groups_domains, _}) -> xep_groups;
+get_mod({identity, _, _, _, _}) -> xep0030;
+get_mod({redirect, _}) -> rfc6120;
+get_mod({muc_history, _, _, _, _}) -> xep0045;
+get_mod({groups_last, _}) -> xep_groups;
+get_mod({replace, _, _, _, _, _, _, _, _}) ->
+    xep_rewrite;
+get_mod({sync_delivered, _}) -> xep_sync;
+get_mod({sync_last, _}) -> xep_sync;
+get_mod({schedule_cancelled, _}) -> xep_schedule;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).

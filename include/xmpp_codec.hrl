@@ -160,8 +160,8 @@
                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xmppreference() :: #xmppreference{}.
 
--record(groups_last, {stamp :: erlang:timestamp()}).
--type groups_last() :: #groups_last{}.
+-record(schedule_cancelled, {id = <<>> :: binary()}).
+-type schedule_cancelled() :: #schedule_cancelled{}.
 
 -record(markup_quote, {}).
 -type markup_quote() :: #markup_quote{}.
@@ -192,10 +192,6 @@
 
 -record(legacy_auth_feature, {}).
 -type legacy_auth_feature() :: #legacy_auth_feature{}.
-
--record(bind, {jid :: undefined | jid:jid(),
-               resource = <<>> :: binary()}).
--type bind() :: #bind{}.
 
 -record(rosterver_feature, {}).
 -type rosterver_feature() :: #rosterver_feature{}.
@@ -375,6 +371,9 @@
 -record(vcard_org, {name :: 'undefined' | binary(),
                     units = [] :: [binary()]}).
 -type vcard_org() :: #vcard_org{}.
+
+-record(schedule_cancel, {id = <<>> :: binary()}).
+-type schedule_cancel() :: #schedule_cancel{}.
 
 -record(sync_displayed, {id = <<>> :: binary()}).
 -type sync_displayed() :: #sync_displayed{}.
@@ -651,34 +650,6 @@
 -record(groups_kick, {jid :: undefined | jid:jid()}).
 -type groups_kick() :: #groups_kick{}.
 
--record(groups_user, {id = <<>> :: binary(),
-                      jid :: undefined | jid:jid(),
-                      role :: 'undefined' | binary(),
-                      badge :: 'undefined' | binary(),
-                      nickname :: 'undefined' | binary(),
-                      avatar :: 'undefined' | #groups_avatar{},
-                      last :: 'undefined' | #groups_last{},
-                      p2p = false :: boolean()}).
--type groups_user() :: #groups_user{}.
-
--record(groups_mentions, {members = [] :: [#groups_user{}]}).
--type groups_mentions() :: #groups_mentions{}.
-
--record(groups_sys_msg, {type = <<>> :: binary(),
-                         actor :: 'undefined' | #groups_user{}}).
--type groups_sys_msg() :: #groups_sys_msg{}.
-
--record(groups_x, {author :: 'undefined' | #groups_user{},
-                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type groups_x() :: #groups_x{}.
-
--record(groups_invite, {jid :: undefined | jid:jid(),
-                        target :: undefined | jid:jid(),
-                        send :: 'false' | 'true' | 'undefined',
-                        reason :: 'undefined' | binary(),
-                        user :: 'undefined' | #groups_user{}}).
--type groups_invite() :: #groups_invite{}.
-
 -record(nick, {name = <<>> :: binary()}).
 -type nick() :: #nick{}.
 
@@ -687,6 +658,10 @@
 
 -record(muc_subscriptions, {list = [] :: [jid:jid()]}).
 -type muc_subscriptions() :: #muc_subscriptions{}.
+
+-record(schedule_deferred, {id = <<>> :: binary(),
+                            'deliver-at' :: erlang:timestamp()}).
+-type schedule_deferred() :: #schedule_deferred{}.
 
 -record(sync_last, {sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type sync_last() :: #sync_last{}.
@@ -870,12 +845,6 @@
                 fields = [] :: [#xdata_field{}]}).
 -type xdata() :: #xdata{}.
 
--record(groups_members, {members = [] :: [#groups_user{}],
-                         id :: 'undefined' | binary(),
-                         version :: 'undefined' | binary(),
-                         xdata :: 'undefined' | #xdata{}}).
--type groups_members() :: #groups_members{}.
-
 -record(xabber_push_notification, {xdata :: 'undefined' | #xdata{},
                                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type xabber_push_notification() :: #xabber_push_notification{}.
@@ -897,13 +866,24 @@
                      xdata :: 'undefined' | #xdata{}}).
 -type ps_options() :: #ps_options{}.
 
--record(ps_event, {items :: 'undefined' | #ps_items{},
-                   purge :: 'undefined' | binary(),
-                   subscription :: 'undefined' | #ps_subscription{},
-                   delete :: 'undefined' | {binary(),binary()},
-                   create :: 'undefined' | binary(),
-                   configuration :: 'undefined' | {binary(),'undefined' | #xdata{}}}).
--type ps_event() :: #ps_event{}.
+-record(schedule_scheduled, {id = <<>> :: binary(),
+                             conversation :: jid:jid(),
+                             type = <<>> :: binary(),
+                             'deliver-at' :: erlang:timestamp(),
+                             status :: 'failed' | 'pending' | 'undefined',
+                             message :: 'undefined' | #message{}}).
+-type schedule_scheduled() :: #schedule_scheduled{}.
+
+-record(schedule_query, {conversation :: undefined | jid:jid(),
+                         type = <<>> :: binary(),
+                         scheduled = [] :: [#schedule_scheduled{}]}).
+-type schedule_query() :: #schedule_query{}.
+
+-record(schedule_schedule, {conversation :: jid:jid(),
+                            type = <<>> :: binary(),
+                            'deliver-at' :: erlang:timestamp(),
+                            message :: #message{}}).
+-type schedule_schedule() :: #schedule_schedule{}.
 
 -record(gone, {uri = <<>> :: binary()}).
 -type gone() :: #gone{}.
@@ -1008,13 +988,8 @@
                 sid = <<>> :: binary()}).
 -type oob_x() :: #oob_x{}.
 
--record(pubsub_owner, {affiliations :: 'undefined' | {binary(),[#ps_affiliation{}]},
-                       configure :: 'undefined' | {binary(),'undefined' | #xdata{}},
-                       default :: 'undefined' | {binary(),'undefined' | #xdata{}},
-                       delete :: 'undefined' | {binary(),binary()},
-                       purge :: 'undefined' | binary(),
-                       subscriptions :: 'undefined' | {binary(),[#ps_subscription{}]}}).
--type pubsub_owner() :: #pubsub_owner{}.
+-record(schedule_failed, {id = <<>> :: binary()}).
+-type schedule_failed() :: #schedule_failed{}.
 
 -record(mix_participant, {jid :: jid:jid(),
                           nick = <<>> :: binary()}).
@@ -1113,24 +1088,6 @@
                     pcode :: 'undefined' | binary(),
                     ctry :: 'undefined' | binary()}).
 -type vcard_adr() :: #vcard_adr{}.
-
--record(pubsub, {subscriptions :: 'undefined' | {binary(),[#ps_subscription{}]},
-                 subscription :: 'undefined' | #ps_subscription{},
-                 affiliations :: 'undefined' | {binary(),[#ps_affiliation{}]},
-                 publish :: 'undefined' | #ps_publish{},
-                 publish_options :: 'undefined' | #xdata{},
-                 subscribe :: 'undefined' | #ps_subscribe{},
-                 unsubscribe :: 'undefined' | #ps_unsubscribe{},
-                 options :: 'undefined' | #ps_options{},
-                 items :: 'undefined' | #ps_items{},
-                 retract :: 'undefined' | #ps_retract{},
-                 create :: 'undefined' | binary(),
-                 configure :: 'undefined' | {binary(),'undefined' | #xdata{}},
-                 default :: 'undefined' | {binary(),'undefined' | #xdata{}},
-                 delete :: 'undefined' | {binary(),binary()},
-                 purge :: 'undefined' | binary(),
-                 rsm :: 'undefined' | #rsm_set{}}).
--type pubsub() :: #pubsub{}.
 
 -record(vcard_tel, {home = false :: boolean(),
                     work = false :: boolean(),
@@ -1328,30 +1285,6 @@
                      extval :: 'undefined' | binary()}).
 -type vcard_logo() :: #vcard_logo{}.
 
--record(register, {registered = false :: boolean(),
-                   remove = false :: boolean(),
-                   instructions :: 'undefined' | binary(),
-                   username :: 'undefined' | binary(),
-                   nick :: 'undefined' | binary(),
-                   password :: 'undefined' | binary(),
-                   name :: 'undefined' | binary(),
-                   first :: 'undefined' | binary(),
-                   last :: 'undefined' | binary(),
-                   email :: 'undefined' | binary(),
-                   address :: 'undefined' | binary(),
-                   city :: 'undefined' | binary(),
-                   state :: 'undefined' | binary(),
-                   zip :: 'undefined' | binary(),
-                   phone :: 'undefined' | binary(),
-                   url :: 'undefined' | binary(),
-                   date :: 'undefined' | binary(),
-                   misc :: 'undefined' | binary(),
-                   text :: 'undefined' | binary(),
-                   key :: 'undefined' | binary(),
-                   xdata :: 'undefined' | #xdata{},
-                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type register() :: #register{}.
-
 -record(mark_received, {id = <<>> :: binary(),
                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type mark_received() :: #mark_received{}.
@@ -1409,10 +1342,6 @@
 -record(sasl_challenge, {text = <<>> :: binary()}).
 -type sasl_challenge() :: #sasl_challenge{}.
 
--record(sasl_failure, {reason :: 'aborted' | 'account-disabled' | 'bad-protocol' | 'credentials-expired' | 'encryption-required' | 'incorrect-encoding' | 'invalid-authzid' | 'invalid-mechanism' | 'malformed-request' | 'mechanism-too-weak' | 'not-authorized' | 'temporary-auth-failure' | 'undefined',
-                       text = [] :: [#text{}]}).
--type sasl_failure() :: #sasl_failure{}.
-
 -record(xabber_push_security, {cipher = <<>> :: binary(),
                                encryption_key :: 'undefined' | #xabber_encryption_key{}}).
 -type xabber_push_security() :: #xabber_push_security{}.
@@ -1446,6 +1375,109 @@
                      fallback = [] :: [#text{}],
                      addresses :: #addresses{}}).
 -type xen_notify() :: #xen_notify{}.
+
+-record(groups_last, {stamp :: erlang:timestamp()}).
+-type groups_last() :: #groups_last{}.
+
+-record(groups_user, {id = <<>> :: binary(),
+                      jid :: undefined | jid:jid(),
+                      role :: 'undefined' | binary(),
+                      badge :: 'undefined' | binary(),
+                      nickname :: 'undefined' | binary(),
+                      avatar :: 'undefined' | #groups_avatar{},
+                      last :: 'undefined' | #groups_last{},
+                      p2p = false :: boolean()}).
+-type groups_user() :: #groups_user{}.
+
+-record(groups_mentions, {members = [] :: [#groups_user{}]}).
+-type groups_mentions() :: #groups_mentions{}.
+
+-record(groups_sys_msg, {type = <<>> :: binary(),
+                         actor :: 'undefined' | #groups_user{}}).
+-type groups_sys_msg() :: #groups_sys_msg{}.
+
+-record(groups_x, {author :: 'undefined' | #groups_user{},
+                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type groups_x() :: #groups_x{}.
+
+-record(groups_invite, {jid :: undefined | jid:jid(),
+                        target :: undefined | jid:jid(),
+                        send :: 'false' | 'true' | 'undefined',
+                        reason :: 'undefined' | binary(),
+                        user :: 'undefined' | #groups_user{}}).
+-type groups_invite() :: #groups_invite{}.
+
+-record(groups_members, {members = [] :: [#groups_user{}],
+                         id :: 'undefined' | binary(),
+                         version :: 'undefined' | binary(),
+                         xdata :: 'undefined' | #xdata{}}).
+-type groups_members() :: #groups_members{}.
+
+-record(sasl_failure, {reason :: 'aborted' | 'account-disabled' | 'bad-protocol' | 'credentials-expired' | 'encryption-required' | 'incorrect-encoding' | 'invalid-authzid' | 'invalid-mechanism' | 'malformed-request' | 'mechanism-too-weak' | 'not-authorized' | 'temporary-auth-failure' | 'undefined',
+                       text = [] :: [#text{}]}).
+-type sasl_failure() :: #sasl_failure{}.
+
+-record(bind, {jid :: undefined | jid:jid(),
+               resource = <<>> :: binary()}).
+-type bind() :: #bind{}.
+
+-record(pubsub_owner, {affiliations :: 'undefined' | {binary(),[#ps_affiliation{}]},
+                       configure :: 'undefined' | {binary(),'undefined' | #xdata{}},
+                       default :: 'undefined' | {binary(),'undefined' | #xdata{}},
+                       delete :: 'undefined' | {binary(),binary()},
+                       purge :: 'undefined' | binary(),
+                       subscriptions :: 'undefined' | {binary(),[#ps_subscription{}]}}).
+-type pubsub_owner() :: #pubsub_owner{}.
+
+-record(pubsub, {subscriptions :: 'undefined' | {binary(),[#ps_subscription{}]},
+                 subscription :: 'undefined' | #ps_subscription{},
+                 affiliations :: 'undefined' | {binary(),[#ps_affiliation{}]},
+                 publish :: 'undefined' | #ps_publish{},
+                 publish_options :: 'undefined' | #xdata{},
+                 subscribe :: 'undefined' | #ps_subscribe{},
+                 unsubscribe :: 'undefined' | #ps_unsubscribe{},
+                 options :: 'undefined' | #ps_options{},
+                 items :: 'undefined' | #ps_items{},
+                 retract :: 'undefined' | #ps_retract{},
+                 create :: 'undefined' | binary(),
+                 configure :: 'undefined' | {binary(),'undefined' | #xdata{}},
+                 default :: 'undefined' | {binary(),'undefined' | #xdata{}},
+                 delete :: 'undefined' | {binary(),binary()},
+                 purge :: 'undefined' | binary(),
+                 rsm :: 'undefined' | #rsm_set{}}).
+-type pubsub() :: #pubsub{}.
+
+-record(ps_event, {items :: 'undefined' | #ps_items{},
+                   purge :: 'undefined' | binary(),
+                   subscription :: 'undefined' | #ps_subscription{},
+                   delete :: 'undefined' | {binary(),binary()},
+                   create :: 'undefined' | binary(),
+                   configuration :: 'undefined' | {binary(),'undefined' | #xdata{}}}).
+-type ps_event() :: #ps_event{}.
+
+-record(register, {registered = false :: boolean(),
+                   remove = false :: boolean(),
+                   instructions :: 'undefined' | binary(),
+                   username :: 'undefined' | binary(),
+                   nick :: 'undefined' | binary(),
+                   password :: 'undefined' | binary(),
+                   name :: 'undefined' | binary(),
+                   first :: 'undefined' | binary(),
+                   last :: 'undefined' | binary(),
+                   email :: 'undefined' | binary(),
+                   address :: 'undefined' | binary(),
+                   city :: 'undefined' | binary(),
+                   state :: 'undefined' | binary(),
+                   zip :: 'undefined' | binary(),
+                   phone :: 'undefined' | binary(),
+                   url :: 'undefined' | binary(),
+                   date :: 'undefined' | binary(),
+                   misc :: 'undefined' | binary(),
+                   text :: 'undefined' | binary(),
+                   key :: 'undefined' | binary(),
+                   xdata :: 'undefined' | #xdata{},
+                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type register() :: #register{}.
 
 -type xmpp_element() :: address() |
                         addresses() |
@@ -1643,6 +1675,13 @@
                         sasl_mechanisms() |
                         sasl_response() |
                         sasl_success() |
+                        schedule_cancel() |
+                        schedule_cancelled() |
+                        schedule_deferred() |
+                        schedule_failed() |
+                        schedule_query() |
+                        schedule_schedule() |
+                        schedule_scheduled() |
                         search() |
                         search_item() |
                         'see-other-host'() |

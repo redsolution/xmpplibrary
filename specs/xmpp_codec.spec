@@ -5511,6 +5511,80 @@
        refs = [#ref{name = perms_permissions, label = '$perms',
                     min = 0, max = 1}]}).
 
+-xml(schedule_schedule,
+     #elem{name = <<"schedule">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_schedule, '$conversation', '$type', '$deliver-at', '$message'},
+       attrs = [#attr{name = <<"conversation">>, required = true,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"type">>, required = true},
+                #attr{name = <<"deliver-at">>, required = true,
+                  dec = {dec_utc, []},
+                  enc = {enc_utc, []}}],
+       refs = [#ref{name = message, min = 1, max = 1, label = '$message'}]}).
+
+-xml(schedule_scheduled,
+     #elem{name = <<"scheduled">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_scheduled, '$id', '$conversation', '$type', '$deliver-at', '$status', '$message'},
+       attrs = [#attr{name = <<"id">>, required = true},
+                #attr{name = <<"conversation">>, required = true,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"type">>, required = true},
+                #attr{name = <<"deliver-at">>, required = true,
+                  dec = {dec_utc, []},
+                  enc = {enc_utc, []}},
+                #attr{name = <<"status">>,
+                  dec = {dec_enum, [[pending, failed]]},
+                  enc = {enc_enum, []}}],
+       refs = [#ref{name = message, min = 0, max = 1, label = '$message'}]}).
+
+-xml(schedule_query,
+     #elem{name = <<"query">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_query, '$conversation', '$type', '$scheduled'},
+       attrs = [#attr{name = <<"conversation">>,
+                  dec = {jid, decode, []},
+                  enc = {jid, encode, []}},
+                #attr{name = <<"type">>}],
+       refs = [#ref{name = schedule_scheduled, label = '$scheduled'}]}).
+
+-xml(schedule_cancel,
+     #elem{name = <<"cancel">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_cancel, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
+
+-xml(schedule_cancelled,
+     #elem{name = <<"cancelled">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_cancelled, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
+
+-xml(schedule_failed,
+     #elem{name = <<"failed">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_failed, '$id'},
+       attrs = [#attr{name = <<"id">>, required = true}]}).
+
+-xml(schedule_deferred,
+     #elem{name = <<"deferred">>,
+       xmlns = <<"https://xabber.com/protocol/schedule">>,
+       module = 'xep_schedule',
+       result = {schedule_deferred, '$id', '$deliver-at'},
+       attrs = [#attr{name = <<"id">>, required = true},
+                #attr{name = <<"deliver-at">>, required = true,
+                  dec = {dec_utc, []},
+                  enc = {enc_utc, []}}]}).
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),
