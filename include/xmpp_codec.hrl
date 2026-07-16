@@ -148,6 +148,9 @@
 -record(xabbertoken_feature, {}).
 -type xabbertoken_feature() :: #xabbertoken_feature{}.
 
+-record(xpush_encryption_key, {data = <<>> :: binary()}).
+-type xpush_encryption_key() :: #xpush_encryption_key{}.
+
 -record(ping, {}).
 -type ping() :: #ping{}.
 
@@ -248,9 +251,6 @@
 -record(ps_subscribe, {node = <<>> :: binary(),
                        jid :: jid:jid()}).
 -type ps_subscribe() :: #ps_subscribe{}.
-
--record(xabber_encryption_key, {data = <<>> :: binary()}).
--type xabber_encryption_key() :: #xabber_encryption_key{}.
 
 -record(groups_owner, {id = <<>> :: binary()}).
 -type groups_owner() :: #groups_owner{}.
@@ -356,10 +356,6 @@
 -record(perms_newbies, {perms :: 'undefined' | #perms_permissions{}}).
 -type perms_newbies() :: #perms_newbies{}.
 
--record(encrypted, {'iv-length' :: non_neg_integer(),
-                    data = <<>> :: binary()}).
--type encrypted() :: #encrypted{}.
-
 -record(bytestreams, {hosts = [] :: [#streamhost{}],
                       used :: undefined | jid:jid(),
                       activate :: undefined | jid:jid(),
@@ -380,6 +376,9 @@
 
 -record(markup_bold, {}).
 -type markup_bold() :: #markup_bold{}.
+
+-record(xpush_disable, {}).
+-type xpush_disable() :: #xpush_disable{}.
 
 -record(privacy_item, {order :: non_neg_integer(),
                        action :: 'allow' | 'deny',
@@ -485,6 +484,10 @@
                 uri = [] :: [#media_uri{}]}).
 -type media() :: #media{}.
 
+-record(xpush_encryption, {algorithm = <<>> :: binary(),
+                           key :: #xpush_encryption_key{}}).
+-type xpush_encryption() :: #xpush_encryption{}.
+
 -record(mam_prefs, {xmlns = <<>> :: binary(),
                     default :: 'always' | 'never' | 'roster' | 'undefined',
                     always :: undefined | [jid:jid()],
@@ -566,10 +569,6 @@
 -record(groups_pinned, {messages = [] :: [#groups_pinned_message{}]}).
 -type groups_pinned() :: #groups_pinned{}.
 
--record(xabber_push_disable, {jid :: jid:jid(),
-                              node = <<>> :: binary()}).
--type xabber_push_disable() :: #xabber_push_disable{}.
-
 -record(sasl_response, {text = <<>> :: binary()}).
 -type sasl_response() :: #sasl_response{}.
 
@@ -608,6 +607,10 @@
 -record(mark_displayed, {id = <<>> :: binary(),
                          sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type mark_displayed() :: #mark_displayed{}.
+
+-record(xpush_encrypted, {'iv-length' :: non_neg_integer(),
+                          data = <<>> :: binary()}).
+-type xpush_encrypted() :: #xpush_encrypted{}.
 
 -record(xabbertoken_xtoken, {token :: 'undefined' | binary(),
                              uid = <<>> :: binary(),
@@ -845,9 +848,16 @@
                 fields = [] :: [#xdata_field{}]}).
 -type xdata() :: #xdata{}.
 
--record(xabber_push_notification, {xdata :: 'undefined' | #xdata{},
-                                   sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
--type xabber_push_notification() :: #xabber_push_notification{}.
+-record(xpush_notification, {xdata :: 'undefined' | #xdata{},
+                             sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
+-type xpush_notification() :: #xpush_notification{}.
+
+-record(xpush_enable, {jid :: jid:jid(),
+                       node = <<>> :: binary(),
+                       mode = full :: 'full' | 'summary',
+                       encryption :: #xpush_encryption{},
+                       xdata :: 'undefined' | #xdata{}}).
+-type xpush_enable() :: #xpush_enable{}.
 
 -record(push_notification, {xdata :: 'undefined' | #xdata{}}).
 -type push_notification() :: #push_notification{}.
@@ -966,9 +976,6 @@
                       x400 = false :: boolean(),
                       userid :: 'undefined' | binary()}).
 -type vcard_email() :: #vcard_email{}.
-
--record(push_call, {}).
--type push_call() :: #push_call{}.
 
 -record(unblock, {items = [] :: [jid:jid()]}).
 -type unblock() :: #unblock{}.
@@ -1342,16 +1349,6 @@
 -record(sasl_challenge, {text = <<>> :: binary()}).
 -type sasl_challenge() :: #sasl_challenge{}.
 
--record(xabber_push_security, {cipher = <<>> :: binary(),
-                               encryption_key :: 'undefined' | #xabber_encryption_key{}}).
--type xabber_push_security() :: #xabber_push_security{}.
-
--record(xabber_push_enable, {jid :: jid:jid(),
-                             node = <<>> :: binary(),
-                             xdata :: 'undefined' | #xdata{},
-                             push_security :: 'undefined' | #xabber_push_security{}}).
--type xabber_push_enable() :: #xabber_push_enable{}.
-
 -record(roster_query, {items = [] :: [#roster_item{}],
                        ver :: 'undefined' | binary()}).
 -type roster_query() :: #roster_query{}.
@@ -1529,7 +1526,6 @@
                         disco_info() |
                         disco_item() |
                         disco_items() |
-                        encrypted() |
                         encrypted_message_omemo() |
                         expire() |
                         feature_csi() |
@@ -1647,7 +1643,6 @@
                         ps_unsubscribe() |
                         pubsub() |
                         pubsub_owner() |
-                        push_call() |
                         push_disable() |
                         push_enable() |
                         push_notification() |
@@ -1741,11 +1736,6 @@
                         version() |
                         voice_message() |
                         x_conference() |
-                        xabber_encryption_key() |
-                        xabber_push_disable() |
-                        xabber_push_enable() |
-                        xabber_push_notification() |
-                        xabber_push_security() |
                         xabbertoken_feature() |
                         xabbertoken_issue() |
                         xabbertoken_query() |
@@ -1763,4 +1753,10 @@
                         xen_prefs() |
                         xevent() |
                         xmpp_session() |
-                        xmppreference().
+                        xmppreference() |
+                        xpush_disable() |
+                        xpush_enable() |
+                        xpush_encrypted() |
+                        xpush_encryption() |
+                        xpush_encryption_key() |
+                        xpush_notification().

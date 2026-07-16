@@ -4017,69 +4017,62 @@
 	   refs = [#ref{name = xdata, min = 0, max = 1}]}).
 
 
--xml(xabber_push_enable,
+-xml(xpush_enable,
      #elem{name = <<"enable">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {xabber_push_enable, '$jid', '$node', '$xdata', '$push_security'},
+	   module = 'xep_push',
+	   result = {xpush_enable, '$jid', '$node', '$mode', '$encryption', '$xdata'},
 	   attrs = [#attr{name = <<"jid">>,
-			  dec = {jid, decode, []},
-			  enc = {jid, encode, []},
-			  required = true},
-		    #attr{name = <<"node">>}],
-	   refs = [
-	   #ref{name = xdata, min = 0, max = 1},
-	   #ref{name = push_security, min = 0, max = 1}
-	   ]}).
+			          dec = {jid, decode, []},
+			          enc = {jid, encode, []},
+			          required = true},
+	            #attr{name = <<"node">>, required = true},
+	            #attr{name = <<"mode">>,
+	                  default = full,
+                      enc = {enc_enum, []},
+                      dec = {dec_enum, [[full,summary]]}}],
+	   refs = [#ref{name = xdata, min = 0, max = 1},
+	           #ref{name = xpush_encryption, min = 1, max = 1,
+	                label = '$encryption'}]}).
 
--xml(xabber_push_disable,
+-xml(xpush_disable,
      #elem{name = <<"disable">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {xabber_push_disable, '$jid', '$node'},
-	   attrs = [#attr{name = <<"jid">>,
-			  dec = {jid, decode, []},
-			  enc = {jid, encode, []},
-			  required = true},
-		    #attr{name = <<"node">>}]}).
+	   module = 'xep_push',
+	   result = {xpush_disable},
+	   attrs = []}).
 
--xml(xabber_push_notification,
+-xml(xpush_notification,
      #elem{name = <<"notification">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {xabber_push_notification, '$xdata', '$_els'},
+	   module = 'xep_push',
+	   result = {xpush_notification, '$xdata', '$_els'},
 	   refs = [#ref{name = xdata, min = 0, max = 1}]}).
 
--xml(push_security,
-     #elem{name = <<"security">>,
+-xml(xpush_encryption,
+     #elem{name = <<"encryption">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {xabber_push_security, '$cipher', '$encryption_key'},
-	   attrs = [#attr{name = <<"cipher">>,
-       			  required = true}],
-	   refs = [#ref{name = encryption_key, min = 0, max = 1}]}).
+	   module = 'xep_push',
+	   result = {xpush_encryption, '$algorithm', '$key'},
+	   attrs = [#attr{name = <<"algorithm">>, required = true}],
+	   refs = [#ref{name = xpush_encryption_key, min = 1, max = 1,
+	                label = '$key'}]}).
 
--xml(encryption_key,
-     #elem{name = <<"encryption-key">>,
+-xml(xpush_encryption_key,
+     #elem{name = <<"key">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {xabber_encryption_key, '$data'},
+	   module = 'xep_push',
+	   result = {xpush_encryption_key, '$data'},
 	   cdata = #cdata{label = '$data',
 			  required = true,
 			  dec = {base64, decode, []},
 			  enc = {base64, encode, []}}}).
 
--xml(push_call,
-     #elem{name = <<"call">>,
-	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {push_call}}).
-
--xml(encrypted,
+-xml(xpush_encrypted,
      #elem{name = <<"encrypted">>,
 	   xmlns = <<"https://xabber.com/protocol/push">>,
-	   module = 'xabberpush',
-	   result = {encrypted, '$iv-length', '$data'},
+	   module = 'xep_push',
+	   result = {xpush_encrypted, '$iv-length', '$data'},
 	   attrs = [#attr{name = <<"iv-length">>,
 	              dec = {dec_int, [0, infinity]},
        			  enc = {enc_int, []},

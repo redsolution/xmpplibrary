@@ -310,9 +310,6 @@ get_mod(<<"query">>,
     xep0065;
 get_mod(<<"displayed">>, <<"jabber:x:event">>) ->
     xep0022;
-get_mod(<<"security">>,
-        <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
 get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"avatar">>,
         <<"https://xabber.com/protocol/groups">>) ->
@@ -602,9 +599,6 @@ get_mod(<<"handshake">>,
 get_mod(<<"not-subscribed">>,
         <<"http://jabber.org/protocol/pubsub#errors">>) ->
     xep0060;
-get_mod(<<"encryption-key">>,
-        <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
 get_mod(<<"query">>,
         <<"http://jabber.org/protocol/stats">>) ->
     xep0039;
@@ -747,7 +741,7 @@ get_mod(<<"invalid-jid">>,
     xep0060;
 get_mod(<<"notification">>,
         <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
+    xep_push;
 get_mod(<<"allow-p2p">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
@@ -1026,9 +1020,6 @@ get_mod(<<"item">>,
     xep0013;
 get_mod(<<"get">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
-get_mod(<<"call">>,
-        <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
 get_mod(<<"revoke-all">>,
         <<"https://xabber.com/protocol/devices">>) ->
     xep_devices;
@@ -1120,7 +1111,7 @@ get_mod(<<"purge">>,
     xep0013;
 get_mod(<<"disable">>,
         <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
+    xep_push;
 get_mod(<<"prefs">>, <<"urn:xabber:xen:0">>) -> xep_xen;
 get_mod(<<"MODEM">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"ORGUNIT">>, <<"vcard-temp">>) -> xep0054;
@@ -1282,6 +1273,9 @@ get_mod(<<"state">>,
 get_mod(<<"subject">>, <<"jabber:client">>) -> rfc6120;
 get_mod(<<"date">>, <<"jabber:iq:register">>) ->
     xep0077;
+get_mod(<<"encryption">>,
+        <<"https://xabber.com/protocol/push">>) ->
+    xep_push;
 get_mod(<<"peer-to-peer">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
@@ -1514,7 +1508,7 @@ get_mod(<<"items">>,
     xep0060;
 get_mod(<<"enable">>,
         <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
+    xep_push;
 get_mod(<<"geoloc">>,
         <<"http://jabber.org/protocol/geoloc">>) ->
     xep0080;
@@ -1570,7 +1564,7 @@ get_mod(<<"fin">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"enabled">>, <<"urn:xmpp:sm:2">>) -> xep0198;
 get_mod(<<"encrypted">>,
         <<"https://xabber.com/protocol/push">>) ->
-    xabberpush;
+    xep_push;
 get_mod(<<"expire">>,
         <<"https://xabber.com/protocol/devices">>) ->
     xep_devices;
@@ -1670,6 +1664,9 @@ get_mod(<<"auth">>,
 get_mod(<<"malformed-request">>,
         <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
+get_mod(<<"key">>,
+        <<"https://xabber.com/protocol/push">>) ->
+    xep_push;
 get_mod(<<"username">>, <<"jabber:iq:register">>) ->
     xep0077;
 get_mod(<<"paused">>,
@@ -1833,7 +1830,6 @@ get_mod({sync_unread, _, _}) -> xep_sync;
 get_mod({schedule_deferred, _, _}) -> xep_schedule;
 get_mod({compression, _}) -> xep0138;
 get_mod({mam_prefs, _, _, _, _}) -> xep0313;
-get_mod({xabber_push_disable, _, _}) -> xabberpush;
 get_mod({groups_pinned_message, _, _}) -> xep_groups;
 get_mod({groups_members, _, _, _, _}) -> xep_groups;
 get_mod({jingle_propose, _, _}) -> xep0353;
@@ -1883,7 +1879,6 @@ get_mod({vcard_temp,
          _}) ->
     xep0054;
 get_mod({mam_fin, _, _, _, _, _}) -> xep0313;
-get_mod({xabber_push_security, _, _}) -> xabberpush;
 get_mod({groups_owner, _}) -> xep_groups;
 get_mod({sticker, _}) -> xep_sticker;
 get_mod({legacy_auth, _, _, _, _}) -> xep0078;
@@ -1938,7 +1933,7 @@ get_mod({pubsub,
          _}) ->
     xep0060;
 get_mod({x_conference, _, _, _, _, _}) -> xep0249;
-get_mod({xabber_encryption_key, _}) -> xabberpush;
+get_mod({xpush_encryption_key, _}) -> xep_push;
 get_mod({devices_query, _}) -> xep_devices;
 get_mod({groups_p2p, _, _}) -> xep_groups;
 get_mod({groups_invite, _, _, _, _, _}) -> xep_groups;
@@ -1956,11 +1951,11 @@ get_mod({muc, _, _}) -> xep0045;
 get_mod({carbons_enable}) -> xep0280;
 get_mod({carbons_private}) -> xep0280;
 get_mod({mix_leave}) -> xep0369;
+get_mod({xpush_disable}) -> xep_push;
 get_mod({schedule_cancel, _}) -> xep_schedule;
 get_mod({shim, _}) -> xep0131;
 get_mod({mam_archived, _, _}) -> xep0313;
 get_mod({mix_participant, _, _}) -> xep0369;
-get_mod({encrypted, _, _}) -> xabberpush;
 get_mod({delegated, _, _}) -> xep0355;
 get_mod({xabbertoken_xtoken, _, _, _, _, _, _, _, _}) ->
     xabbertoken;
@@ -2060,7 +2055,8 @@ get_mod({sm_enable, _, _, _}) -> xep0198;
 get_mod({offline, _, _, _}) -> xep0013;
 get_mod({mix_join, _, _}) -> xep0369;
 get_mod({address, _, _, _, _, _}) -> xep0033;
-get_mod({xabber_push_notification, _, _}) -> xabberpush;
+get_mod({xpush_notification, _, _}) -> xep_push;
+get_mod({xpush_encryption, _, _}) -> xep_push;
 get_mod({thumbnail, _, _, _, _}) -> xep0264;
 get_mod({delegation, _, _}) -> xep0355;
 get_mod({groups_settings, _, _, _, _, _}) -> xep_groups;
@@ -2071,6 +2067,7 @@ get_mod({retract_user, _, _, _, _, _, _, _}) ->
 get_mod({vcard_email, _, _, _, _, _, _}) -> xep0054;
 get_mod({ps_affiliation, _, _, _, _}) -> xep0060;
 get_mod({feature_csi, _}) -> xep0352;
+get_mod({xpush_enable, _, _, _, _, _}) -> xep_push;
 get_mod({delivery_retry, _}) -> xep_delivery;
 get_mod({xabbertoken_query, _}) -> xabbertoken;
 get_mod({groups_deny_user_avatar}) -> xep_groups;
@@ -2102,6 +2099,7 @@ get_mod({groups_search, _, _, _, _, _}) -> xep_groups;
 get_mod({markup_underline}) -> xep_markup;
 get_mod({bind, _, _}) -> rfc6120;
 get_mod({rsm_first, _, _}) -> xep0059;
+get_mod({xpush_encrypted, _, _}) -> xep_push;
 get_mod({sync_conversation, _, _, _, _, _, _, _, _}) ->
     xep_sync;
 get_mod({mark_received, _, _}) -> xep0333;
@@ -2203,7 +2201,6 @@ get_mod({upload_request, _, _, _, _}) -> xep0363;
 get_mod({vcard_org, _, _}) -> xep0054;
 get_mod({ps_items, _, _, _, _, _, _}) -> xep0060;
 get_mod({muc_subscribe, _, _, _, _}) -> p1_mucsub;
-get_mod({xabber_push_enable, _, _, _, _}) -> xabberpush;
 get_mod({groups_sys_msg, _, _}) -> xep_groups;
 get_mod({schedule_schedule, _, _, _, _}) ->
     xep_schedule;
@@ -2235,7 +2232,6 @@ get_mod({replace_message, _, _, _, _, _, _}) ->
     xep_rewrite;
 get_mod({muc_subscriptions, _}) -> p1_mucsub;
 get_mod({addresses, _}) -> xep0033;
-get_mod({push_call}) -> xabberpush;
 get_mod({groups_contacts, _}) -> xep_groups;
 get_mod({groups_domains, _}) -> xep_groups;
 get_mod({identity, _, _, _, _}) -> xep0030;
