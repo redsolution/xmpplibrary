@@ -216,3 +216,4 @@
 -define(NS_XEN, <<"urn:xabber:xen:0">>).
 -define(NS_PERMS, <<"https://xabber.com/protocol/permissions">>).
 -define(NS_SCHEDULE, <<"https://xabber.com/protocol/schedule">>).
+-define(NS_HTTPIQ, <<"https://xabber.com/protocol/http-iq">>).
