@@ -5578,6 +5578,72 @@
                   dec = {dec_utc, []},
                   enc = {enc_utc, []}}]}).
 
+-xml(httpiq_endpoint,
+     #elem{name = <<"endpoint">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = {httpiq_endpoint, '$name', '$url'},
+       attrs = [#attr{name = <<"name">>, required = true},
+                #attr{name = <<"url">>, required = true}]}).
+
+-xml(httpiq_protocol,
+     #elem{name = <<"protocol">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = {httpiq_protocol, '$var', '$endpoints'},
+       attrs = [#attr{name = <<"var">>, required = true}],
+       refs = [#ref{name = httpiq_endpoint, label = '$endpoints'}]}).
+
+-xml(httpiq_endpoints,
+     #elem{name = <<"endpoints">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = {httpiq_endpoints, '$protocols'},
+       refs = [#ref{name = httpiq_protocol, label = '$protocols'}]}).
+
+-xml(httpiq_token_scope,
+     #elem{name = <<"scope">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = '$cdata',
+       cdata = #cdata{required = true, label = '$cdata'}}).
+
+-xml(httpiq_token_ttl,
+     #elem{name = <<"ttl">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata',
+                      enc = {enc_int, []},
+                      dec = {dec_int, [1, infinity]}}}).
+
+-xml(httpiq_token_expires,
+     #elem{name = <<"expires">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata',
+                      dec = {dec_utc, []},
+                      enc = {enc_utc, []}}}).
+
+-xml(httpiq_token_value,
+     #elem{name = <<"value">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = '$cdata',
+       cdata = #cdata{label = '$cdata'}}).
+
+-xml(httpiq_token,
+     #elem{name = <<"token">>,
+       xmlns = <<"https://xabber.com/protocol/http-iq">>,
+       module = 'xep_httpiq',
+       result = {httpiq_token, '$scopes', '$ttl', '$expires', '$value'},
+       refs = [#ref{name = httpiq_token_scope, label = '$scopes'},
+               #ref{name = httpiq_token_ttl, min = 0, max = 1,  label = '$ttl'},
+               #ref{name = httpiq_token_expires, min = 0, max = 1, label = '$expires'},
+               #ref{name = httpiq_token_value, min = 0, max = 1, label = '$value'}]}).
+
+
 -spec dec_tzo(_) -> {integer(), integer()}.
 dec_tzo(Val) ->
     [H1, M1] = binary:split(Val, <<":">>),

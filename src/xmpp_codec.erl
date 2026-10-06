@@ -314,11 +314,6 @@ get_mod(<<"start">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"avatar">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
-get_mod(<<"nick">>, <<"jabber:iq:register">>) ->
-    xep0077;
-get_mod(<<"internal-server-error">>,
-        <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
-    rfc6120;
 get_mod(<<"X-MEMBERSHIP">>, <<"vcard-temp">>) ->
     xep0054;
 get_mod(<<"x">>, <<"vcard-temp:x:update">>) -> xep0153;
@@ -327,12 +322,6 @@ get_mod(<<"purge">>,
     xep0060;
 get_mod(<<"with">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"address">>, <<"urn:xmpp:sic:0">>) -> xep0279;
-get_mod(<<"put">>,
-        <<"eu:siacs:conversations:http:upload">>) ->
-    xep0363;
-get_mod(<<"permissions">>,
-        <<"https://xabber.com/protocol/permissions">>) ->
-    xep_permissions;
 get_mod(<<"failure">>,
         <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
@@ -790,6 +779,9 @@ get_mod(<<"revoke-all">>,
 get_mod(<<"schedule">>,
         <<"https://xabber.com/protocol/schedule">>) ->
     xep_schedule;
+get_mod(<<"token">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"time">>, <<"urn:xmpp:time">>) -> xep0202;
 get_mod(<<"invalid-namespace">>,
         <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
@@ -921,6 +913,9 @@ get_mod(<<"URL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"mention">>,
         <<"https://xabber.com/protocol/markup">>) ->
     xep_markup;
+get_mod(<<"endpoint">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"jid-malformed">>,
         <<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -948,6 +943,9 @@ get_mod(<<"enable">>, <<"urn:xmpp:carbons:2">>) ->
 get_mod(<<"client">>,
         <<"https://xabber.com/protocol/auth-tokens">>) ->
     xabbertoken;
+get_mod(<<"endpoints">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"block">>, <<"urn:xmpp:blocking">>) ->
     xep0191;
 get_mod(<<"delete">>,
@@ -1149,6 +1147,9 @@ get_mod(<<"fin">>, <<"urn:xmpp:mam:2">>) -> xep0313;
 get_mod(<<"replace">>,
         <<"https://xabber.com/protocol/rewrite#notify">>) ->
     xep_rewrite;
+get_mod(<<"expires">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"ver">>, <<"urn:xmpp:features:rosterver">>) ->
     rfc6121;
 get_mod(<<"body">>, <<"jabber:client">>) -> rfc6120;
@@ -1488,6 +1489,9 @@ get_mod(<<"localpart">>,
 get_mod(<<"reject">>,
         <<"urn:xmpp:jingle-message:0">>) ->
     xep0353;
+get_mod(<<"ttl">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"policy-violation">>,
         <<"urn:ietf:params:xml:ns:xmpp-stanzas">>) ->
     rfc6120;
@@ -1792,6 +1796,9 @@ get_mod(<<"last-auth">>,
 get_mod(<<"info">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
+get_mod(<<"protocol">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"url">>, <<"jabber:iq:register">>) -> xep0077;
 get_mod(<<"GIVEN">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"first">>, <<"jabber:iq:register">>) ->
@@ -1808,14 +1815,31 @@ get_mod(<<"slot">>, <<"urn:xmpp:http:upload">>) ->
     xep0363;
 get_mod(<<"digest">>, <<"jabber:iq:auth">>) -> xep0078;
 get_mod(<<"REGION">>, <<"vcard-temp">>) -> xep0054;
+get_mod(<<"scope">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"thread">>, <<"jabber:component:accept">>) ->
     rfc6120;
 get_mod(<<"bad-protocol">>,
         <<"urn:ietf:params:xml:ns:xmpp-sasl">>) ->
     rfc6120;
+get_mod(<<"value">>,
+        <<"https://xabber.com/protocol/http-iq">>) ->
+    xep_httpiq;
 get_mod(<<"received">>, <<"urn:xmpp:carbons:2">>) ->
     xep0280;
 get_mod(<<"x">>, <<"jabber:x:event">>) -> xep0022;
+get_mod(<<"nick">>, <<"jabber:iq:register">>) ->
+    xep0077;
+get_mod(<<"internal-server-error">>,
+        <<"urn:ietf:params:xml:ns:xmpp-streams">>) ->
+    rfc6120;
+get_mod(<<"put">>,
+        <<"eu:siacs:conversations:http:upload">>) ->
+    xep0363;
+get_mod(<<"permissions">>,
+        <<"https://xabber.com/protocol/permissions">>) ->
+    xep_permissions;
 get_mod(Name, XMLNS) ->
     xmpp_codec_external:lookup(Name, XMLNS).
 
@@ -2031,21 +2055,16 @@ get_mod({media, _, _, _}) -> xep0221;
 get_mod({xabbertoken_revoke_all}) -> xabbertoken;
 get_mod({xabbertoken_query_items, _}) -> xabbertoken;
 get_mod({files_sources, _}) -> xep_files;
+get_mod({httpiq_endpoints, _}) -> xep_httpiq;
 get_mod({muc_owner, _, _, _}) -> xep0045;
 get_mod({groups_pinned, _}) -> xep_groups;
 get_mod({sync_retract, _}) -> xep_sync;
 get_mod({sync_displayed, _}) -> xep_sync;
 get_mod({bookmark_url, _, _}) -> xep0048;
 get_mod({gone, _}) -> rfc6120;
-get_mod({sasl_response, _}) -> rfc6120;
 get_mod({chatstate, _}) -> xep0085;
-get_mod({muc_unique, _}) -> xep0045;
 get_mod({receipt_response, _}) -> xep0184;
 get_mod({sic, _, _, _}) -> xep0279;
-get_mod({devices_revoke, _}) -> xep_devices;
-get_mod({groups_revoke, _}) -> xep_groups;
-get_mod({voice_message, _}) -> xep_voice;
-get_mod({idle, _}) -> xep0319;
 get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
@@ -2106,6 +2125,7 @@ get_mod({mark_received, _, _}) -> xep0333;
 get_mod({mark_displayed, _, _}) -> xep0333;
 get_mod({jingle_reject, _, _}) -> xep0353;
 get_mod({xen_jid, _, _}) -> xep_xen;
+get_mod({httpiq_endpoint, _, _}) -> xep_httpiq;
 get_mod({caps, _, _, _, _}) -> xep0115;
 get_mod({xdata, _, _, _, _, _, _}) -> xep0004;
 get_mod({ps_options, _, _, _, _}) -> xep0060;
@@ -2168,6 +2188,7 @@ get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({vcard_name, _, _, _, _, _}) -> xep0054;
 get_mod({csi, _}) -> xep0352;
+get_mod({httpiq_token, _, _, _, _}) -> xep_httpiq;
 get_mod({sm_a, _, _}) -> xep0198;
 get_mod({privacy_query, _, _, _}) -> xep0016;
 get_mod({block, _}) -> xep0191;
@@ -2243,4 +2264,11 @@ get_mod({replace, _, _, _, _, _, _, _, _}) ->
 get_mod({sync_delivered, _}) -> xep_sync;
 get_mod({sync_last, _}) -> xep_sync;
 get_mod({schedule_cancelled, _}) -> xep_schedule;
+get_mod({sasl_response, _}) -> rfc6120;
+get_mod({muc_unique, _}) -> xep0045;
+get_mod({devices_revoke, _}) -> xep_devices;
+get_mod({groups_revoke, _}) -> xep_groups;
+get_mod({voice_message, _}) -> xep_voice;
+get_mod({idle, _}) -> xep0319;
+get_mod({httpiq_protocol, _, _}) -> xep_httpiq;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).

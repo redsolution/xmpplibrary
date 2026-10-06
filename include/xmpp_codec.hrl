@@ -585,6 +585,12 @@
 -record(origin_id, {id = <<>> :: binary()}).
 -type origin_id() :: #origin_id{}.
 
+-record(httpiq_token, {scopes = [] :: [binary()],
+                       ttl :: 'undefined' | pos_integer(),
+                       expires :: undefined | erlang:timestamp(),
+                       value :: 'undefined' | binary()}).
+-type httpiq_token() :: #httpiq_token{}.
+
 -record(retract_message, {xmlns = <<>> :: binary(),
                           id :: 'undefined' | binary(),
                           by :: undefined | jid:jid(),
@@ -658,9 +664,6 @@
 
 -record(groups_contacts, {list = [] :: [jid:jid()]}).
 -type groups_contacts() :: #groups_contacts{}.
-
--record(muc_subscriptions, {list = [] :: [jid:jid()]}).
--type muc_subscriptions() :: #muc_subscriptions{}.
 
 -record(schedule_deferred, {id = <<>> :: binary(),
                             'deliver-at' :: erlang:timestamp()}).
@@ -1292,6 +1295,17 @@
                      extval :: 'undefined' | binary()}).
 -type vcard_logo() :: #vcard_logo{}.
 
+-record(httpiq_endpoint, {name = <<>> :: binary(),
+                          url = <<>> :: binary()}).
+-type httpiq_endpoint() :: #httpiq_endpoint{}.
+
+-record(httpiq_protocol, {var = <<>> :: binary(),
+                          endpoints = [] :: [#httpiq_endpoint{}]}).
+-type httpiq_protocol() :: #httpiq_protocol{}.
+
+-record(httpiq_endpoints, {protocols = [] :: [#httpiq_protocol{}]}).
+-type httpiq_endpoints() :: #httpiq_endpoints{}.
+
 -record(mark_received, {id = <<>> :: binary(),
                         sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type mark_received() :: #mark_received{}.
@@ -1476,6 +1490,9 @@
                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type register() :: #register{}.
 
+-record(muc_subscriptions, {list = [] :: [jid:jid()]}).
+-type muc_subscriptions() :: #muc_subscriptions{}.
+
 -type xmpp_element() :: address() |
                         addresses() |
                         adhoc_actions() |
@@ -1568,6 +1585,10 @@
                         groups_x() |
                         handshake() |
                         hint() |
+                        httpiq_endpoint() |
+                        httpiq_endpoints() |
+                        httpiq_protocol() |
+                        httpiq_token() |
                         identity() |
                         idle() |
                         iq() |
