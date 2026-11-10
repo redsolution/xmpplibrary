@@ -35,6 +35,12 @@ do_decode(<<"unread">>,
     decode_sync_unread(<<"https://xabber.com/protocol/synchronization">>,
                        Opts,
                        El);
+do_decode(<<"rewrite">>,
+          <<"https://xabber.com/protocol/synchronization">>, El,
+          Opts) ->
+    decode_sync_rewrite(<<"https://xabber.com/protocol/synchronization">>,
+                        Opts,
+                        El);
 do_decode(<<"retract">>,
           <<"https://xabber.com/protocol/synchronization">>, El,
           Opts) ->
@@ -81,6 +87,8 @@ tags() ->
       <<"https://xabber.com/protocol/synchronization">>},
      {<<"unread">>,
       <<"https://xabber.com/protocol/synchronization">>},
+     {<<"rewrite">>,
+      <<"https://xabber.com/protocol/synchronization">>},
      {<<"retract">>,
       <<"https://xabber.com/protocol/synchronization">>},
      {<<"metadata">>,
@@ -105,6 +113,8 @@ do_encode({sync_metadata, _, _} = Metadata, TopXMLNS) ->
     encode_sync_metadata(Metadata, TopXMLNS);
 do_encode({sync_retract, _} = Retract, TopXMLNS) ->
     encode_sync_retract(Retract, TopXMLNS);
+do_encode({sync_rewrite, _} = Rewrite, TopXMLNS) ->
+    encode_sync_rewrite(Rewrite, TopXMLNS);
 do_encode({sync_unread, _, _} = Unread, TopXMLNS) ->
     encode_sync_unread(Unread, TopXMLNS);
 do_encode({sync_displayed, _} = Displayed, TopXMLNS) ->
@@ -133,6 +143,7 @@ do_get_name({sync_last, _}) -> <<"last-message">>;
 do_get_name({sync_metadata, _, _}) -> <<"metadata">>;
 do_get_name({sync_query, _, _, _, _}) -> <<"query">>;
 do_get_name({sync_retract, _}) -> <<"retract">>;
+do_get_name({sync_rewrite, _}) -> <<"rewrite">>;
 do_get_name({sync_synchronization}) ->
     <<"synchronization">>;
 do_get_name({sync_unread, _, _}) -> <<"unread">>.
@@ -160,6 +171,8 @@ do_get_ns({sync_metadata, _, _}) ->
 do_get_ns({sync_query, _, _, _, _}) ->
     <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({sync_retract, _}) ->
+    <<"https://xabber.com/protocol/synchronization">>;
+do_get_ns({sync_rewrite, _}) ->
     <<"https://xabber.com/protocol/synchronization">>;
 do_get_ns({sync_synchronization}) ->
     <<"https://xabber.com/protocol/synchronization">>;
@@ -224,6 +237,7 @@ pp(sync_conversation, 8) ->
      sub_els];
 pp(sync_metadata, 2) -> [node, sub_els];
 pp(sync_retract, 1) -> [version];
+pp(sync_rewrite, 1) -> [version];
 pp(sync_unread, 2) -> [count, 'after'];
 pp(sync_displayed, 1) -> [id];
 pp(sync_delivered, 1) -> [id];
@@ -237,6 +251,7 @@ records() ->
      {sync_conversation, 8},
      {sync_metadata, 2},
      {sync_retract, 1},
+     {sync_rewrite, 1},
      {sync_unread, 2},
      {sync_displayed, 1},
      {sync_delivered, 1},
@@ -507,6 +522,53 @@ decode_sync_unread_attr_after(__TopXMLNS, _val) -> _val.
 
 encode_sync_unread_attr_after(_val, _acc) ->
     [{<<"after">>, _val} | _acc].
+
+decode_sync_rewrite(__TopXMLNS, __Opts,
+                    {xmlel, <<"rewrite">>, _attrs, _els}) ->
+    Version = decode_sync_rewrite_attrs(__TopXMLNS,
+                                        _attrs,
+                                        undefined),
+    {sync_rewrite, Version}.
+
+decode_sync_rewrite_attrs(__TopXMLNS,
+                          [{<<"version">>, _val} | _attrs], _Version) ->
+    decode_sync_rewrite_attrs(__TopXMLNS, _attrs, _val);
+decode_sync_rewrite_attrs(__TopXMLNS, [_ | _attrs],
+                          Version) ->
+    decode_sync_rewrite_attrs(__TopXMLNS, _attrs, Version);
+decode_sync_rewrite_attrs(__TopXMLNS, [], Version) ->
+    decode_sync_rewrite_attr_version(__TopXMLNS, Version).
+
+encode_sync_rewrite({sync_rewrite, Version},
+                    __TopXMLNS) ->
+    __NewTopXMLNS =
+        xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/synchronization">>,
+                                    [],
+                                    __TopXMLNS),
+    _els = [],
+    _attrs = encode_sync_rewrite_attr_version(Version,
+                                              xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                         __TopXMLNS)),
+    {xmlel, <<"rewrite">>, _attrs, _els}.
+
+decode_sync_rewrite_attr_version(__TopXMLNS,
+                                 undefined) ->
+    undefined;
+decode_sync_rewrite_attr_version(__TopXMLNS, _val) ->
+    case catch dec_int(_val, 0, infinity) of
+        {'EXIT', _} ->
+            erlang:error({xmpp_codec,
+                          {bad_attr_value,
+                           <<"version">>,
+                           <<"rewrite">>,
+                           __TopXMLNS}});
+        _res -> _res
+    end.
+
+encode_sync_rewrite_attr_version(undefined, _acc) ->
+    _acc;
+encode_sync_rewrite_attr_version(_val, _acc) ->
+    [{<<"version">>, enc_int(_val)} | _acc].
 
 decode_sync_retract(__TopXMLNS, __Opts,
                     {xmlel, <<"retract">>, _attrs, _els}) ->

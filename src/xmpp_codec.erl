@@ -376,6 +376,9 @@ get_mod(<<"archived">>, <<"urn:xmpp:mam:tmp">>) ->
 get_mod(<<"next">>,
         <<"http://jabber.org/protocol/commands">>) ->
     xep0050;
+get_mod(<<"rewrite">>,
+        <<"https://xabber.com/protocol/synchronization">>) ->
+    xep_sync;
 get_mod(<<"subscription">>,
         <<"http://jabber.org/protocol/pubsub">>) ->
     xep0060;
@@ -537,9 +540,6 @@ get_mod(<<"no-storage">>, <<"urn:xmpp:hints">>) ->
 get_mod(<<"stream:stream">>, <<"jabber:client">>) ->
     rfc6120;
 get_mod(<<"data">>, <<"urn:xmpp:bob">>) -> xep0231;
-get_mod(<<"invalidate">>,
-        <<"https://xabber.com/protocol/rewrite#notify">>) ->
-    xep_rewrite;
 get_mod(<<"method">>,
         <<"http://jabber.org/protocol/compress">>) ->
     xep0138;
@@ -871,9 +871,6 @@ get_mod(<<"email">>, <<"jabber:iq:register">>) ->
 get_mod(<<"event">>,
         <<"http://jabber.org/protocol/pubsub#event">>) ->
     xep0060;
-get_mod(<<"retract-all">>,
-        <<"https://xabber.com/protocol/rewrite#notify">>) ->
-    xep_rewrite;
 get_mod(<<"sticker">>,
         <<"https://xabber.com/protocol/stickers">>) ->
     xep_sticker;
@@ -903,9 +900,6 @@ get_mod(<<"delegated">>, <<"urn:xmpp:delegation:1">>) ->
 get_mod(<<"devices">>,
         <<"https://xabber.com/protocol/devices">>) ->
     xep_devices;
-get_mod(<<"retract-message">>,
-        <<"https://xabber.com/protocol/rewrite#notify">>) ->
-    xep_rewrite;
 get_mod(<<"presence">>,
         <<"jabber:component:accept">>) ->
     rfc6120;
@@ -1043,6 +1037,12 @@ get_mod(<<"revoke">>,
 get_mod(<<"group">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
+get_mod(<<"retract-archive">>,
+        <<"https://xabber.com/protocol/rewrite">>) ->
+    xep_rewrite;
+get_mod(<<"replacement">>,
+        <<"https://xabber.com/protocol/rewrite">>) ->
+    xep_rewrite;
 get_mod(<<"query">>,
         <<"https://xabber.com/protocol/rewrite">>) ->
     xep_rewrite;
@@ -1116,9 +1116,6 @@ get_mod(<<"ORGUNIT">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"UID">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"required">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"result">>, <<"urn:xmpp:mam:0">>) -> xep0313;
-get_mod(<<"body">>,
-        <<"https://xabber.com/protocol/rewrite#notify">>) ->
-    xep_rewrite;
 get_mod(<<"TEL">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"prefs">>, <<"urn:xmpp:mam:tmp">>) -> xep0313;
 get_mod(<<"captcha">>, <<"urn:xmpp:captcha">>) ->
@@ -1144,9 +1141,6 @@ get_mod(<<"MSG">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"PHONETIC">>, <<"vcard-temp">>) -> xep0054;
 get_mod(<<"jid">>, <<"urn:xmpp:mam:0">>) -> xep0313;
 get_mod(<<"fin">>, <<"urn:xmpp:mam:2">>) -> xep0313;
-get_mod(<<"replace">>,
-        <<"https://xabber.com/protocol/rewrite#notify">>) ->
-    xep_rewrite;
 get_mod(<<"expires">>,
         <<"https://xabber.com/protocol/http-iq">>) ->
     xep_httpiq;
@@ -1200,6 +1194,9 @@ get_mod(<<"members">>,
 get_mod(<<"send">>,
         <<"https://xabber.com/protocol/groups">>) ->
     xep_groups;
+get_mod(<<"invalidate">>,
+        <<"https://xabber.com/protocol/rewrite">>) ->
+    xep_rewrite;
 get_mod(<<"value">>, <<"jabber:x:data">>) -> xep0004;
 get_mod(<<"invalid-subid">>,
         <<"http://jabber.org/protocol/pubsub#errors">>) ->
@@ -1931,6 +1928,7 @@ get_mod({streamhost, _, _, _}) -> xep0065;
 get_mod({iq, _, _, _, _, _, _, _}) -> rfc6120;
 get_mod({xdata_option, _, _}) -> xep0004;
 get_mod({markup_mention, _, _}) -> xep_markup;
+get_mod({rewrite_invalidate, _, _, _}) -> xep_rewrite;
 get_mod({perms_permissions, _, _, _, _, _}) ->
     xep_permissions;
 get_mod({vcard_geo, _, _}) -> xep0054;
@@ -2065,7 +2063,7 @@ get_mod({gone, _}) -> rfc6120;
 get_mod({chatstate, _}) -> xep0085;
 get_mod({receipt_response, _}) -> xep0184;
 get_mod({sic, _, _, _}) -> xep0279;
-get_mod({sm_resumed, _, _, _}) -> xep0198;
+get_mod({sync_rewrite, _}) -> xep_sync;
 get_mod({offline_item, _, _}) -> xep0013;
 get_mod({db_verify, _, _, _, _, _, _}) -> xep0220;
 get_mod({upload_slot, _, _, _}) -> xep0363;
@@ -2079,7 +2077,6 @@ get_mod({xpush_encryption, _, _}) -> xep_push;
 get_mod({thumbnail, _, _, _, _}) -> xep0264;
 get_mod({delegation, _, _}) -> xep0355;
 get_mod({groups_settings, _, _, _, _, _}) -> xep_groups;
-get_mod({retract_invalidate, _, _, _}) -> xep_rewrite;
 get_mod({sm_enabled, _, _, _, _, _}) -> xep0198;
 get_mod({retract_user, _, _, _, _, _, _, _}) ->
     xep_rewrite;
@@ -2090,6 +2087,7 @@ get_mod({xpush_enable, _, _, _, _, _}) -> xep_push;
 get_mod({delivery_retry, _}) -> xep_delivery;
 get_mod({xabbertoken_query, _}) -> xabbertoken;
 get_mod({groups_deny_user_avatar}) -> xep_groups;
+get_mod({replace, _, _, _, _, _}) -> xep_rewrite;
 get_mod({roster_item, _, _, _, _, _, _}) -> rfc6121;
 get_mod({rsm_set, _, _, _, _, _, _, _}) -> xep0059;
 get_mod({avatar_meta, _, _}) -> xep0084;
@@ -2106,8 +2104,6 @@ get_mod({upload_request_0, _, _, _, _}) -> xep0363;
 get_mod({groups_block, _}) -> xep_groups;
 get_mod({groups_resend}) -> xep_groups;
 get_mod({markup_link, _}) -> xep_markup;
-get_mod({retract_message, _, _, _, _, _, _, _}) ->
-    xep_rewrite;
 get_mod({xen_notify, _, _, _}) -> xep_xen;
 get_mod({privacy_item, _, _, _, _, _, _, _, _}) ->
     xep0016;
@@ -2143,6 +2139,7 @@ get_mod({muc_invite, _, _, _, _}) -> xep0045;
 get_mod({retract_all, _, _, _, _, _}) -> xep_rewrite;
 get_mod({ps_event, _, _, _, _, _, _}) -> xep0060;
 get_mod({groups_x, _, _}) -> xep_groups;
+get_mod({rewrite_query, _, _}) -> xep_rewrite;
 get_mod({sasl_mechanisms, _}) -> rfc6120;
 get_mod({starttls, _}) -> rfc6120;
 get_mod({stream_start, _, _, _, _, _, _, _, _}) ->
@@ -2160,6 +2157,8 @@ get_mod({db_feature, _}) -> xep0220;
 get_mod({handshake, _}) -> xep0114;
 get_mod({xabbertoken_revoke, _}) -> xabbertoken;
 get_mod({groups_delete, _}) -> xep_groups;
+get_mod({retract_archive, _}) -> xep_rewrite;
+get_mod({replacement_message, _}) -> xep_rewrite;
 get_mod({vcard_sound, _, _, _}) -> xep0054;
 get_mod({ps_retract, _, _, _}) -> xep0060;
 get_mod({privilege_perm, _, _}) -> xep0356;
@@ -2188,6 +2187,8 @@ get_mod({bookmark_conference, _, _, _, _, _}) ->
     xep0048;
 get_mod({vcard_name, _, _, _, _, _}) -> xep0054;
 get_mod({csi, _}) -> xep0352;
+get_mod({retract_message, _, _, _, _, _}) ->
+    xep_rewrite;
 get_mod({httpiq_token, _, _, _, _}) -> xep_httpiq;
 get_mod({sm_a, _, _}) -> xep0198;
 get_mod({privacy_query, _, _, _}) -> xep0016;
@@ -2199,7 +2200,6 @@ get_mod({muc_actor, _, _}) -> xep0045;
 get_mod({nick, _}) -> xep0172;
 get_mod({groups_unblock, _}) -> xep_groups;
 get_mod({groups_kick, _}) -> xep_groups;
-get_mod({retract_query, _, _, _}) -> xep_rewrite;
 get_mod({avatar_info, _, _, _, _, _, _}) -> xep0084;
 get_mod({markup_strike}) -> xep_markup;
 get_mod({markup_quote}) -> xep_markup;
@@ -2209,6 +2209,7 @@ get_mod({privacy_list, _, _}) -> xep0016;
 get_mod({forwarded, _, _}) -> xep0297;
 get_mod({feature_sm, _}) -> xep0198;
 get_mod({stanza_id, _, _}) -> xep0359;
+get_mod({replaced_text, _, _}) -> xep_rewrite;
 get_mod({bookmark_storage, _, _}) -> xep0048;
 get_mod({sasl_failure, _, _}) -> rfc6120;
 get_mod({adhoc_note, _, _}) -> xep0050;
@@ -2259,8 +2260,6 @@ get_mod({identity, _, _, _, _}) -> xep0030;
 get_mod({redirect, _}) -> rfc6120;
 get_mod({muc_history, _, _, _, _}) -> xep0045;
 get_mod({groups_last, _}) -> xep_groups;
-get_mod({replace, _, _, _, _, _, _, _, _}) ->
-    xep_rewrite;
 get_mod({sync_delivered, _}) -> xep_sync;
 get_mod({sync_last, _}) -> xep_sync;
 get_mod({schedule_cancelled, _}) -> xep_schedule;
@@ -2271,4 +2270,5 @@ get_mod({groups_revoke, _}) -> xep_groups;
 get_mod({voice_message, _}) -> xep_voice;
 get_mod({idle, _}) -> xep0319;
 get_mod({httpiq_protocol, _, _}) -> xep_httpiq;
+get_mod({sm_resumed, _, _, _}) -> xep0198;
 get_mod(Record) -> xmpp_codec_external:lookup(Record).
