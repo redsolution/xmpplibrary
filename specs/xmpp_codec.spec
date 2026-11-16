@@ -5149,7 +5149,7 @@
      xmlns = <<"https://xabber.com/protocol/rewrite">>,
      module = 'xep_rewrite',
      result = {rewrite_invalidate, '$version', '$conversation','$type'},
-     attrs = [#attr{name = <<"type">>, required = true},
+     attrs = [#attr{name = <<"type">>},
               #attr{name = <<"version">>, required = true,
                 dec = {dec_int, [0, infinity]},
                 enc = {enc_int, []}},

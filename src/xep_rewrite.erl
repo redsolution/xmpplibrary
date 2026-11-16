@@ -842,14 +842,11 @@ encode_rewrite_invalidate({rewrite_invalidate,
 
 decode_rewrite_invalidate_attr_type(__TopXMLNS,
                                     undefined) ->
-    erlang:error({xmpp_codec,
-                  {missing_attr,
-                   <<"type">>,
-                   <<"invalidate">>,
-                   __TopXMLNS}});
+    <<>>;
 decode_rewrite_invalidate_attr_type(__TopXMLNS, _val) ->
     _val.
 
+encode_rewrite_invalidate_attr_type(<<>>, _acc) -> _acc;
 encode_rewrite_invalidate_attr_type(_val, _acc) ->
     [{<<"type">>, _val} | _acc].
 
