@@ -5136,11 +5136,11 @@
      #elem{name = <<"query">>,
        xmlns = <<"https://xabber.com/protocol/rewrite">>,
        module = 'xep_rewrite',
-       result = {rewrite_query, '$version', '$less-than'},
+       result = {rewrite_query, '$version', '$max'},
        attrs = [#attr{name = <<"version">>,
                   dec = {dec_int, [0, infinity]},
                   enc = {enc_int, []}},
-                #attr{name = <<"less-than">>,
+                #attr{name = <<"max">>,
                   dec = {dec_int, [1, infinity]},
                   enc = {enc_int, []}}]}).
 

@@ -214,7 +214,7 @@ pp(replace, 5) ->
     [sid, oid, replacement, version, conversation];
 pp(replaced_text, 2) -> [lang, data];
 pp(replaced, 2) -> [stamp, body];
-pp(rewrite_query, 2) -> [version, 'less-than'];
+pp(rewrite_query, 2) -> [version, max];
 pp(rewrite_invalidate, 3) ->
     [version, conversation, type];
 pp(retract_user, 7) ->
@@ -900,53 +900,46 @@ encode_rewrite_invalidate_attr_conversation(_val,
 
 decode_rewrite_query(__TopXMLNS, __Opts,
                      {xmlel, <<"query">>, _attrs, _els}) ->
-    {Version, Less_than} =
-        decode_rewrite_query_attrs(__TopXMLNS,
-                                   _attrs,
-                                   undefined,
-                                   undefined),
-    {rewrite_query, Version, Less_than}.
+    {Version, Max} = decode_rewrite_query_attrs(__TopXMLNS,
+                                                _attrs,
+                                                undefined,
+                                                undefined),
+    {rewrite_query, Version, Max}.
 
 decode_rewrite_query_attrs(__TopXMLNS,
-                           [{<<"version">>, _val} | _attrs], _Version,
-                           Less_than) ->
+                           [{<<"version">>, _val} | _attrs], _Version, Max) ->
     decode_rewrite_query_attrs(__TopXMLNS,
                                _attrs,
                                _val,
-                               Less_than);
+                               Max);
 decode_rewrite_query_attrs(__TopXMLNS,
-                           [{<<"less-than">>, _val} | _attrs], Version,
-                           _Less_than) ->
+                           [{<<"max">>, _val} | _attrs], Version, _Max) ->
     decode_rewrite_query_attrs(__TopXMLNS,
                                _attrs,
                                Version,
                                _val);
 decode_rewrite_query_attrs(__TopXMLNS, [_ | _attrs],
-                           Version, Less_than) ->
+                           Version, Max) ->
     decode_rewrite_query_attrs(__TopXMLNS,
                                _attrs,
                                Version,
-                               Less_than);
+                               Max);
 decode_rewrite_query_attrs(__TopXMLNS, [], Version,
-                           Less_than) ->
+                           Max) ->
     {decode_rewrite_query_attr_version(__TopXMLNS, Version),
-     'decode_rewrite_query_attr_less-than'(__TopXMLNS,
-                                           Less_than)}.
+     decode_rewrite_query_attr_max(__TopXMLNS, Max)}.
 
-encode_rewrite_query({rewrite_query,
-                      Version,
-                      Less_than},
+encode_rewrite_query({rewrite_query, Version, Max},
                      __TopXMLNS) ->
     __NewTopXMLNS =
         xmpp_codec:choose_top_xmlns(<<"https://xabber.com/protocol/rewrite">>,
                                     [],
                                     __TopXMLNS),
     _els = [],
-    _attrs =
-        'encode_rewrite_query_attr_less-than'(Less_than,
-                                              encode_rewrite_query_attr_version(Version,
-                                                                                xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
-                                                                                                           __TopXMLNS))),
+    _attrs = encode_rewrite_query_attr_max(Max,
+                                           encode_rewrite_query_attr_version(Version,
+                                                                             xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                                                        __TopXMLNS))),
     {xmlel, <<"query">>, _attrs, _els}.
 
 decode_rewrite_query_attr_version(__TopXMLNS,
@@ -968,26 +961,22 @@ encode_rewrite_query_attr_version(undefined, _acc) ->
 encode_rewrite_query_attr_version(_val, _acc) ->
     [{<<"version">>, enc_int(_val)} | _acc].
 
-'decode_rewrite_query_attr_less-than'(__TopXMLNS,
-                                      undefined) ->
+decode_rewrite_query_attr_max(__TopXMLNS, undefined) ->
     undefined;
-'decode_rewrite_query_attr_less-than'(__TopXMLNS,
-                                      _val) ->
+decode_rewrite_query_attr_max(__TopXMLNS, _val) ->
     case catch dec_int(_val, 1, infinity) of
         {'EXIT', _} ->
             erlang:error({xmpp_codec,
                           {bad_attr_value,
-                           <<"less-than">>,
+                           <<"max">>,
                            <<"query">>,
                            __TopXMLNS}});
         _res -> _res
     end.
 
-'encode_rewrite_query_attr_less-than'(undefined,
-                                      _acc) ->
-    _acc;
-'encode_rewrite_query_attr_less-than'(_val, _acc) ->
-    [{<<"less-than">>, enc_int(_val)} | _acc].
+encode_rewrite_query_attr_max(undefined, _acc) -> _acc;
+encode_rewrite_query_attr_max(_val, _acc) ->
+    [{<<"max">>, enc_int(_val)} | _acc].
 
 decode_replaced(__TopXMLNS, __Opts,
                 {xmlel, <<"replaced">>, _attrs, _els}) ->

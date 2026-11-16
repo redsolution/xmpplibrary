@@ -155,7 +155,7 @@
 -type ping() :: #ping{}.
 
 -record(rewrite_query, {version :: 'undefined' | non_neg_integer(),
-                        'less-than' :: 'undefined' | pos_integer()}).
+                        max :: 'undefined' | pos_integer()}).
 -type rewrite_query() :: #rewrite_query{}.
 
 -record(starttls_proceed, {}).
