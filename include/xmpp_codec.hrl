@@ -202,9 +202,6 @@
 -record(legacy_auth_feature, {}).
 -type legacy_auth_feature() :: #legacy_auth_feature{}.
 
--record(rosterver_feature, {}).
--type rosterver_feature() :: #rosterver_feature{}.
-
 -record(perms_permission, {name = <<>> :: binary(),
                            level = <<>> :: binary(),
                            status :: boolean(),
@@ -1048,6 +1045,11 @@
                   complete :: 'false' | 'true' | 'undefined'}).
 -type mam_fin() :: #mam_fin{}.
 
+-record(mam_search_query, {id = <<>> :: binary(),
+                           rsm :: 'undefined' | #rsm_set{},
+                           xdata :: 'undefined' | #xdata{}}).
+-type mam_search_query() :: #mam_search_query{}.
+
 -record(identity, {category = <<>> :: binary(),
                    type = <<>> :: binary(),
                    lang = <<>> :: binary(),
@@ -1382,10 +1384,6 @@
                        text = [] :: [#text{}]}).
 -type sasl_failure() :: #sasl_failure{}.
 
--record(bind, {jid :: undefined | jid:jid(),
-               resource = <<>> :: binary()}).
--type bind() :: #bind{}.
-
 -record(pubsub, {subscriptions :: 'undefined' | {binary(),[#ps_subscription{}]},
                  subscription :: 'undefined' | #ps_subscription{},
                  affiliations :: 'undefined' | {binary(),[#ps_affiliation{}]},
@@ -1471,6 +1469,11 @@
                      members :: 'undefined' | binary()}).
 -type vcard_temp() :: #vcard_temp{}.
 
+-record(privacy_query, {lists = [] :: [#privacy_list{}],
+                        default :: 'none' | 'undefined' | binary(),
+                        active :: 'none' | 'undefined' | binary()}).
+-type privacy_query() :: #privacy_query{}.
+
 -record(register, {registered = false :: boolean(),
                    remove = false :: boolean(),
                    instructions :: 'undefined' | binary(),
@@ -1495,10 +1498,12 @@
                    sub_els = [] :: [xmpp_element() | fxml:xmlel()]}).
 -type register() :: #register{}.
 
--record(privacy_query, {lists = [] :: [#privacy_list{}],
-                        default :: 'none' | 'undefined' | binary(),
-                        active :: 'none' | 'undefined' | binary()}).
--type privacy_query() :: #privacy_query{}.
+-record(bind, {jid :: undefined | jid:jid(),
+               resource = <<>> :: binary()}).
+-type bind() :: #bind{}.
+
+-record(rosterver_feature, {}).
+-type rosterver_feature() :: #rosterver_feature{}.
 
 -type xmpp_element() :: address() |
                         addresses() |
@@ -1610,6 +1615,7 @@
                         mam_prefs() |
                         mam_query() |
                         mam_result() |
+                        mam_search_query() |
                         mark_displayed() |
                         mark_markable() |
                         mark_received() |

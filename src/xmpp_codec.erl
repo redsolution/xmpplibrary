@@ -1746,6 +1746,8 @@ get_mod(<<"decline">>,
 get_mod(<<"x">>,
         <<"http://jabber.org/protocol/muc#user">>) ->
     xep0045;
+get_mod(<<"query">>, <<"urn:xmpp:mam:2:search">>) ->
+    xep0313;
 get_mod(<<"failure">>,
         <<"http://jabber.org/protocol/compress">>) ->
     xep0138;
@@ -2099,6 +2101,7 @@ get_mod({sasl_abort}) -> rfc6120;
 get_mod({starttls_proceed}) -> rfc6120;
 get_mod({compressed}) -> xep0138;
 get_mod({stream_error, _, _}) -> rfc6120;
+get_mod({mam_search_query, _, _, _}) -> xep0313;
 get_mod({receipt_request}) -> xep0184;
 get_mod({upload_request_0, _, _, _, _}) -> xep0363;
 get_mod({groups_block, _}) -> xep_groups;

@@ -1,0 +1,26 @@
+<form_type>
+  <name>urn:xmpp:mam:2:search</name>
+  <doc>XEP-MAMEXT</doc>
+  <desc>Form to search message archives</desc>
+  <field var='text'
+         type='text-single'
+         label='Text to search for'/>
+  <field var='with'
+         type='jid-single'
+         label='Contact JID'/>
+  <field var='start'
+         type='text-single'
+         label='Search from the date'/>
+  <field var='end'
+         type='text-single'
+         label='Search until the date'/>
+  <field var='conversation-type'
+         type='text-single'
+         label='Search only messages of the specified conversation type'/>
+</form_type>
+
+<!--
+Local Variables:
+mode: xml
+End:
+-->

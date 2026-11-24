@@ -3063,6 +3063,15 @@
            #ref{name = mam_flip_page, min = 0, max = 1, label = '$flippage', default = false},
 		   #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]}).
 
+-xml(mam_search_query,
+     #elem{name = <<"query">>,
+           xmlns = <<"urn:xmpp:mam:2:search">>,
+           module = 'xep0313',
+           result = {mam_search_query, '$id', '$rsm', '$xdata'},
+           attrs = [#attr{name = <<"queryid">>, label = '$id'}],
+           refs = [#ref{name = rsm_set, min = 0, max = 1, label = '$rsm'},
+                   #ref{name = xdata, min = 0, max = 1, label = '$xdata'}]}).
+
 -xml(mam_archived,
      #elem{name = <<"archived">>,
            xmlns = <<"urn:xmpp:mam:tmp">>,

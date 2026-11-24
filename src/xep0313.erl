@@ -71,6 +71,11 @@ do_decode(<<"result">>, <<"urn:xmpp:mam:tmp">>, El,
 do_decode(<<"archived">>, <<"urn:xmpp:mam:tmp">>, El,
           Opts) ->
     decode_mam_archived(<<"urn:xmpp:mam:tmp">>, Opts, El);
+do_decode(<<"query">>, <<"urn:xmpp:mam:2:search">>, El,
+          Opts) ->
+    decode_mam_search_query(<<"urn:xmpp:mam:2:search">>,
+                            Opts,
+                            El);
 do_decode(<<"query">>, <<"urn:xmpp:mam:0">>, El,
           Opts) ->
     decode_mam_query(<<"urn:xmpp:mam:0">>, Opts, El);
@@ -128,6 +133,7 @@ tags() ->
      {<<"result">>, <<"urn:xmpp:mam:2">>},
      {<<"result">>, <<"urn:xmpp:mam:tmp">>},
      {<<"archived">>, <<"urn:xmpp:mam:tmp">>},
+     {<<"query">>, <<"urn:xmpp:mam:2:search">>},
      {<<"query">>, <<"urn:xmpp:mam:0">>},
      {<<"query">>, <<"urn:xmpp:mam:1">>},
      {<<"query">>, <<"urn:xmpp:mam:2">>},
@@ -142,6 +148,9 @@ do_encode({mam_query, _, _, _, _, _, _, _, _, _} =
               Query,
           TopXMLNS) ->
     encode_mam_query(Query, TopXMLNS);
+do_encode({mam_search_query, _, _, _} = Query,
+          TopXMLNS) ->
+    encode_mam_search_query(Query, TopXMLNS);
 do_encode({mam_archived, _, _} = Archived, TopXMLNS) ->
     encode_mam_archived(Archived, TopXMLNS);
 do_encode({mam_result, _, _, _, _} = Result,
@@ -157,7 +166,8 @@ do_get_name({mam_fin, _, _, _, _, _}) -> <<"fin">>;
 do_get_name({mam_prefs, _, _, _, _}) -> <<"prefs">>;
 do_get_name({mam_query, _, _, _, _, _, _, _, _, _}) ->
     <<"query">>;
-do_get_name({mam_result, _, _, _, _}) -> <<"result">>.
+do_get_name({mam_result, _, _, _, _}) -> <<"result">>;
+do_get_name({mam_search_query, _, _, _}) -> <<"query">>.
 
 do_get_ns({mam_archived, _, _}) ->
     <<"urn:xmpp:mam:tmp">>;
@@ -165,7 +175,9 @@ do_get_ns({mam_fin, Xmlns, _, _, _, _}) -> Xmlns;
 do_get_ns({mam_prefs, Xmlns, _, _, _}) -> Xmlns;
 do_get_ns({mam_query, Xmlns, _, _, _, _, _, _, _, _}) ->
     Xmlns;
-do_get_ns({mam_result, Xmlns, _, _, _}) -> Xmlns.
+do_get_ns({mam_result, Xmlns, _, _, _}) -> Xmlns;
+do_get_ns({mam_search_query, _, _, _}) ->
+    <<"urn:xmpp:mam:2:search">>.
 
 get_els({mam_result,
          _xmlns,
@@ -188,6 +200,7 @@ pp(mam_query, 9) ->
      rsm,
      flippage,
      xdata];
+pp(mam_search_query, 3) -> [id, rsm, xdata];
 pp(mam_archived, 2) -> [by, id];
 pp(mam_result, 4) -> [xmlns, queryid, id, sub_els];
 pp(mam_prefs, 4) -> [xmlns, default, always, never];
@@ -196,6 +209,7 @@ pp(_, _) -> no.
 
 records() ->
     [{mam_query, 9},
+     {mam_search_query, 3},
      {mam_archived, 2},
      {mam_result, 4},
      {mam_prefs, 4},
@@ -952,6 +966,127 @@ decode_mam_archived_attr_by(__TopXMLNS, _val) ->
 
 encode_mam_archived_attr_by(_val, _acc) ->
     [{<<"by">>, jid:encode(_val)} | _acc].
+
+decode_mam_search_query(__TopXMLNS, __Opts,
+                        {xmlel, <<"query">>, _attrs, _els}) ->
+    {Xdata, Rsm} = decode_mam_search_query_els(__TopXMLNS,
+                                               __Opts,
+                                               _els,
+                                               undefined,
+                                               undefined),
+    Id = decode_mam_search_query_attrs(__TopXMLNS,
+                                       _attrs,
+                                       undefined),
+    {mam_search_query, Id, Rsm, Xdata}.
+
+decode_mam_search_query_els(__TopXMLNS, __Opts, [],
+                            Xdata, Rsm) ->
+    {Xdata, Rsm};
+decode_mam_search_query_els(__TopXMLNS, __Opts,
+                            [{xmlel, <<"set">>, _attrs, _} = _el | _els], Xdata,
+                            Rsm) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"http://jabber.org/protocol/rsm">> ->
+            decode_mam_search_query_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        Xdata,
+                                        xep0059:decode_rsm_set(<<"http://jabber.org/protocol/rsm">>,
+                                                               __Opts,
+                                                               _el));
+        _ ->
+            decode_mam_search_query_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        Xdata,
+                                        Rsm)
+    end;
+decode_mam_search_query_els(__TopXMLNS, __Opts,
+                            [{xmlel, <<"x">>, _attrs, _} = _el | _els], Xdata,
+                            Rsm) ->
+    case xmpp_codec:get_attr(<<"xmlns">>,
+                             _attrs,
+                             __TopXMLNS)
+        of
+        <<"jabber:x:data">> ->
+            decode_mam_search_query_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        xep0004:decode_xdata(<<"jabber:x:data">>,
+                                                             __Opts,
+                                                             _el),
+                                        Rsm);
+        _ ->
+            decode_mam_search_query_els(__TopXMLNS,
+                                        __Opts,
+                                        _els,
+                                        Xdata,
+                                        Rsm)
+    end;
+decode_mam_search_query_els(__TopXMLNS, __Opts,
+                            [_ | _els], Xdata, Rsm) ->
+    decode_mam_search_query_els(__TopXMLNS,
+                                __Opts,
+                                _els,
+                                Xdata,
+                                Rsm).
+
+decode_mam_search_query_attrs(__TopXMLNS,
+                              [{<<"queryid">>, _val} | _attrs], _Id) ->
+    decode_mam_search_query_attrs(__TopXMLNS, _attrs, _val);
+decode_mam_search_query_attrs(__TopXMLNS, [_ | _attrs],
+                              Id) ->
+    decode_mam_search_query_attrs(__TopXMLNS, _attrs, Id);
+decode_mam_search_query_attrs(__TopXMLNS, [], Id) ->
+    decode_mam_search_query_attr_queryid(__TopXMLNS, Id).
+
+encode_mam_search_query({mam_search_query,
+                         Id,
+                         Rsm,
+                         Xdata},
+                        __TopXMLNS) ->
+    __NewTopXMLNS =
+        xmpp_codec:choose_top_xmlns(<<"urn:xmpp:mam:2:search">>,
+                                    [],
+                                    __TopXMLNS),
+    _els =
+        lists:reverse('encode_mam_search_query_$xdata'(Xdata,
+                                                       __NewTopXMLNS,
+                                                       'encode_mam_search_query_$rsm'(Rsm,
+                                                                                      __NewTopXMLNS,
+                                                                                      []))),
+    _attrs = encode_mam_search_query_attr_queryid(Id,
+                                                  xmpp_codec:enc_xmlns_attrs(__NewTopXMLNS,
+                                                                             __TopXMLNS)),
+    {xmlel, <<"query">>, _attrs, _els}.
+
+'encode_mam_search_query_$xdata'(undefined, __TopXMLNS,
+                                 _acc) ->
+    _acc;
+'encode_mam_search_query_$xdata'(Xdata, __TopXMLNS,
+                                 _acc) ->
+    [xep0004:encode_xdata(Xdata, __TopXMLNS) | _acc].
+
+'encode_mam_search_query_$rsm'(undefined, __TopXMLNS,
+                               _acc) ->
+    _acc;
+'encode_mam_search_query_$rsm'(Rsm, __TopXMLNS, _acc) ->
+    [xep0059:encode_rsm_set(Rsm, __TopXMLNS) | _acc].
+
+decode_mam_search_query_attr_queryid(__TopXMLNS,
+                                     undefined) ->
+    <<>>;
+decode_mam_search_query_attr_queryid(__TopXMLNS,
+                                     _val) ->
+    _val.
+
+encode_mam_search_query_attr_queryid(<<>>, _acc) ->
+    _acc;
+encode_mam_search_query_attr_queryid(_val, _acc) ->
+    [{<<"queryid">>, _val} | _acc].
 
 decode_mam_query(__TopXMLNS, __Opts,
                  {xmlel, <<"query">>, _attrs, _els}) ->
